@@ -30,7 +30,9 @@ func main() {
 	app.Static("/static", "./public")
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("hello")
+		return c.Render("pages/index", fiber.Map{
+			"Title": "Hello, World!",
+		}, "layouts/admin", "layouts/base")
 	})
 
 	app.Get("/initialize", func(c *fiber.Ctx) error {
