@@ -1,5 +1,5 @@
 <div class="flex h-screen bg-gray-50 dark:bg-gray-900">
-    <aside class="bg-white w-64">
+    <aside class="bg-white w-64 shadow-lg z-40">
         <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
             <h1 class="text-xl font-bold text-blue-600 dark:text-blue-400">Headless CMS</h1><button
                 class="lg:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 focus:outline-none"><svg
@@ -11,38 +11,53 @@
                 </svg></button>
         </div>
         <nav class="px-2 py-4 space-y-1">
-            <button
-                class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"><span
-                    class="mr-3"></span><span>仪表盘</span></button>
-            <button
-                class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                <span
-                    class="mr-3"></span><span>内容模型管理</span>
-            </button>
-            <button
-                class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                <span
-                    class="mr-3"></span><span>内容管理</span>
-            </button>
-            <button
-                class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                <span
-                    class="mr-3"></span><span>用户权限管理</span>
-            </button>
-            <button
-                class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                <span
-                    class="mr-3"></span><span>webhook</span>
-            </button>
-            <button
-                class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                <span
-                    class="mr-3"></span><span>文件管理</span>
-            </button>
+            <a class="flex" href="/">
+                <button
+                    class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"><span
+                        class="mr-3"></span><span>仪表盘</span></button>
+            </a>
+            <a class="flex" href="/content_models">
+                <button
+                    class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                    <span class="mr-3"></span><span>内容模型管理</span>
+                </button>
+            </a>
+            <a class="flex" href="/content">
+                <button
+                    class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                    <span class="mr-3"></span><span>内容管理</span>
+                </button>
+            </a>
+            <a class="flex" href="/users">
+                <button
+                    class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                    <span class="mr-3"></span><span>用户权限管理</span>
+                </button>
+            </a>
+            <a class="flex" href="/webhook">
+                <button
+                    class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                    <span class="mr-3"></span><span>webhook</span>
+                </button>
+            </a>
+            <a class="flex" href="/files">
+                <button
+                    class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                    <span class="mr-3"></span><span>文件管理</span>
+                </button>
+            </a>
         </nav>
 
     </aside>
-    <main class="flex-1 flex flex-col">
-        {{embed}}
-    </main>
+    <div class="flex-1 flex flex-col">
+        <header class="bg-white h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between h-full">
+                <h1 class="text-xl font-bold text-blue-600 dark:text-blue-400">内容管理</h1>
+            </div>
+        </header>
+        <main class="flex-1">
+            {{embed}}
+        </main>
+
+    </div>
 </div>
