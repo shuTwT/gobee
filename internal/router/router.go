@@ -9,7 +9,6 @@ import (
 
 func Initialize(router *fiber.App) {
 	router.Use(middleware.Security)
-	router.Use(middleware.Authenticated)
 
 	router.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("pages/index", fiber.Map{
@@ -19,16 +18,67 @@ func Initialize(router *fiber.App) {
 
 	console := router.Group("/console")
 	{
-		console.Get("/", func(c *fiber.Ctx) error {
-			return c.Render("pages/console/index", fiber.Map{
-				"Title": "Hello, World!",
-			}, "layouts/admin", "layouts/base")
-		})
+		// 登录页面
 		console.Get("/login", func(c *fiber.Ctx) error {
 			return c.Render("pages/console/login", fiber.Map{
 				"Title": "登录",
 			}, "layouts/base")
 		})
+		// console.Use(middleware.ConsoleProtected)
+		// 首页
+		console.Get("/", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/index", fiber.Map{
+				"Title": "Hello, World!",
+			}, "layouts/admin", "layouts/base")
+		})
+		// 相册管理
+		console.Get("/album", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/album", fiber.Map{
+				"Title": "相册",
+			}, "layouts/admin", "layouts/base")
+		})
+		// 评论管理
+		console.Get("/comment", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/comment", fiber.Map{
+				"Title": "相册",
+			}, "layouts/admin", "layouts/base")
+		})
+		// 文件管理
+		console.Get("/file", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/file", fiber.Map{
+				"Title": "相册",
+			}, "layouts/admin", "layouts/base")
+		})
+		// 友链管理
+		console.Get("/flink", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/flink", fiber.Map{
+				"Title": "相册",
+			}, "layouts/admin", "layouts/base")
+		})
+		// 用户中心
+		console.Get("/user-center", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/user-center", fiber.Map{
+				"Title": "相册",
+			}, "layouts/admin", "layouts/base")
+		})
+		// 用户管理
+		console.Get("/users", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/users", fiber.Map{
+				"Title": "相册",
+			}, "layouts/admin", "layouts/base")
+		})
+	}
+
+	api := router.Group("/api")
+	{
+		apiV1 := api.Group("/v1")
+		{
+			apiV1.Get("/users", func(c *fiber.Ctx) error {
+				return c.JSON(fiber.Map{
+					"message": "Hello, World!",
+				})
+			})
+		}
 	}
 
 	auth := router.Group("/auth")

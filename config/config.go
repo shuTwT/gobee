@@ -55,3 +55,7 @@ func GetPort() string {
 func GetIsProduction() bool {
 	return os.Getenv("STAGE") == "prod"
 }
+
+func GetSecret() string {
+	return os.Getenv("SECRET")
+}
