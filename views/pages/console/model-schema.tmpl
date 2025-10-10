@@ -1,0 +1,397 @@
+<!-- 内容模型管理 -->
+<div class="flex h-full">
+  <!-- 左侧列表 -->
+  <div class="w-64 bg-white border-r border-gray-200 flex flex-col">
+    <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+      <h2 class="text-lg font-medium text-gray-900">内容模型</h2>
+      <button id="add-model-btn" class="p-1 rounded-md text-blue-600 hover:bg-blue-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+    <div class="overflow-y-auto flex-1">
+      <ul id="model-list" class="divide-y divide-gray-200">
+        <!-- 示例模型项 -->
+        <li class="model-item px-4 py-3 hover:bg-gray-50 cursor-pointer">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-sm font-medium text-gray-900">文章</h3>
+              <p class="text-xs text-gray-500">article</p>
+            </div>
+            <div class="flex space-x-1">
+              <button class="text-gray-400 hover:text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+              </button>
+              <button class="text-gray-400 hover:text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </li>
+        <li class="model-item px-4 py-3 hover:bg-gray-50 cursor-pointer">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-sm font-medium text-gray-900">产品</h3>
+              <p class="text-xs text-gray-500">product</p>
+            </div>
+            <div class="flex space-x-1">
+              <button class="text-gray-400 hover:text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+              </button>
+              <button class="text-gray-400 hover:text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 右侧编辑区域 -->
+  <div class="flex-1 flex flex-col">
+    <!-- 未选择模型时的提示 -->
+    <div id="empty-state" class="flex-1 flex flex-col items-center justify-center p-8 text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">未选择内容模型</h3>
+      <p class="text-sm text-gray-500 max-w-md">请从左侧列表选择一个内容模型进行编辑，或者点击左上角的"+"按钮创建一个新的内容模型。</p>
+    </div>
+
+    <!-- 选择模型后的编辑区域 -->
+    <div id="edit-area" class="flex-1 flex flex-col hidden">
+      <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+        <div>
+          <h2 id="model-title" class="text-lg font-medium text-gray-900">文章</h2>
+          <p id="model-identifier" class="text-sm text-gray-500">article</p>
+        </div>
+        <button id="add-field-btn" class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          添加字段
+        </button>
+      </div>
+      <div class="p-4 flex-1 overflow-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">字段名称</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">字段标识</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">字段类型</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">必填</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+            </tr>
+          </thead>
+          <tbody id="field-list" class="bg-white divide-y divide-gray-200">
+            <!-- 示例字段 -->
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">标题</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">title</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Text</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">是</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <button class="text-blue-600 hover:text-blue-900 mr-2">编辑</button>
+                <button class="text-red-600 hover:text-red-900">删除</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">内容</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">content</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">富文本</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">是</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <button class="text-blue-600 hover:text-blue-900 mr-2">编辑</button>
+                <button class="text-red-600 hover:text-red-900">删除</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">发布日期</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">publish_date</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">日期时间</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">否</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <button class="text-blue-600 hover:text-blue-900 mr-2">编辑</button>
+                <button class="text-red-600 hover:text-red-900">删除</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 添加模型弹窗 -->
+<div id="add-model-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">添加内容模型</h3>
+    </div>
+    <form id="add-model-form" class="px-6 py-4">
+      <div class="mb-4">
+        <label for="model-name" class="block text-sm font-medium text-gray-700 mb-1">模型名称</label>
+        <input type="text" id="model-name" name="model-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="例如：文章、产品">
+      </div>
+      <div class="mb-4">
+        <label for="model-identifier" class="block text-sm font-medium text-gray-700 mb-1">模型标识</label>
+        <input type="text" id="model-identifier" name="model-identifier" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="例如：article、product">
+        <p class="mt-1 text-xs text-gray-500">只能包含小写字母、数字和下划线，不能以数字开头</p>
+      </div>
+      <div class="mb-4">
+        <label for="model-description" class="block text-sm font-medium text-gray-700 mb-1">模型描述（可选）</label>
+        <textarea id="model-description" name="model-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="描述这个内容模型的用途..."></textarea>
+      </div>
+    </form>
+    <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+      <button id="cancel-add-model-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 mr-2">
+        取消
+      </button>
+      <button id="confirm-add-model-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        确定
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 添加字段弹窗 -->
+<div id="add-field-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">添加字段</h3>
+    </div>
+    <form id="add-field-form" class="px-6 py-4">
+      <div class="mb-4">
+        <label for="field-name" class="block text-sm font-medium text-gray-700 mb-1">字段名称</label>
+        <input type="text" id="field-name" name="field-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="例如：标题、内容">
+      </div>
+      <div class="mb-4">
+        <label for="field-identifier" class="block text-sm font-medium text-gray-700 mb-1">字段标识</label>
+        <input type="text" id="field-identifier" name="field-identifier" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="例如：title、content">
+        <p class="mt-1 text-xs text-gray-500">只能包含小写字母、数字和下划线，不能以数字开头</p>
+      </div>
+      <div class="mb-4">
+        <label for="field-type" class="block text-sm font-medium text-gray-700 mb-1">字段类型</label>
+        <select id="field-type" name="field-type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+          <option value="text">Text</option>
+          <option value="number">Number</option>
+          <option value="textarea">文本域</option>
+          <option value="richtext">富文本</option>
+          <option value="datetime">日期时间</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <div class="flex items-center">
+          <input type="checkbox" id="field-required" name="field-required" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+          <label for="field-required" class="ml-2 block text-sm text-gray-900">必填字段</label>
+        </div>
+      </div>
+    </form>
+    <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+      <button id="cancel-add-field-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 mr-2">
+        取消
+      </button>
+      <button id="confirm-add-field-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        确定
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 当前选中的模型ID
+  let currentModelId = null;
+
+  // 模型列表点击事件
+  document.querySelectorAll('.model-item').forEach(item => {
+    item.addEventListener('click', function() {
+      // 移除所有选中状态
+      document.querySelectorAll('.model-item').forEach(el => {
+        el.classList.remove('bg-blue-50');
+      });
+      
+      // 添加选中状态
+      this.classList.add('bg-blue-50');
+      
+      // 获取模型信息
+      const modelName = this.querySelector('h3').textContent;
+      const modelIdentifier = this.querySelector('p').textContent;
+      
+      // 更新右侧编辑区域
+      document.getElementById('model-title').textContent = modelName;
+      document.getElementById('model-identifier').textContent = modelIdentifier;
+      
+      // 显示编辑区域，隐藏空状态
+      document.getElementById('empty-state').classList.add('hidden');
+      document.getElementById('edit-area').classList.remove('hidden');
+      
+      // 设置当前模型ID（这里使用示例ID）
+      currentModelId = modelIdentifier;
+      
+      // 这里可以添加加载字段列表的逻辑
+      // loadFieldList(currentModelId);
+    });
+  });
+
+  // 添加模型按钮点击事件
+  document.getElementById('add-model-btn').addEventListener('click', function() {
+    document.getElementById('add-model-form').reset();
+    document.getElementById('add-model-modal').classList.remove('hidden');
+  });
+
+  // 取消添加模型按钮点击事件
+  document.getElementById('cancel-add-model-btn').addEventListener('click', function() {
+    document.getElementById('add-model-modal').classList.add('hidden');
+  });
+
+  // 确认添加模型按钮点击事件
+  document.getElementById('confirm-add-model-btn').addEventListener('click', function() {
+    const modelName = document.getElementById('model-name').value;
+    const modelIdentifier = document.getElementById('model-identifier').value;
+    
+    if (!modelName || !modelIdentifier) {
+      alert('请填写模型名称和标识');
+      return;
+    }
+    
+    // 这里可以添加保存模型的逻辑
+    // saveModel(modelName, modelIdentifier);
+    
+    // 添加到列表中
+    const newItem = document.createElement('li');
+    newItem.className = 'model-item px-4 py-3 hover:bg-gray-50 cursor-pointer';
+    newItem.innerHTML = `
+      <div class="flex justify-between items-center">
+        <div>
+          <h3 class="text-sm font-medium text-gray-900">${modelName}</h3>
+          <p class="text-xs text-gray-500">${modelIdentifier}</p>
+        </div>
+        <div class="flex space-x-1">
+          <button class="text-gray-400 hover:text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+            </svg>
+          </button>
+          <button class="text-gray-400 hover:text-red-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('model-list').appendChild(newItem);
+    
+    // 添加点击事件
+    newItem.addEventListener('click', function() {
+      document.querySelectorAll('.model-item').forEach(el => {
+        el.classList.remove('bg-blue-50');
+      });
+      
+      this.classList.add('bg-blue-50');
+      
+      document.getElementById('model-title').textContent = modelName;
+      document.getElementById('model-identifier').textContent = modelIdentifier;
+      
+      document.getElementById('empty-state').classList.add('hidden');
+      document.getElementById('edit-area').classList.remove('hidden');
+      
+      currentModelId = modelIdentifier;
+      
+      // 清空字段列表
+      document.getElementById('field-list').innerHTML = '';
+    });
+    
+    document.getElementById('add-model-modal').classList.add('hidden');
+  });
+
+  // 添加字段按钮点击事件
+  document.getElementById('add-field-btn').addEventListener('click', function() {
+    if (!currentModelId) {
+      alert('请先选择一个内容模型');
+      return;
+    }
+    
+    document.getElementById('add-field-form').reset();
+    document.getElementById('add-field-modal').classList.remove('hidden');
+  });
+
+  // 取消添加字段按钮点击事件
+  document.getElementById('cancel-add-field-btn').addEventListener('click', function() {
+    document.getElementById('add-field-modal').classList.add('hidden');
+  });
+
+  // 确认添加字段按钮点击事件
+  document.getElementById('confirm-add-field-btn').addEventListener('click', function() {
+    const fieldName = document.getElementById('field-name').value;
+    const fieldIdentifier = document.getElementById('field-identifier').value;
+    const fieldType = document.getElementById('field-type').value;
+    const fieldRequired = document.getElementById('field-required').checked;
+    
+    if (!fieldName || !fieldIdentifier) {
+      alert('请填写字段名称和标识');
+      return;
+    }
+    
+    // 这里可以添加保存字段的逻辑
+    // saveField(currentModelId, fieldName, fieldIdentifier, fieldType, fieldRequired);
+    
+    // 添加到表格中
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${fieldName}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${fieldIdentifier}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${getFieldTypeText(fieldType)}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${fieldRequired ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+          ${fieldRequired ? '是' : '否'}
+        </span>
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        <button class="text-blue-600 hover:text-blue-900 mr-2">编辑</button>
+        <button class="text-red-600 hover:text-red-900">删除</button>
+      </td>
+    `;
+    
+    document.getElementById('field-list').appendChild(newRow);
+    
+    document.getElementById('add-field-modal').classList.add('hidden');
+  });
+
+  // 获取字段类型显示文本
+  function getFieldTypeText(type) {
+    const typeMap = {
+      'text': 'Text',
+      'number': 'Number',
+      'textarea': '文本域',
+      'richtext': '富文本',
+      'datetime': '日期时间'
+    };
+    
+    return typeMap[type] || type;
+  }
+
+  // 初始化页面
+  function initPage() {
+    // 默认显示空状态
+    document.getElementById('empty-state').classList.remove('hidden');
+    document.getElementById('edit-area').classList.add('hidden');
+  }
+
+  // 页面加载完成后初始化
+  document.addEventListener('DOMContentLoaded', initPage);
+</script>

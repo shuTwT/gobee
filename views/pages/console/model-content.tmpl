@@ -1,0 +1,344 @@
+<!-- 内容管理页面 -->
+<div class="flex h-full">
+  <!-- 左侧内容模型列表 -->
+  <div class="w-64 bg-white border-r border-gray-200 flex flex-col">
+    <div class="p-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">内容模型</h2>
+    </div>
+    <div class="overflow-y-auto flex-1">
+      <ul id="model-list" class="divide-y divide-gray-200">
+        <!-- 示例内容模型项 -->
+        <li class="model-item px-4 py-3 hover:bg-gray-50 cursor-pointer" data-model-id="article" data-model-name="文章">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-sm font-medium text-gray-900">文章</h3>
+              <p class="text-xs text-gray-500">article</p>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              10
+            </span>
+          </div>
+        </li>
+        <li class="model-item px-4 py-3 hover:bg-gray-50 cursor-pointer" data-model-id="product" data-model-name="产品">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-sm font-medium text-gray-900">产品</h3>
+              <p class="text-xs text-gray-500">product</p>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              5
+            </span>
+          </div>
+        </li>
+        <li class="model-item px-4 py-3 hover:bg-gray-50 cursor-pointer" data-model-id="news" data-model-name="新闻">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-sm font-medium text-gray-900">新闻</h3>
+              <p class="text-xs text-gray-500">news</p>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              8
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 右侧内容区域 -->
+  <div class="flex-1 flex flex-col">
+    <!-- 未选择内容时的提示 -->
+    <div id="empty-state" class="flex-1 flex flex-col items-center justify-center p-8 text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">未选择内容模型</h3>
+      <p class="text-sm text-gray-500 max-w-md">请从左侧列表选择一个内容模型查看其内容列表。</p>
+    </div>
+
+    <!-- 内容列表区域 -->
+    <div id="content-list-container" class="flex-1 flex flex-col hidden">
+      <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+        <h2 id="content-list-title" class="text-lg font-medium text-gray-900">文章列表</h2>
+        <button id="new-content-btn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          新建内容
+        </button>
+      </div>
+      <div class="p-4">
+        <div class="mb-4">
+          <div class="relative">
+            <input type="text" id="search-content" placeholder="搜索内容..." class="w-full px-3 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">标题</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">作者</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">发布日期</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+              </tr>
+            </thead>
+            <tbody id="content-list" class="bg-white divide-y divide-gray-200">
+              <!-- 示例内容项 -->
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">如何使用Headless CMS</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">张三</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">已发布</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-05-15</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button class="edit-content-btn text-blue-600 hover:text-blue-900 mr-2" data-content-id="1">编辑</button>
+                  <button class="text-red-600 hover:text-red-900">删除</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">内容模型设计指南</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">李四</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">草稿</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button class="edit-content-btn text-blue-600 hover:text-blue-900 mr-2" data-content-id="2">编辑</button>
+                  <button class="text-red-600 hover:text-red-900">删除</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4 flex justify-between items-center">
+          <div class="text-sm text-gray-500">
+            显示 1-2 共 2 条
+          </div>
+          <div class="flex space-x-2">
+            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50" disabled>上一页</button>
+            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50" disabled>下一页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 内容编辑表单 -->
+    <div id="content-form-container" class="flex-1 flex flex-col hidden">
+      <!-- 表单头部 -->
+      <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+        <div class="flex items-center">
+          <h2 id="content-title" class="text-lg font-medium text-gray-900 mr-4">编辑内容</h2>
+          <div class="relative">
+            <select id="language-selector" class="appearance-none bg-white border border-gray-300 rounded-md py-1 pl-3 pr-8 text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+              <option value="zh-CN">中文</option>
+              <option value="en-US">English</option>
+              <option value="ja-JP">日本語</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="flex space-x-2">
+          <button id="back-to-list-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            返回列表
+          </button>
+          <button id="save-draft-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            保存草稿
+          </button>
+          <button id="publish-btn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            发布
+          </button>
+        </div>
+      </div>
+
+      <!-- 表单内容 -->
+      <div class="p-6 flex-1 overflow-auto">
+        <form id="content-form">
+          <!-- 标题字段 -->
+          <div class="mb-6">
+            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">标题</label>
+            <input type="text" id="title" name="title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+          </div>
+
+          <!-- 摘要字段 -->
+          <div class="mb-6">
+            <label for="summary" class="block text-sm font-medium text-gray-700 mb-1">摘要</label>
+            <textarea id="summary" name="summary" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+          </div>
+
+          <!-- 内容字段 -->
+          <div class="mb-6">
+            <label for="content" class="block text-sm font-medium text-gray-700 mb-1">内容</label>
+            <div id="rich-editor" class="w-full border border-gray-300 rounded-md min-h-[300px]">
+              <!-- 富文本编辑器将在这里初始化 -->
+              <div class="p-3">这里是富文本编辑器区域</div>
+            </div>
+          </div>
+
+          <!-- 发布日期字段 -->
+          <div class="mb-6">
+            <label for="publish-date" class="block text-sm font-medium text-gray-700 mb-1">发布日期</label>
+            <input type="datetime-local" id="publish-date" name="publish-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+          </div>
+
+          <!-- 作者字段 -->
+          <div class="mb-6">
+            <label for="author" class="block text-sm font-medium text-gray-700 mb-1">作者</label>
+            <input type="text" id="author" name="author" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+          </div>
+
+          <!-- 标签字段 -->
+          <div class="mb-6">
+            <label for="tags" class="block text-sm font-medium text-gray-700 mb-1">标签</label>
+            <input type="text" id="tags" name="tags" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="使用逗号分隔多个标签">
+          </div>
+
+          <!-- 封面图片字段 -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-1">封面图片</label>
+            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+              <div class="space-y-1 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                  <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <div class="flex text-sm text-gray-600">
+                  <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                    <span>上传图片</span>
+                    <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                  </label>
+                  <p class="pl-1">或拖放图片到此处</p>
+                </div>
+                <p class="text-xs text-gray-500">PNG, JPG, GIF 最大 10MB</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 状态字段 -->
+          <div class="mb-6">
+            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">状态</label>
+            <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+              <option value="draft">草稿</option>
+              <option value="published">已发布</option>
+              <option value="archived">已归档</option>
+            </select>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 当前选中的模型ID和名称
+  let currentModelId = null;
+  let currentModelName = null;
+
+  // 模型列表点击事件
+  document.querySelectorAll('.model-item').forEach(item => {
+    item.addEventListener('click', function() {
+      // 移除所有选中状态
+      document.querySelectorAll('.model-item').forEach(el => {
+        el.classList.remove('bg-blue-50');
+      });
+      
+      // 添加选中状态
+      this.classList.add('bg-blue-50');
+      
+      // 获取模型信息
+      currentModelId = this.dataset.modelId;
+      currentModelName = this.dataset.modelName;
+      
+      // 更新内容列表标题
+      document.getElementById('content-list-title').textContent = `${currentModelName}列表`;
+      
+      // 显示内容列表，隐藏其他区域
+      document.getElementById('empty-state').classList.add('hidden');
+      document.getElementById('content-list-container').classList.remove('hidden');
+      document.getElementById('content-form-container').classList.add('hidden');
+      
+      // 这里可以添加加载内容列表的逻辑
+      // loadContentList(currentModelId);
+    });
+  });
+
+  // 编辑内容按钮点击事件
+  document.querySelectorAll('.edit-content-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const contentId = this.dataset.contentId;
+      
+      // 显示编辑表单，隐藏内容列表
+      document.getElementById('content-list-container').classList.add('hidden');
+      document.getElementById('content-form-container').classList.remove('hidden');
+      
+      // 设置表单标题
+      document.getElementById('content-title').textContent = '编辑内容';
+      
+      // 这里可以添加加载内容数据的逻辑
+      // loadContentData(contentId);
+    });
+  });
+
+  // 新建内容按钮点击事件
+  document.getElementById('new-content-btn').addEventListener('click', function() {
+    // 显示空表单，隐藏内容列表
+    document.getElementById('content-list-container').classList.add('hidden');
+    document.getElementById('content-form-container').classList.remove('hidden');
+    
+    // 重置表单
+    document.getElementById('content-form').reset();
+    document.getElementById('content-title').textContent = '新建内容';
+  });
+
+  // 返回列表按钮点击事件
+  document.getElementById('back-to-list-btn').addEventListener('click', function() {
+    // 显示内容列表，隐藏表单
+    document.getElementById('content-form-container').classList.add('hidden');
+    document.getElementById('content-list-container').classList.remove('hidden');
+  });
+
+  // 保存草稿按钮点击事件
+  document.getElementById('save-draft-btn').addEventListener('click', function() {
+    // 这里可以添加保存草稿的逻辑
+    alert('内容已保存为草稿');
+  });
+
+  // 发布按钮点击事件
+  document.getElementById('publish-btn').addEventListener('click', function() {
+    // 这里可以添加发布内容的逻辑
+    alert('内容已发布');
+  });
+
+  // 语言选择器变更事件
+  document.getElementById('language-selector').addEventListener('change', function() {
+    const selectedLanguage = this.value;
+    // 这里可以添加切换语言的逻辑
+    console.log('已切换到语言：', selectedLanguage);
+  });
+
+  // 初始化页面
+  function initPage() {
+    // 默认显示空状态
+    document.getElementById('empty-state').classList.remove('hidden');
+    document.getElementById('content-list-container').classList.add('hidden');
+    document.getElementById('content-form-container').classList.add('hidden');
+  }
+
+  // 页面加载完成后初始化
+  document.addEventListener('DOMContentLoaded', initPage);
+</script>

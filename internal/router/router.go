@@ -31,40 +31,56 @@ func Initialize(router *fiber.App) {
 				"Title": "Hello, World!",
 			}, "layouts/admin", "layouts/base")
 		})
+		console.Get("/content_models", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/model-schema", fiber.Map{
+				"Title": "内容模型",
+			}, "layouts/admin", "layouts/base")
+		})
+		console.Get("/content", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/model-content", fiber.Map{
+				"Title": "内容",
+			}, "layouts/admin", "layouts/base")
+		})
 		// 相册管理
 		console.Get("/album", func(c *fiber.Ctx) error {
 			return c.Render("pages/console/album", fiber.Map{
-				"Title": "相册",
+				"Title": "相册管理",
 			}, "layouts/admin", "layouts/base")
 		})
 		// 评论管理
 		console.Get("/comment", func(c *fiber.Ctx) error {
 			return c.Render("pages/console/comment", fiber.Map{
-				"Title": "相册",
+				"Title": "评论管理",
 			}, "layouts/admin", "layouts/base")
 		})
 		// 文件管理
 		console.Get("/file", func(c *fiber.Ctx) error {
 			return c.Render("pages/console/file", fiber.Map{
-				"Title": "相册",
+				"Title": "文件管理",
 			}, "layouts/admin", "layouts/base")
 		})
 		// 友链管理
 		console.Get("/flink", func(c *fiber.Ctx) error {
 			return c.Render("pages/console/flink", fiber.Map{
-				"Title": "相册",
+				"Title": "友链管理",
+			}, "layouts/admin", "layouts/base")
+		})
+		// webhook
+		console.Get("/webhook", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/webhook", fiber.Map{
+				"Title": "Webhook",
 			}, "layouts/admin", "layouts/base")
 		})
 		// 用户中心
 		console.Get("/user-center", func(c *fiber.Ctx) error {
 			return c.Render("pages/console/user-center", fiber.Map{
-				"Title": "相册",
+				"Title": "用户中心",
 			}, "layouts/admin", "layouts/base")
 		})
 		// 用户管理
 		console.Get("/users", func(c *fiber.Ctx) error {
 			return c.Render("pages/console/users", fiber.Map{
-				"Title": "相册",
+				"Title": "用户管理",
 			}, "layouts/admin", "layouts/base")
 		})
 	}

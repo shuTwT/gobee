@@ -1,0 +1,238 @@
+<div class="p-6 bg-white dark:bg-gray-800 shadow-md rounded-lg">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Webhook 管理</h2>
+        <div class="flex space-x-4">
+            <button id="addWebhookBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                添加 Webhook
+            </button>
+            <div class="relative">
+                <input type="text" id="webhookSearchInput" placeholder="搜索 Webhook..." class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+            <thead>
+                <tr class="bg-gray-100 dark:bg-gray-700">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">URL</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">事件</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">操作</th>
+                </tr>
+            </thead>
+            <tbody id="webhookListTableBody" class="divide-y divide-gray-200 dark:divide-gray-700">
+                <!-- Webhook 列表将在这里动态加载 -->
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">https://example.com/webhook1</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">内容创建, 内容更新</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-600 mr-4">编辑</button>
+                        <button class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-600">删除</button>
+                    </td>
+                </tr>
+                <!-- 更多 Webhook 行 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 分页组件 -->
+    <div class="mt-6 flex justify-end">
+        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600">
+                <span class="sr-only">Previous</span>
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+            </a>
+            <a href="#" aria-current="page" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600 dark:bg-blue-900/30 dark:border-gray-600 dark:text-blue-400">
+                1
+            </a>
+            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600">
+                2
+            </a>
+            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600">
+                <span class="sr-only">Next</span>
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Add/Edit Webhook Modal -->
+    <div id="webhookModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="webhookModalTitle">添加 Webhook</h3>
+                <div class="mt-2 px-7 py-3 text-left">
+                    <label for="webhookUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300">URL</label>
+                    <input type="url" id="webhookUrl" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="https://example.com/webhook">
+
+                    <label for="webhookEvents" class="mt-4 block text-sm font-medium text-gray-700 dark:text-gray-300">选择事件</label>
+                    <div class="mt-1 space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="webhookEvents" value="content_created" class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">内容创建</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="webhookEvents" value="content_updated" class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">内容更新</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="webhookEvents" value="content_deleted" class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">内容删除</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="webhookEvents" value="user_registered" class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">用户注册</span>
+                        </label>
+                        <!-- 更多事件类型 -->
+                    </div>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="saveWebhookBtn" class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        保存
+                    </button>
+                    <button id="closeWebhookModalBtn" class="mt-3 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addWebhookBtn = document.getElementById('addWebhookBtn');
+        const webhookModal = document.getElementById('webhookModal');
+        const webhookModalTitle = document.getElementById('webhookModalTitle');
+        const closeWebhookModalBtn = document.getElementById('closeWebhookModalBtn');
+        const saveWebhookBtn = document.getElementById('saveWebhookBtn');
+        const webhookUrlInput = document.getElementById('webhookUrl');
+        const webhookEventsCheckboxes = document.querySelectorAll('input[name="webhookEvents"]'); // 获取所有事件复选框
+        const webhookListTableBody = document.getElementById('webhookListTableBody');
+        const webhookSearchInput = document.getElementById('webhookSearchInput');
+
+        let editingWebhookId = null; // 用于存储当前正在编辑的 webhook ID
+
+        // 显示添加/编辑 Webhook 模态框
+        addWebhookBtn.addEventListener('click', function() {
+            editingWebhookId = null;
+            webhookModalTitle.textContent = '添加 Webhook';
+            webhookUrlInput.value = '';
+            // 清空所有选中事件复选框
+            webhookEventsCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            webhookModal.classList.remove('hidden');
+        });
+
+        // 关闭模态框
+        closeWebhookModalBtn.addEventListener('click', function() {
+            webhookModal.classList.add('hidden');
+        });
+
+        // 模拟保存 Webhook
+        saveWebhookBtn.addEventListener('click', function() {
+            const url = webhookUrlInput.value;
+            // 获取所有选中的事件复选框的值
+            const selectedEvents = Array.from(webhookEventsCheckboxes)
+                                     .filter(checkbox => checkbox.checked)
+                                     .map(checkbox => checkbox.nextElementSibling.textContent); // 获取相邻的 span 文本作为事件名称
+
+            if (!url) {
+                alert('URL 不能为空喵！');
+                return;
+            }
+
+            if (editingWebhookId) {
+                console.log(`更新 Webhook ID: ${editingWebhookId}, URL: ${url}, 事件: ${selectedEvents.join(', ')}`);
+                alert(`Webhook ID: ${editingWebhookId} 已更新 (模拟)`);
+            } else {
+                console.log(`添加 Webhook URL: ${url}, 事件: ${selectedEvents.join(', ')}`);
+                alert(`Webhook 已添加 (模拟)`);
+            }
+            webhookModal.classList.add('hidden');
+            refreshWebhookList(); // 刷新列表
+        });
+
+        // 模拟编辑 Webhook
+        webhookListTableBody.addEventListener('click', function(event) {
+            if (event.target.textContent === '编辑') {
+                const row = event.target.closest('tr');
+                // 假设第一列是 URL，第二列是事件
+                const url = row.children[0].textContent;
+                const eventsText = row.children[1].textContent;
+                const events = eventsText.split(', ').map(e => e.trim());
+
+                editingWebhookId = 'some-webhook-id'; // 实际应用中，这里会从后端获取 ID
+                webhookModalTitle.textContent = '编辑 Webhook';
+                webhookUrlInput.value = url;
+
+                // 清空所有选中事件复选框
+                webhookEventsCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                // 选中对应的事件复选框
+                webhookEventsCheckboxes.forEach(checkbox => {
+                    if (events.includes(checkbox.nextElementSibling.textContent)) {
+                        checkbox.checked = true;
+                    }
+                });
+
+                webhookModal.classList.remove('hidden');
+            }
+        });
+
+        // 模拟删除 Webhook
+        webhookListTableBody.addEventListener('click', function(event) {
+            if (event.target.textContent === '删除') {
+                if (confirm('确定要删除这个 Webhook 吗？')) {
+                    const row = event.target.closest('tr');
+                    const url = row.children[0].textContent;
+                    console.log(`删除 Webhook URL: ${url}`);
+                    alert(`Webhook ${url} 已删除 (模拟)`);
+                    refreshWebhookList(); // 刷新列表
+                }
+            }
+        });
+
+        // 搜索 Webhook (占位符)
+        webhookSearchInput.addEventListener('keyup', function() {
+            const searchTerm = webhookSearchInput.value.toLowerCase();
+            console.log('搜索 Webhook:', searchTerm);
+            // 实际应用中，这里会根据搜索词过滤 Webhook 列表
+            // filterWebhookList(searchTerm);
+        });
+
+        // 模拟 Webhook 列表刷新 (实际需要从后端获取数据)
+        function refreshWebhookList() {
+            // 假设从后端获取到以下数据
+            const webhooks = [
+                { url: 'https://example.com/webhook1', events: ['内容创建', '内容更新'] },
+                { url: 'https://another.com/hook', events: ['用户注册'] },
+            ];
+
+            webhookListTableBody.innerHTML = ''; // 清空现有列表
+            webhooks.forEach(webhook => {
+                const row = `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${webhook.url}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${webhook.events.join(', ')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-600 mr-4">编辑</button>
+                            <button class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-600">删除</button>
+                        </td>
+                    </tr>
+                `;
+                webhookListTableBody.innerHTML += row;
+            });
+        }
+
+        // 初始加载 Webhook 列表
+        refreshWebhookList();
+    });
+</script>
