@@ -1,69 +1,46 @@
 package middleware
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"log"
-
-	jwtware "github.com/gofiber/contrib/jwt"
-
 	"github.com/gofiber/fiber/v2"
+	jwtware "github.com/gofiber/jwt/v3"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-var (
-	// Obviously, this is just a test example. Do not do this in production.
-	// In production, you would have the private key and public key pair generated
-	// in advance. NEVER add a private key to any GitHub repo.
-	privateKey *rsa.PrivateKey
-)
+// Protected 保护需要认证的路由
+func Protected() fiber.Handler {
+	return jwtware.New(jwtware.Config{
+		SigningKey:     []byte("your-secret-key"), // 注意：在生产环境中应该使用环境变量存储密钥
+		SigningMethod:  "HS256",
+		ErrorHandler:   jwtError,
+		SuccessHandler: jwtSuccess,
+	})
+}
 
-var apiJwtMiddleware = jwtware.New(jwtware.Config{
-	SigningKey: jwtware.SigningKey{
-		JWTAlg: jwtware.RS256,
-		Key:    getPrivateKey().Public(),
-	},
-	ErrorHandler: apiJwtError,
-})
+// jwtError 处理JWT错误
+func jwtError(c *fiber.Ctx, err error) error {
+	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+		"error": "Unauthorized",
+	})
+}
 
-var consoleJwtMiddleware = jwtware.New(jwtware.Config{
-	SigningKey: jwtware.SigningKey{
-		JWTAlg: jwtware.RS256,
-		Key:    getPrivateKey().Public(),
-	},
-	ErrorHandler: consoleJwtError,
-})
+// jwtSuccess 处理JWT验证成功
+func jwtSuccess(c *fiber.Ctx) error {
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	
+	// 将用户信息存储到上下文中
+	c.Locals("userId", claims["id"])
+	c.Locals("userEmail", claims["email"])
+	c.Locals("userName", claims["name"])
+	
+	return c.Next()
+}
 
-func getPrivateKey() *rsa.PrivateKey {
-	if privateKey == nil {
-		rng := rand.Reader
-		var err error
-		privateKey, err = rsa.GenerateKey(rng, 2048)
-		if err != nil {
-			log.Fatalf("rsa.GenerateKey: %v", err)
-		}
+// GetCurrentUser 获取当前登录用户信息
+func GetCurrentUser(c *fiber.Ctx) fiber.Map {
+	return fiber.Map{
+		"id":    c.Locals("userId"),
+		"email": c.Locals("userEmail"),
+		"name":  c.Locals("userName"),
 	}
-	return privateKey
-}
-
-func ApiProtected(c *fiber.Ctx) error {
-
-	return apiJwtMiddleware(c)
-}
-
-func ConsoleProtected(c *fiber.Ctx) error {
-
-	return consoleJwtMiddleware(c)
-}
-
-func apiJwtError(c *fiber.Ctx, err error) error {
-	if err.Error() == "Missing or malformed JWT" {
-		return c.Status(fiber.StatusBadRequest).
-			JSON(fiber.Map{"status": "error", "message": "Missing or malformed JWT", "data": nil})
-	}
-	return c.Status(fiber.StatusUnauthorized).
-		JSON(fiber.Map{"status": "error", "message": "Invalid or expired JWT", "data": nil})
-}
-
-func consoleJwtError(c *fiber.Ctx, err error) error {
-	return c.Redirect("/console/login")
 }

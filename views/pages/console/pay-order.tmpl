@@ -1,0 +1,144 @@
+<div class="p-4">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">支付订单管理</h1>
+        <div class="flex space-x-4">
+            <select id="stateFilter" onchange="loadOrders()" class="border rounded py-2 px-4">
+                <option value="">全部状态</option>
+                <option value="1">待支付</option>
+                <option value="2">支付成功</option>
+                <option value="3">支付失败</option>
+            </select>
+            <button onclick="loadOrders()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                刷新列表
+            </button>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">商户订单号</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单金额</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单标题</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">支付渠道</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">支付状态</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">创建时间</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                </tr>
+            </thead>
+            <tbody id="orderList">
+                <!-- 订单列表将通过JavaScript动态加载 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 订单详情模态框 -->
+    <div id="orderModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white p-6 rounded-lg w-full max-w-4xl">
+                <h2 class="text-xl font-bold mb-4">订单详情</h2>
+                <div id="orderDetails" class="grid grid-cols-2 gap-4">
+                    <!-- 订单详情将通过JavaScript动态加载 -->
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button onclick="closeOrderModal()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 页面加载时获取订单列表
+    document.addEventListener('DOMContentLoaded', function() {
+        loadOrders();
+    });
+
+    // 加载订单列表
+    function loadOrders() {
+        const stateFilter = document.getElementById('stateFilter').value;
+        let url = '/api/pay-orders';
+        if (stateFilter) {
+            url += `?state=${stateFilter}`;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const orderList = document.getElementById('orderList');
+                orderList.innerHTML = '';
+                data.data.forEach(order => {
+                    orderList.innerHTML += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">${order.order_id}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${order.out_trade_no}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${order.total_fee}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${order.subject}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${order.channel_id}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${getOrderStatus(order.state)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${new Date(order.created_at).toLocaleString()}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <button onclick="viewOrderDetails('${order.id}')" class="text-blue-600 hover:text-blue-900">查看详情</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('加载订单列表失败');
+            });
+    }
+
+    // 获取订单状态文本
+    function getOrderStatus(state) {
+        const statusMap = {
+            '1': '待支付',
+            '2': '支付成功',
+            '3': '支付失败'
+        };
+        return statusMap[state] || '未知状态';
+    }
+
+    // 查看订单详情
+    function viewOrderDetails(id) {
+        fetch(`/api/pay-orders/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                const order = data.data;
+                const details = document.getElementById('orderDetails');
+                details.innerHTML = `
+                    <div class="space-y-2">
+                        <p><span class="font-bold">订单ID：</span>${order.order_id}</p>
+                        <p><span class="font-bold">商户订单号：</span>${order.out_trade_no}</p>
+                        <p><span class="font-bold">订单金额：</span>${order.total_fee}</p>
+                        <p><span class="font-bold">订单标题：</span>${order.subject}</p>
+                        <p><span class="font-bold">订单描述：</span>${order.body}</p>
+                        <p><span class="font-bold">支付渠道：</span>${order.channel_id}</p>
+                    </div>
+                    <div class="space-y-2">
+                        <p><span class="font-bold">支付状态：</span>${getOrderStatus(order.state)}</p>
+                        <p><span class="font-bold">支付链接：</span>${order.pay_url || '-'}</p>
+                        <p><span class="font-bold">异步通知地址：</span>${order.notify_url}</p>
+                        <p><span class="font-bold">同步通知地址：</span>${order.return_url}</p>
+                        <p><span class="font-bold">错误信息：</span>${order.error_msg || '-'}</p>
+                        <p><span class="font-bold">创建时间：</span>${new Date(order.created_at).toLocaleString()}</p>
+                    </div>
+                `;
+                document.getElementById('orderModal').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('加载订单详情失败');
+            });
+    }
+
+    // 关闭订单详情模态框
+    function closeOrderModal() {
+        document.getElementById('orderModal').classList.add('hidden');
+    }
+</script>

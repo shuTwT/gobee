@@ -1,8 +1,9 @@
 package router
 
 import (
-	auth_handlers "gobee/internal/handlers/auth"
+	auth_handler "gobee/internal/handlers/auth"
 	paychannel_handler "gobee/internal/handlers/pay_channel"
+	payorder_handler "gobee/internal/handlers/pay_order"
 	"gobee/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -79,15 +80,28 @@ func Initialize(router *fiber.App) {
 			}, "layouts/admin", "layouts/base")
 		})
 		// 用户管理
-		console.Get("/users", func(c *fiber.Ctx) error {
-			return c.Render("pages/console/users", fiber.Map{
+		console.Get("/use", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/user", fiber.Map{
 				"Title": "用户管理",
+			}, "layouts/admin", "layouts/base")
+		})
+		// 支付渠道管理
+		console.Get("/pay-channel", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/pay-channel", fiber.Map{
+				"Title": "支付渠道管理",
+			}, "layouts/admin", "layouts/base")
+		})
+		// 支付订单管理
+		console.Get("/pay-order", func(c *fiber.Ctx) error {
+			return c.Render("pages/console/pay-order", fiber.Map{
+				"Title": "支付订单管理",
 			}, "layouts/admin", "layouts/base")
 		})
 	}
 
 	api := router.Group("/api")
 	{
+		api.Use(middleware.Protected())
 		apiV1 := api.Group("/v1")
 		{
 			apiV1.Get("/users", func(c *fiber.Ctx) error {
@@ -98,13 +112,25 @@ func Initialize(router *fiber.App) {
 			payChannelApi := apiV1.Group("/pay-channel")
 			{
 				payChannelApi.Get("/list", paychannel_handler.ListPayChannel)
+				payChannelApi.Get("/create", paychannel_handler.CreatePayChannel)
+				payChannelApi.Get("/update", paychannel_handler.UpdatePayChannel)
+				payChannelApi.Get("/query", paychannel_handler.QueryPayChannel)
+				payChannelApi.Get("/delete", paychannel_handler.DeletePayChannel)
+			}
+			payOrderApi := apiV1.Group("/pay-order")
+			{
+				payOrderApi.Get("/list", payorder_handler.ListPayOrder)
+				payOrderApi.Get("/create", payorder_handler.CreatePayOrder)
+				payOrderApi.Get("/update", payorder_handler.UpdatePayOrder)
+				payOrderApi.Get("/query", payorder_handler.QueryPayOrder)
+				payOrderApi.Get("/delete", payorder_handler.DeletePayOrder)
 			}
 		}
 	}
 
 	auth := router.Group("/auth")
 	{
-		auth.Post("/login/password", auth_handlers.LoginPassword)
+		auth.Post("/login/password", auth_handler.Login)
 	}
 
 	router.Get("/initialize", func(c *fiber.Ctx) error {

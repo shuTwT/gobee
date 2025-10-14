@@ -1,0 +1,201 @@
+<div class="p-4">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">支付渠道管理</h1>
+        <button onclick="openAddModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            添加渠道
+        </button>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">渠道名称</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">渠道代码</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">渠道类型</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">创建时间</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                </tr>
+            </thead>
+            <tbody id="channelList">
+                <!-- 渠道列表将通过JavaScript动态加载 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 添加/编辑渠道模态框 -->
+    <div id="channelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white p-6 rounded-lg w-full max-w-lg">
+                <h2 id="modalTitle" class="text-xl font-bold mb-4">添加支付渠道</h2>
+                <form id="channelForm" onsubmit="saveChannel(event)">
+                    <input type="hidden" id="channelId">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                            渠道名称
+                        </label>
+                        <input type="text" id="name" name="name" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="code">
+                            渠道代码
+                        </label>
+                        <input type="text" id="code" name="code" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="type">
+                            渠道类型
+                        </label>
+                        <select id="type" name="type" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="alipay">支付宝</option>
+                            <option value="wechat">微信支付</option>
+                            <option value="unionpay">银联支付</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="config">
+                            渠道配置
+                        </label>
+                        <textarea id="config" name="config" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"></textarea>
+                    </div>
+                    <div class="flex items-center justify-end">
+                        <button type="button" onclick="closeModal()"
+                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">
+                            取消
+                        </button>
+                        <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 页面加载时获取渠道列表
+    document.addEventListener('DOMContentLoaded', function() {
+        loadChannels();
+    });
+
+    // 加载渠道列表
+    function loadChannels() {
+        fetch('/api/pay-channels')
+            .then(response => response.json())
+            .then(data => {
+                const channelList = document.getElementById('channelList');
+                channelList.innerHTML = '';
+                data.data.forEach(channel => {
+                    channelList.innerHTML += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">${channel.name}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${channel.code}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${channel.type}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${new Date(channel.created_at).toLocaleString()}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <button onclick="editChannel('${channel.id}')" class="text-blue-600 hover:text-blue-900 mr-2">编辑</button>
+                                <button onclick="deleteChannel('${channel.id}')" class="text-red-600 hover:text-red-900">删除</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('加载渠道列表失败');
+            });
+    }
+
+    // 打开添加模态框
+    function openAddModal() {
+        document.getElementById('modalTitle').textContent = '添加支付渠道';
+        document.getElementById('channelId').value = '';
+        document.getElementById('channelForm').reset();
+        document.getElementById('channelModal').classList.remove('hidden');
+    }
+
+    // 打开编辑模态框
+    function editChannel(id) {
+        document.getElementById('modalTitle').textContent = '编辑支付渠道';
+        document.getElementById('channelId').value = id;
+        
+        fetch(`/api/pay-channels/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                const channel = data.data;
+                document.getElementById('name').value = channel.name;
+                document.getElementById('code').value = channel.code;
+                document.getElementById('type').value = channel.type;
+                document.getElementById('config').value = channel.config;
+                document.getElementById('channelModal').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('加载渠道信息失败');
+            });
+    }
+
+    // 关闭模态框
+    function closeModal() {
+        document.getElementById('channelModal').classList.add('hidden');
+    }
+
+    // 保存渠道信息
+    function saveChannel(event) {
+        event.preventDefault();
+        const id = document.getElementById('channelId').value;
+        const data = {
+            name: document.getElementById('name').value,
+            code: document.getElementById('code').value,
+            type: document.getElementById('type').value,
+            config: document.getElementById('config').value
+        };
+
+        const url = id ? `/api/pay-channels/${id}` : '/api/pay-channels';
+        const method = id ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                closeModal();
+                loadChannels();
+                alert(id ? '更新成功' : '添加成功');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(id ? '更新失败' : '添加失败');
+            });
+    }
+
+    // 删除渠道
+    function deleteChannel(id) {
+        if (!confirm('确定要删除这个支付渠道吗？')) {
+            return;
+        }
+
+        fetch(`/api/pay-channels/${id}`, {
+            method: 'DELETE',
+        })
+            .then(response => response.json())
+            .then(data => {
+                loadChannels();
+                alert('删除成功');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('删除失败');
+            });
+    }
+</script>
