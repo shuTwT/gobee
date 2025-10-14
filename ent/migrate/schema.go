@@ -8,6 +8,58 @@ import (
 )
 
 var (
+	// AlbumsColumns holds the columns for the "albums" table.
+	AlbumsColumns = []*schema.Column{
+		{Name: "oid", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 255},
+	}
+	// AlbumsTable holds the schema information for the "albums" table.
+	AlbumsTable = &schema.Table{
+		Name:       "albums",
+		Columns:    AlbumsColumns,
+		PrimaryKey: []*schema.Column{AlbumsColumns[0]},
+	}
+	// CommentsColumns holds the columns for the "comments" table.
+	CommentsColumns = []*schema.Column{
+		{Name: "oid", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "post_id", Type: field.TypeInt},
+		{Name: "page_id", Type: field.TypeInt},
+		{Name: "content", Type: field.TypeString, Size: 1024},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "status", Type: field.TypeInt},
+		{Name: "user_agent", Type: field.TypeString, Nullable: true},
+		{Name: "ip_address", Type: field.TypeString, Size: 45},
+		{Name: "ip_location", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "pinned", Type: field.TypeBool, Default: false},
+	}
+	// CommentsTable holds the schema information for the "comments" table.
+	CommentsTable = &schema.Table{
+		Name:       "comments",
+		Columns:    CommentsColumns,
+		PrimaryKey: []*schema.Column{CommentsColumns[0]},
+	}
+	// FilesColumns holds the columns for the "files" table.
+	FilesColumns = []*schema.Column{
+		{Name: "oid", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "path", Type: field.TypeString, Size: 512},
+		{Name: "url", Type: field.TypeString, Size: 1024},
+		{Name: "type", Type: field.TypeString},
+		{Name: "size", Type: field.TypeString},
+	}
+	// FilesTable holds the schema information for the "files" table.
+	FilesTable = &schema.Table{
+		Name:       "files",
+		Columns:    FilesColumns,
+		PrimaryKey: []*schema.Column{FilesColumns[0]},
+	}
 	// ModelSchemasColumns holds the columns for the "model_schemas" table.
 	ModelSchemasColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -18,9 +70,82 @@ var (
 		Columns:    ModelSchemasColumns,
 		PrimaryKey: []*schema.Column{ModelSchemasColumns[0]},
 	}
+	// PagesColumns holds the columns for the "pages" table.
+	PagesColumns = []*schema.Column{
+		{Name: "oid", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "title", Type: field.TypeString, Size: 255},
+		{Name: "content", Type: field.TypeString, Size: 2147483647},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+	}
+	// PagesTable holds the schema information for the "pages" table.
+	PagesTable = &schema.Table{
+		Name:       "pages",
+		Columns:    PagesColumns,
+		PrimaryKey: []*schema.Column{PagesColumns[0]},
+	}
+	// PayChannelsColumns holds the columns for the "pay_channels" table.
+	PayChannelsColumns = []*schema.Column{
+		{Name: "oid", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "code", Type: field.TypeString, Size: 255},
+		{Name: "type", Type: field.TypeString, Size: 255},
+		{Name: "config", Type: field.TypeString},
+	}
+	// PayChannelsTable holds the schema information for the "pay_channels" table.
+	PayChannelsTable = &schema.Table{
+		Name:       "pay_channels",
+		Columns:    PayChannelsColumns,
+		PrimaryKey: []*schema.Column{PayChannelsColumns[0]},
+	}
+	// PayOrdersColumns holds the columns for the "pay_orders" table.
+	PayOrdersColumns = []*schema.Column{
+		{Name: "oid", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "channel_id", Type: field.TypeString},
+		{Name: "order_id", Type: field.TypeString},
+		{Name: "out_trade_no", Type: field.TypeString},
+		{Name: "total_fee", Type: field.TypeString},
+		{Name: "subject", Type: field.TypeString},
+		{Name: "body", Type: field.TypeString},
+		{Name: "notify_url", Type: field.TypeString},
+		{Name: "return_url", Type: field.TypeString},
+		{Name: "extra", Type: field.TypeString},
+		{Name: "pay_url", Type: field.TypeString, Nullable: true},
+		{Name: "state", Type: field.TypeString, Default: "1"},
+		{Name: "error_msg", Type: field.TypeString, Nullable: true},
+		{Name: "raw", Type: field.TypeString, Nullable: true},
+	}
+	// PayOrdersTable holds the schema information for the "pay_orders" table.
+	PayOrdersTable = &schema.Table{
+		Name:       "pay_orders",
+		Columns:    PayOrdersColumns,
+		PrimaryKey: []*schema.Column{PayOrdersColumns[0]},
+	}
+	// SettingsColumns holds the columns for the "settings" table.
+	SettingsColumns = []*schema.Column{
+		{Name: "oid", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "key", Type: field.TypeString, Size: 255},
+		{Name: "value", Type: field.TypeString, Size: 255},
+		{Name: "comment", Type: field.TypeString, Size: 512},
+	}
+	// SettingsTable holds the schema information for the "settings" table.
+	SettingsTable = &schema.Table{
+		Name:       "settings",
+		Columns:    SettingsColumns,
+		PrimaryKey: []*schema.Column{SettingsColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "oid", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "email", Type: field.TypeString, Unique: true, Size: 255},
 		{Name: "email_verified", Type: field.TypeBool, Default: false},
 		{Name: "name", Type: field.TypeString, Default: "unknown"},
@@ -36,7 +161,14 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AlbumsTable,
+		CommentsTable,
+		FilesTable,
 		ModelSchemasTable,
+		PagesTable,
+		PayChannelsTable,
+		PayOrdersTable,
+		SettingsTable,
 		UsersTable,
 	}
 )

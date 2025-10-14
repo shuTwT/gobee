@@ -6,8 +6,29 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Album is the predicate function for album builders.
+type Album func(*sql.Selector)
+
+// Comment is the predicate function for comment builders.
+type Comment func(*sql.Selector)
+
+// File is the predicate function for file builders.
+type File func(*sql.Selector)
+
 // ModelSchema is the predicate function for modelschema builders.
 type ModelSchema func(*sql.Selector)
+
+// Page is the predicate function for page builders.
+type Page func(*sql.Selector)
+
+// PayChannel is the predicate function for paychannel builders.
+type PayChannel func(*sql.Selector)
+
+// PayOrder is the predicate function for payorder builders.
+type PayOrder func(*sql.Selector)
+
+// Setting is the predicate function for setting builders.
+type Setting func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

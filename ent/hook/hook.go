@@ -8,6 +8,42 @@ import (
 	"gobee/ent"
 )
 
+// The AlbumFunc type is an adapter to allow the use of ordinary
+// function as Album mutator.
+type AlbumFunc func(context.Context, *ent.AlbumMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AlbumFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AlbumMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlbumMutation", m)
+}
+
+// The CommentFunc type is an adapter to allow the use of ordinary
+// function as Comment mutator.
+type CommentFunc func(context.Context, *ent.CommentMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CommentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CommentMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommentMutation", m)
+}
+
+// The FileFunc type is an adapter to allow the use of ordinary
+// function as File mutator.
+type FileFunc func(context.Context, *ent.FileMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FileMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileMutation", m)
+}
+
 // The ModelSchemaFunc type is an adapter to allow the use of ordinary
 // function as ModelSchema mutator.
 type ModelSchemaFunc func(context.Context, *ent.ModelSchemaMutation) (ent.Value, error)
@@ -18,6 +54,54 @@ func (f ModelSchemaFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ModelSchemaMutation", m)
+}
+
+// The PageFunc type is an adapter to allow the use of ordinary
+// function as Page mutator.
+type PageFunc func(context.Context, *ent.PageMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PageMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PageMutation", m)
+}
+
+// The PayChannelFunc type is an adapter to allow the use of ordinary
+// function as PayChannel mutator.
+type PayChannelFunc func(context.Context, *ent.PayChannelMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PayChannelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PayChannelMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PayChannelMutation", m)
+}
+
+// The PayOrderFunc type is an adapter to allow the use of ordinary
+// function as PayOrder mutator.
+type PayOrderFunc func(context.Context, *ent.PayOrderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PayOrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PayOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PayOrderMutation", m)
+}
+
+// The SettingFunc type is an adapter to allow the use of ordinary
+// function as Setting mutator.
+type SettingFunc func(context.Context, *ent.SettingMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SettingFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SettingMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SettingMutation", m)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary

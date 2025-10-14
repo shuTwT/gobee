@@ -6,7 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gobee/ent/album"
+	"gobee/ent/comment"
+	"gobee/ent/file"
 	"gobee/ent/modelschema"
+	"gobee/ent/page"
+	"gobee/ent/paychannel"
+	"gobee/ent/payorder"
+	"gobee/ent/setting"
 	"gobee/ent/user"
 	"reflect"
 	"sync"
@@ -74,7 +81,14 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			album.Table:       album.ValidColumn,
+			comment.Table:     comment.ValidColumn,
+			file.Table:        file.ValidColumn,
 			modelschema.Table: modelschema.ValidColumn,
+			page.Table:        page.ValidColumn,
+			paychannel.Table:  paychannel.ValidColumn,
+			payorder.Table:    payorder.ValidColumn,
+			setting.Table:     setting.ValidColumn,
 			user.Table:        user.ValidColumn,
 		})
 	})

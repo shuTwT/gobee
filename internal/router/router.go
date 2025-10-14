@@ -2,6 +2,7 @@ package router
 
 import (
 	auth_handlers "gobee/internal/handlers/auth"
+	paychannel_handler "gobee/internal/handlers/pay_channel"
 	"gobee/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -94,6 +95,10 @@ func Initialize(router *fiber.App) {
 					"message": "Hello, World!",
 				})
 			})
+			payChannelApi := apiV1.Group("/pay-channel")
+			{
+				payChannelApi.Get("/list", paychannel_handler.ListPayChannel)
+			}
 		}
 	}
 
