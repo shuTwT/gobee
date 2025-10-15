@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/template/html/v2"
 	_ "github.com/mattn/go-sqlite3"
 
+	"gobee/config"
 	"gobee/internal/database"
 	"gobee/internal/router"
 	"gobee/pkg"
@@ -14,6 +15,7 @@ import (
 
 func InitializeApp() *fiber.App {
 	godotenv.Load()
+	config.Init()
 	pkg.InitializeServices()
 	engine := html.New("./views", ".tmpl")
 	engine.Debug(true)
@@ -22,7 +24,7 @@ func InitializeApp() *fiber.App {
 		AppName: "Fiber HTML Template Demo",
 		Views:   engine, // 关联模板引擎
 	})
-	app.Static("/static", "./public")
+	app.Static("/", "./assets")
 
 	router.Initialize(app)
 	return app
