@@ -1,0 +1,634 @@
+basePath: /
+definitions:
+  auth_handler.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  ent.PayChannel:
+    properties:
+      code:
+        description: 支付渠道代码
+        type: string
+      config:
+        description: 支付渠道配置
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: 支付渠道名称
+        type: string
+      type:
+        description: 支付渠道类型
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.PayOrder:
+    properties:
+      body:
+        description: 订单描述
+        type: string
+      channel_id:
+        description: 支付渠道ID
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      error_msg:
+        description: 错误信息
+        type: string
+      extra:
+        description: 额外参数
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      notify_url:
+        description: 异步通知地址
+        type: string
+      order_id:
+        description: 支付订单ID
+        type: string
+      out_trade_no:
+        description: 商户订单号
+        type: string
+      pay_url:
+        description: 支付链接
+        type: string
+      raw:
+        description: 原始响应
+        type: string
+      return_url:
+        description: 同步通知地址
+        type: string
+      state:
+        description: 支付状态
+        type: string
+      subject:
+        description: 订单标题
+        type: string
+      total_fee:
+        description: 订单金额
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.User:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      email:
+        description: Email holds the value of the "email" field.
+        type: string
+      email_verified:
+        description: EmailVerified holds the value of the "email_verified" field.
+        type: boolean
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      phone_number:
+        description: PhoneNumber holds the value of the "phone_number" field.
+        type: string
+      phone_number_verified:
+        description: PhoneNumberVerified holds the value of the "phone_number_verified"
+          field.
+        type: boolean
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  model.HttpError:
+    properties:
+      code:
+        type: integer
+      msg:
+        type: string
+    type: object
+  model.HttpSuccess:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Fiber Example API
+  version: "1.0"
+paths:
+  /api/v1/paychannels:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有支付渠道的列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ent.PayChannel'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取支付渠道列表
+      tags:
+      - paychannels
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的支付渠道
+      parameters:
+      - description: 支付渠道信息
+        in: body
+        name: paychannel
+        required: true
+        schema:
+          $ref: '#/definitions/ent.PayChannel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.PayChannel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建支付渠道
+      tags:
+      - paychannels
+  /api/v1/paychannels/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定支付渠道
+      parameters:
+      - description: 支付渠道ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除支付渠道
+      tags:
+      - paychannels
+    get:
+      consumes:
+      - application/json
+      description: 查询指定支付渠道的详细信息
+      parameters:
+      - description: 支付渠道ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.PayChannel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询支付渠道
+      tags:
+      - paychannels
+    put:
+      consumes:
+      - application/json
+      description: 更新指定支付渠道的信息
+      parameters:
+      - description: 支付渠道ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 支付渠道信息
+        in: body
+        name: paychannel
+        required: true
+        schema:
+          $ref: '#/definitions/ent.PayChannel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.PayChannel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新支付渠道
+      tags:
+      - paychannels
+  /api/v1/payorders:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有支付订单的列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/ent.PayOrder'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取支付订单列表
+      tags:
+      - payorders
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的支付订单
+      parameters:
+      - description: 支付订单信息
+        in: body
+        name: payorder
+        required: true
+        schema:
+          $ref: '#/definitions/ent.PayOrder'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/ent.PayOrder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建支付订单
+      tags:
+      - payorders
+  /api/v1/payorders/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定支付订单
+      parameters:
+      - description: 支付订单ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除支付订单
+      tags:
+      - payorders
+    get:
+      consumes:
+      - application/json
+      description: 查询指定支付订单的详细信息
+      parameters:
+      - description: 支付订单ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.PayOrder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询支付订单
+      tags:
+      - payorders
+    put:
+      consumes:
+      - application/json
+      description: 更新指定支付订单的信息
+      parameters:
+      - description: 支付订单ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 支付订单信息
+        in: body
+        name: payorder
+        required: true
+        schema:
+          $ref: '#/definitions/ent.PayOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.PayOrder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新支付订单
+      tags:
+      - payorders
+  /api/v1/users:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有用户的列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ent.User'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取用户列表
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新用户
+      parameters:
+      - description: 用户信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/ent.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/ent.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建用户
+      tags:
+      - users
+  /api/v1/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定用户
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除用户
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: 查询指定用户的详细信息
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询用户
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: 更新指定用户的信息
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 用户信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/ent.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新用户
+      tags:
+      - users
+  /auth/login/password:
+    post:
+      consumes:
+      - application/json
+      description: 验证用户凭据并返回JWT令牌
+      parameters:
+      - description: 登录请求
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/auth_handler.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 用户登录
+      tags:
+      - auth
+swagger: "2.0"

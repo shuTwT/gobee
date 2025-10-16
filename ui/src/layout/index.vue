@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import type { MenuOption } from 'naive-ui'
-import { ProLayout, useLayoutMenu, type ProLayoutMode } from 'pro-naive-ui'
+import { ProLayout, useLayoutMenu } from 'pro-naive-ui'
 import { RouterLink } from 'vue-router'
+import { useAppStoreHook } from '@/stores/modules/app'
+import { storeToRefs } from 'pinia'
+
+const appStore = useAppStoreHook()
 
 const menuOptions: MenuOption[] = [
   {
@@ -125,31 +129,53 @@ const menuOptions: MenuOption[] = [
     },
     key: 'file-management',
   },
+    {
+    label: () => {
+      return h(RouterLink,
+        {
+          to:{
+            name:'ApiManagement'
+          },
+        },
+        {
+          default:()=>'API管理'
+        }
+      )
+    },
+    key: 'api-management',
+  },
+  {
+    label: () => {
+      return h(RouterLink,
+        {
+          to:{
+            name:'SystemSettings'
+          },
+        },
+        {
+          default:()=>'系统设置'
+        }
+      )
+    },
+    key: 'system-settings',
+  },
+
 ]
 
-const navFixed = ref(true)
-const showNav = ref(true)
-const showLogo = ref(true)
-const isMobile = ref(false)
-const showFooter = ref(true)
-const showTabbar = ref(true)
-const collapsed = ref(false)
-const showSidebar = ref(true)
-const footerFixed = ref(true)
+const {isMobile,showFooter,showTabbar,showLogo,showSidebar,showNav,collapsed,navFixed,footerFixed,layoutMode}  = storeToRefs(appStore)
 const navHeight = ref(50)
 const sidebarWidth = ref(224)
 const tabbarHeight = ref(38)
 const footerHeight = ref(50)
 const sidebarCollapsedWidth = ref(58)
-const mode = ref<ProLayoutMode>('vertical')
 
 const { layout, verticalLayout } = useLayoutMenu({
-  mode,
+  mode:layoutMode,
   menus: menuOptions,
 })
 
 const hasHorizontalMenu = computed(() =>
-  ['horizontal', 'mixed-two-column', 'mixed-sidebar'].includes(mode.value),
+  ['horizontal', 'mixed-two-column', 'mixed-sidebar'].includes(layoutMode.value),
 )
 
 // function updateMode(v: ProLayoutMode) {
@@ -184,7 +210,7 @@ function logout() {
   <div class="h-dvh w-dvw">
     <pro-layout
       v-model:collapsed="collapsed"
-      :mode="mode"
+      :mode="layoutMode"
       :show-nav="showNav"
       :show-logo="showLogo"
       :is-mobile="isMobile"

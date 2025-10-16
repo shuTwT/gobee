@@ -35,7 +35,15 @@ export default defineConfig({
   ],
   base:'/console/',
   server:{
-    port: 3000,
+    port: 5379,
+    proxy:{
+      '/api':{
+        target:'http://localhost:3000',
+        changeOrigin:true,
+        secure:false,
+        rewrite:(path)=>path.replace(/^\/api/,'')
+      }
+    }
   },
   resolve: {
     alias: {

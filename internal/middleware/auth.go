@@ -27,12 +27,12 @@ func jwtError(c *fiber.Ctx, err error) error {
 func jwtSuccess(c *fiber.Ctx) error {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	
+
 	// 将用户信息存储到上下文中
 	c.Locals("userId", claims["id"])
 	c.Locals("userEmail", claims["email"])
 	c.Locals("userName", claims["name"])
-	
+
 	return c.Next()
 }
 

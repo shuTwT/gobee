@@ -8,7 +8,14 @@ import (
 	"gobee/ent/paychannel"
 )
 
-// ListPayChannel 获取支付渠道列表
+// @Summary 获取支付渠道列表
+// @Description 获取所有支付渠道的列表
+// @Tags paychannels
+// @Accept json
+// @Produce json
+// @Success 200 {object} []ent.PayChannel
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/paychannels [get]
 func ListPayChannel(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	channels, err := client.PayChannel.Query().All(c.Context())
@@ -22,7 +29,16 @@ func ListPayChannel(c *fiber.Ctx) error {
 	})
 }
 
-// CreatePayChannel 创建支付渠道
+// @Summary 创建支付渠道
+// @Description 创建一个新的支付渠道
+// @Tags paychannels
+// @Accept json
+// @Produce json
+// @Param paychannel body ent.PayChannel true "支付渠道信息"
+// @Success 200 {object} ent.PayChannel
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/paychannels [post]
 func CreatePayChannel(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	var channel struct {
@@ -53,7 +69,18 @@ func CreatePayChannel(c *fiber.Ctx) error {
 	})
 }
 
-// UpdatePayChannel 更新支付渠道
+// @Summary 更新支付渠道
+// @Description 更新指定支付渠道的信息
+// @Tags paychannels
+// @Accept json
+// @Produce json
+// @Param id path string true "支付渠道ID"
+// @Param paychannel body ent.PayChannel true "支付渠道信息"
+// @Success 200 {object} ent.PayChannel
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/paychannels/{id} [put]
 func UpdatePayChannel(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	id, err := uuid.Parse(c.Params("id"))
@@ -91,7 +118,17 @@ func UpdatePayChannel(c *fiber.Ctx) error {
 	})
 }
 
-// QueryPayChannel 查询支付渠道
+// @Summary 查询支付渠道
+// @Description 查询指定支付渠道的详细信息
+// @Tags paychannels
+// @Accept json
+// @Produce json
+// @Param id path string true "支付渠道ID"
+// @Success 200 {object} ent.PayChannel
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/paychannels/{id} [get]
 func QueryPayChannel(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	id, err := uuid.Parse(c.Params("id"))
@@ -119,7 +156,17 @@ func QueryPayChannel(c *fiber.Ctx) error {
 	})
 }
 
-// DeletePayChannel 删除支付渠道
+// @Summary 删除支付渠道
+// @Description 删除指定支付渠道
+// @Tags paychannels
+// @Accept json
+// @Produce json
+// @Param id path string true "支付渠道ID"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/paychannels/{id} [delete]
 func DeletePayChannel(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	id, err := uuid.Parse(c.Params("id"))

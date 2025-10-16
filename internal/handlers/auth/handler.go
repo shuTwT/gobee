@@ -17,7 +17,17 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
-// Login 处理用户登录
+// @Summary 用户登录
+// @Description 验证用户凭据并返回JWT令牌
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param login body LoginRequest true "登录请求"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 401 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /auth/login/password [post]
 func Login(c *fiber.Ctx) error {
 	var req LoginRequest
 	if err := c.BodyParser(&req); err != nil {

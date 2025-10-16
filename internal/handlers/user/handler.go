@@ -7,23 +7,38 @@ import (
 
 	"gobee/ent"
 	"gobee/ent/user"
+	"gobee/internal/model"
 )
 
-// ListUser 获取用户列表
+// @Summary 获取用户列表
+// @Description 获取所有用户的列表
+// @Tags users
+// @Accept json
+// @Produce json
+// @Success 200 {array} ent.User
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/users [get]
 func ListUser(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	users, err := client.User.Query().All(c.Context())
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(-1, err.Error()))
 	}
 	return c.JSON(fiber.Map{
 		"data": users,
 	})
 }
 
-// CreateUser 创建用户
+// @Summary 创建用户
+// @Description 创建一个新用户
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body ent.User true "用户信息"
+// @Success 201 {object} ent.User
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/users [post]
 func CreateUser(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	var userData struct {
@@ -96,7 +111,17 @@ func CreateUser(c *fiber.Ctx) error {
 	})
 }
 
-// UpdateUser 更新用户
+// @Summary 更新用户
+// @Description 更新指定用户的信息
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "用户ID"
+// @Param user body ent.User true "用户信息"
+// @Success 200 {object} ent.User
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/users/{id} [put]
 func UpdateUser(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	id, err := uuid.Parse(c.Params("id"))
@@ -173,7 +198,17 @@ func UpdateUser(c *fiber.Ctx) error {
 	})
 }
 
-// QueryUser 查询用户
+// @Summary 查询用户
+// @Description 查询指定用户的详细信息
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "用户ID"
+// @Success 200 {object} ent.User
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/users/{id} [get]
 func QueryUser(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	id, err := uuid.Parse(c.Params("id"))
@@ -202,7 +237,17 @@ func QueryUser(c *fiber.Ctx) error {
 	})
 }
 
-// DeleteUser 删除用户
+// @Summary 删除用户
+// @Description 删除指定用户
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "用户ID"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/users/{id} [delete]
 func DeleteUser(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	id, err := uuid.Parse(c.Params("id"))

@@ -8,7 +8,14 @@ import (
 	"gobee/ent/payorder"
 )
 
-// ListPayOrder 获取支付订单列表
+// @Summary 获取支付订单列表
+// @Description 获取所有支付订单的列表
+// @Tags payorders
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=[]ent.PayOrder}
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/payorders [get]
 func ListPayOrder(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	orders, err := client.PayOrder.Query().All(c.Context())
@@ -22,7 +29,16 @@ func ListPayOrder(c *fiber.Ctx) error {
 	})
 }
 
-// CreatePayOrder 创建支付订单
+// @Summary 创建支付订单
+// @Description 创建一个新的支付订单
+// @Tags payorders
+// @Accept json
+// @Produce json
+// @Param payorder body ent.PayOrder true "支付订单信息"
+// @Success 201 {object} ent.PayOrder
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/payorders [post]
 func CreatePayOrder(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	var order struct {
@@ -71,7 +87,17 @@ func CreatePayOrder(c *fiber.Ctx) error {
 	})
 }
 
-// UpdatePayOrder 更新支付订单
+// @Summary 更新支付订单
+// @Description 更新指定支付订单的信息
+// @Tags payorders
+// @Accept json
+// @Produce json
+// @Param id path string true "支付订单ID"
+// @Param payorder body ent.PayOrder true "支付订单信息"
+// @Success 200 {object} ent.PayOrder
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/payorders/{id} [put]
 func UpdatePayOrder(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	id, err := uuid.Parse(c.Params("id"))
@@ -127,7 +153,17 @@ func UpdatePayOrder(c *fiber.Ctx) error {
 	})
 }
 
-// QueryPayOrder 查询支付订单
+// @Summary 查询支付订单
+// @Description 查询指定支付订单的详细信息
+// @Tags payorders
+// @Accept json
+// @Produce json
+// @Param id path string true "支付订单ID"
+// @Success 200 {object} ent.PayOrder
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/payorders/{id} [get]
 func QueryPayOrder(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	id, err := uuid.Parse(c.Params("id"))
@@ -155,7 +191,17 @@ func QueryPayOrder(c *fiber.Ctx) error {
 	})
 }
 
-// DeletePayOrder 删除支付订单
+// @Summary 删除支付订单
+// @Description 删除指定支付订单
+// @Tags payorders
+// @Accept json
+// @Produce json
+// @Param id path string true "支付订单ID"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/payorders/{id} [delete]
 func DeletePayOrder(c *fiber.Ctx) error {
 	client := c.Locals("client").(*ent.Client)
 	id, err := uuid.Parse(c.Params("id"))
