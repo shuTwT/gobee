@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"gobee/ent/album"
+	"gobee/ent/article"
 	"gobee/ent/comment"
 	"gobee/ent/file"
 	"gobee/ent/modelschema"
@@ -82,6 +83,7 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			album.Table:       album.ValidColumn,
+			article.Table:     article.ValidColumn,
 			comment.Table:     comment.ValidColumn,
 			file.Table:        file.ValidColumn,
 			modelschema.Table: modelschema.ValidColumn,

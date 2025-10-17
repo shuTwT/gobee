@@ -13,7 +13,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 )
 
 // AlbumQuery is the builder for querying Album entities.
@@ -83,8 +82,8 @@ func (_q *AlbumQuery) FirstX(ctx context.Context) *Album {
 
 // FirstID returns the first Album ID from the query.
 // Returns a *NotFoundError when no Album ID was found.
-func (_q *AlbumQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (_q *AlbumQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -96,7 +95,7 @@ func (_q *AlbumQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *AlbumQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (_q *AlbumQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -134,8 +133,8 @@ func (_q *AlbumQuery) OnlyX(ctx context.Context) *Album {
 // OnlyID is like Only, but returns the only Album ID in the query.
 // Returns a *NotSingularError when more than one Album ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *AlbumQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (_q *AlbumQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -151,7 +150,7 @@ func (_q *AlbumQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *AlbumQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (_q *AlbumQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -179,7 +178,7 @@ func (_q *AlbumQuery) AllX(ctx context.Context) []*Album {
 }
 
 // IDs executes the query and returns a list of Album IDs.
-func (_q *AlbumQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+func (_q *AlbumQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -191,7 +190,7 @@ func (_q *AlbumQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *AlbumQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (_q *AlbumQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -366,7 +365,7 @@ func (_q *AlbumQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *AlbumQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(album.Table, album.Columns, sqlgraph.NewFieldSpec(album.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewQuerySpec(album.Table, album.Columns, sqlgraph.NewFieldSpec(album.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

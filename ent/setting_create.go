@@ -11,7 +11,6 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 )
 
 // SettingCreate is the builder for creating a Setting entity.
@@ -67,20 +66,6 @@ func (_c *SettingCreate) SetComment(v string) *SettingCreate {
 	return _c
 }
 
-// SetID sets the "id" field.
-func (_c *SettingCreate) SetID(v uuid.UUID) *SettingCreate {
-	_c.mutation.SetID(v)
-	return _c
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (_c *SettingCreate) SetNillableID(v *uuid.UUID) *SettingCreate {
-	if v != nil {
-		_c.SetID(*v)
-	}
-	return _c
-}
-
 // Mutation returns the SettingMutation object of the builder.
 func (_c *SettingCreate) Mutation() *SettingMutation {
 	return _c.mutation
@@ -123,10 +108,6 @@ func (_c *SettingCreate) defaults() {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := setting.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
-	}
-	if _, ok := _c.mutation.ID(); !ok {
-		v := setting.DefaultID()
-		_c.mutation.SetID(v)
 	}
 }
 
@@ -176,13 +157,8 @@ func (_c *SettingCreate) sqlSave(ctx context.Context) (*Setting, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -191,12 +167,8 @@ func (_c *SettingCreate) sqlSave(ctx context.Context) (*Setting, error) {
 func (_c *SettingCreate) createSpec() (*Setting, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Setting{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(setting.Table, sqlgraph.NewFieldSpec(setting.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(setting.Table, sqlgraph.NewFieldSpec(setting.FieldID, field.TypeInt))
 	)
-	if id, ok := _c.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = &id
-	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(setting.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -265,6 +237,10 @@ func (_c *SettingCreateBulk) Save(ctx context.Context) ([]*Setting, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

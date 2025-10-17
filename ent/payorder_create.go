@@ -11,7 +11,6 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 )
 
 // PayOrderCreate is the builder for creating a PayOrder entity.
@@ -159,20 +158,6 @@ func (_c *PayOrderCreate) SetNillableRaw(v *string) *PayOrderCreate {
 	return _c
 }
 
-// SetID sets the "id" field.
-func (_c *PayOrderCreate) SetID(v uuid.UUID) *PayOrderCreate {
-	_c.mutation.SetID(v)
-	return _c
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (_c *PayOrderCreate) SetNillableID(v *uuid.UUID) *PayOrderCreate {
-	if v != nil {
-		_c.SetID(*v)
-	}
-	return _c
-}
-
 // Mutation returns the PayOrderMutation object of the builder.
 func (_c *PayOrderCreate) Mutation() *PayOrderMutation {
 	return _c.mutation
@@ -219,10 +204,6 @@ func (_c *PayOrderCreate) defaults() {
 	if _, ok := _c.mutation.State(); !ok {
 		v := payorder.DefaultState
 		_c.mutation.SetState(v)
-	}
-	if _, ok := _c.mutation.ID(); !ok {
-		v := payorder.DefaultID()
-		_c.mutation.SetID(v)
 	}
 }
 
@@ -278,13 +259,8 @@ func (_c *PayOrderCreate) sqlSave(ctx context.Context) (*PayOrder, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -293,12 +269,8 @@ func (_c *PayOrderCreate) sqlSave(ctx context.Context) (*PayOrder, error) {
 func (_c *PayOrderCreate) createSpec() (*PayOrder, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PayOrder{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(payorder.Table, sqlgraph.NewFieldSpec(payorder.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(payorder.Table, sqlgraph.NewFieldSpec(payorder.FieldID, field.TypeInt))
 	)
-	if id, ok := _c.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = &id
-	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(payorder.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -407,6 +379,10 @@ func (_c *PayOrderCreateBulk) Save(ctx context.Context) ([]*PayOrder, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

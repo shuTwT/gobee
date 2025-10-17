@@ -276,7 +276,7 @@ func (_u *PayOrderUpdate) defaults() {
 }
 
 func (_u *PayOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(payorder.Table, payorder.Columns, sqlgraph.NewFieldSpec(payorder.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(payorder.Table, payorder.Columns, sqlgraph.NewFieldSpec(payorder.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -616,7 +616,7 @@ func (_u *PayOrderUpdateOne) defaults() {
 }
 
 func (_u *PayOrderUpdateOne) sqlSave(ctx context.Context) (_node *PayOrder, err error) {
-	_spec := sqlgraph.NewUpdateSpec(payorder.Table, payorder.Columns, sqlgraph.NewFieldSpec(payorder.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(payorder.Table, payorder.Columns, sqlgraph.NewFieldSpec(payorder.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PayOrder.id" for update`)}

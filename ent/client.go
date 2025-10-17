@@ -12,6 +12,7 @@ import (
 	"gobee/ent/migrate"
 
 	"gobee/ent/album"
+	"gobee/ent/article"
 	"gobee/ent/comment"
 	"gobee/ent/file"
 	"gobee/ent/modelschema"
@@ -24,7 +25,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
-	"github.com/google/uuid"
 )
 
 // Client is the client that holds all ent builders.
@@ -34,6 +34,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
+	// Article is the client for interacting with the Article builders.
+	Article *ArticleClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// File is the client for interacting with the File builders.
@@ -62,6 +64,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Album = NewAlbumClient(c.config)
+	c.Article = NewArticleClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.ModelSchema = NewModelSchemaClient(c.config)
@@ -163,6 +166,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:         ctx,
 		config:      cfg,
 		Album:       NewAlbumClient(cfg),
+		Article:     NewArticleClient(cfg),
 		Comment:     NewCommentClient(cfg),
 		File:        NewFileClient(cfg),
 		ModelSchema: NewModelSchemaClient(cfg),
@@ -191,6 +195,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:         ctx,
 		config:      cfg,
 		Album:       NewAlbumClient(cfg),
+		Article:     NewArticleClient(cfg),
 		Comment:     NewCommentClient(cfg),
 		File:        NewFileClient(cfg),
 		ModelSchema: NewModelSchemaClient(cfg),
@@ -228,8 +233,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.Comment, c.File, c.ModelSchema, c.Page, c.PayChannel, c.PayOrder,
-		c.Setting, c.User,
+		c.Album, c.Article, c.Comment, c.File, c.ModelSchema, c.Page, c.PayChannel,
+		c.PayOrder, c.Setting, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -239,8 +244,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.Comment, c.File, c.ModelSchema, c.Page, c.PayChannel, c.PayOrder,
-		c.Setting, c.User,
+		c.Album, c.Article, c.Comment, c.File, c.ModelSchema, c.Page, c.PayChannel,
+		c.PayOrder, c.Setting, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -251,6 +256,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AlbumMutation:
 		return c.Album.mutate(ctx, m)
+	case *ArticleMutation:
+		return c.Article.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
 	case *FileMutation:
@@ -333,7 +340,7 @@ func (c *AlbumClient) UpdateOne(_m *Album) *AlbumUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AlbumClient) UpdateOneID(id uuid.UUID) *AlbumUpdateOne {
+func (c *AlbumClient) UpdateOneID(id int) *AlbumUpdateOne {
 	mutation := newAlbumMutation(c.config, OpUpdateOne, withAlbumID(id))
 	return &AlbumUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -350,7 +357,7 @@ func (c *AlbumClient) DeleteOne(_m *Album) *AlbumDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AlbumClient) DeleteOneID(id uuid.UUID) *AlbumDeleteOne {
+func (c *AlbumClient) DeleteOneID(id int) *AlbumDeleteOne {
 	builder := c.Delete().Where(album.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -367,12 +374,12 @@ func (c *AlbumClient) Query() *AlbumQuery {
 }
 
 // Get returns a Album entity by its id.
-func (c *AlbumClient) Get(ctx context.Context, id uuid.UUID) (*Album, error) {
+func (c *AlbumClient) Get(ctx context.Context, id int) (*Album, error) {
 	return c.Query().Where(album.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AlbumClient) GetX(ctx context.Context, id uuid.UUID) *Album {
+func (c *AlbumClient) GetX(ctx context.Context, id int) *Album {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -402,6 +409,139 @@ func (c *AlbumClient) mutate(ctx context.Context, m *AlbumMutation) (Value, erro
 		return (&AlbumDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Album mutation op: %q", m.Op())
+	}
+}
+
+// ArticleClient is a client for the Article schema.
+type ArticleClient struct {
+	config
+}
+
+// NewArticleClient returns a client for the Article from the given config.
+func NewArticleClient(c config) *ArticleClient {
+	return &ArticleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `article.Hooks(f(g(h())))`.
+func (c *ArticleClient) Use(hooks ...Hook) {
+	c.hooks.Article = append(c.hooks.Article, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `article.Intercept(f(g(h())))`.
+func (c *ArticleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Article = append(c.inters.Article, interceptors...)
+}
+
+// Create returns a builder for creating a Article entity.
+func (c *ArticleClient) Create() *ArticleCreate {
+	mutation := newArticleMutation(c.config, OpCreate)
+	return &ArticleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Article entities.
+func (c *ArticleClient) CreateBulk(builders ...*ArticleCreate) *ArticleCreateBulk {
+	return &ArticleCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ArticleClient) MapCreateBulk(slice any, setFunc func(*ArticleCreate, int)) *ArticleCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ArticleCreateBulk{err: fmt.Errorf("calling to ArticleClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ArticleCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ArticleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Article.
+func (c *ArticleClient) Update() *ArticleUpdate {
+	mutation := newArticleMutation(c.config, OpUpdate)
+	return &ArticleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ArticleClient) UpdateOne(_m *Article) *ArticleUpdateOne {
+	mutation := newArticleMutation(c.config, OpUpdateOne, withArticle(_m))
+	return &ArticleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ArticleClient) UpdateOneID(id int) *ArticleUpdateOne {
+	mutation := newArticleMutation(c.config, OpUpdateOne, withArticleID(id))
+	return &ArticleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Article.
+func (c *ArticleClient) Delete() *ArticleDelete {
+	mutation := newArticleMutation(c.config, OpDelete)
+	return &ArticleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ArticleClient) DeleteOne(_m *Article) *ArticleDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ArticleClient) DeleteOneID(id int) *ArticleDeleteOne {
+	builder := c.Delete().Where(article.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ArticleDeleteOne{builder}
+}
+
+// Query returns a query builder for Article.
+func (c *ArticleClient) Query() *ArticleQuery {
+	return &ArticleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeArticle},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Article entity by its id.
+func (c *ArticleClient) Get(ctx context.Context, id int) (*Article, error) {
+	return c.Query().Where(article.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ArticleClient) GetX(ctx context.Context, id int) *Article {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ArticleClient) Hooks() []Hook {
+	return c.hooks.Article
+}
+
+// Interceptors returns the client interceptors.
+func (c *ArticleClient) Interceptors() []Interceptor {
+	return c.inters.Article
+}
+
+func (c *ArticleClient) mutate(ctx context.Context, m *ArticleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ArticleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ArticleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ArticleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ArticleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Article mutation op: %q", m.Op())
 	}
 }
 
@@ -466,7 +606,7 @@ func (c *CommentClient) UpdateOne(_m *Comment) *CommentUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CommentClient) UpdateOneID(id uuid.UUID) *CommentUpdateOne {
+func (c *CommentClient) UpdateOneID(id int) *CommentUpdateOne {
 	mutation := newCommentMutation(c.config, OpUpdateOne, withCommentID(id))
 	return &CommentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -483,7 +623,7 @@ func (c *CommentClient) DeleteOne(_m *Comment) *CommentDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *CommentClient) DeleteOneID(id uuid.UUID) *CommentDeleteOne {
+func (c *CommentClient) DeleteOneID(id int) *CommentDeleteOne {
 	builder := c.Delete().Where(comment.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -500,12 +640,12 @@ func (c *CommentClient) Query() *CommentQuery {
 }
 
 // Get returns a Comment entity by its id.
-func (c *CommentClient) Get(ctx context.Context, id uuid.UUID) (*Comment, error) {
+func (c *CommentClient) Get(ctx context.Context, id int) (*Comment, error) {
 	return c.Query().Where(comment.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CommentClient) GetX(ctx context.Context, id uuid.UUID) *Comment {
+func (c *CommentClient) GetX(ctx context.Context, id int) *Comment {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -599,7 +739,7 @@ func (c *FileClient) UpdateOne(_m *File) *FileUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *FileClient) UpdateOneID(id uuid.UUID) *FileUpdateOne {
+func (c *FileClient) UpdateOneID(id int) *FileUpdateOne {
 	mutation := newFileMutation(c.config, OpUpdateOne, withFileID(id))
 	return &FileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -616,7 +756,7 @@ func (c *FileClient) DeleteOne(_m *File) *FileDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *FileClient) DeleteOneID(id uuid.UUID) *FileDeleteOne {
+func (c *FileClient) DeleteOneID(id int) *FileDeleteOne {
 	builder := c.Delete().Where(file.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -633,12 +773,12 @@ func (c *FileClient) Query() *FileQuery {
 }
 
 // Get returns a File entity by its id.
-func (c *FileClient) Get(ctx context.Context, id uuid.UUID) (*File, error) {
+func (c *FileClient) Get(ctx context.Context, id int) (*File, error) {
 	return c.Query().Where(file.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *FileClient) GetX(ctx context.Context, id uuid.UUID) *File {
+func (c *FileClient) GetX(ctx context.Context, id int) *File {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -865,7 +1005,7 @@ func (c *PageClient) UpdateOne(_m *Page) *PageUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PageClient) UpdateOneID(id uuid.UUID) *PageUpdateOne {
+func (c *PageClient) UpdateOneID(id int) *PageUpdateOne {
 	mutation := newPageMutation(c.config, OpUpdateOne, withPageID(id))
 	return &PageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -882,7 +1022,7 @@ func (c *PageClient) DeleteOne(_m *Page) *PageDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PageClient) DeleteOneID(id uuid.UUID) *PageDeleteOne {
+func (c *PageClient) DeleteOneID(id int) *PageDeleteOne {
 	builder := c.Delete().Where(page.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -899,12 +1039,12 @@ func (c *PageClient) Query() *PageQuery {
 }
 
 // Get returns a Page entity by its id.
-func (c *PageClient) Get(ctx context.Context, id uuid.UUID) (*Page, error) {
+func (c *PageClient) Get(ctx context.Context, id int) (*Page, error) {
 	return c.Query().Where(page.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PageClient) GetX(ctx context.Context, id uuid.UUID) *Page {
+func (c *PageClient) GetX(ctx context.Context, id int) *Page {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -998,7 +1138,7 @@ func (c *PayChannelClient) UpdateOne(_m *PayChannel) *PayChannelUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PayChannelClient) UpdateOneID(id uuid.UUID) *PayChannelUpdateOne {
+func (c *PayChannelClient) UpdateOneID(id int) *PayChannelUpdateOne {
 	mutation := newPayChannelMutation(c.config, OpUpdateOne, withPayChannelID(id))
 	return &PayChannelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1015,7 +1155,7 @@ func (c *PayChannelClient) DeleteOne(_m *PayChannel) *PayChannelDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PayChannelClient) DeleteOneID(id uuid.UUID) *PayChannelDeleteOne {
+func (c *PayChannelClient) DeleteOneID(id int) *PayChannelDeleteOne {
 	builder := c.Delete().Where(paychannel.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1032,12 +1172,12 @@ func (c *PayChannelClient) Query() *PayChannelQuery {
 }
 
 // Get returns a PayChannel entity by its id.
-func (c *PayChannelClient) Get(ctx context.Context, id uuid.UUID) (*PayChannel, error) {
+func (c *PayChannelClient) Get(ctx context.Context, id int) (*PayChannel, error) {
 	return c.Query().Where(paychannel.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PayChannelClient) GetX(ctx context.Context, id uuid.UUID) *PayChannel {
+func (c *PayChannelClient) GetX(ctx context.Context, id int) *PayChannel {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1131,7 +1271,7 @@ func (c *PayOrderClient) UpdateOne(_m *PayOrder) *PayOrderUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PayOrderClient) UpdateOneID(id uuid.UUID) *PayOrderUpdateOne {
+func (c *PayOrderClient) UpdateOneID(id int) *PayOrderUpdateOne {
 	mutation := newPayOrderMutation(c.config, OpUpdateOne, withPayOrderID(id))
 	return &PayOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1148,7 +1288,7 @@ func (c *PayOrderClient) DeleteOne(_m *PayOrder) *PayOrderDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PayOrderClient) DeleteOneID(id uuid.UUID) *PayOrderDeleteOne {
+func (c *PayOrderClient) DeleteOneID(id int) *PayOrderDeleteOne {
 	builder := c.Delete().Where(payorder.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1165,12 +1305,12 @@ func (c *PayOrderClient) Query() *PayOrderQuery {
 }
 
 // Get returns a PayOrder entity by its id.
-func (c *PayOrderClient) Get(ctx context.Context, id uuid.UUID) (*PayOrder, error) {
+func (c *PayOrderClient) Get(ctx context.Context, id int) (*PayOrder, error) {
 	return c.Query().Where(payorder.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PayOrderClient) GetX(ctx context.Context, id uuid.UUID) *PayOrder {
+func (c *PayOrderClient) GetX(ctx context.Context, id int) *PayOrder {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1264,7 +1404,7 @@ func (c *SettingClient) UpdateOne(_m *Setting) *SettingUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *SettingClient) UpdateOneID(id uuid.UUID) *SettingUpdateOne {
+func (c *SettingClient) UpdateOneID(id int) *SettingUpdateOne {
 	mutation := newSettingMutation(c.config, OpUpdateOne, withSettingID(id))
 	return &SettingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1281,7 +1421,7 @@ func (c *SettingClient) DeleteOne(_m *Setting) *SettingDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *SettingClient) DeleteOneID(id uuid.UUID) *SettingDeleteOne {
+func (c *SettingClient) DeleteOneID(id int) *SettingDeleteOne {
 	builder := c.Delete().Where(setting.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1298,12 +1438,12 @@ func (c *SettingClient) Query() *SettingQuery {
 }
 
 // Get returns a Setting entity by its id.
-func (c *SettingClient) Get(ctx context.Context, id uuid.UUID) (*Setting, error) {
+func (c *SettingClient) Get(ctx context.Context, id int) (*Setting, error) {
 	return c.Query().Where(setting.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *SettingClient) GetX(ctx context.Context, id uuid.UUID) *Setting {
+func (c *SettingClient) GetX(ctx context.Context, id int) *Setting {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1397,7 +1537,7 @@ func (c *UserClient) UpdateOne(_m *User) *UserUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *UserClient) UpdateOneID(id uuid.UUID) *UserUpdateOne {
+func (c *UserClient) UpdateOneID(id int) *UserUpdateOne {
 	mutation := newUserMutation(c.config, OpUpdateOne, withUserID(id))
 	return &UserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1414,7 +1554,7 @@ func (c *UserClient) DeleteOne(_m *User) *UserDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *UserClient) DeleteOneID(id uuid.UUID) *UserDeleteOne {
+func (c *UserClient) DeleteOneID(id int) *UserDeleteOne {
 	builder := c.Delete().Where(user.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1431,12 +1571,12 @@ func (c *UserClient) Query() *UserQuery {
 }
 
 // Get returns a User entity by its id.
-func (c *UserClient) Get(ctx context.Context, id uuid.UUID) (*User, error) {
+func (c *UserClient) Get(ctx context.Context, id int) (*User, error) {
 	return c.Query().Where(user.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *UserClient) GetX(ctx context.Context, id uuid.UUID) *User {
+func (c *UserClient) GetX(ctx context.Context, id int) *User {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1472,11 +1612,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, Comment, File, ModelSchema, Page, PayChannel, PayOrder, Setting,
+		Album, Article, Comment, File, ModelSchema, Page, PayChannel, PayOrder, Setting,
 		User []ent.Hook
 	}
 	inters struct {
-		Album, Comment, File, ModelSchema, Page, PayChannel, PayOrder, Setting,
+		Album, Article, Comment, File, ModelSchema, Page, PayChannel, PayOrder, Setting,
 		User []ent.Interceptor
 	}
 )

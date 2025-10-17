@@ -2,10 +2,15 @@
 import type { MenuOption } from 'naive-ui'
 import { ProLayout, useLayoutMenu } from 'pro-naive-ui'
 import { RouterLink } from 'vue-router'
-import { useAppStoreHook } from '@/stores/modules/app'
+import { useAppStore } from '@/stores/modules/app'
 import { storeToRefs } from 'pinia'
+import { usePermissionStore } from '@/stores/modules/permission'
 
-const appStore = useAppStoreHook()
+const appStore = useAppStore()
+const permissionStore = usePermissionStore()
+const {wholeMenus} = storeToRefs(permissionStore)
+
+console.log(wholeMenus.value)
 
 const menuOptions: MenuOption[] = [
   {

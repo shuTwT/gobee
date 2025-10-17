@@ -128,7 +128,7 @@ func (_u *AlbumUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(album.Table, album.Columns, sqlgraph.NewFieldSpec(album.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(album.Table, album.Columns, sqlgraph.NewFieldSpec(album.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -281,7 +281,7 @@ func (_u *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(album.Table, album.Columns, sqlgraph.NewFieldSpec(album.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(album.Table, album.Columns, sqlgraph.NewFieldSpec(album.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Album.id" for update`)}

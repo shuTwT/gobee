@@ -9,6 +9,7 @@ import (
 
 	"gobee/ent"
 	"gobee/ent/user"
+	"gobee/internal/database"
 )
 
 // LoginRequest 登录请求结构
@@ -37,7 +38,7 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// 获取数据库客户端
-	client := c.Locals("client").(*ent.Client)
+	client := database.DB
 
 	// 查找用户
 	u, err := client.User.Query().

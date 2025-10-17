@@ -10,14 +10,13 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/google/uuid"
 )
 
 // Setting is the model entity for the Setting schema.
 type Setting struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -36,12 +35,12 @@ func (*Setting) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case setting.FieldID:
+			values[i] = new(sql.NullInt64)
 		case setting.FieldKey, setting.FieldValue, setting.FieldComment:
 			values[i] = new(sql.NullString)
 		case setting.FieldCreatedAt, setting.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case setting.FieldID:
-			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -58,11 +57,11 @@ func (_m *Setting) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case setting.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				_m.ID = *value
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			_m.ID = int(value.Int64)
 		case setting.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])

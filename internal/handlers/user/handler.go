@@ -1,12 +1,14 @@
 package user_handler
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
 	"gobee/ent"
 	"gobee/ent/user"
+	"gobee/internal/database"
 	"gobee/internal/model"
 )
 
@@ -123,8 +125,8 @@ func CreateUser(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/users/{id} [put]
 func UpdateUser(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
-	id, err := uuid.Parse(c.Params("id"))
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid ID format",
@@ -210,8 +212,8 @@ func UpdateUser(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/users/{id} [get]
 func QueryUser(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
-	id, err := uuid.Parse(c.Params("id"))
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid ID format",
@@ -249,8 +251,8 @@ func QueryUser(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/users/{id} [delete]
 func DeleteUser(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
-	id, err := uuid.Parse(c.Params("id"))
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid ID format",

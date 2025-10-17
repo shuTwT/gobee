@@ -10,7 +10,7 @@ import (
 var (
 	// AlbumsColumns holds the columns for the "albums" table.
 	AlbumsColumns = []*schema.Column{
-		{Name: "oid", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
@@ -22,9 +22,23 @@ var (
 		Columns:    AlbumsColumns,
 		PrimaryKey: []*schema.Column{AlbumsColumns[0]},
 	}
+	// ArticlesColumns holds the columns for the "articles" table.
+	ArticlesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "title", Type: field.TypeString, Size: 255},
+		{Name: "content", Type: field.TypeString, Size: 2147483647},
+	}
+	// ArticlesTable holds the schema information for the "articles" table.
+	ArticlesTable = &schema.Table{
+		Name:       "articles",
+		Columns:    ArticlesColumns,
+		PrimaryKey: []*schema.Column{ArticlesColumns[0]},
+	}
 	// CommentsColumns holds the columns for the "comments" table.
 	CommentsColumns = []*schema.Column{
-		{Name: "oid", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "post_id", Type: field.TypeInt},
@@ -45,7 +59,7 @@ var (
 	}
 	// FilesColumns holds the columns for the "files" table.
 	FilesColumns = []*schema.Column{
-		{Name: "oid", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
@@ -72,7 +86,7 @@ var (
 	}
 	// PagesColumns holds the columns for the "pages" table.
 	PagesColumns = []*schema.Column{
-		{Name: "oid", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "title", Type: field.TypeString, Size: 255},
@@ -87,7 +101,7 @@ var (
 	}
 	// PayChannelsColumns holds the columns for the "pay_channels" table.
 	PayChannelsColumns = []*schema.Column{
-		{Name: "oid", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
@@ -103,7 +117,7 @@ var (
 	}
 	// PayOrdersColumns holds the columns for the "pay_orders" table.
 	PayOrdersColumns = []*schema.Column{
-		{Name: "oid", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "channel_id", Type: field.TypeString},
@@ -128,7 +142,7 @@ var (
 	}
 	// SettingsColumns holds the columns for the "settings" table.
 	SettingsColumns = []*schema.Column{
-		{Name: "oid", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "key", Type: field.TypeString, Size: 255},
@@ -143,7 +157,7 @@ var (
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "oid", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "email", Type: field.TypeString, Unique: true, Size: 255},
@@ -162,6 +176,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AlbumsTable,
+		ArticlesTable,
 		CommentsTable,
 		FilesTable,
 		ModelSchemasTable,

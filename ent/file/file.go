@@ -6,14 +6,13 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/google/uuid"
 )
 
 const (
 	// Label holds the string label denoting the file type in the database.
 	Label = "file"
 	// FieldID holds the string denoting the id field in the database.
-	FieldID = "oid"
+	FieldID = "id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -67,8 +66,6 @@ var (
 	PathValidator func(string) error
 	// URLValidator is a validator for the "url" field. It is called by the builders before save.
 	URLValidator func(string) error
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() uuid.UUID
 )
 
 // OrderOption defines the ordering options for the File queries.

@@ -11,7 +11,6 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 )
 
 // CommentCreate is the builder for creating a Comment entity.
@@ -127,20 +126,6 @@ func (_c *CommentCreate) SetNillablePinned(v *bool) *CommentCreate {
 	return _c
 }
 
-// SetID sets the "id" field.
-func (_c *CommentCreate) SetID(v uuid.UUID) *CommentCreate {
-	_c.mutation.SetID(v)
-	return _c
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableID(v *uuid.UUID) *CommentCreate {
-	if v != nil {
-		_c.SetID(*v)
-	}
-	return _c
-}
-
 // Mutation returns the CommentMutation object of the builder.
 func (_c *CommentCreate) Mutation() *CommentMutation {
 	return _c.mutation
@@ -187,10 +172,6 @@ func (_c *CommentCreate) defaults() {
 	if _, ok := _c.mutation.Pinned(); !ok {
 		v := comment.DefaultPinned
 		_c.mutation.SetPinned(v)
-	}
-	if _, ok := _c.mutation.ID(); !ok {
-		v := comment.DefaultID()
-		_c.mutation.SetID(v)
 	}
 }
 
@@ -252,13 +233,8 @@ func (_c *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -267,12 +243,8 @@ func (_c *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
 func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Comment{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(comment.Table, sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(comment.Table, sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt))
 	)
-	if id, ok := _c.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = &id
-	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(comment.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -365,6 +337,10 @@ func (_c *CommentCreateBulk) Save(ctx context.Context) ([]*Comment, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

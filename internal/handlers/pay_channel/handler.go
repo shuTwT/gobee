@@ -1,11 +1,13 @@
 package pay_handler
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 
 	"gobee/ent"
 	"gobee/ent/paychannel"
+	"gobee/internal/database"
 )
 
 // @Summary 获取支付渠道列表
@@ -17,7 +19,7 @@ import (
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels [get]
 func ListPayChannel(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
+	client := database.DB
 	channels, err := client.PayChannel.Query().All(c.Context())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -40,7 +42,7 @@ func ListPayChannel(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels [post]
 func CreatePayChannel(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
+	client := database.DB
 	var channel struct {
 		Name   string `json:"name"`
 		Code   string `json:"code"`
@@ -82,8 +84,8 @@ func CreatePayChannel(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels/{id} [put]
 func UpdatePayChannel(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
-	id, err := uuid.Parse(c.Params("id"))
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid ID format",
@@ -130,8 +132,8 @@ func UpdatePayChannel(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels/{id} [get]
 func QueryPayChannel(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
-	id, err := uuid.Parse(c.Params("id"))
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid ID format",
@@ -168,8 +170,8 @@ func QueryPayChannel(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels/{id} [delete]
 func DeletePayChannel(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
-	id, err := uuid.Parse(c.Params("id"))
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid ID format",

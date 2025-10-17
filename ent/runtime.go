@@ -4,6 +4,7 @@ package ent
 
 import (
 	"gobee/ent/album"
+	"gobee/ent/article"
 	"gobee/ent/comment"
 	"gobee/ent/file"
 	"gobee/ent/page"
@@ -13,8 +14,6 @@ import (
 	"gobee/ent/setting"
 	"gobee/ent/user"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -27,11 +26,11 @@ func init() {
 	albumFields := schema.Album{}.Fields()
 	_ = albumFields
 	// albumDescCreatedAt is the schema descriptor for created_at field.
-	albumDescCreatedAt := albumMixinFields0[1].Descriptor()
+	albumDescCreatedAt := albumMixinFields0[0].Descriptor()
 	// album.DefaultCreatedAt holds the default value on creation for the created_at field.
 	album.DefaultCreatedAt = albumDescCreatedAt.Default.(func() time.Time)
 	// albumDescUpdatedAt is the schema descriptor for updated_at field.
-	albumDescUpdatedAt := albumMixinFields0[2].Descriptor()
+	albumDescUpdatedAt := albumMixinFields0[1].Descriptor()
 	// album.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	album.DefaultUpdatedAt = albumDescUpdatedAt.Default.(func() time.Time)
 	// album.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -58,21 +57,54 @@ func init() {
 	albumDescDescription := albumFields[1].Descriptor()
 	// album.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	album.DescriptionValidator = albumDescDescription.Validators[0].(func(string) error)
-	// albumDescID is the schema descriptor for id field.
-	albumDescID := albumMixinFields0[0].Descriptor()
-	// album.DefaultID holds the default value on creation for the id field.
-	album.DefaultID = albumDescID.Default.(func() uuid.UUID)
+	articleMixin := schema.Article{}.Mixin()
+	articleMixinFields0 := articleMixin[0].Fields()
+	_ = articleMixinFields0
+	articleFields := schema.Article{}.Fields()
+	_ = articleFields
+	// articleDescCreatedAt is the schema descriptor for created_at field.
+	articleDescCreatedAt := articleMixinFields0[0].Descriptor()
+	// article.DefaultCreatedAt holds the default value on creation for the created_at field.
+	article.DefaultCreatedAt = articleDescCreatedAt.Default.(func() time.Time)
+	// articleDescUpdatedAt is the schema descriptor for updated_at field.
+	articleDescUpdatedAt := articleMixinFields0[1].Descriptor()
+	// article.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	article.DefaultUpdatedAt = articleDescUpdatedAt.Default.(func() time.Time)
+	// article.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	article.UpdateDefaultUpdatedAt = articleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// articleDescTitle is the schema descriptor for title field.
+	articleDescTitle := articleFields[0].Descriptor()
+	// article.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	article.TitleValidator = func() func(string) error {
+		validators := articleDescTitle.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(title string) error {
+			for _, fn := range fns {
+				if err := fn(title); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// articleDescContent is the schema descriptor for content field.
+	articleDescContent := articleFields[1].Descriptor()
+	// article.ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	article.ContentValidator = articleDescContent.Validators[0].(func(string) error)
 	commentMixin := schema.Comment{}.Mixin()
 	commentMixinFields0 := commentMixin[0].Fields()
 	_ = commentMixinFields0
 	commentFields := schema.Comment{}.Fields()
 	_ = commentFields
 	// commentDescCreatedAt is the schema descriptor for created_at field.
-	commentDescCreatedAt := commentMixinFields0[1].Descriptor()
+	commentDescCreatedAt := commentMixinFields0[0].Descriptor()
 	// comment.DefaultCreatedAt holds the default value on creation for the created_at field.
 	comment.DefaultCreatedAt = commentDescCreatedAt.Default.(func() time.Time)
 	// commentDescUpdatedAt is the schema descriptor for updated_at field.
-	commentDescUpdatedAt := commentMixinFields0[2].Descriptor()
+	commentDescUpdatedAt := commentMixinFields0[1].Descriptor()
 	// comment.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	comment.DefaultUpdatedAt = commentDescUpdatedAt.Default.(func() time.Time)
 	// comment.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -107,21 +139,17 @@ func init() {
 	commentDescPinned := commentFields[8].Descriptor()
 	// comment.DefaultPinned holds the default value on creation for the pinned field.
 	comment.DefaultPinned = commentDescPinned.Default.(bool)
-	// commentDescID is the schema descriptor for id field.
-	commentDescID := commentMixinFields0[0].Descriptor()
-	// comment.DefaultID holds the default value on creation for the id field.
-	comment.DefaultID = commentDescID.Default.(func() uuid.UUID)
 	fileMixin := schema.File{}.Mixin()
 	fileMixinFields0 := fileMixin[0].Fields()
 	_ = fileMixinFields0
 	fileFields := schema.File{}.Fields()
 	_ = fileFields
 	// fileDescCreatedAt is the schema descriptor for created_at field.
-	fileDescCreatedAt := fileMixinFields0[1].Descriptor()
+	fileDescCreatedAt := fileMixinFields0[0].Descriptor()
 	// file.DefaultCreatedAt holds the default value on creation for the created_at field.
 	file.DefaultCreatedAt = fileDescCreatedAt.Default.(func() time.Time)
 	// fileDescUpdatedAt is the schema descriptor for updated_at field.
-	fileDescUpdatedAt := fileMixinFields0[2].Descriptor()
+	fileDescUpdatedAt := fileMixinFields0[1].Descriptor()
 	// file.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	file.DefaultUpdatedAt = fileDescUpdatedAt.Default.(func() time.Time)
 	// file.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -180,21 +208,17 @@ func init() {
 			return nil
 		}
 	}()
-	// fileDescID is the schema descriptor for id field.
-	fileDescID := fileMixinFields0[0].Descriptor()
-	// file.DefaultID holds the default value on creation for the id field.
-	file.DefaultID = fileDescID.Default.(func() uuid.UUID)
 	pageMixin := schema.Page{}.Mixin()
 	pageMixinFields0 := pageMixin[0].Fields()
 	_ = pageMixinFields0
 	pageFields := schema.Page{}.Fields()
 	_ = pageFields
 	// pageDescCreatedAt is the schema descriptor for created_at field.
-	pageDescCreatedAt := pageMixinFields0[1].Descriptor()
+	pageDescCreatedAt := pageMixinFields0[0].Descriptor()
 	// page.DefaultCreatedAt holds the default value on creation for the created_at field.
 	page.DefaultCreatedAt = pageDescCreatedAt.Default.(func() time.Time)
 	// pageDescUpdatedAt is the schema descriptor for updated_at field.
-	pageDescUpdatedAt := pageMixinFields0[2].Descriptor()
+	pageDescUpdatedAt := pageMixinFields0[1].Descriptor()
 	// page.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	page.DefaultUpdatedAt = pageDescUpdatedAt.Default.(func() time.Time)
 	// page.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -221,21 +245,17 @@ func init() {
 	pageDescContent := pageFields[1].Descriptor()
 	// page.ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	page.ContentValidator = pageDescContent.Validators[0].(func(string) error)
-	// pageDescID is the schema descriptor for id field.
-	pageDescID := pageMixinFields0[0].Descriptor()
-	// page.DefaultID holds the default value on creation for the id field.
-	page.DefaultID = pageDescID.Default.(func() uuid.UUID)
 	paychannelMixin := schema.PayChannel{}.Mixin()
 	paychannelMixinFields0 := paychannelMixin[0].Fields()
 	_ = paychannelMixinFields0
 	paychannelFields := schema.PayChannel{}.Fields()
 	_ = paychannelFields
 	// paychannelDescCreatedAt is the schema descriptor for created_at field.
-	paychannelDescCreatedAt := paychannelMixinFields0[1].Descriptor()
+	paychannelDescCreatedAt := paychannelMixinFields0[0].Descriptor()
 	// paychannel.DefaultCreatedAt holds the default value on creation for the created_at field.
 	paychannel.DefaultCreatedAt = paychannelDescCreatedAt.Default.(func() time.Time)
 	// paychannelDescUpdatedAt is the schema descriptor for updated_at field.
-	paychannelDescUpdatedAt := paychannelMixinFields0[2].Descriptor()
+	paychannelDescUpdatedAt := paychannelMixinFields0[1].Descriptor()
 	// paychannel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	paychannel.DefaultUpdatedAt = paychannelDescUpdatedAt.Default.(func() time.Time)
 	// paychannel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -294,21 +314,17 @@ func init() {
 			return nil
 		}
 	}()
-	// paychannelDescID is the schema descriptor for id field.
-	paychannelDescID := paychannelMixinFields0[0].Descriptor()
-	// paychannel.DefaultID holds the default value on creation for the id field.
-	paychannel.DefaultID = paychannelDescID.Default.(func() uuid.UUID)
 	payorderMixin := schema.PayOrder{}.Mixin()
 	payorderMixinFields0 := payorderMixin[0].Fields()
 	_ = payorderMixinFields0
 	payorderFields := schema.PayOrder{}.Fields()
 	_ = payorderFields
 	// payorderDescCreatedAt is the schema descriptor for created_at field.
-	payorderDescCreatedAt := payorderMixinFields0[1].Descriptor()
+	payorderDescCreatedAt := payorderMixinFields0[0].Descriptor()
 	// payorder.DefaultCreatedAt holds the default value on creation for the created_at field.
 	payorder.DefaultCreatedAt = payorderDescCreatedAt.Default.(func() time.Time)
 	// payorderDescUpdatedAt is the schema descriptor for updated_at field.
-	payorderDescUpdatedAt := payorderMixinFields0[2].Descriptor()
+	payorderDescUpdatedAt := payorderMixinFields0[1].Descriptor()
 	// payorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	payorder.DefaultUpdatedAt = payorderDescUpdatedAt.Default.(func() time.Time)
 	// payorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -317,21 +333,17 @@ func init() {
 	payorderDescState := payorderFields[10].Descriptor()
 	// payorder.DefaultState holds the default value on creation for the state field.
 	payorder.DefaultState = payorderDescState.Default.(string)
-	// payorderDescID is the schema descriptor for id field.
-	payorderDescID := payorderMixinFields0[0].Descriptor()
-	// payorder.DefaultID holds the default value on creation for the id field.
-	payorder.DefaultID = payorderDescID.Default.(func() uuid.UUID)
 	settingMixin := schema.Setting{}.Mixin()
 	settingMixinFields0 := settingMixin[0].Fields()
 	_ = settingMixinFields0
 	settingFields := schema.Setting{}.Fields()
 	_ = settingFields
 	// settingDescCreatedAt is the schema descriptor for created_at field.
-	settingDescCreatedAt := settingMixinFields0[1].Descriptor()
+	settingDescCreatedAt := settingMixinFields0[0].Descriptor()
 	// setting.DefaultCreatedAt holds the default value on creation for the created_at field.
 	setting.DefaultCreatedAt = settingDescCreatedAt.Default.(func() time.Time)
 	// settingDescUpdatedAt is the schema descriptor for updated_at field.
-	settingDescUpdatedAt := settingMixinFields0[2].Descriptor()
+	settingDescUpdatedAt := settingMixinFields0[1].Descriptor()
 	// setting.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	setting.DefaultUpdatedAt = settingDescUpdatedAt.Default.(func() time.Time)
 	// setting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -376,21 +388,17 @@ func init() {
 	settingDescComment := settingFields[2].Descriptor()
 	// setting.CommentValidator is a validator for the "comment" field. It is called by the builders before save.
 	setting.CommentValidator = settingDescComment.Validators[0].(func(string) error)
-	// settingDescID is the schema descriptor for id field.
-	settingDescID := settingMixinFields0[0].Descriptor()
-	// setting.DefaultID holds the default value on creation for the id field.
-	setting.DefaultID = settingDescID.Default.(func() uuid.UUID)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userMixinFields0[1].Descriptor()
+	userDescCreatedAt := userMixinFields0[0].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userMixinFields0[2].Descriptor()
+	userDescUpdatedAt := userMixinFields0[1].Descriptor()
 	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -447,8 +455,4 @@ func init() {
 			return nil
 		}
 	}()
-	// userDescID is the schema descriptor for id field.
-	userDescID := userMixinFields0[0].Descriptor()
-	// user.DefaultID holds the default value on creation for the id field.
-	user.DefaultID = userDescID.Default.(func() uuid.UUID)
 }

@@ -20,11 +20,25 @@ Object.keys(modules).forEach(key => {
   routes.push(modules[key].default);
 });
 
-const constantMenus = routes.concat(...remainingRouter);
+export const constantMenus = routes.concat(...remainingRouter);
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes:constantMenus
+})
+
+const whiteList = ['/login']
+
+router.beforeEach((to,_from,next)=>{
+  if(to.path !== '/login'){
+    if(whiteList.indexOf(to.path) !== -1){
+      next()
+    }else{
+      next({path:'/login'})
+    }
+  }else{
+    next()
+  }
 })
 
 export default router

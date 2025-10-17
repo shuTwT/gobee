@@ -13,7 +13,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 )
 
 // SettingQuery is the builder for querying Setting entities.
@@ -83,8 +82,8 @@ func (_q *SettingQuery) FirstX(ctx context.Context) *Setting {
 
 // FirstID returns the first Setting ID from the query.
 // Returns a *NotFoundError when no Setting ID was found.
-func (_q *SettingQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (_q *SettingQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -96,7 +95,7 @@ func (_q *SettingQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *SettingQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (_q *SettingQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -134,8 +133,8 @@ func (_q *SettingQuery) OnlyX(ctx context.Context) *Setting {
 // OnlyID is like Only, but returns the only Setting ID in the query.
 // Returns a *NotSingularError when more than one Setting ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *SettingQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (_q *SettingQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -151,7 +150,7 @@ func (_q *SettingQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *SettingQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (_q *SettingQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -179,7 +178,7 @@ func (_q *SettingQuery) AllX(ctx context.Context) []*Setting {
 }
 
 // IDs executes the query and returns a list of Setting IDs.
-func (_q *SettingQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+func (_q *SettingQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -191,7 +190,7 @@ func (_q *SettingQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *SettingQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (_q *SettingQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -366,7 +365,7 @@ func (_q *SettingQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *SettingQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(setting.Table, setting.Columns, sqlgraph.NewFieldSpec(setting.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewQuerySpec(setting.Table, setting.Columns, sqlgraph.NewFieldSpec(setting.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

@@ -1,11 +1,13 @@
 package payorder_handler
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 
 	"gobee/ent"
 	"gobee/ent/payorder"
+	"gobee/internal/database"
 )
 
 // @Summary 获取支付订单列表
@@ -99,8 +101,8 @@ func CreatePayOrder(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders/{id} [put]
 func UpdatePayOrder(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
-	id, err := uuid.Parse(c.Params("id"))
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid ID format",
@@ -165,8 +167,8 @@ func UpdatePayOrder(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders/{id} [get]
 func QueryPayOrder(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
-	id, err := uuid.Parse(c.Params("id"))
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid ID format",
@@ -203,8 +205,8 @@ func QueryPayOrder(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders/{id} [delete]
 func DeletePayOrder(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
-	id, err := uuid.Parse(c.Params("id"))
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid ID format",
