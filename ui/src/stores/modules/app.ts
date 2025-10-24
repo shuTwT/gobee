@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { store } from '../index'
+import { store } from '..'
 import type { ProLayoutMode } from 'pro-naive-ui'
 
 export const useAppStore = defineStore('app', () => {

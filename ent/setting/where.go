@@ -344,6 +344,16 @@ func CommentHasSuffix(v string) predicate.Setting {
 	return predicate.Setting(sql.FieldHasSuffix(FieldComment, v))
 }
 
+// CommentIsNil applies the IsNil predicate on the "comment" field.
+func CommentIsNil() predicate.Setting {
+	return predicate.Setting(sql.FieldIsNull(FieldComment))
+}
+
+// CommentNotNil applies the NotNil predicate on the "comment" field.
+func CommentNotNil() predicate.Setting {
+	return predicate.Setting(sql.FieldNotNull(FieldComment))
+}
+
 // CommentEqualFold applies the EqualFold predicate on the "comment" field.
 func CommentEqualFold(v string) predicate.Setting {
 	return predicate.Setting(sql.FieldEqualFold(FieldComment, v))

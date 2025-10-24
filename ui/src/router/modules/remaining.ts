@@ -153,4 +153,8 @@ export default  [
         },
       ],
     },
+    {
+    path: '/initialize',
+    component: () => import('@/views/initialize/index.vue'),
+  }
   ]

@@ -47,7 +47,7 @@ func Login(c *fiber.Ctx) error {
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Invalid credentials",
+				"error": "找不到该用户",
 			})
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

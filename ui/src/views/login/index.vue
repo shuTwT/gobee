@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { NForm, NFormItem, NInput, NButton, NCard, NIcon, NDropdown, NDivider, NSpace, NText } from 'naive-ui'
 import { LogoGithub, LogoGoogle, Language } from '@vicons/ionicons5'
+import * as authService from '@/api/auth'
 
 const router = useRouter()
 
@@ -28,20 +29,11 @@ const handleLogin = async () => {
 
   loading.value = true
   try {
-    const response = await fetch('/auth/login/password', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: loginForm.username,
-        password: loginForm.password
-      })
-    })
+    const response = await authService.login(loginForm)
 
-    const result = await response.json()
+    const result = response.data
 
-    if (response.ok) {
+    if (response.status === 200) {
       localStorage.setItem('token', result.token)
       localStorage.setItem('user', JSON.stringify(result.user))
       router.push('/console')

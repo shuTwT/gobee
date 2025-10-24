@@ -2,8 +2,10 @@ package router
 
 import (
 	auth_handler "gobee/internal/handlers/auth"
+	initialize_handler "gobee/internal/handlers/initialize"
 	paychannel_handler "gobee/internal/handlers/pay_channel"
 	payorder_handler "gobee/internal/handlers/pay_order"
+	setting_handler "gobee/internal/handlers/setting"
 	"gobee/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,15 +14,21 @@ import (
 func Initialize(router *fiber.App) {
 	router.Use(middleware.Security)
 
+	router.Post("/api/initialize", initialize_handler.Initialize)
+
 	router.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("pages/index", fiber.Map{
 			"Title": "Hello, World!",
 		})
 	})
 
+	auth := router.Group("/api/auth")
+	{
+		auth.Post("/login/password", auth_handler.Login)
+	}
+
 	api := router.Group("/api")
 	{
-		api.Use(middleware.Protected())
 		apiV1 := api.Group("/v1")
 		{
 			apiV1.Get("/users", func(c *fiber.Ctx) error {
@@ -28,6 +36,11 @@ func Initialize(router *fiber.App) {
 					"message": "Hello, World!",
 				})
 			})
+
+			// 系统设置接口
+			apiV1.Get("/settings", setting_handler.GetSettings)
+			// 登录身份验证中间件
+			apiV1.Use(middleware.Protected())
 			payChannelApi := apiV1.Group("/pay-channel")
 			{
 				payChannelApi.Get("/list", paychannel_handler.ListPayChannel)
@@ -45,11 +58,6 @@ func Initialize(router *fiber.App) {
 				payOrderApi.Get("/delete", payorder_handler.DeletePayOrder)
 			}
 		}
-	}
-
-	auth := router.Group("/auth")
-	{
-		auth.Post("/login/password", auth_handler.Login)
 	}
 
 	router.Get("/initialize", func(c *fiber.Ctx) error {

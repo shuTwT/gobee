@@ -66,6 +66,14 @@ func (_c *SettingCreate) SetComment(v string) *SettingCreate {
 	return _c
 }
 
+// SetNillableComment sets the "comment" field if the given value is not nil.
+func (_c *SettingCreate) SetNillableComment(v *string) *SettingCreate {
+	if v != nil {
+		_c.SetComment(*v)
+	}
+	return _c
+}
+
 // Mutation returns the SettingMutation object of the builder.
 func (_c *SettingCreate) Mutation() *SettingMutation {
 	return _c.mutation
@@ -134,9 +142,6 @@ func (_c *SettingCreate) check() error {
 		if err := setting.ValueValidator(v); err != nil {
 			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "Setting.value": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.Comment(); !ok {
-		return &ValidationError{Name: "comment", err: errors.New(`ent: missing required field "Setting.comment"`)}
 	}
 	if v, ok := _c.mutation.Comment(); ok {
 		if err := setting.CommentValidator(v); err != nil {

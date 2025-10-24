@@ -76,6 +76,12 @@ func (_u *SettingUpdate) SetNillableComment(v *string) *SettingUpdate {
 	return _u
 }
 
+// ClearComment clears the value of the "comment" field.
+func (_u *SettingUpdate) ClearComment() *SettingUpdate {
+	_u.mutation.ClearComment()
+	return _u
+}
+
 // Mutation returns the SettingMutation object of the builder.
 func (_u *SettingUpdate) Mutation() *SettingMutation {
 	return _u.mutation
@@ -161,6 +167,9 @@ func (_u *SettingUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Comment(); ok {
 		_spec.SetField(setting.FieldComment, field.TypeString, value)
 	}
+	if _u.mutation.CommentCleared() {
+		_spec.ClearField(setting.FieldComment, field.TypeString)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{setting.Label}
@@ -226,6 +235,12 @@ func (_u *SettingUpdateOne) SetNillableComment(v *string) *SettingUpdateOne {
 	if v != nil {
 		_u.SetComment(*v)
 	}
+	return _u
+}
+
+// ClearComment clears the value of the "comment" field.
+func (_u *SettingUpdateOne) ClearComment() *SettingUpdateOne {
+	_u.mutation.ClearComment()
 	return _u
 }
 
@@ -343,6 +358,9 @@ func (_u *SettingUpdateOne) sqlSave(ctx context.Context) (_node *Setting, err er
 	}
 	if value, ok := _u.mutation.Comment(); ok {
 		_spec.SetField(setting.FieldComment, field.TypeString, value)
+	}
+	if _u.mutation.CommentCleared() {
+		_spec.ClearField(setting.FieldComment, field.TypeString)
 	}
 	_node = &Setting{config: _u.config}
 	_spec.Assign = _node.assignValues

@@ -21,7 +21,7 @@ func (Setting) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("key").NotEmpty().MaxLen(255).Comment("设置键"),
 		field.String("value").NotEmpty().MaxLen(255).Comment("设置值"),
-		field.String("comment").MaxLen(512).Comment("设置注释"),
+		field.String("comment").MaxLen(512).Optional().Comment("设置注释"),
 	}
 }
 

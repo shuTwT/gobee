@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import BaseLayout from '@/layout/index.vue'
 import remainingRouter from "./modules/remaining";
+import { useSettingsStoreHook } from '@/stores/modules/settings';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const modules: Record<string, any> = import.meta.glob(
@@ -27,10 +28,18 @@ const router = createRouter({
   routes:constantMenus
 })
 
-const whiteList = ['/login']
+const whiteList = ['/login','/initialize']
 
 router.beforeEach((to,_from,next)=>{
-  if(to.path !== '/login'){
+
+  if(to.path === '/initialize'){
+    const settingsStore = useSettingsStoreHook()
+    if(settingsStore.initialized){
+      next({path:'/'})
+    }else{
+      next()
+    }
+  }else if(to.path !== '/login'){
     if(whiteList.indexOf(to.path) !== -1){
       next()
     }else{
