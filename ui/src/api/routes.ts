@@ -1,6 +1,6 @@
-import axios from "axios"
-import { BASE_URL } from "./utils"
+import { http } from "@/utils/http";
+import { BASE_URL, type ApiResponse } from "./utils"
 
 export const getAsyncRoutes=()=>{
-  return axios.get(`${BASE_URL}/v1/routes`)
+  return http.get<ApiResponse<any>, any>(`${BASE_URL}/v1/routes`)
 }

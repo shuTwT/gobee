@@ -22,5 +22,5 @@ import (
 func main() {
 	app := cmd.InitializeApp()
 	defer database.CloseDB()
-	app.Listen(":3000")
+	app.Listen(":13000")
 }

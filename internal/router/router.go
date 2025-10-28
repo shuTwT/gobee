@@ -5,6 +5,7 @@ import (
 	initialize_handler "gobee/internal/handlers/initialize"
 	paychannel_handler "gobee/internal/handlers/pay_channel"
 	payorder_handler "gobee/internal/handlers/pay_order"
+	route_handler "gobee/internal/handlers/route"
 	setting_handler "gobee/internal/handlers/setting"
 	"gobee/internal/middleware"
 
@@ -36,6 +37,7 @@ func Initialize(router *fiber.App) {
 					"message": "Hello, World!",
 				})
 			})
+			apiV1.Get("/routes", route_handler.GetRoutes)
 
 			// 系统设置接口
 			apiV1.Get("/settings", setting_handler.GetSettings)

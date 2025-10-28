@@ -3,12 +3,14 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { NForm, NFormItem, NInput, NButton, NCard, NIcon, NDropdown, NDivider, NSpace, NText } from 'naive-ui'
 import { LogoGithub, LogoGoogle, Language } from '@vicons/ionicons5'
-import * as authService from '@/api/auth'
+import { useUserStore } from '@/stores/modules/user'
+import { initRouter } from '@/router/utils'
 
+const message = useMessage()
 const router = useRouter()
 
 const loginForm = reactive({
-  username: '',
+  email: '',
   password: '',
   remember: false
 })
@@ -22,33 +24,27 @@ const languageOptions = [
 const loading = ref(false)
 
 const handleLogin = async () => {
-  if (!loginForm.username || !loginForm.password) {
+  if (!loginForm.email || !loginForm.password) {
     alert('请输入用户名和密码')
     return
   }
 
   loading.value = true
-  try {
-    const response = await authService.login(loginForm)
 
-    const result = response.data
+    useUserStore().loginByUsername({...loginForm}).then(()=>{
+      return initRouter().then(()=>{
+        router.push('/console').then(()=>{
+          message.success('登录成功')
+        })
+      }).catch((err:Error)=>{
+        console.error(err)
+      })
+    }).catch((err:Error)=>{
+      console.error(err)
+    }).finally(()=>{
+      loading.value=false
+    })
 
-    if (response.status === 200) {
-      localStorage.setItem('token', result.token)
-      localStorage.setItem('user', JSON.stringify(result.user))
-      router.push('/console')
-    } else {
-      throw new Error(result.error || '登录失败')
-    }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      alert(error.message)
-    } else {
-      alert('登录失败')
-    }
-  } finally {
-    loading.value = false
-  }
 }
 
 const handleSocialLogin = (provider: string) => {
@@ -102,10 +98,10 @@ onMounted(() => {
 
           <!-- 用户名密码登录 -->
           <n-form :model="loginForm" class="space-y-4">
-            <n-form-item label="用户名" path="username">
+            <n-form-item label="邮箱" path="email">
               <n-input
-                v-model:value="loginForm.username"
-                placeholder="请输入用户名"
+                v-model:value="loginForm.email"
+                placeholder="请输入邮箱"
                 size="large"
                 clearable
               >

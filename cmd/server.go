@@ -6,6 +6,7 @@ import (
 	"gobee/pkg"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/swagger"
 	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
@@ -39,6 +40,7 @@ func InitializeApp() *fiber.App {
 		// Ability to change OAuth2 redirect uri location
 		OAuth2RedirectUrl: "http://localhost:3000/swagger/oauth2-redirect.html",
 	}))
+	app.Use(logger.New())
 
 	router.Initialize(app)
 

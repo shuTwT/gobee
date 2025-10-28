@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import hljs from 'highlight.js';
+import hljs from 'highlight.js'
+
 </script>
 
 <template>
   <n-config-provider class="w-full h-full" :hljs="hljs">
-    <n-message-provider>
-      <n-modal-provider>
-        <n-dialog-provider>
-          <RouterView />
-        </n-dialog-provider>
-      </n-modal-provider>
-    </n-message-provider>
+    <n-notification-provider>
+      <n-message-provider>
+        <n-modal-provider>
+          <n-dialog-provider>
+            <RouterView />
+          </n-dialog-provider>
+        </n-modal-provider>
+      </n-message-provider>
+    </n-notification-provider>
   </n-config-provider>
 </template>
 

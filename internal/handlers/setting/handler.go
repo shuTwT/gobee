@@ -2,6 +2,7 @@ package setting_handler
 
 import (
 	"gobee/internal/database"
+	"gobee/internal/model"
 	"gobee/internal/services/setting"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,23 +23,17 @@ func GetSettings(c *fiber.Ctx) error {
 	// 获取所有系统设置
 	settings, err := setting.GetAllSettings(ctx, client)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
 	// 检查系统是否已初始化
 	initialized, err := setting.IsSystemInitialized(ctx, client)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(fiber.Map{
-		"data": fiber.Map{
-			"settings":    settings,
-			"initialized": initialized,
-		},
-	})
+	return c.JSON(model.NewSuccess("success", fiber.Map{
+		"settings":    settings,
+		"initialized": initialized,
+	}))
 }

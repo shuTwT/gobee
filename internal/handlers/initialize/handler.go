@@ -8,6 +8,7 @@ import (
 	"gobee/internal/services/setting"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 // InitializeRequest 定义了初始化请求的结构
@@ -39,32 +40,33 @@ type InitializeRequest struct {
 func Initialize(c *fiber.Ctx) error {
 	var req InitializeRequest
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
 	if req.AdminPassword != req.ConfirmPassword {
-		return c.Status(fiber.StatusBadRequest).JSON(model.NewError(fiber.StatusBadRequest, "两次输入的密码不一致"))
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "两次输入的密码不一致"))
 	}
 
 	// 检查系统是否已初始化
 	isInitialized, err := setting.IsSystemInitialized(c.UserContext(), database.DB)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("检查系统初始化状态失败: %v", err)))
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("检查系统初始化状态失败: %v", err)))
 	}
 	if isInitialized {
-		return c.Status(fiber.StatusConflict).JSON(model.NewError(fiber.StatusConflict, "系统已初始化，请勿重复操作"))
+		return c.JSON(model.NewError(fiber.StatusConflict, "系统已初始化，请勿重复操作"))
 	}
 
+	log.Info(fmt.Sprintf("初始化请求参数: %s", req.DBType))
 	// 根据数据库类型进行参数验证
 	switch req.DBType {
 	case "mysql", "postgres":
 		if req.DBHost == "" || req.DBPort == 0 || req.DBUser == "" || req.DBPassword == "" || req.DBName == "" {
-			return c.Status(fiber.StatusBadRequest).JSON(model.NewError(fiber.StatusBadRequest, "MySQL/PostgreSQL数据库连接信息不完整"))
+			return c.JSON(model.NewError(fiber.StatusBadRequest, "MySQL/PostgreSQL数据库连接信息不完整"))
 		}
 	case "sqlite":
 		// SQLite不需要额外的连接信息，但可以接受DBName作为文件路径
 	default:
-		return c.Status(fiber.StatusBadRequest).JSON(model.NewError(fiber.StatusBadRequest, "不支持的数据库类型"))
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "不支持的数据库类型"))
 	}
 
 	// 数据库初始化
@@ -101,14 +103,14 @@ func Initialize(c *fiber.Ctx) error {
 		Email:    req.AdminEmail,
 	})
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("创建超级管理员账户失败: %v", err)))
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("创建超级管理员账户失败: %v", err)))
 	}
 	fmt.Printf("超级管理员账户创建成功: %s\n", adminUser.Name)
 
 	// 标记系统已初始化
 	if err := setting.SetSystemInitialized(c.UserContext(), database.DB); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("标记系统初始化状态失败: %v", err)))
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("标记系统初始化状态失败: %v", err)))
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "系统初始化成功"})
+	return c.JSON(model.NewSuccess("系统初始化成功", nil))
 }

@@ -1,181 +1,244 @@
 <script setup lang="ts">
 import type { MenuOption } from 'naive-ui'
 import { ProLayout, useLayoutMenu } from 'pro-naive-ui'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/modules/app'
 import { storeToRefs } from 'pinia'
 import { usePermissionStore } from '@/stores/modules/permission'
+import { useUserStore } from '@/stores/modules/user'
 
+const router = useRouter()
 const appStore = useAppStore()
 const permissionStore = usePermissionStore()
-const {wholeMenus} = storeToRefs(permissionStore)
 
-console.log(wholeMenus.value)
+const userStore = useUserStore()
+const message = useMessage()
 
-const menuOptions: MenuOption[] = [
-  {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'Home'
-          },
-        },
-        {
-          default:()=>'仪表盘'
-        }
-      )
-    },
-    key: 'dashboard',
-  },
-  {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'ModelSchemaManagement'
-          },
-        },
-        {
-          default:()=>'内容模型管理'
-        }
-      )
-    },
-    key: 'content-model-management',
-  },
-  {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'ModelContentManagement'
-          },
-        },
-        {
-          default:()=>'内容管理'
-        }
-      )
-    },
-    key: 'content-management',
-  },
-  {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'PayChannelManagement'
-          },
-        },
-        {
-          default:()=>'支付渠道'
-        }
-      )
-    },
-    key: 'payment-channel',
-  },
-  {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'PayOrderManagement'
-          },
-        },
-        {
-          default:()=>'支付订单'
-        }
-      )
-    },
-    key: 'payment-order',
-  },
-  {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'UserManagement'
-          },
-        },
-        {
-          default:()=>'用户权限管理'
-        }
-      )
-    },
-    key: 'user-management',
-  },
-  {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'WebhookManagement'
-          },
-        },
-        {
-          default:()=>'webhook'
-        }
-      )
-    },
-    key: 'webhook-management',
-  },
-  {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'FileManagement',
-            params:{}
-          },
-        },
-        {
-          default:()=>'文件管理'
-        }
-      )
-    },
-    key: 'file-management',
-  },
-    {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'ApiManagement'
-          },
-        },
-        {
-          default:()=>'API管理'
-        }
-      )
-    },
-    key: 'api-management',
-  },
-  {
-    label: () => {
-      return h(RouterLink,
-        {
-          to:{
-            name:'SystemSettings'
-          },
-        },
-        {
-          default:()=>'系统设置'
-        }
-      )
-    },
-    key: 'system-settings',
-  },
+window.$message = useMessage()
+window.$dialog = useDialog()
+window.$notification = useNotification()
 
-]
+const menuData = computed(() => permissionStore.wholeMenus)
 
-const {isMobile,showFooter,showTabbar,showLogo,showSidebar,showNav,collapsed,navFixed,footerFixed,layoutMode}  = storeToRefs(appStore)
+// const menuOptions = shallowRef<MenuOption[]>([
+//   {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'Home'
+//           },
+//         },
+//         {
+//           default:()=>'仪表盘'
+//         }
+//       )
+//     },
+//     key: 'dashboard',
+//   },
+//   {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'ModelSchemaManagement'
+//           },
+//         },
+//         {
+//           default:()=>'内容模型管理'
+//         }
+//       )
+//     },
+//     key: 'content-model-management',
+//   },
+//   {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'ModelContentManagement'
+//           },
+//         },
+//         {
+//           default:()=>'内容管理'
+//         }
+//       )
+//     },
+//     key: 'content-management',
+//   },
+//   {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'PayChannelManagement'
+//           },
+//         },
+//         {
+//           default:()=>'支付渠道'
+//         }
+//       )
+//     },
+//     key: 'payment-channel',
+//   },
+//   {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'PayOrderManagement'
+//           },
+//         },
+//         {
+//           default:()=>'支付订单'
+//         }
+//       )
+//     },
+//     key: 'payment-order',
+//   },
+//   {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'UserManagement'
+//           },
+//         },
+//         {
+//           default:()=>'用户权限管理'
+//         }
+//       )
+//     },
+//     key: 'user-management',
+//   },
+//   {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'WebhookManagement'
+//           },
+//         },
+//         {
+//           default:()=>'webhook'
+//         }
+//       )
+//     },
+//     key: 'webhook-management',
+//   },
+//   {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'FileManagement',
+//             params:{}
+//           },
+//         },
+//         {
+//           default:()=>'文件管理'
+//         }
+//       )
+//     },
+//     key: 'file-management',
+//   },
+//     {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'ApiManagement'
+//           },
+//         },
+//         {
+//           default:()=>'API管理'
+//         }
+//       )
+//     },
+//     key: 'api-management',
+//   },
+//   {
+//     label: () => {
+//       return h(RouterLink,
+//         {
+//           to:{
+//             name:'SystemSettings'
+//           },
+//         },
+//         {
+//           default:()=>'系统设置'
+//         }
+//       )
+//     },
+//     key: 'system-settings',
+//   },
+
+// ])
+
+const menuOptions = computed<MenuOption[]>(() =>
+  menuData.value.map((item: any) => {
+    if (item.children && item.children.length) {
+      return {
+        label: item.meta?.title || item.name,
+        key: item.name,
+        children: item.children.map((child: any) => ({
+          label: () => {
+            return h(
+              RouterLink,
+              {
+                to: {
+                  name: child.name,
+                },
+              },
+              {
+                default: () => child.meta?.title || child.name,
+              },
+            )
+          },
+          key: child.name,
+        })),
+      }
+    }
+    return {
+      label: () => {
+        return h(
+          RouterLink,
+          {
+            to: {
+              name: item.name,
+            },
+          },
+          {
+            default: () => item.meta?.title || item.name,
+          },
+        )
+      },
+      key: item.name,
+    }
+  }),
+)
+
+const {
+  isMobile,
+  showFooter,
+  showTabbar,
+  showLogo,
+  showSidebar,
+  showNav,
+  collapsed,
+  navFixed,
+  footerFixed,
+  layoutMode,
+} = storeToRefs(appStore)
 const navHeight = ref(50)
 const sidebarWidth = ref(224)
 const tabbarHeight = ref(38)
 const footerHeight = ref(50)
 const sidebarCollapsedWidth = ref(58)
+const loading = computed(() => menuData.value.length === 0)
 
 const { layout, verticalLayout } = useLayoutMenu({
-  mode:layoutMode,
+  mode: layoutMode,
   menus: menuOptions,
 })
 
@@ -191,25 +254,34 @@ const hasHorizontalMenu = computed(() =>
 function logout() {
   if (confirm('确定要登出吗？')) {
     // 发送登出请求
-    fetch('/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    userStore.logOut().then(() => {
+      router.push('/login').then(() => {
+        message.success('登出成功')
+      })
     })
-      .then((response) => {
-        if (response.ok) {
-          window.location.href = '/login'
-        } else {
-          alert('登出失败，请重试')
-        }
-      })
-      .catch((error) => {
-        console.error('登出错误:', error)
-        alert('登出失败，请重试')
-      })
   }
 }
+
+onMounted(() => {
+  // console.log(router.getRoutes())
+  console.log(menuData.value)
+  console.log(permissionStore.flatteningRoutes)
+  // menuOptions.value = menuData.value.map((item:any)=>({
+  //   label: () => {
+  //     return h(RouterLink,
+  //       {
+  //         to:{
+  //           name:item.path
+  //         },
+  //       },
+  //       {
+  //         default:()=>item.name
+  //       }
+  //     )
+  //   },
+  //   key: item.path,
+  // }))
+})
 </script>
 <template>
   <div class="h-dvh w-dvw">
@@ -239,7 +311,8 @@ function logout() {
             <n-button type="primary" size="small"> 菜单 </n-button>
           </template>
           <n-scrollbar class="flex-[1_0_0]">
-            <n-menu v-bind="verticalLayout.verticalMenuProps" :collapsed="false" />
+            <n-spin v-if="loading" />
+            <n-menu v-else v-bind="verticalLayout.verticalMenuProps" :collapsed="false" />
           </n-scrollbar>
         </n-popover>
       </template>

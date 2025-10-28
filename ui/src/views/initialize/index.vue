@@ -230,7 +230,7 @@
               </div>
               <div class="mb-4">
                 <label for="admin-password-confirm" class="block text-sm font-medium text-gray-700 mb-1">确认密码</label>
-                <input type="password" id="admin-password-confirm" v-model="formData.admin.passwordConfirm" required
+                <input type="password" id="admin-password-confirm" v-model="formData.admin.confirmPassword" required
                   class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                   placeholder="请再次输入密码">
                 <p v-if="passwordError" class="mt-1 text-sm text-red-600">{{ passwordError }}</p>
@@ -257,8 +257,9 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { initialize } from '@/api/initialize';
 
+const message = useMessage()
 const router = useRouter();
 const currentStep = ref(1);
 const passwordError = ref('');
@@ -286,7 +287,7 @@ const formData = reactive({
     username: '',
     email: '',
     password: '',
-    passwordConfirm: ''
+    confirmPassword: ''
   }
 });
 
@@ -304,16 +305,16 @@ const prevStep = () => {
 
 const validateForm = () => {
   // 验证密码
-  if (formData.admin.password !== formData.admin.passwordConfirm) {
+  if (formData.admin.password !== formData.admin.confirmPassword) {
     passwordError.value = '两次输入的密码不一致，请重新输入';
     return false;
   }
-  
+
   if (formData.admin.password.length < 8) {
     passwordError.value = '密码长度至少为8位';
     return false;
   }
-  
+
   passwordError.value = '';
   return true;
 };
@@ -322,48 +323,49 @@ const submitForm = async () => {
   if (!validateForm()) {
     return;
   }
-  
+
   try {
     // 准备提交的数据
     const submitData: any = {
-      db_type: formData.dbType,
-      admin_username: formData.admin.username,
-      admin_email: formData.admin.email,
-      admin_password: formData.admin.password,
-      admin_password_confirm: formData.admin.passwordConfirm
+      dbType: formData.dbType,
+      adminUsername: formData.admin.username,
+      adminEmail: formData.admin.email,
+      adminPassword: formData.admin.password,
+      confirmPassword: formData.admin.confirmPassword
     };
-    
+
     // 根据数据库类型添加相应的参数
     if (formData.dbType === 'sqlite') {
-      submitData.sqlite_file = formData.sqlite.file;
+      submitData.sqliteFile = formData.sqlite.file;
     } else if (formData.dbType === 'mysql') {
-      submitData.mysql_host = formData.mysql.host;
-      submitData.mysql_port = formData.mysql.port;
-      submitData.mysql_user = formData.mysql.user;
-      submitData.mysql_password = formData.mysql.password;
-      submitData.mysql_database = formData.mysql.database;
+      submitData.mysqlHost = formData.mysql.host;
+      submitData.mysqlPort = formData.mysql.port;
+      submitData.mysqlUser = formData.mysql.user;
+      submitData.mysqlPassword = formData.mysql.password;
+      submitData.mysqlDatabase = formData.mysql.database;
     } else if (formData.dbType === 'postgresql') {
-      submitData.pg_host = formData.postgresql.host;
-      submitData.pg_port = formData.postgresql.port;
-      submitData.pg_user = formData.postgresql.user;
-      submitData.pg_password = formData.postgresql.password;
-      submitData.pg_database = formData.postgresql.database;
+      submitData.pgHost = formData.postgresql.host;
+      submitData.pgPort = formData.postgresql.port;
+      submitData.pgUser = formData.postgresql.user;
+      submitData.pgPassword = formData.postgresql.password;
+      submitData.pgDatabase = formData.postgresql.database;
     }
-    
+
     // 发送请求
-    const response = await axios.post('/initialize', submitData);
-    
+    const response = await initialize(submitData);
+
     // 处理响应
-    if (response.data.success) {
+    if (response.code === 200) {
       // 初始化成功，跳转到登录页
       router.push('/login');
     } else {
       // 显示错误信息
-      alert(response.data.message || '初始化失败，请重试');
+      message.error(response.msg || '初始化失败，请重试');
     }
   } catch (error) {
     console.error('初始化失败:', error);
-    alert('初始化失败，请检查网络连接或联系管理员');
+    message.error('初始化失败，请检查网络连接或联系管理员');
+
   }
 };
 </script>

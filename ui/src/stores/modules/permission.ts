@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import {constantMenus} from "@/router"
 import { store } from '../index'
-import {ascending, filterTree} from "@/router/utils"
+import {ascending, filterTree, filterNoPermissionTree, formatFlatteningRoutes} from "@/router/utils"
+import type { RouteRecordRaw } from "vue-router";
 
 export const usePermissionStore = defineStore('permission',()=>{
   /**
@@ -20,9 +21,14 @@ export const usePermissionStore = defineStore('permission',()=>{
    * 缓存页面keepAlive
    */
   const cachePageList= ref([])
-  function handleWholeMenus(menus: unknown[]){
+  function handleWholeMenus(routes: RouteRecordRaw[]){
     //!TODO 用户角色过滤无权限菜单
-    wholeMenus.value = filterTree(ascending(menus))
+    wholeMenus.value = filterNoPermissionTree(
+      filterTree(ascending(constantMenusRef.value.concat(routes)))
+    )
+    flatteningRoutes.value = formatFlatteningRoutes(
+      constantMenusRef.value.concat(routes)
+    )
   }
   /**
    * 清空缓存页面
