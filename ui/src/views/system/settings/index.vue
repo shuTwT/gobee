@@ -1122,7 +1122,7 @@ onMounted(() => {
 }
 
 .settings-card {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
 }
 
@@ -1145,7 +1145,7 @@ onMounted(() => {
   .settings-container {
     padding: 16px;
   }
-  
+
   .tab-content {
     padding: 16px 0;
   }

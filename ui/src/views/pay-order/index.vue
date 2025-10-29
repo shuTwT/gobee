@@ -41,17 +41,17 @@
           />
         </div>
         <div class="action-section">
-          <n-button @click="handleRefresh" style="margin-right: 12px">
-            <template #icon>
-              <n-icon><refresh-outline /></n-icon>
-            </template>
-            刷新
-          </n-button>
-          <n-button type="primary" @click="exportOrders">
+          <n-button type="primary" @click="exportOrders" style="margin-right: 12px">
             <template #icon>
               <n-icon><download-outline /></n-icon>
             </template>
             导出订单
+          </n-button>
+          <n-button @click="handleRefresh">
+            <template #icon>
+              <n-icon><refresh-outline /></n-icon>
+            </template>
+            刷新
           </n-button>
         </div>
       </div>
@@ -104,18 +104,15 @@
     </n-card>
 
     <!-- 订单详情模态框 -->
-    <n-modal
-      v-model:show="showDetailModal"
-      preset="dialog"
-      title="订单详情"
-      style="width: 800px"
-    >
+    <n-modal v-model:show="showDetailModal" preset="dialog" title="订单详情" style="width: 800px">
       <div class="order-detail-content" v-if="currentOrder">
         <n-tabs type="line" animated>
           <n-tab-pane name="basic" tab="基本信息">
             <n-descriptions :columns="2" bordered>
               <n-descriptions-item label="订单ID">{{ currentOrder.id }}</n-descriptions-item>
-              <n-descriptions-item label="商户订单号">{{ currentOrder.merchantOrderNo }}</n-descriptions-item>
+              <n-descriptions-item label="商户订单号">{{
+                currentOrder.merchantOrderNo
+              }}</n-descriptions-item>
               <n-descriptions-item label="订单标题">{{ currentOrder.title }}</n-descriptions-item>
               <n-descriptions-item label="订单金额">
                 <n-text type="primary" strong>¥{{ currentOrder.amount }}</n-text>
@@ -123,25 +120,47 @@
               <n-descriptions-item label="实际支付">
                 <n-text type="success" strong>¥{{ currentOrder.paidAmount }}</n-text>
               </n-descriptions-item>
-              <n-descriptions-item label="支付渠道">{{ currentOrder.channelName }}</n-descriptions-item>
+              <n-descriptions-item label="支付渠道">{{
+                currentOrder.channelName
+              }}</n-descriptions-item>
               <n-descriptions-item label="订单状态">
-                <n-tag :type="getStatusType(currentOrder.status)">{{ getStatusText(currentOrder.status) }}</n-tag>
+                <n-tag :type="getStatusType(currentOrder.status)">{{
+                  getStatusText(currentOrder.status)
+                }}</n-tag>
               </n-descriptions-item>
-              <n-descriptions-item label="创建时间">{{ currentOrder.createdAt }}</n-descriptions-item>
-              <n-descriptions-item label="支付时间" v-if="currentOrder.paidAt">{{ currentOrder.paidAt }}</n-descriptions-item>
-              <n-descriptions-item label="过期时间">{{ currentOrder.expireAt }}</n-descriptions-item>
+              <n-descriptions-item label="创建时间">{{
+                currentOrder.createdAt
+              }}</n-descriptions-item>
+              <n-descriptions-item label="支付时间" v-if="currentOrder.paidAt">{{
+                currentOrder.paidAt
+              }}</n-descriptions-item>
+              <n-descriptions-item label="过期时间">{{
+                currentOrder.expireAt
+              }}</n-descriptions-item>
               <n-descriptions-item label="用户ID">{{ currentOrder.userId }}</n-descriptions-item>
             </n-descriptions>
           </n-tab-pane>
 
           <n-tab-pane name="payment" tab="支付信息">
             <n-descriptions :columns="2" bordered>
-              <n-descriptions-item label="支付流水号" v-if="currentOrder.tradeNo">{{ currentOrder.tradeNo }}</n-descriptions-item>
-              <n-descriptions-item label="第三方订单号" v-if="currentOrder.thirdPartyOrderNo">{{ currentOrder.thirdPartyOrderNo }}</n-descriptions-item>
-              <n-descriptions-item label="支付状态">{{ getStatusText(currentOrder.status) }}</n-descriptions-item>
-              <n-descriptions-item label="支付时间" v-if="currentOrder.paidAt">{{ currentOrder.paidAt }}</n-descriptions-item>
-              <n-descriptions-item label="支付金额" v-if="currentOrder.paidAmount">¥{{ currentOrder.paidAmount }}</n-descriptions-item>
-              <n-descriptions-item label="手续费" v-if="currentOrder.fee">¥{{ currentOrder.fee }}</n-descriptions-item>
+              <n-descriptions-item label="支付流水号" v-if="currentOrder.tradeNo">{{
+                currentOrder.tradeNo
+              }}</n-descriptions-item>
+              <n-descriptions-item label="第三方订单号" v-if="currentOrder.thirdPartyOrderNo">{{
+                currentOrder.thirdPartyOrderNo
+              }}</n-descriptions-item>
+              <n-descriptions-item label="支付状态">{{
+                getStatusText(currentOrder.status)
+              }}</n-descriptions-item>
+              <n-descriptions-item label="支付时间" v-if="currentOrder.paidAt">{{
+                currentOrder.paidAt
+              }}</n-descriptions-item>
+              <n-descriptions-item label="支付金额" v-if="currentOrder.paidAmount"
+                >¥{{ currentOrder.paidAmount }}</n-descriptions-item
+              >
+              <n-descriptions-item label="手续费" v-if="currentOrder.fee"
+                >¥{{ currentOrder.fee }}</n-descriptions-item
+              >
               <n-descriptions-item label="失败原因" v-if="currentOrder.failReason" :span="2">
                 <n-text type="error">{{ currentOrder.failReason }}</n-text>
               </n-descriptions-item>
@@ -150,10 +169,18 @@
 
           <n-tab-pane name="extra" tab="扩展信息">
             <n-descriptions :columns="1" bordered>
-              <n-descriptions-item label="客户端IP">{{ currentOrder.clientIp }}</n-descriptions-item>
-              <n-descriptions-item label="用户代理">{{ currentOrder.userAgent }}</n-descriptions-item>
-              <n-descriptions-item label="回调地址">{{ currentOrder.notifyUrl }}</n-descriptions-item>
-              <n-descriptions-item label="跳转地址">{{ currentOrder.returnUrl }}</n-descriptions-item>
+              <n-descriptions-item label="客户端IP">{{
+                currentOrder.clientIp
+              }}</n-descriptions-item>
+              <n-descriptions-item label="用户代理">{{
+                currentOrder.userAgent
+              }}</n-descriptions-item>
+              <n-descriptions-item label="回调地址">{{
+                currentOrder.notifyUrl
+              }}</n-descriptions-item>
+              <n-descriptions-item label="跳转地址">{{
+                currentOrder.returnUrl
+              }}</n-descriptions-item>
               <n-descriptions-item label="扩展参数" v-if="currentOrder.extra">
                 <n-code :code="formatExtra(currentOrder.extra)" language="json" :word-wrap="true" />
               </n-descriptions-item>
@@ -171,11 +198,7 @@
           >
             取消订单
           </n-button>
-          <n-button
-            v-if="currentOrder?.status === 'paid'"
-            type="error"
-            @click="handleRefundOrder"
-          >
+          <n-button v-if="currentOrder?.status === 'paid'" type="error" @click="handleRefundOrder">
             退款
           </n-button>
         </n-space>
@@ -196,7 +219,7 @@ import {
   CashOutline,
   TrendingUpOutline,
   TimeOutline,
-  EyeOutline
+  EyeOutline,
 } from '@vicons/ionicons5'
 
 const message = useMessage()
@@ -227,7 +250,7 @@ const pagination = reactive({
   onUpdatePageSize: (pageSize: number) => {
     pagination.pageSize = pageSize
     pagination.page = 1
-  }
+  },
 })
 
 // 订单状态选项
@@ -237,7 +260,7 @@ const statusOptions = [
   { label: '支付成功', value: 'paid' },
   { label: '支付失败', value: 'failed' },
   { label: '已取消', value: 'cancelled' },
-  { label: '已退款', value: 'refunded' }
+  { label: '已退款', value: 'refunded' },
 ]
 
 // 支付渠道选项
@@ -247,7 +270,7 @@ const channelOptions = [
   { label: '微信支付', value: 'wechatpay' },
   { label: '银联支付', value: 'unionpay' },
   { label: 'PayPal', value: 'paypal' },
-  { label: 'Stripe', value: 'stripe' }
+  { label: 'Stripe', value: 'stripe' },
 ]
 
 // 今日统计
@@ -255,7 +278,7 @@ const todayStats = reactive({
   total: 0,
   amount: 0,
   successRate: 0,
-  pending: 0
+  pending: 0,
 })
 
 // 订单数据类型
@@ -291,27 +314,28 @@ const filteredOrderList = computed(() => {
   // 关键词搜索
   if (searchKeyword.value) {
     const keyword = searchKeyword.value.toLowerCase()
-    filtered = filtered.filter(order =>
-      order.id.toLowerCase().includes(keyword) ||
-      order.merchantOrderNo.toLowerCase().includes(keyword) ||
-      order.title.toLowerCase().includes(keyword)
+    filtered = filtered.filter(
+      (order) =>
+        order.id.toLowerCase().includes(keyword) ||
+        order.merchantOrderNo.toLowerCase().includes(keyword) ||
+        order.title.toLowerCase().includes(keyword),
     )
   }
 
   // 状态筛选
   if (filterStatus.value) {
-    filtered = filtered.filter(order => order.status === filterStatus.value)
+    filtered = filtered.filter((order) => order.status === filterStatus.value)
   }
 
   // 渠道筛选
   if (filterChannel.value) {
-    filtered = filtered.filter(order => order.channel === filterChannel.value)
+    filtered = filtered.filter((order) => order.channel === filterChannel.value)
   }
 
   // 日期范围筛选
   if (dateRange.value && dateRange.value.length === 2) {
     const [startDate, endDate] = dateRange.value
-    filtered = filtered.filter(order => {
+    filtered = filtered.filter((order) => {
       const orderDate = new Date(order.createdAt).getTime()
       return orderDate >= startDate && orderDate <= endDate
     })
@@ -327,7 +351,7 @@ const getStatusType = (status: string) => {
     paid: 'success',
     failed: 'error',
     cancelled: 'default',
-    refunded: 'info'
+    refunded: 'info',
   }
   return typeMap[status] || 'default'
 }
@@ -339,7 +363,7 @@ const getStatusText = (status: string) => {
     paid: '支付成功',
     failed: '支付失败',
     cancelled: '已取消',
-    refunded: '已退款'
+    refunded: '已退款',
   }
   return textMap[status] || status
 }
@@ -361,32 +385,32 @@ const columns: DataTableColumns<PayOrderItem> = [
     key: 'id',
     width: 180,
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '商户订单号',
     key: 'merchantOrderNo',
     width: 180,
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '订单标题',
     key: 'title',
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '订单金额',
     key: 'amount',
     width: 100,
     render: (row) => {
-      return h(NText, { type: 'primary', strong: true }, ()=>`¥${row.amount}`)
+      return h(NText, { type: 'primary', strong: true }, () => `¥${row.amount}`)
     },
-    sorter: (row1, row2) => row1.amount - row2.amount
+    sorter: (row1, row2) => row1.amount - row2.amount,
   },
   {
     title: '支付金额',
@@ -394,33 +418,33 @@ const columns: DataTableColumns<PayOrderItem> = [
     width: 100,
     render: (row) => {
       if (row.paidAmount > 0) {
-        return h(NText, { type: 'success', strong: true }, ()=>`¥${row.paidAmount}`)
+        return h(NText, { type: 'success', strong: true }, () => `¥${row.paidAmount}`)
       }
-      return h(NText, { type: 'default' }, ()=>'-')
+      return h(NText, { type: 'default' }, () => '-')
     },
-    sorter: (row1, row2) => row1.paidAmount - row2.paidAmount
+    sorter: (row1, row2) => row1.paidAmount - row2.paidAmount,
   },
   {
     title: '支付渠道',
     key: 'channelName',
     width: 120,
     render: (row) => {
-      return h(NTag, { type: 'info' },()=> row.channelName)
-    }
+      return h(NTag, { type: 'info' }, () => row.channelName)
+    },
   },
   {
     title: '订单状态',
     key: 'status',
     width: 100,
     render: (row) => {
-      return h(NTag, { type: getStatusType(row.status) }, ()=>getStatusText(row.status))
-    }
+      return h(NTag, { type: getStatusType(row.status) }, () => getStatusText(row.status))
+    },
   },
   {
     title: '创建时间',
     key: 'createdAt',
     width: 160,
-    sorter: (row1, row2) => new Date(row1.createdAt).getTime() - new Date(row2.createdAt).getTime()
+    sorter: (row1, row2) => new Date(row1.createdAt).getTime() - new Date(row2.createdAt).getTime(),
   },
   {
     title: '支付时间',
@@ -433,7 +457,7 @@ const columns: DataTableColumns<PayOrderItem> = [
       const time1 = row1.paidAt ? new Date(row1.paidAt).getTime() : 0
       const time2 = row2.paidAt ? new Date(row2.paidAt).getTime() : 0
       return time1 - time2
-    }
+    },
   },
   {
     title: '操作',
@@ -446,15 +470,15 @@ const columns: DataTableColumns<PayOrderItem> = [
           size: 'small',
           type: 'primary',
           quaternary: true,
-          onClick: () => viewOrderDetail(row)
+          onClick: () => viewOrderDetail(row),
         },
         {
-          icon: () => h(NIcon, {}, ()=>h(EyeOutline)),
-          default: () => '详情'
-        }
+          icon: () => h(NIcon, {}, () => h(EyeOutline)),
+          default: () => '详情',
+        },
       )
-    }
-  }
+    },
+  },
 ]
 
 // 处理搜索
@@ -478,7 +502,7 @@ const handleCancelOrder = () => {
   if (currentOrder.value && currentOrder.value.status === 'pending') {
     // 模拟API调用
     setTimeout(() => {
-      const order = orderList.value.find(item => item.id === currentOrder.value?.id)
+      const order = orderList.value.find((item) => item.id === currentOrder.value?.id)
       if (order) {
         order.status = 'cancelled'
         order.updatedAt = new Date().toLocaleString('zh-CN')
@@ -494,7 +518,7 @@ const handleRefundOrder = () => {
   if (currentOrder.value && currentOrder.value.status === 'paid') {
     // 模拟API调用
     setTimeout(() => {
-      const order = orderList.value.find(item => item.id === currentOrder.value?.id)
+      const order = orderList.value.find((item) => item.id === currentOrder.value?.id)
       if (order) {
         order.status = 'refunded'
         order.updatedAt = new Date().toLocaleString('zh-CN')
@@ -518,18 +542,17 @@ const handleRefresh = () => {
 // 计算今日统计
 const calculateTodayStats = () => {
   const today = new Date().toDateString()
-  const todayOrders = orderList.value.filter(order =>
-    new Date(order.createdAt).toDateString() === today
+  const todayOrders = orderList.value.filter(
+    (order) => new Date(order.createdAt).toDateString() === today,
   )
 
   todayStats.total = todayOrders.length
   todayStats.amount = todayOrders.reduce((sum, order) => sum + order.paidAmount, 0)
-  todayStats.pending = todayOrders.filter(order => order.status === 'pending').length
+  todayStats.pending = todayOrders.filter((order) => order.status === 'pending').length
 
-  const successOrders = todayOrders.filter(order => order.status === 'paid')
-  todayStats.successRate = todayOrders.length > 0
-    ? (successOrders.length / todayOrders.length) * 100
-    : 0
+  const successOrders = todayOrders.filter((order) => order.status === 'paid')
+  todayStats.successRate =
+    todayOrders.length > 0 ? (successOrders.length / todayOrders.length) * 100 : 0
 }
 
 // 加载订单列表
@@ -537,7 +560,7 @@ const loadOrderList = async () => {
   loading.value = true
   try {
     // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 800))
+    await new Promise((resolve) => setTimeout(resolve, 800))
 
     // 模拟数据
     orderList.value = [
@@ -545,8 +568,8 @@ const loadOrderList = async () => {
         id: 'ORD202401150001',
         merchantOrderNo: 'MER202401150001',
         title: 'VIP会员年费',
-        amount: 299.00,
-        paidAmount: 299.00,
+        amount: 299.0,
+        paidAmount: 299.0,
         fee: 2.99,
         channel: 'alipay',
         channelName: '支付宝',
@@ -562,13 +585,13 @@ const loadOrderList = async () => {
         createdAt: '2024-01-15 14:30:00',
         paidAt: '2024-01-15 14:31:25',
         expireAt: '2024-01-15 15:00:00',
-        updatedAt: '2024-01-15 14:31:25'
+        updatedAt: '2024-01-15 14:31:25',
       },
       {
         id: 'ORD202401150002',
         merchantOrderNo: 'MER202401150002',
         title: '月度会员',
-        amount: 29.90,
+        amount: 29.9,
         paidAmount: 0,
         fee: 0,
         channel: 'wechatpay',
@@ -582,13 +605,13 @@ const loadOrderList = async () => {
         extra: JSON.stringify({ product_id: 'MONTH001', quantity: 1 }, null, 2),
         createdAt: '2024-01-15 14:35:00',
         expireAt: '2024-01-15 15:05:00',
-        updatedAt: '2024-01-15 14:35:00'
+        updatedAt: '2024-01-15 14:35:00',
       },
       {
         id: 'ORD202401150003',
         merchantOrderNo: 'MER202401150003',
         title: '高级功能包',
-        amount: 99.00,
+        amount: 99.0,
         paidAmount: 0,
         fee: 0,
         channel: 'alipay',
@@ -603,14 +626,14 @@ const loadOrderList = async () => {
         extra: JSON.stringify({ product_id: 'ADV001', quantity: 1 }, null, 2),
         createdAt: '2024-01-15 14:40:00',
         expireAt: '2024-01-15 15:10:00',
-        updatedAt: '2024-01-15 14:45:30'
+        updatedAt: '2024-01-15 14:45:30',
       },
       {
         id: 'ORD202401150004',
         merchantOrderNo: 'MER202401150004',
         title: '企业版套餐',
-        amount: 999.00,
-        paidAmount: 999.00,
+        amount: 999.0,
+        paidAmount: 999.0,
         fee: 9.99,
         channel: 'stripe',
         channelName: 'Stripe',
@@ -626,15 +649,15 @@ const loadOrderList = async () => {
         createdAt: '2024-01-15 14:50:00',
         paidAt: '2024-01-15 14:51:15',
         expireAt: '2024-01-15 15:20:00',
-        updatedAt: '2024-01-15 15:30:45'
+        updatedAt: '2024-01-15 15:30:45',
       },
       {
         id: 'ORD202401150005',
         merchantOrderNo: 'MER202401150005',
         title: '季度会员',
-        amount: 79.90,
-        paidAmount: 79.90,
-        fee: 0.80,
+        amount: 79.9,
+        paidAmount: 79.9,
+        fee: 0.8,
         channel: 'unionpay',
         channelName: '银联支付',
         status: 'paid',
@@ -649,8 +672,8 @@ const loadOrderList = async () => {
         createdAt: '2024-01-15 15:00:00',
         paidAt: '2024-01-15 15:02:30',
         expireAt: '2024-01-15 15:30:00',
-        updatedAt: '2024-01-15 15:02:30'
-      }
+        updatedAt: '2024-01-15 15:02:30',
+      },
     ]
 
     // 计算今日统计
@@ -670,7 +693,6 @@ onMounted(() => {
 <style scoped>
 .pay-order-container {
   padding: 24px;
-  min-height: 100vh;
   background-color: #f5f7fa;
 }
 

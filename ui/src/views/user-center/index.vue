@@ -67,7 +67,7 @@ const personalizedSetting = ref({
             </div>
             <div class="mb-4">
                 <n-form-item label="接收通知">
-                  <n-checkbox v-model:value="personalizedSetting.notifications"/>
+                  <n-checkbox v-model:checked="personalizedSetting.notifications"/>
                 </n-form-item>
             </div>
             <div class="flex justify-end">

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { MenuOption } from 'naive-ui'
-import { ProLayout, useLayoutMenu } from 'pro-naive-ui'
-import { RouterLink, useRouter } from 'vue-router'
+import { ProLayout, useLayoutMenu,type ProLayoutProps } from 'pro-naive-ui'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/modules/app'
 import { storeToRefs } from 'pinia'
 import { usePermissionStore } from '@/stores/modules/permission'
 import { useUserStore } from '@/stores/modules/user'
+import { remainingPaths } from '@/router'
 
+const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
 const permissionStore = usePermissionStore()
@@ -18,166 +20,17 @@ window.$message = useMessage()
 window.$dialog = useDialog()
 window.$notification = useNotification()
 
+type LayoutThemeOverrides = NonNullable<ProLayoutProps['builtinThemeOverrides']>
+
+const layoutThemeOverrides :LayoutThemeOverrides= {
+  color:'#f5f7fa'
+}
+
 const menuData = computed(() => permissionStore.wholeMenus)
-
-// const menuOptions = shallowRef<MenuOption[]>([
-//   {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'Home'
-//           },
-//         },
-//         {
-//           default:()=>'仪表盘'
-//         }
-//       )
-//     },
-//     key: 'dashboard',
-//   },
-//   {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'ModelSchemaManagement'
-//           },
-//         },
-//         {
-//           default:()=>'内容模型管理'
-//         }
-//       )
-//     },
-//     key: 'content-model-management',
-//   },
-//   {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'ModelContentManagement'
-//           },
-//         },
-//         {
-//           default:()=>'内容管理'
-//         }
-//       )
-//     },
-//     key: 'content-management',
-//   },
-//   {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'PayChannelManagement'
-//           },
-//         },
-//         {
-//           default:()=>'支付渠道'
-//         }
-//       )
-//     },
-//     key: 'payment-channel',
-//   },
-//   {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'PayOrderManagement'
-//           },
-//         },
-//         {
-//           default:()=>'支付订单'
-//         }
-//       )
-//     },
-//     key: 'payment-order',
-//   },
-//   {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'UserManagement'
-//           },
-//         },
-//         {
-//           default:()=>'用户权限管理'
-//         }
-//       )
-//     },
-//     key: 'user-management',
-//   },
-//   {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'WebhookManagement'
-//           },
-//         },
-//         {
-//           default:()=>'webhook'
-//         }
-//       )
-//     },
-//     key: 'webhook-management',
-//   },
-//   {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'FileManagement',
-//             params:{}
-//           },
-//         },
-//         {
-//           default:()=>'文件管理'
-//         }
-//       )
-//     },
-//     key: 'file-management',
-//   },
-//     {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'ApiManagement'
-//           },
-//         },
-//         {
-//           default:()=>'API管理'
-//         }
-//       )
-//     },
-//     key: 'api-management',
-//   },
-//   {
-//     label: () => {
-//       return h(RouterLink,
-//         {
-//           to:{
-//             name:'SystemSettings'
-//           },
-//         },
-//         {
-//           default:()=>'系统设置'
-//         }
-//       )
-//     },
-//     key: 'system-settings',
-//   },
-
-// ])
 
 const menuOptions = computed<MenuOption[]>(() =>
   menuData.value.map((item: any) => {
-    if (item.children && item.children.length) {
+    if (item.children && item.children.length > 1) {
       return {
         label: item.meta?.title || item.name,
         key: item.name,
@@ -262,29 +115,25 @@ function logout() {
   }
 }
 
-onMounted(() => {
-  // console.log(router.getRoutes())
-  console.log(menuData.value)
-  console.log(permissionStore.flatteningRoutes)
-  // menuOptions.value = menuData.value.map((item:any)=>({
-  //   label: () => {
-  //     return h(RouterLink,
-  //       {
-  //         to:{
-  //           name:item.path
-  //         },
-  //       },
-  //       {
-  //         default:()=>item.name
-  //       }
-  //     )
-  //   },
-  //   key: item.path,
-  // }))
-})
+/** 判断路径是否参与菜单 */
+function isRemaining(path: string) {
+  return remainingPaths.includes(path)
+}
+
+function menuSelect(path: string) {
+  if (permissionStore.wholeMenus.length === 0 || isRemaining(path)) return
+}
+
+watch(
+  () => [route.path, usePermissionStore().wholeMenus],
+  () => {
+    if (route.path.includes('/redirect')) return
+    menuSelect(route.path)
+  },
+)
 </script>
 <template>
-  <div class="h-dvh w-dvw">
+  <div class="app-wrapper h-dvh w-dvw">
     <pro-layout
       v-model:collapsed="collapsed"
       :mode="layoutMode"
@@ -301,6 +150,7 @@ onMounted(() => {
       :sidebar-width="sidebarWidth"
       :tabbar-height="tabbarHeight"
       :sidebar-collapsed-width="sidebarCollapsedWidth"
+      :builtin-theme-overrides="layoutThemeOverrides"
       logo-class="flex justify-center"
     >
       <template #logo>logo</template>
@@ -340,9 +190,11 @@ onMounted(() => {
               </n-avatar>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {CurrentUser.Name}
+                  {{ userStore.username }}
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{CurrentUser.Email}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  {{ userStore.username }}
+                </p>
               </div>
               <button
                 @click="logout()"
@@ -361,8 +213,22 @@ onMounted(() => {
           </div>
         </div>
       </template>
-      <slot v-if="$slots.default" />
-      <router-view v-else />
+      <div class="app-main app-main--vertical">
+        <slot v-if="$slots.default" />
+        <router-view v-else />
+      </div>
     </pro-layout>
   </div>
 </template>
+<style scoped>
+.app-main {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  /* background-color: #f5f7fa; */
+}
+.app-main--vertical{
+  display: flex;
+  flex-direction: column;
+}
+</style>

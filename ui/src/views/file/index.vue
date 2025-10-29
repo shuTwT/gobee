@@ -1,66 +1,111 @@
+<script lang="ts" setup>
+import { NButton,NIcon } from 'naive-ui'
+import { RefreshOutline,Eye } from '@vicons/ionicons5'
+import type { DataTableColumns } from 'naive-ui'
+// 分页配置
+const pagination = reactive({
+  page: 1,
+  pageSize: 10,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50, 100],
+  onChange: (page: number) => {
+    pagination.page = page
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.pageSize = pageSize
+    pagination.page = 1
+  },
+})
+
+const dataList = ref([
+  {
+    id:"1",
+    type:"图片",
+    size:"1.2MB",
+    createdTime:"2023-10-26"
+  }
+])
+const loading = ref(false)
+
+// 表格列定义
+const columns: DataTableColumns<any> = [
+  {
+    title:"编号",
+    key:"id",
+    width:180,
+    ellipsis:{
+      tooltip:true
+    }
+  },
+    {
+    title:"类型",
+    key:"type",
+    width:180,
+    ellipsis:{
+      tooltip:true
+    }
+  },
+    {
+    title:"大小",
+    key:"size",
+    width:180,
+    ellipsis:{
+      tooltip:true
+    }
+  },
+    {
+    title:"上传时间",
+    key:"createdTime",
+    width:180,
+    ellipsis:{
+      tooltip:true
+    }
+  },
+  {
+    title: '操作',
+    key: 'actions',
+    width: 180,
+    render: () => {
+      return h(
+        NButton,
+        {
+          size: 'small',
+          type: 'primary',
+          quaternary: true,
+        },
+        {
+          icon: () => h(NIcon, {}, () => h(Eye)),
+          default: () => '编辑',
+        },
+      )
+    },
+  },
+]
+</script>
 <template>
-  <div class="p-6 bg-white dark:bg-gray-800 shadow-md rounded-lg">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">文件管理</h2>
-      <div class="flex space-x-4">
-        <n-button id="uploadFileBtn" type="primary"> 上传文件 </n-button>
-        <div class="relative">
-          <input
-            type="text"
-            id="fileSearchInput"
-            placeholder="搜索文件..."
-            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-          />
-          <svg
-            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            ></path>
-          </svg>
+  <div class="container-fluid p-4">
+    <n-card title="文件管理" class="file-card">
+      <!-- 头部操作栏 -->
+      <div class="header-section">
+        <div class="search-section"></div>
+        <div class="action-section">
+           <n-button type="primary"  style="margin-right: 12px"> <i class="bi bi-plus"></i> 添加webhook </n-button>
+          <n-button>
+            <template #icon>
+              <n-icon><refresh-outline /></n-icon>
+            </template>
+            刷新
+          </n-button>
         </div>
       </div>
-    </div>
-
-    <div class="overflow-x-auto">
-      <n-table>
-        <thead>
-          <tr>
-            <th>文件名</th>
-            <th>类型</th>
-            <th>大小</th>
-            <th>上传日期</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- 文件列表将在这里动态加载 -->
-          <tr>
-            <td>example.jpg</td>
-            <td>图片</td>
-            <td>1.2 MB</td>
-            <td>2023-10-26</td>
-            <td>
-              <n-button type="primary">查看</n-button>
-              <n-button type="danger">删除</n-button>
-            </td>
-          </tr>
-          <!-- 更多文件行 -->
-        </tbody>
-      </n-table>
-    </div>
-
-    <!-- 分页组件 -->
-    <div class="mt-6 flex justify-end">
-      <n-pagination :total="100" :page-size="10" :page-size-options="[10, 20, 30, 40]" />
-    </div>
+      <n-data-table
+        :columns="columns"
+        :data="dataList"
+        :loading="loading"
+        :pagination="pagination"
+        :row-key="(row) => row.id"
+      />
+    </n-card>
 
     <!-- 文件上传 Modal -->
     <n-modal>
@@ -95,3 +140,28 @@
     </n-modal>
   </div>
 </template>
+<style scoped>
+.file-card {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.search-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.action-section {
+  display: flex;
+  align-items: center;
+}
+</style>

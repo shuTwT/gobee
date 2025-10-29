@@ -21,10 +21,8 @@ const modules: Record<string, any> = import.meta.glob(
 const routes: any[] = []
 
 Object.keys(modules).forEach((key) => {
-  routes.push(modules[key].default)
+  routes.push(...modules[key].default)
 })
-
-console.log(routes)
 
 /** 导出处理后的静态路由（三级及以上的路由全部拍成二级） */
 export const constantRoutes: Array<RouteRecordRaw> = formatTwoStageRoutes(

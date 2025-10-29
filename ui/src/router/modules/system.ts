@@ -1,25 +1,7 @@
 import type { RouteRecordRaw } from 'vue-router'
 import BaseLayout from '@/layout/index.vue'
 
-export default {
-  path: '/',
-  name: 'System',
-  component: BaseLayout,
-  meta: {
-    title: '系统管理',
-    roles: ['admin', 'common'],
-  },
-  children: [
-    {
-      path: '/welcome',
-      name: 'Home',
-      component: () => import('@/views/home/index.vue'),
-      meta: {
-        title: '首页',
-        showLink: true,
-        roles: ['admin', 'common'],
-      },
-    },
+export default [
     {
       path: '/album',
       name: 'AlbumManagement',
@@ -60,26 +42,26 @@ export default {
         roles: ['admin', 'common'],
       },
     },
-    {
-      path: '/model-content',
-      name: 'ModelContentManagement',
-      component: () => import('@/views/model-content/index.vue'),
-      meta: {
-        title: '模型内容管理',
-        showLink: true,
-        roles: ['admin', 'common'],
-      },
-    },
-    {
-      path: '/model-schema',
-      name: 'ModelSchemaManagement',
-      component: () => import('@/views/model-schema/index.vue'),
-      meta: {
-        title: '模型内容管理',
-        showLink: true,
-        roles: ['admin', 'common'],
-      },
-    },
+    // {
+    //   path: '/model-content',
+    //   name: 'ModelContentManagement',
+    //   component: () => import('@/views/model-content/index.vue'),
+    //   meta: {
+    //     title: '模型内容管理',
+    //     showLink: true,
+    //     roles: ['admin', 'common'],
+    //   },
+    // },
+    // {
+    //   path: '/model-schema',
+    //   name: 'ModelSchemaManagement',
+    //   component: () => import('@/views/model-schema/index.vue'),
+    //   meta: {
+    //     title: '模型内容管理',
+    //     showLink: true,
+    //     roles: ['admin', 'common'],
+    //   },
+    // },
     {
       path: '/pay-channel',
       name: 'PayChannelManagement',
@@ -140,5 +122,4 @@ export default {
         roles: ['admin', 'common'],
       },
     },
-  ],
-} satisfies RouteRecordRaw
+  ] satisfies RouteRecordRaw []

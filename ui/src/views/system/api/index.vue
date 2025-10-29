@@ -846,12 +846,11 @@ onMounted(() => {
 <style scoped>
 .api-management-container {
   padding: 24px;
-  min-height: 100vh;
   background-color: #f5f7fa;
 }
 
 .api-card {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
 }
 
