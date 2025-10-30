@@ -1,5 +1,5 @@
 <template>
-  <div class="pay-channel-container">
+  <div class="pay-channel-container p-6">
     <n-card title="支付渠道管理" class="channel-card">
       <!-- 头部操作栏 -->
       <div class="header-section">
@@ -696,7 +696,6 @@ onMounted(() => {
 
 <style scoped>
 .pay-channel-container {
-  padding: 24px;
   min-height: 100vh;
   background-color: #f5f7fa;
 }

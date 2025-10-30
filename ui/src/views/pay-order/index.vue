@@ -1,5 +1,5 @@
 <template>
-  <div class="pay-order-container">
+  <div class="pay-order-container p-6">
     <n-card title="支付订单管理" class="order-card">
       <!-- 头部操作栏 -->
       <div class="header-section">
@@ -692,7 +692,6 @@ onMounted(() => {
 
 <style scoped>
 .pay-order-container {
-  padding: 24px;
   background-color: #f5f7fa;
 }
 

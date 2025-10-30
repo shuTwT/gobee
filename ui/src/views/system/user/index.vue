@@ -76,7 +76,7 @@ const columns: DataTableColumns<any> = [
 ]
 </script>
 <template>
-  <div class="container-fluid p-4">
+  <div class="container-fluid p-6">
     <n-card title="用户管理" class="user-card">
       <!-- 头部操作栏 -->
       <div class="header-section">

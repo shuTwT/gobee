@@ -3,3 +3,19 @@
 #app{
   height:100vh;
 }
+
+.n-dropdown-menu .n-dropdown-option .n-dropdown-option-body--danger{
+  color:red;
+}
+
+.n-dropdown-menu .n-dropdown-option .n-dropdown-option-body--danger .n-dropdown-option-body__prefix{
+  color:red;
+}
+
+.n-dropdown-option .n-dropdown-option-body--danger:not(.n-dropdown-option-body--disabled).n-dropdown-option-body--pending{
+  color:red !important;
+}
+
+.n-dropdown-option .n-dropdown-option-body--danger:not(.n-dropdown-option-body--disabled).n-dropdown-option-body--pending .n-dropdown-option-body__prefix{
+  color:red !important;
+}

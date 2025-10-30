@@ -46,6 +46,12 @@ const whiteList = ['/login', '/initialize']
 router.beforeEach((to, _from, next) => {
   const userInfo = useStorageLocal().getItem<DataInfo<number>>(userKey)
   const externalLink = isUrl(to.path)
+  if(!externalLink){
+    to.matched.some(item=>{
+      if(!item.meta.title) return ""
+      document.title = item.meta.title as string
+    })
+  }
 
   /** 如果已经登录并存在登录信息后不能跳转到路由白名单，而是继续保持在当前页面 */
   function toCorrectRoute() {

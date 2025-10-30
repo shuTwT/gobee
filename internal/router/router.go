@@ -61,10 +61,4 @@ func Initialize(router *fiber.App) {
 			}
 		}
 	}
-
-	router.Get("/initialize", func(c *fiber.Ctx) error {
-		return c.Render("pages/initialize", fiber.Map{
-			"Title": "Hello, World!",
-		}, "layouts/base")
-	})
 }

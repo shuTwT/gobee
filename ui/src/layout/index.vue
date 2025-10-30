@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import type { MenuOption } from 'naive-ui'
 import { ProLayout, useLayoutMenu,type ProLayoutProps } from 'pro-naive-ui'
-import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter, type RouteRecordRaw } from 'vue-router'
 import { useAppStore } from '@/stores/modules/app'
 import { storeToRefs } from 'pinia'
 import { usePermissionStore } from '@/stores/modules/permission'
 import { useUserStore } from '@/stores/modules/user'
 import { remainingPaths } from '@/router'
+import { findRouteByPath, getParentPaths } from '@/router/utils'
 
 const route = useRoute()
 const router = useRouter()
+const routes: any = router.options.routes;
 const appStore = useAppStore()
 const permissionStore = usePermissionStore()
 
@@ -20,10 +22,12 @@ window.$message = useMessage()
 window.$dialog = useDialog()
 window.$notification = useNotification()
 
+const levelList = ref<any[]>([]);
+
 type LayoutThemeOverrides = NonNullable<ProLayoutProps['builtinThemeOverrides']>
 
 const layoutThemeOverrides :LayoutThemeOverrides= {
-  color:'#f5f7fa'
+  color:'#f5f7fa',
 }
 
 const menuData = computed(() => permissionStore.wholeMenus)
@@ -124,6 +128,43 @@ function menuSelect(path: string) {
   if (permissionStore.wholeMenus.length === 0 || isRemaining(path)) return
 }
 
+const getBreadcrumb = ()=>{
+  // 当前路由信息
+  const currentRoute:any = findRouteByPath(router.currentRoute.value.path,routes)
+
+    // 当前路由的父级路径组成的数组
+  const parentRoutes = getParentPaths(
+    router.currentRoute.value.name as string,
+    routes,
+    "name"
+  );
+
+    // 存放组成面包屑的数组
+  const matched:(RouteRecordRaw|undefined)[] = [];
+
+  // 获取每个父级路径对应的路由信息
+  parentRoutes.forEach(path => {
+    if (path !== "/") matched.push(findRouteByPath(path, routes));
+  });
+
+  matched.push(currentRoute);
+
+  matched.forEach((item, index) => {
+    if (currentRoute?.query || currentRoute?.params) return;
+    if (item?.children) {
+      item.children.forEach(v => {
+        if (v?.meta?.title === item?.meta?.title) {
+          matched.splice(index, 1);
+        }
+      });
+    }
+  });
+
+  levelList.value = matched.filter(
+    item => item?.meta && item?.meta.title !== false
+  );
+}
+
 watch(
   () => [route.path, usePermissionStore().wholeMenus],
   () => {
@@ -131,6 +172,14 @@ watch(
     menuSelect(route.path)
   },
 )
+
+watch(()=>route.path,()=>{
+  getBreadcrumb()
+})
+
+onMounted(()=>{
+  getBreadcrumb()
+})
 </script>
 <template>
   <div class="app-wrapper h-dvh w-dvw">
@@ -155,7 +204,11 @@ watch(
     >
       <template #logo>logo</template>
       <template #nav-left>
-        <span>left</span>
+        <template v-if="!isMobile">
+          <span v-for="(item,index) in levelList" :key="index">
+            {{ item.meta?.title }}
+          </span>
+        </template>
         <n-popover v-if="isMobile" trigger="click" style="padding: 0">
           <template #trigger>
             <n-button type="primary" size="small"> 菜单 </n-button>
@@ -169,7 +222,11 @@ watch(
       <template #nav-center>
         <n-menu v-if="hasHorizontalMenu" v-bind="layout.horizontalMenuProps" />
       </template>
-      <template #footer>footer</template>
+      <template #footer>
+        <div class="w-full h-full text-center leading-[var(--pro-layout-footer-height)] text-gray-500">
+          <span>Copyright ©2025</span>
+        </div>
+      </template>
       <template #sidebar>
         <n-scrollbar class="flex-[1_0_0]">
           <n-menu v-bind="layout.verticalMenuProps" :collapsed-width="sidebarCollapsedWidth" />

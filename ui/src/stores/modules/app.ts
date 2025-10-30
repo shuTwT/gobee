@@ -32,7 +32,7 @@ export const useAppStore = defineStore('app', () => {
   /**
    * 是否显示标签栏
    */
-  const showTabbar = ref(true)
+  const showTabbar = ref(false)
   /**
    * 是否显示底部
    */

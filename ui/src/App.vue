@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import hljs from 'highlight.js'
+import DialogManager from '@/components/dialog/DialogManager.vue'
 </script>
 
 <template>
@@ -10,6 +11,7 @@ import hljs from 'highlight.js'
         <n-modal-provider>
           <n-dialog-provider>
             <RouterView />
+            <DialogManager />
           </n-dialog-provider>
         </n-modal-provider>
       </n-message-provider>

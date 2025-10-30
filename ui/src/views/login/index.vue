@@ -33,7 +33,7 @@ const handleLogin = async () => {
 
     useUserStore().loginByUsername({...loginForm}).then(()=>{
       return initRouter().then(()=>{
-        router.push('/console').then(()=>{
+        router.push('/').then(()=>{
           message.success('登录成功')
         })
       }).catch((err:Error)=>{

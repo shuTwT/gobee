@@ -1,7 +1,26 @@
 import type { RouteRecordRaw } from 'vue-router'
-import BaseLayout from '@/layout/index.vue'
 
 export default [
+    {
+      path:"/post",
+      name:"PostManagement",
+      component:()=>import('@/views/post/index.vue'),
+      meta:{
+        title:'文章管理',
+        showLink:true,
+        roles:['admin','common']
+      }
+    },
+    {
+      path:"/post/edit",
+      name:"PostEditor",
+      component:()=>import('@/views/post/editor/index.vue'),
+      meta:{
+        title:"文章编辑",
+        showLink:false,
+        roles:['admin','common']
+      }
+    },
     {
       path: '/album',
       name: 'AlbumManagement',

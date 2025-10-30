@@ -114,6 +114,51 @@ function filterNoPermissionTree(data: RouteComponent[]) {
   return filterChildrenTree(newTree);
 }
 
+/** 通过指定 `key` 获取父级路径集合，默认 `key` 为 `path` */
+function getParentPaths(value: string, routes: RouteRecordRaw[], key = "path") {
+  // 深度遍历查找
+  function dfs(routes: RouteRecordRaw[], value: string, parents: string[]) {
+    for (let i = 0; i < routes.length; i++) {
+      const item = routes[i];
+      // 返回父级path
+      if ((item as any)[key] === value) return parents;
+      // children不存在或为空则不递归
+      if (!item.children || !item.children.length) continue;
+      // 往下查找时将当前path入栈
+      parents.push(item.path);
+
+      if (dfs(item.children, value, parents).length) return parents;
+      // 深度遍历查找未找到时当前path 出栈
+      parents.pop();
+    }
+    // 未找到时返回空数组
+    return [];
+  }
+
+  return dfs(routes, value, []);
+}
+
+/** 查找对应 `path` 的路由信息 */
+function findRouteByPath(path: string, routes: RouteRecordRaw[]):RouteRecordRaw|undefined {
+  let res = routes.find((item: { path: string }) => item.path == path);
+  if (res) {
+    return isProxy(res) ? toRaw(res) : res;
+  } else {
+    for (let i = 0; i < routes.length; i++) {
+      const childRoutes = routes[i].children;
+      if (
+        childRoutes instanceof Array  &&  childRoutes.length > 0
+      ) {
+        res = findRouteByPath(path, childRoutes);
+        if (res) {
+          return isProxy(res) ? toRaw(res) : res;
+        }
+      }
+    }
+    return undefined;
+  }
+}
+
 function addPathMatch() {
   if (!router.hasRoute("pathMatch")) {
     router.addRoute({
@@ -204,4 +249,6 @@ export {
   filterNoPermissionTree,
   formatFlatteningRoutes,
   formatTwoStageRoutes,
+  findRouteByPath,
+  getParentPaths
 }

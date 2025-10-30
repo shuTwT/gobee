@@ -1,5 +1,5 @@
 <template>
-  <div class="api-management-container">
+  <div class="p-6">
     <n-card title="API 接口管理" class="api-card">
       <!-- 搜索和操作栏 -->
       <div class="header-section">
@@ -245,7 +245,7 @@ const filterMethod = ref<string | null>(null)
 // 表格数据
 const loading = ref(false)
 const apiList = ref<ApiItem[]>([])
-const checkedRowKeys = ref<string[]>([])
+const checkedRowKeys = ref<(string|number)[]>([])
 
 // 模态框状态
 const showPermissionModal = ref(false)
@@ -569,7 +569,8 @@ const handleFilterChange = () => {
 }
 
 // 处理表格选择
-const handleCheck = (keys: string[]) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const handleCheck = (keys: Array<string|number>) => {
   checkedRowKeys.value = keys
 }
 
@@ -844,10 +845,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.api-management-container {
-  padding: 24px;
-  background-color: #f5f7fa;
-}
 
 .api-card {
   max-width: 1600px;

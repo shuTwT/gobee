@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/swagger"
+
 	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
 )
@@ -21,7 +22,7 @@ func InitializeApp() *fiber.App {
 	engine.Reload(true)
 	app := fiber.New(fiber.Config{
 		AppName: "Fiber HTML Template Demo",
-		Views:   engine, // 关联模板引擎
+		// Views:   engine, // 关联模板引擎
 	})
 	app.Static("/", "./assets")
 

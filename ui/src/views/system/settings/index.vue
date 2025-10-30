@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-container">
+  <div class="settings-container p-6">
     <n-card title="系统设置" class="settings-card">
       <n-tabs type="line" animated>
         <!-- 基本设置 -->
@@ -1116,8 +1116,6 @@ onMounted(() => {
 
 <style scoped>
 .settings-container {
-  padding: 24px;
-  min-height: 100vh;
   background-color: #f5f7fa;
 }
 
