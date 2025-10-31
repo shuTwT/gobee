@@ -56,7 +56,7 @@ export default [
       name: 'FlinkManagement',
       component: () => import('@/views/flink/index.vue'),
       meta: {
-        title: 'flink管理',
+        title: '友链管理',
         showLink: true,
         roles: ['admin', 'common'],
       },

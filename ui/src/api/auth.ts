@@ -7,5 +7,5 @@ type LoginRequest = {
 };
 
 export const passwordLogin = (data: LoginRequest) => {
-  return http.post<ApiResponse<any>, LoginRequest>(`${BASE_URL}/auth/login/password`, {data});
+  return http.request<ApiResponse<any>>('post',`${BASE_URL}/auth/login/password`, {data});
 };

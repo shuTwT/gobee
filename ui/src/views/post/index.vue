@@ -8,16 +8,10 @@ import {
   NSelect,
   NDatePicker,
   NDataTable,
-  NModal,
-  NForm,
-  NFormItem,
-  NDynamicTags,
-  NSpace,
   NTag,
   NDropdown,
   useMessage,
   type DataTableColumns,
-  useModal,
 } from 'naive-ui'
 import {
   SearchOutline,
@@ -36,10 +30,11 @@ import { h } from 'vue'
 import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 import SettingForm from './settingForm.vue'
 import { addDialog } from '@/components/dialog'
+import { useRouter } from 'vue-router'
 
 const message = useMessage()
 const dialog = useDialog()
-const modal = useModal()
+const router = useRouter()
 
 
 
@@ -334,13 +329,9 @@ const createPost = () => {
 
 // 编辑文章
 const editPost = (post: any) => {
-  postForm.id = post.id
-  postForm.title = post.title
-  postForm.summary = post.summary
-  postForm.content = post.content || ''
-  postForm.tags = post.tags || []
-  postForm.status = post.status
-  showEditModal.value = true
+  router.push({
+    name:"PostEditor"
+  })
 }
 
 // 发布文章
@@ -532,63 +523,6 @@ const handleRefresh = () => {
         :row-key="(row) => row.id"
       />
     </n-card>
-
-    <!-- 文章编辑弹窗 -->
-    <n-modal
-      v-model:show="showEditModal"
-      preset="card"
-      style="width: 900px"
-      title="编辑文章"
-      :bordered="false"
-      size="huge"
-      :segmented="true"
-    >
-      <n-form
-        ref="formRef"
-        :model="postForm"
-        :rules="rules"
-        label-placement="left"
-        label-width="auto"
-        require-mark-placement="right-hanging"
-        size="medium"
-      >
-        <n-form-item label="标题" path="title">
-          <n-input v-model:value="postForm.title" placeholder="请输入文章标题" />
-        </n-form-item>
-        <n-form-item label="摘要" path="summary">
-          <n-input
-            v-model:value="postForm.summary"
-            type="textarea"
-            placeholder="请输入文章摘要"
-            :rows="3"
-          />
-        </n-form-item>
-        <n-form-item label="内容" path="content">
-          <n-input
-            v-model:value="postForm.content"
-            type="textarea"
-            placeholder="请输入文章内容"
-            :rows="10"
-          />
-        </n-form-item>
-        <n-form-item label="标签" path="tags">
-          <n-dynamic-tags v-model:value="postForm.tags" />
-        </n-form-item>
-        <n-form-item label="状态" path="status">
-          <n-select
-            v-model:value="postForm.status"
-            :options="statusOptions"
-            placeholder="请选择文章状态"
-          />
-        </n-form-item>
-      </n-form>
-      <template #footer>
-        <n-space justify="end">
-          <n-button @click="showEditModal = false">取消</n-button>
-          <n-button type="primary" :loading="saving" @click="savePost">保存</n-button>
-        </n-space>
-      </template>
-    </n-modal>
   </div>
 </template>
 

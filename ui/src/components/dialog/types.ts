@@ -1,6 +1,6 @@
 import type { ButtonProps, ModalProps, PopconfirmProps } from "naive-ui";
 
-type EventType = "open"|"close"
+type EventType = "open"|"close"|"fullscreenCallBack"
 
 type BtnClickDialog = {
   options?: DialogOptions;
@@ -26,6 +26,7 @@ interface ModalButtonProps extends ButtonProps {
 interface DialogOptions extends ModalProps{
   props?:Record<string,any>
   visible?:boolean
+  fullscreen?:boolean
   /** 自定义底部按钮操作 */
   footerButtons?: Array<ModalButtonProps>;
   /** 点击确定按钮后是否开启 `loading` 加载动画 */
@@ -64,6 +65,8 @@ interface DialogOptions extends ModalProps{
     }
   ) => void;
   width?:number|string
+  /** 在打开前获取数据 */
+  fetchOpen?:()=>void
   [key:string]:any
 }
 

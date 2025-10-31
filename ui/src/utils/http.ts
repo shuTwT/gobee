@@ -1,6 +1,7 @@
 import axios, { type AxiosRequestConfig, type Method } from 'axios'
 import { formatToken, getToken } from './auth'
 import { useUserStoreHook } from '@/stores/modules/user'
+import type { ApiResponse } from '@/api/utils'
 
 
 export type RequestMethods = Extract<
@@ -120,7 +121,7 @@ class HttpService {
     )
   }
 
-  public request<T>(method: RequestMethods, url: string, params?: AxiosRequestConfig): Promise<T> {
+  public request<T=any>(method: RequestMethods, url: string, params?: AxiosRequestConfig): Promise<T> {
     const config = {
       method,
       url,
@@ -137,10 +138,10 @@ class HttpService {
         })
     })
   }
-  public post<T, P>(url: string, params?: AxiosRequestConfig<P>): Promise<T> {
+  public post<T=any, P=any>(url: string, params?: AxiosRequestConfig<P>): Promise<T> {
     return this.request<T>('post', url, params)
   }
-  public get<T, P>(url: string, params?: AxiosRequestConfig<P>): Promise<T> {
+  public get<T=any, P=any>(url: string, params?: AxiosRequestConfig<P>): Promise<T> {
     return this.request<T>('get', url, params)
   }
 }

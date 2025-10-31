@@ -89,7 +89,7 @@ const columns: DataTableColumns<any> = [
       <div class="header-section">
         <div class="search-section"></div>
         <div class="action-section">
-           <n-button type="primary"  style="margin-right: 12px"> <i class="bi bi-plus"></i> 添加webhook </n-button>
+           <n-button type="primary"  style="margin-right: 12px"> <i class="bi bi-plus"></i> 上传文件 </n-button>
           <n-button>
             <template #icon>
               <n-icon><refresh-outline /></n-icon>

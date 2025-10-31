@@ -99,6 +99,7 @@
         :loading="loading"
         :pagination="pagination"
         :row-key="(row) => row.id"
+        :scroll-x="1500"
         class="order-table"
       />
     </n-card>

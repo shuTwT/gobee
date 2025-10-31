@@ -5,11 +5,21 @@ const dialogStore = ref<Array<DialogOptions>>([])
 
 /** 打开弹窗 */
 const addDialog = (options:DialogOptions)=>{
-  const open =()=>dialogStore.value.push(Object.assign({
-    width:'600px'
-  },options,{visible:true}))
+  const dialog = Object.assign({
+    width:'600px',
+    fullscreen:false,
+    visible:false
+  },options)
+  const length = dialogStore.value.push(dialog)
+  const open =()=>{
+    console.log(dialogStore.value[length-1])
+    dialogStore.value[length-1].visible=true
+  }
 
-  open()
+  setTimeout(() => {
+   open()
+  }, 200);
+
 }
 
 const closeDialog = (options:DialogOptions,index:number,args?:any)=>{

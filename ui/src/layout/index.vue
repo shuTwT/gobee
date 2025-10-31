@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MenuOption } from 'naive-ui'
-import { ProLayout, useLayoutMenu,type ProLayoutProps } from 'pro-naive-ui'
+import { ProLayout, useLayoutMenu, type ProLayoutProps } from 'pro-naive-ui'
 import { RouterLink, useRoute, useRouter, type RouteRecordRaw } from 'vue-router'
 import { useAppStore } from '@/stores/modules/app'
 import { storeToRefs } from 'pinia'
@@ -11,7 +11,7 @@ import { findRouteByPath, getParentPaths } from '@/router/utils'
 
 const route = useRoute()
 const router = useRouter()
-const routes: any = router.options.routes;
+const routes: any = router.options.routes
 const appStore = useAppStore()
 const permissionStore = usePermissionStore()
 
@@ -22,12 +22,12 @@ window.$message = useMessage()
 window.$dialog = useDialog()
 window.$notification = useNotification()
 
-const levelList = ref<any[]>([]);
+const levelList = ref<any[]>([])
 
 type LayoutThemeOverrides = NonNullable<ProLayoutProps['builtinThemeOverrides']>
 
-const layoutThemeOverrides :LayoutThemeOverrides= {
-  color:'#f5f7fa',
+const layoutThemeOverrides: LayoutThemeOverrides = {
+  color: '#f5f7fa',
 }
 
 const menuData = computed(() => permissionStore.wholeMenus)
@@ -128,41 +128,35 @@ function menuSelect(path: string) {
   if (permissionStore.wholeMenus.length === 0 || isRemaining(path)) return
 }
 
-const getBreadcrumb = ()=>{
+const getBreadcrumb = () => {
   // 当前路由信息
-  const currentRoute:any = findRouteByPath(router.currentRoute.value.path,routes)
+  const currentRoute: any = findRouteByPath(router.currentRoute.value.path, routes)
 
-    // 当前路由的父级路径组成的数组
-  const parentRoutes = getParentPaths(
-    router.currentRoute.value.name as string,
-    routes,
-    "name"
-  );
+  // 当前路由的父级路径组成的数组
+  const parentRoutes = getParentPaths(router.currentRoute.value.name as string, routes, 'name')
 
-    // 存放组成面包屑的数组
-  const matched:(RouteRecordRaw|undefined)[] = [];
+  // 存放组成面包屑的数组
+  const matched: (RouteRecordRaw | undefined)[] = []
 
   // 获取每个父级路径对应的路由信息
-  parentRoutes.forEach(path => {
-    if (path !== "/") matched.push(findRouteByPath(path, routes));
-  });
+  parentRoutes.forEach((path) => {
+    if (path !== '/') matched.push(findRouteByPath(path, routes))
+  })
 
-  matched.push(currentRoute);
+  matched.push(currentRoute)
 
   matched.forEach((item, index) => {
-    if (currentRoute?.query || currentRoute?.params) return;
+    if (currentRoute?.query || currentRoute?.params) return
     if (item?.children) {
-      item.children.forEach(v => {
+      item.children.forEach((v) => {
         if (v?.meta?.title === item?.meta?.title) {
-          matched.splice(index, 1);
+          matched.splice(index, 1)
         }
-      });
+      })
     }
-  });
+  })
 
-  levelList.value = matched.filter(
-    item => item?.meta && item?.meta.title !== false
-  );
+  levelList.value = matched.filter((item) => item?.meta && item?.meta.title !== false)
 }
 
 watch(
@@ -173,11 +167,14 @@ watch(
   },
 )
 
-watch(()=>route.path,()=>{
-  getBreadcrumb()
-})
+watch(
+  () => route.path,
+  () => {
+    getBreadcrumb()
+  },
+)
 
-onMounted(()=>{
+onMounted(() => {
   getBreadcrumb()
 })
 </script>
@@ -205,9 +202,11 @@ onMounted(()=>{
       <template #logo>logo</template>
       <template #nav-left>
         <template v-if="!isMobile">
-          <span v-for="(item,index) in levelList" :key="index">
-            {{ item.meta?.title }}
-          </span>
+          <div class="flex items-center h-full pl-6">
+            <span v-for="(item, index) in levelList" :key="index">
+              {{ item.meta?.title }}
+            </span>
+          </div>
         </template>
         <n-popover v-if="isMobile" trigger="click" style="padding: 0">
           <template #trigger>
@@ -223,7 +222,9 @@ onMounted(()=>{
         <n-menu v-if="hasHorizontalMenu" v-bind="layout.horizontalMenuProps" />
       </template>
       <template #footer>
-        <div class="w-full h-full text-center leading-[var(--pro-layout-footer-height)] text-gray-500">
+        <div
+          class="w-full h-full text-center leading-[var(--pro-layout-footer-height)] text-gray-500"
+        >
           <span>Copyright ©2025</span>
         </div>
       </template>
@@ -284,7 +285,7 @@ onMounted(()=>{
   overflow-x: hidden;
   /* background-color: #f5f7fa; */
 }
-.app-main--vertical{
+.app-main--vertical {
   display: flex;
   flex-direction: column;
 }

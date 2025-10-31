@@ -9,7 +9,15 @@ defineOptions({
 })
 
 const sureBtnMap = ref<Record<string, any>>({})
-const fullscreen = ref(false)
+
+const fullscreenStyle = (options:DialogOptions)=>options.fullscreen?{
+  maxHeight:'100vh',
+  height:'100vh',
+  width:'100%'
+}:{
+  maxHeight:'80vh',
+  width:options.width
+}
 
 const footerButtons = computed(() => {
   return (options: DialogOptions) => {
@@ -18,7 +26,6 @@ const footerButtons = computed(() => {
       : ([
           {
             label: '取消',
-            text: true,
             quaternary: true,
             btnClick: ({ dialog: { options, index } }) => {
               const done = () => closeDialog(options!, index!, { command: 'cancel' })
@@ -31,7 +38,6 @@ const footerButtons = computed(() => {
           {
             label: '确定',
             type: 'primary',
-            text: true,
             quaternary: true,
             btnClick: ({ dialog: { options, index } }) => {
               if (options?.sureBtnLoading) {
@@ -65,7 +71,7 @@ function eventsCallback(
   index: number,
   isClickFullScreen = false,
 ) {
-  if (!isClickFullScreen) fullscreen.value = false
+  if (!isClickFullScreen) options.fullscreen = false
   if (options?.[event] && isFunction(options?.[event])) {
     return options?.[event]({ options, index })
   }
@@ -83,19 +89,24 @@ function handleClose(options: DialogOptions, index: number, args = { command: 'c
     :key="index"
     :closable="true"
     v-bind="options"
-    :style="{
-      width:options.width,
-      maxHeight:'80vh'
-    }"
+    :style="fullscreenStyle(options)"
     @after-enter="eventsCallback('open', options, index)"
-    @after-leave="handleClose(options, index)"
+    @close="handleClose(options, index)"
   >
     <!-- header -->
     <template #header>
       <span>{{ options.title }}</span>
     </template>
     <template #header-extra>
-      <n-button :quaternary="true" style="width: 22px;height: 22px;padding: 0;">
+      <n-button :quaternary="true" style="width: 22px;height: 22px;padding: 0;" @click="()=>{
+        options.fullscreen = !options.fullscreen;
+        eventsCallback(
+          'fullscreenCallBack',
+          { ...options, fullscreen:options.fullscreen },
+          index,
+          true
+        );
+      }">
         <template #icon>
           <n-icon size="16">
             <expand-sharp />
@@ -105,7 +116,9 @@ function handleClose(options: DialogOptions, index: number, args = { command: 'c
     </template>
     <!-- content -->
      <n-scrollbar style="height: calc(80vh - 128px);">
-          <component v-bind="options.props" :is="options.contentRenderer({ options, index })" />
+      <div class="px-3">
+        <component v-bind="options.props" :is="options.contentRenderer({ options, index })" />
+      </div>
      </n-scrollbar>
 
     <!-- footer -->
@@ -113,7 +126,7 @@ function handleClose(options: DialogOptions, index: number, args = { command: 'c
       <template v-if="options.footer">
         <component :is="options.footer" />
       </template>
-      <span v-else>
+      <span v-else class="flex justify-end items-center">
         <template v-for="(btn, key) in footerButtons(options)" :key="key">
           <n-popconfirm v-if="btn.popconfirm" v-bind="btn.popconfirm">
             <template #trigger>

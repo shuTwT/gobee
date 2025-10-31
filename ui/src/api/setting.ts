@@ -16,5 +16,5 @@ export interface SettingResponse {
 
 // 获取系统设置和初始化状态
 export const getSettings = () => {
-  return http.get<ApiResponse<SettingResponse>, null>(`${BASE_URL}/v1/settings`);
+  return http.request<ApiResponse<SettingResponse>>('get',`${BASE_URL}/v1/settings`);
 };

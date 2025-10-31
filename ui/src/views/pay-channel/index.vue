@@ -55,6 +55,7 @@
         :loading="loading"
         :pagination="pagination"
         :row-key="(row) => row.id"
+        :scroll-x="1500"
         class="channel-table"
       />
     </n-card>
@@ -718,6 +719,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .action-section {
