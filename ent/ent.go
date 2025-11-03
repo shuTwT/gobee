@@ -7,13 +7,16 @@ import (
 	"errors"
 	"fmt"
 	"gobee/ent/album"
-	"gobee/ent/article"
 	"gobee/ent/comment"
 	"gobee/ent/file"
 	"gobee/ent/modelschema"
+	"gobee/ent/oauth2accesstoken"
+	"gobee/ent/oauth2code"
+	"gobee/ent/oauth2refreshtoken"
 	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
+	"gobee/ent/post"
 	"gobee/ent/setting"
 	"gobee/ent/user"
 	"reflect"
@@ -82,16 +85,19 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			album.Table:       album.ValidColumn,
-			article.Table:     article.ValidColumn,
-			comment.Table:     comment.ValidColumn,
-			file.Table:        file.ValidColumn,
-			modelschema.Table: modelschema.ValidColumn,
-			page.Table:        page.ValidColumn,
-			paychannel.Table:  paychannel.ValidColumn,
-			payorder.Table:    payorder.ValidColumn,
-			setting.Table:     setting.ValidColumn,
-			user.Table:        user.ValidColumn,
+			album.Table:              album.ValidColumn,
+			comment.Table:            comment.ValidColumn,
+			file.Table:               file.ValidColumn,
+			modelschema.Table:        modelschema.ValidColumn,
+			oauth2accesstoken.Table:  oauth2accesstoken.ValidColumn,
+			oauth2code.Table:         oauth2code.ValidColumn,
+			oauth2refreshtoken.Table: oauth2refreshtoken.ValidColumn,
+			page.Table:               page.ValidColumn,
+			paychannel.Table:         paychannel.ValidColumn,
+			payorder.Table:           payorder.ValidColumn,
+			post.Table:               post.ValidColumn,
+			setting.Table:            setting.ValidColumn,
+			user.Table:               user.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

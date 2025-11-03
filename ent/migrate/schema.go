@@ -22,20 +22,6 @@ var (
 		Columns:    AlbumsColumns,
 		PrimaryKey: []*schema.Column{AlbumsColumns[0]},
 	}
-	// ArticlesColumns holds the columns for the "articles" table.
-	ArticlesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "title", Type: field.TypeString, Size: 255},
-		{Name: "content", Type: field.TypeString, Size: 2147483647},
-	}
-	// ArticlesTable holds the schema information for the "articles" table.
-	ArticlesTable = &schema.Table{
-		Name:       "articles",
-		Columns:    ArticlesColumns,
-		PrimaryKey: []*schema.Column{ArticlesColumns[0]},
-	}
 	// CommentsColumns holds the columns for the "comments" table.
 	CommentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -83,6 +69,59 @@ var (
 		Name:       "model_schemas",
 		Columns:    ModelSchemasColumns,
 		PrimaryKey: []*schema.Column{ModelSchemasColumns[0]},
+	}
+	// Oauth2accessTokensColumns holds the columns for the "oauth2access_tokens" table.
+	Oauth2accessTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "access_token", Type: field.TypeString, Size: 255},
+		{Name: "refresh_token", Type: field.TypeString, Size: 32},
+		{Name: "client_id", Type: field.TypeString, Size: 255},
+		{Name: "scope", Type: field.TypeString, Size: 255},
+		{Name: "expire_at", Type: field.TypeTime},
+	}
+	// Oauth2accessTokensTable holds the schema information for the "oauth2access_tokens" table.
+	Oauth2accessTokensTable = &schema.Table{
+		Name:       "oauth2access_tokens",
+		Columns:    Oauth2accessTokensColumns,
+		PrimaryKey: []*schema.Column{Oauth2accessTokensColumns[0]},
+	}
+	// Oauth2codesColumns holds the columns for the "oauth2codes" table.
+	Oauth2codesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "code", Type: field.TypeString, Size: 32},
+		{Name: "expire_at", Type: field.TypeTime},
+		{Name: "client_id", Type: field.TypeString, Size: 255},
+		{Name: "redirect_uri", Type: field.TypeString, Size: 255},
+		{Name: "scope", Type: field.TypeString, Size: 255},
+	}
+	// Oauth2codesTable holds the schema information for the "oauth2codes" table.
+	Oauth2codesTable = &schema.Table{
+		Name:       "oauth2codes",
+		Columns:    Oauth2codesColumns,
+		PrimaryKey: []*schema.Column{Oauth2codesColumns[0]},
+	}
+	// Oauth2refreshTokensColumns holds the columns for the "oauth2refresh_tokens" table.
+	Oauth2refreshTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "refresh_token", Type: field.TypeString, Size: 32},
+		{Name: "client_id", Type: field.TypeString, Size: 255},
+		{Name: "scope", Type: field.TypeString, Size: 255},
+		{Name: "expire_at", Type: field.TypeTime},
+	}
+	// Oauth2refreshTokensTable holds the schema information for the "oauth2refresh_tokens" table.
+	Oauth2refreshTokensTable = &schema.Table{
+		Name:       "oauth2refresh_tokens",
+		Columns:    Oauth2refreshTokensColumns,
+		PrimaryKey: []*schema.Column{Oauth2refreshTokensColumns[0]},
 	}
 	// PagesColumns holds the columns for the "pages" table.
 	PagesColumns = []*schema.Column{
@@ -140,6 +179,28 @@ var (
 		Columns:    PayOrdersColumns,
 		PrimaryKey: []*schema.Column{PayOrdersColumns[0]},
 	}
+	// PostsColumns holds the columns for the "posts" table.
+	PostsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "title", Type: field.TypeString, Size: 255},
+		{Name: "content", Type: field.TypeString, Size: 2147483647},
+		{Name: "is_published", Type: field.TypeBool, Default: false},
+		{Name: "published_at", Type: field.TypeTime, Nullable: true},
+		{Name: "view_count", Type: field.TypeInt, Default: 0},
+		{Name: "comment_count", Type: field.TypeInt, Default: 0},
+		{Name: "cover", Type: field.TypeString, Nullable: true, Size: 512},
+		{Name: "keywords", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "copyright", Type: field.TypeString, Nullable: true, Size: 512},
+		{Name: "author", Type: field.TypeString},
+	}
+	// PostsTable holds the schema information for the "posts" table.
+	PostsTable = &schema.Table{
+		Name:       "posts",
+		Columns:    PostsColumns,
+		PrimaryKey: []*schema.Column{PostsColumns[0]},
+	}
 	// SettingsColumns holds the columns for the "settings" table.
 	SettingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -176,13 +237,16 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AlbumsTable,
-		ArticlesTable,
 		CommentsTable,
 		FilesTable,
 		ModelSchemasTable,
+		Oauth2accessTokensTable,
+		Oauth2codesTable,
+		Oauth2refreshTokensTable,
 		PagesTable,
 		PayChannelsTable,
 		PayOrdersTable,
+		PostsTable,
 		SettingsTable,
 		UsersTable,
 	}

@@ -1,3 +1,6 @@
+/**
+* 设置
+ */
 package schema
 
 import (

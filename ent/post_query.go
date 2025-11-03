@@ -5,7 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/article"
+	"gobee/ent/post"
 	"gobee/ent/predicate"
 	"math"
 
@@ -15,64 +15,64 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ArticleQuery is the builder for querying Article entities.
-type ArticleQuery struct {
+// PostQuery is the builder for querying Post entities.
+type PostQuery struct {
 	config
 	ctx        *QueryContext
-	order      []article.OrderOption
+	order      []post.OrderOption
 	inters     []Interceptor
-	predicates []predicate.Article
+	predicates []predicate.Post
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the ArticleQuery builder.
-func (_q *ArticleQuery) Where(ps ...predicate.Article) *ArticleQuery {
+// Where adds a new predicate for the PostQuery builder.
+func (_q *PostQuery) Where(ps ...predicate.Post) *PostQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *ArticleQuery) Limit(limit int) *ArticleQuery {
+func (_q *PostQuery) Limit(limit int) *PostQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *ArticleQuery) Offset(offset int) *ArticleQuery {
+func (_q *PostQuery) Offset(offset int) *PostQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *ArticleQuery) Unique(unique bool) *ArticleQuery {
+func (_q *PostQuery) Unique(unique bool) *PostQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *ArticleQuery) Order(o ...article.OrderOption) *ArticleQuery {
+func (_q *PostQuery) Order(o ...post.OrderOption) *PostQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
-// First returns the first Article entity from the query.
-// Returns a *NotFoundError when no Article was found.
-func (_q *ArticleQuery) First(ctx context.Context) (*Article, error) {
+// First returns the first Post entity from the query.
+// Returns a *NotFoundError when no Post was found.
+func (_q *PostQuery) First(ctx context.Context) (*Post, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{article.Label}
+		return nil, &NotFoundError{post.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *ArticleQuery) FirstX(ctx context.Context) *Article {
+func (_q *PostQuery) FirstX(ctx context.Context) *Post {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -80,22 +80,22 @@ func (_q *ArticleQuery) FirstX(ctx context.Context) *Article {
 	return node
 }
 
-// FirstID returns the first Article ID from the query.
-// Returns a *NotFoundError when no Article ID was found.
-func (_q *ArticleQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first Post ID from the query.
+// Returns a *NotFoundError when no Post ID was found.
+func (_q *PostQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{article.Label}
+		err = &NotFoundError{post.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *ArticleQuery) FirstIDX(ctx context.Context) int {
+func (_q *PostQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -103,10 +103,10 @@ func (_q *ArticleQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single Article entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one Article entity is found.
-// Returns a *NotFoundError when no Article entities are found.
-func (_q *ArticleQuery) Only(ctx context.Context) (*Article, error) {
+// Only returns a single Post entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one Post entity is found.
+// Returns a *NotFoundError when no Post entities are found.
+func (_q *PostQuery) Only(ctx context.Context) (*Post, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -115,14 +115,14 @@ func (_q *ArticleQuery) Only(ctx context.Context) (*Article, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{article.Label}
+		return nil, &NotFoundError{post.Label}
 	default:
-		return nil, &NotSingularError{article.Label}
+		return nil, &NotSingularError{post.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *ArticleQuery) OnlyX(ctx context.Context) *Article {
+func (_q *PostQuery) OnlyX(ctx context.Context) *Post {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -130,10 +130,10 @@ func (_q *ArticleQuery) OnlyX(ctx context.Context) *Article {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Article ID in the query.
-// Returns a *NotSingularError when more than one Article ID is found.
+// OnlyID is like Only, but returns the only Post ID in the query.
+// Returns a *NotSingularError when more than one Post ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *ArticleQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *PostQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
@@ -142,15 +142,15 @@ func (_q *ArticleQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{article.Label}
+		err = &NotFoundError{post.Label}
 	default:
-		err = &NotSingularError{article.Label}
+		err = &NotSingularError{post.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *ArticleQuery) OnlyIDX(ctx context.Context) int {
+func (_q *PostQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -158,18 +158,18 @@ func (_q *ArticleQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of Articles.
-func (_q *ArticleQuery) All(ctx context.Context) ([]*Article, error) {
+// All executes the query and returns a list of Posts.
+func (_q *PostQuery) All(ctx context.Context) ([]*Post, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*Article, *ArticleQuery]()
-	return withInterceptors[[]*Article](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*Post, *PostQuery]()
+	return withInterceptors[[]*Post](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *ArticleQuery) AllX(ctx context.Context) []*Article {
+func (_q *PostQuery) AllX(ctx context.Context) []*Post {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -177,20 +177,20 @@ func (_q *ArticleQuery) AllX(ctx context.Context) []*Article {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Article IDs.
-func (_q *ArticleQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of Post IDs.
+func (_q *PostQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(article.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(post.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *ArticleQuery) IDsX(ctx context.Context) []int {
+func (_q *PostQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -199,16 +199,16 @@ func (_q *ArticleQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (_q *ArticleQuery) Count(ctx context.Context) (int, error) {
+func (_q *PostQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*ArticleQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*PostQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *ArticleQuery) CountX(ctx context.Context) int {
+func (_q *PostQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -217,7 +217,7 @@ func (_q *ArticleQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *ArticleQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *PostQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -230,7 +230,7 @@ func (_q *ArticleQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *ArticleQuery) ExistX(ctx context.Context) bool {
+func (_q *PostQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -238,18 +238,18 @@ func (_q *ArticleQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the ArticleQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the PostQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *ArticleQuery) Clone() *ArticleQuery {
+func (_q *PostQuery) Clone() *PostQuery {
 	if _q == nil {
 		return nil
 	}
-	return &ArticleQuery{
+	return &PostQuery{
 		config:     _q.config,
 		ctx:        _q.ctx.Clone(),
-		order:      append([]article.OrderOption{}, _q.order...),
+		order:      append([]post.OrderOption{}, _q.order...),
 		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.Article{}, _q.predicates...),
+		predicates: append([]predicate.Post{}, _q.predicates...),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -266,15 +266,15 @@ func (_q *ArticleQuery) Clone() *ArticleQuery {
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.Article.Query().
-//		GroupBy(article.FieldCreatedAt).
+//	client.Post.Query().
+//		GroupBy(post.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *ArticleQuery) GroupBy(field string, fields ...string) *ArticleGroupBy {
+func (_q *PostQuery) GroupBy(field string, fields ...string) *PostGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &ArticleGroupBy{build: _q}
+	grbuild := &PostGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = article.Label
+	grbuild.label = post.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -288,23 +288,23 @@ func (_q *ArticleQuery) GroupBy(field string, fields ...string) *ArticleGroupBy 
 //		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
-//	client.Article.Query().
-//		Select(article.FieldCreatedAt).
+//	client.Post.Query().
+//		Select(post.FieldCreatedAt).
 //		Scan(ctx, &v)
-func (_q *ArticleQuery) Select(fields ...string) *ArticleSelect {
+func (_q *PostQuery) Select(fields ...string) *PostSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &ArticleSelect{ArticleQuery: _q}
-	sbuild.label = article.Label
+	sbuild := &PostSelect{PostQuery: _q}
+	sbuild.label = post.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a ArticleSelect configured with the given aggregations.
-func (_q *ArticleQuery) Aggregate(fns ...AggregateFunc) *ArticleSelect {
+// Aggregate returns a PostSelect configured with the given aggregations.
+func (_q *PostQuery) Aggregate(fns ...AggregateFunc) *PostSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *ArticleQuery) prepareQuery(ctx context.Context) error {
+func (_q *PostQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -316,7 +316,7 @@ func (_q *ArticleQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !article.ValidColumn(f) {
+		if !post.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -330,16 +330,16 @@ func (_q *ArticleQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *ArticleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Article, error) {
+func (_q *PostQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Post, error) {
 	var (
-		nodes = []*Article{}
+		nodes = []*Post{}
 		_spec = _q.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*Article).scanValues(nil, columns)
+		return (*Post).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &Article{config: _q.config}
+		node := &Post{config: _q.config}
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
@@ -355,7 +355,7 @@ func (_q *ArticleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Arti
 	return nodes, nil
 }
 
-func (_q *ArticleQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *PostQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -364,8 +364,8 @@ func (_q *ArticleQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *ArticleQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(article.Table, article.Columns, sqlgraph.NewFieldSpec(article.FieldID, field.TypeInt))
+func (_q *PostQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(post.Table, post.Columns, sqlgraph.NewFieldSpec(post.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -374,9 +374,9 @@ func (_q *ArticleQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, article.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, post.FieldID)
 		for i := range fields {
-			if fields[i] != article.FieldID {
+			if fields[i] != post.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -404,12 +404,12 @@ func (_q *ArticleQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *ArticleQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *PostQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(article.Table)
+	t1 := builder.Table(post.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = article.Columns
+		columns = post.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -436,28 +436,28 @@ func (_q *ArticleQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// ArticleGroupBy is the group-by builder for Article entities.
-type ArticleGroupBy struct {
+// PostGroupBy is the group-by builder for Post entities.
+type PostGroupBy struct {
 	selector
-	build *ArticleQuery
+	build *PostQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *ArticleGroupBy) Aggregate(fns ...AggregateFunc) *ArticleGroupBy {
+func (_g *PostGroupBy) Aggregate(fns ...AggregateFunc) *PostGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *ArticleGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *PostGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ArticleQuery, *ArticleGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*PostQuery, *PostGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *ArticleGroupBy) sqlScan(ctx context.Context, root *ArticleQuery, v any) error {
+func (_g *PostGroupBy) sqlScan(ctx context.Context, root *PostQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -484,28 +484,28 @@ func (_g *ArticleGroupBy) sqlScan(ctx context.Context, root *ArticleQuery, v any
 	return sql.ScanSlice(rows, v)
 }
 
-// ArticleSelect is the builder for selecting fields of Article entities.
-type ArticleSelect struct {
-	*ArticleQuery
+// PostSelect is the builder for selecting fields of Post entities.
+type PostSelect struct {
+	*PostQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *ArticleSelect) Aggregate(fns ...AggregateFunc) *ArticleSelect {
+func (_s *PostSelect) Aggregate(fns ...AggregateFunc) *PostSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *ArticleSelect) Scan(ctx context.Context, v any) error {
+func (_s *PostSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ArticleQuery, *ArticleSelect](ctx, _s.ArticleQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*PostQuery, *PostSelect](ctx, _s.PostQuery, _s, _s.inters, v)
 }
 
-func (_s *ArticleSelect) sqlScan(ctx context.Context, root *ArticleQuery, v any) error {
+func (_s *PostSelect) sqlScan(ctx context.Context, root *PostQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {

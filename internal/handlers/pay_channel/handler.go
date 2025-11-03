@@ -8,6 +8,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/paychannel"
 	"gobee/internal/database"
+	"gobee/internal/model"
 )
 
 // @Summary 获取支付渠道列表
@@ -22,13 +23,9 @@ func ListPayChannel(c *fiber.Ctx) error {
 	client := database.DB
 	channels, err := client.PayChannel.Query().All(c.Context())
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"data": channels,
-	})
+	return c.JSON(model.NewSuccess("success", channels))
 }
 
 // @Summary 创建支付渠道
@@ -50,9 +47,7 @@ func CreatePayChannel(c *fiber.Ctx) error {
 		Config string `json:"config"`
 	}
 	if err := c.BodyParser(&channel); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
 	newChannel, err := client.PayChannel.Create().
@@ -62,13 +57,9 @@ func CreatePayChannel(c *fiber.Ctx) error {
 		SetConfig(channel.Config).
 		Save(c.Context())
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"data": newChannel,
-	})
+	return c.JSON(model.NewSuccess("success", newChannel))
 }
 
 // @Summary 更新支付渠道
@@ -87,9 +78,7 @@ func UpdatePayChannel(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid ID format",
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
 	}
 
 	var channel struct {
@@ -99,9 +88,7 @@ func UpdatePayChannel(c *fiber.Ctx) error {
 		Config string `json:"config"`
 	}
 	if err := c.BodyParser(&channel); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
 	updatedChannel, err := client.PayChannel.UpdateOneID(id).
@@ -111,13 +98,9 @@ func UpdatePayChannel(c *fiber.Ctx) error {
 		SetConfig(channel.Config).
 		Save(c.Context())
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"data": updatedChannel,
-	})
+	return c.JSON(model.NewSuccess("success", updatedChannel))
 }
 
 // @Summary 查询支付渠道
@@ -135,9 +118,9 @@ func QueryPayChannel(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid ID format",
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format",
+		))
 	}
 
 	channel, err := client.PayChannel.Query().
@@ -145,17 +128,11 @@ func QueryPayChannel(c *fiber.Ctx) error {
 		Only(c.Context())
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": "PayChannel not found",
-			})
+			return c.JSON(model.NewError(fiber.StatusNotFound, "ayChannel not found"))
 		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"data": channel,
-	})
+	return c.JSON(model.NewSuccess("success", channel))
 }
 
 // @Summary 删除支付渠道
@@ -173,23 +150,19 @@ func DeletePayChannel(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid ID format",
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format",
+		))
 	}
 
 	err = client.PayChannel.DeleteOneID(id).Exec(c.Context())
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": "PayChannel not found",
-			})
+			return c.JSON(model.NewError(fiber.StatusNotFound,
+				"PayChannel not found",
+			))
 		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"message": "PayChannel deleted successfully",
-	})
+	return c.JSON(model.NewSuccess("success", nil))
 }

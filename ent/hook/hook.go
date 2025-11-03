@@ -20,18 +20,6 @@ func (f AlbumFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlbumMutation", m)
 }
 
-// The ArticleFunc type is an adapter to allow the use of ordinary
-// function as Article mutator.
-type ArticleFunc func(context.Context, *ent.ArticleMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ArticleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ArticleMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ArticleMutation", m)
-}
-
 // The CommentFunc type is an adapter to allow the use of ordinary
 // function as Comment mutator.
 type CommentFunc func(context.Context, *ent.CommentMutation) (ent.Value, error)
@@ -68,6 +56,42 @@ func (f ModelSchemaFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ModelSchemaMutation", m)
 }
 
+// The Oauth2AccessTokenFunc type is an adapter to allow the use of ordinary
+// function as Oauth2AccessToken mutator.
+type Oauth2AccessTokenFunc func(context.Context, *ent.Oauth2AccessTokenMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f Oauth2AccessTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.Oauth2AccessTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.Oauth2AccessTokenMutation", m)
+}
+
+// The Oauth2CodeFunc type is an adapter to allow the use of ordinary
+// function as Oauth2Code mutator.
+type Oauth2CodeFunc func(context.Context, *ent.Oauth2CodeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f Oauth2CodeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.Oauth2CodeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.Oauth2CodeMutation", m)
+}
+
+// The Oauth2RefreshTokenFunc type is an adapter to allow the use of ordinary
+// function as Oauth2RefreshToken mutator.
+type Oauth2RefreshTokenFunc func(context.Context, *ent.Oauth2RefreshTokenMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f Oauth2RefreshTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.Oauth2RefreshTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.Oauth2RefreshTokenMutation", m)
+}
+
 // The PageFunc type is an adapter to allow the use of ordinary
 // function as Page mutator.
 type PageFunc func(context.Context, *ent.PageMutation) (ent.Value, error)
@@ -102,6 +126,18 @@ func (f PayOrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PayOrderMutation", m)
+}
+
+// The PostFunc type is an adapter to allow the use of ordinary
+// function as Post mutator.
+type PostFunc func(context.Context, *ent.PostMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PostFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PostMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostMutation", m)
 }
 
 // The SettingFunc type is an adapter to allow the use of ordinary

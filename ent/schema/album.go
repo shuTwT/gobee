@@ -1,3 +1,6 @@
+/**
+ * 相册
+ */
 package schema
 
 import (

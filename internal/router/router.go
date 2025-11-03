@@ -7,6 +7,7 @@ import (
 	payorder_handler "gobee/internal/handlers/pay_order"
 	route_handler "gobee/internal/handlers/route"
 	setting_handler "gobee/internal/handlers/setting"
+	user_handler "gobee/internal/handlers/user"
 	"gobee/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -58,6 +59,14 @@ func Initialize(router *fiber.App) {
 				payOrderApi.Get("/update", payorder_handler.UpdatePayOrder)
 				payOrderApi.Get("/query", payorder_handler.QueryPayOrder)
 				payOrderApi.Get("/delete", payorder_handler.DeletePayOrder)
+			}
+			userApi := apiV1.Group("/user")
+			{
+				userApi.Get("/list", user_handler.ListUser)
+				userApi.Get("/create", user_handler.CreateUser)
+				userApi.Get("/update", user_handler.UpdateUser)
+				userApi.Get("/query", user_handler.QueryUser)
+				userApi.Get("/delete", user_handler.DeleteUser)
 			}
 		}
 	}

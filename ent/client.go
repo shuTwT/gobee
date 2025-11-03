@@ -12,13 +12,16 @@ import (
 	"gobee/ent/migrate"
 
 	"gobee/ent/album"
-	"gobee/ent/article"
 	"gobee/ent/comment"
 	"gobee/ent/file"
 	"gobee/ent/modelschema"
+	"gobee/ent/oauth2accesstoken"
+	"gobee/ent/oauth2code"
+	"gobee/ent/oauth2refreshtoken"
 	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
+	"gobee/ent/post"
 	"gobee/ent/setting"
 	"gobee/ent/user"
 
@@ -34,20 +37,26 @@ type Client struct {
 	Schema *migrate.Schema
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
-	// Article is the client for interacting with the Article builders.
-	Article *ArticleClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// ModelSchema is the client for interacting with the ModelSchema builders.
 	ModelSchema *ModelSchemaClient
+	// Oauth2AccessToken is the client for interacting with the Oauth2AccessToken builders.
+	Oauth2AccessToken *Oauth2AccessTokenClient
+	// Oauth2Code is the client for interacting with the Oauth2Code builders.
+	Oauth2Code *Oauth2CodeClient
+	// Oauth2RefreshToken is the client for interacting with the Oauth2RefreshToken builders.
+	Oauth2RefreshToken *Oauth2RefreshTokenClient
 	// Page is the client for interacting with the Page builders.
 	Page *PageClient
 	// PayChannel is the client for interacting with the PayChannel builders.
 	PayChannel *PayChannelClient
 	// PayOrder is the client for interacting with the PayOrder builders.
 	PayOrder *PayOrderClient
+	// Post is the client for interacting with the Post builders.
+	Post *PostClient
 	// Setting is the client for interacting with the Setting builders.
 	Setting *SettingClient
 	// User is the client for interacting with the User builders.
@@ -64,13 +73,16 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Album = NewAlbumClient(c.config)
-	c.Article = NewArticleClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.ModelSchema = NewModelSchemaClient(c.config)
+	c.Oauth2AccessToken = NewOauth2AccessTokenClient(c.config)
+	c.Oauth2Code = NewOauth2CodeClient(c.config)
+	c.Oauth2RefreshToken = NewOauth2RefreshTokenClient(c.config)
 	c.Page = NewPageClient(c.config)
 	c.PayChannel = NewPayChannelClient(c.config)
 	c.PayOrder = NewPayOrderClient(c.config)
+	c.Post = NewPostClient(c.config)
 	c.Setting = NewSettingClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -163,18 +175,21 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Album:       NewAlbumClient(cfg),
-		Article:     NewArticleClient(cfg),
-		Comment:     NewCommentClient(cfg),
-		File:        NewFileClient(cfg),
-		ModelSchema: NewModelSchemaClient(cfg),
-		Page:        NewPageClient(cfg),
-		PayChannel:  NewPayChannelClient(cfg),
-		PayOrder:    NewPayOrderClient(cfg),
-		Setting:     NewSettingClient(cfg),
-		User:        NewUserClient(cfg),
+		ctx:                ctx,
+		config:             cfg,
+		Album:              NewAlbumClient(cfg),
+		Comment:            NewCommentClient(cfg),
+		File:               NewFileClient(cfg),
+		ModelSchema:        NewModelSchemaClient(cfg),
+		Oauth2AccessToken:  NewOauth2AccessTokenClient(cfg),
+		Oauth2Code:         NewOauth2CodeClient(cfg),
+		Oauth2RefreshToken: NewOauth2RefreshTokenClient(cfg),
+		Page:               NewPageClient(cfg),
+		PayChannel:         NewPayChannelClient(cfg),
+		PayOrder:           NewPayOrderClient(cfg),
+		Post:               NewPostClient(cfg),
+		Setting:            NewSettingClient(cfg),
+		User:               NewUserClient(cfg),
 	}, nil
 }
 
@@ -192,18 +207,21 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Album:       NewAlbumClient(cfg),
-		Article:     NewArticleClient(cfg),
-		Comment:     NewCommentClient(cfg),
-		File:        NewFileClient(cfg),
-		ModelSchema: NewModelSchemaClient(cfg),
-		Page:        NewPageClient(cfg),
-		PayChannel:  NewPayChannelClient(cfg),
-		PayOrder:    NewPayOrderClient(cfg),
-		Setting:     NewSettingClient(cfg),
-		User:        NewUserClient(cfg),
+		ctx:                ctx,
+		config:             cfg,
+		Album:              NewAlbumClient(cfg),
+		Comment:            NewCommentClient(cfg),
+		File:               NewFileClient(cfg),
+		ModelSchema:        NewModelSchemaClient(cfg),
+		Oauth2AccessToken:  NewOauth2AccessTokenClient(cfg),
+		Oauth2Code:         NewOauth2CodeClient(cfg),
+		Oauth2RefreshToken: NewOauth2RefreshTokenClient(cfg),
+		Page:               NewPageClient(cfg),
+		PayChannel:         NewPayChannelClient(cfg),
+		PayOrder:           NewPayOrderClient(cfg),
+		Post:               NewPostClient(cfg),
+		Setting:            NewSettingClient(cfg),
+		User:               NewUserClient(cfg),
 	}, nil
 }
 
@@ -233,8 +251,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.Article, c.Comment, c.File, c.ModelSchema, c.Page, c.PayChannel,
-		c.PayOrder, c.Setting, c.User,
+		c.Album, c.Comment, c.File, c.ModelSchema, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.Page, c.PayChannel, c.PayOrder, c.Post, c.Setting,
+		c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -244,8 +263,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.Article, c.Comment, c.File, c.ModelSchema, c.Page, c.PayChannel,
-		c.PayOrder, c.Setting, c.User,
+		c.Album, c.Comment, c.File, c.ModelSchema, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.Page, c.PayChannel, c.PayOrder, c.Post, c.Setting,
+		c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -256,20 +276,26 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AlbumMutation:
 		return c.Album.mutate(ctx, m)
-	case *ArticleMutation:
-		return c.Article.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
 	case *ModelSchemaMutation:
 		return c.ModelSchema.mutate(ctx, m)
+	case *Oauth2AccessTokenMutation:
+		return c.Oauth2AccessToken.mutate(ctx, m)
+	case *Oauth2CodeMutation:
+		return c.Oauth2Code.mutate(ctx, m)
+	case *Oauth2RefreshTokenMutation:
+		return c.Oauth2RefreshToken.mutate(ctx, m)
 	case *PageMutation:
 		return c.Page.mutate(ctx, m)
 	case *PayChannelMutation:
 		return c.PayChannel.mutate(ctx, m)
 	case *PayOrderMutation:
 		return c.PayOrder.mutate(ctx, m)
+	case *PostMutation:
+		return c.Post.mutate(ctx, m)
 	case *SettingMutation:
 		return c.Setting.mutate(ctx, m)
 	case *UserMutation:
@@ -409,139 +435,6 @@ func (c *AlbumClient) mutate(ctx context.Context, m *AlbumMutation) (Value, erro
 		return (&AlbumDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Album mutation op: %q", m.Op())
-	}
-}
-
-// ArticleClient is a client for the Article schema.
-type ArticleClient struct {
-	config
-}
-
-// NewArticleClient returns a client for the Article from the given config.
-func NewArticleClient(c config) *ArticleClient {
-	return &ArticleClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `article.Hooks(f(g(h())))`.
-func (c *ArticleClient) Use(hooks ...Hook) {
-	c.hooks.Article = append(c.hooks.Article, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `article.Intercept(f(g(h())))`.
-func (c *ArticleClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Article = append(c.inters.Article, interceptors...)
-}
-
-// Create returns a builder for creating a Article entity.
-func (c *ArticleClient) Create() *ArticleCreate {
-	mutation := newArticleMutation(c.config, OpCreate)
-	return &ArticleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Article entities.
-func (c *ArticleClient) CreateBulk(builders ...*ArticleCreate) *ArticleCreateBulk {
-	return &ArticleCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *ArticleClient) MapCreateBulk(slice any, setFunc func(*ArticleCreate, int)) *ArticleCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &ArticleCreateBulk{err: fmt.Errorf("calling to ArticleClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*ArticleCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &ArticleCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Article.
-func (c *ArticleClient) Update() *ArticleUpdate {
-	mutation := newArticleMutation(c.config, OpUpdate)
-	return &ArticleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ArticleClient) UpdateOne(_m *Article) *ArticleUpdateOne {
-	mutation := newArticleMutation(c.config, OpUpdateOne, withArticle(_m))
-	return &ArticleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ArticleClient) UpdateOneID(id int) *ArticleUpdateOne {
-	mutation := newArticleMutation(c.config, OpUpdateOne, withArticleID(id))
-	return &ArticleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Article.
-func (c *ArticleClient) Delete() *ArticleDelete {
-	mutation := newArticleMutation(c.config, OpDelete)
-	return &ArticleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *ArticleClient) DeleteOne(_m *Article) *ArticleDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ArticleClient) DeleteOneID(id int) *ArticleDeleteOne {
-	builder := c.Delete().Where(article.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ArticleDeleteOne{builder}
-}
-
-// Query returns a query builder for Article.
-func (c *ArticleClient) Query() *ArticleQuery {
-	return &ArticleQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeArticle},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Article entity by its id.
-func (c *ArticleClient) Get(ctx context.Context, id int) (*Article, error) {
-	return c.Query().Where(article.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ArticleClient) GetX(ctx context.Context, id int) *Article {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *ArticleClient) Hooks() []Hook {
-	return c.hooks.Article
-}
-
-// Interceptors returns the client interceptors.
-func (c *ArticleClient) Interceptors() []Interceptor {
-	return c.inters.Article
-}
-
-func (c *ArticleClient) mutate(ctx context.Context, m *ArticleMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&ArticleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&ArticleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&ArticleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&ArticleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown Article mutation op: %q", m.Op())
 	}
 }
 
@@ -944,6 +837,405 @@ func (c *ModelSchemaClient) mutate(ctx context.Context, m *ModelSchemaMutation) 
 	}
 }
 
+// Oauth2AccessTokenClient is a client for the Oauth2AccessToken schema.
+type Oauth2AccessTokenClient struct {
+	config
+}
+
+// NewOauth2AccessTokenClient returns a client for the Oauth2AccessToken from the given config.
+func NewOauth2AccessTokenClient(c config) *Oauth2AccessTokenClient {
+	return &Oauth2AccessTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `oauth2accesstoken.Hooks(f(g(h())))`.
+func (c *Oauth2AccessTokenClient) Use(hooks ...Hook) {
+	c.hooks.Oauth2AccessToken = append(c.hooks.Oauth2AccessToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `oauth2accesstoken.Intercept(f(g(h())))`.
+func (c *Oauth2AccessTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Oauth2AccessToken = append(c.inters.Oauth2AccessToken, interceptors...)
+}
+
+// Create returns a builder for creating a Oauth2AccessToken entity.
+func (c *Oauth2AccessTokenClient) Create() *Oauth2AccessTokenCreate {
+	mutation := newOauth2AccessTokenMutation(c.config, OpCreate)
+	return &Oauth2AccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Oauth2AccessToken entities.
+func (c *Oauth2AccessTokenClient) CreateBulk(builders ...*Oauth2AccessTokenCreate) *Oauth2AccessTokenCreateBulk {
+	return &Oauth2AccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *Oauth2AccessTokenClient) MapCreateBulk(slice any, setFunc func(*Oauth2AccessTokenCreate, int)) *Oauth2AccessTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &Oauth2AccessTokenCreateBulk{err: fmt.Errorf("calling to Oauth2AccessTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*Oauth2AccessTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &Oauth2AccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Oauth2AccessToken.
+func (c *Oauth2AccessTokenClient) Update() *Oauth2AccessTokenUpdate {
+	mutation := newOauth2AccessTokenMutation(c.config, OpUpdate)
+	return &Oauth2AccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *Oauth2AccessTokenClient) UpdateOne(_m *Oauth2AccessToken) *Oauth2AccessTokenUpdateOne {
+	mutation := newOauth2AccessTokenMutation(c.config, OpUpdateOne, withOauth2AccessToken(_m))
+	return &Oauth2AccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *Oauth2AccessTokenClient) UpdateOneID(id int) *Oauth2AccessTokenUpdateOne {
+	mutation := newOauth2AccessTokenMutation(c.config, OpUpdateOne, withOauth2AccessTokenID(id))
+	return &Oauth2AccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Oauth2AccessToken.
+func (c *Oauth2AccessTokenClient) Delete() *Oauth2AccessTokenDelete {
+	mutation := newOauth2AccessTokenMutation(c.config, OpDelete)
+	return &Oauth2AccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *Oauth2AccessTokenClient) DeleteOne(_m *Oauth2AccessToken) *Oauth2AccessTokenDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *Oauth2AccessTokenClient) DeleteOneID(id int) *Oauth2AccessTokenDeleteOne {
+	builder := c.Delete().Where(oauth2accesstoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &Oauth2AccessTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for Oauth2AccessToken.
+func (c *Oauth2AccessTokenClient) Query() *Oauth2AccessTokenQuery {
+	return &Oauth2AccessTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOauth2AccessToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Oauth2AccessToken entity by its id.
+func (c *Oauth2AccessTokenClient) Get(ctx context.Context, id int) (*Oauth2AccessToken, error) {
+	return c.Query().Where(oauth2accesstoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *Oauth2AccessTokenClient) GetX(ctx context.Context, id int) *Oauth2AccessToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *Oauth2AccessTokenClient) Hooks() []Hook {
+	return c.hooks.Oauth2AccessToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *Oauth2AccessTokenClient) Interceptors() []Interceptor {
+	return c.inters.Oauth2AccessToken
+}
+
+func (c *Oauth2AccessTokenClient) mutate(ctx context.Context, m *Oauth2AccessTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&Oauth2AccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&Oauth2AccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&Oauth2AccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&Oauth2AccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Oauth2AccessToken mutation op: %q", m.Op())
+	}
+}
+
+// Oauth2CodeClient is a client for the Oauth2Code schema.
+type Oauth2CodeClient struct {
+	config
+}
+
+// NewOauth2CodeClient returns a client for the Oauth2Code from the given config.
+func NewOauth2CodeClient(c config) *Oauth2CodeClient {
+	return &Oauth2CodeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `oauth2code.Hooks(f(g(h())))`.
+func (c *Oauth2CodeClient) Use(hooks ...Hook) {
+	c.hooks.Oauth2Code = append(c.hooks.Oauth2Code, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `oauth2code.Intercept(f(g(h())))`.
+func (c *Oauth2CodeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Oauth2Code = append(c.inters.Oauth2Code, interceptors...)
+}
+
+// Create returns a builder for creating a Oauth2Code entity.
+func (c *Oauth2CodeClient) Create() *Oauth2CodeCreate {
+	mutation := newOauth2CodeMutation(c.config, OpCreate)
+	return &Oauth2CodeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Oauth2Code entities.
+func (c *Oauth2CodeClient) CreateBulk(builders ...*Oauth2CodeCreate) *Oauth2CodeCreateBulk {
+	return &Oauth2CodeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *Oauth2CodeClient) MapCreateBulk(slice any, setFunc func(*Oauth2CodeCreate, int)) *Oauth2CodeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &Oauth2CodeCreateBulk{err: fmt.Errorf("calling to Oauth2CodeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*Oauth2CodeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &Oauth2CodeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Oauth2Code.
+func (c *Oauth2CodeClient) Update() *Oauth2CodeUpdate {
+	mutation := newOauth2CodeMutation(c.config, OpUpdate)
+	return &Oauth2CodeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *Oauth2CodeClient) UpdateOne(_m *Oauth2Code) *Oauth2CodeUpdateOne {
+	mutation := newOauth2CodeMutation(c.config, OpUpdateOne, withOauth2Code(_m))
+	return &Oauth2CodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *Oauth2CodeClient) UpdateOneID(id int) *Oauth2CodeUpdateOne {
+	mutation := newOauth2CodeMutation(c.config, OpUpdateOne, withOauth2CodeID(id))
+	return &Oauth2CodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Oauth2Code.
+func (c *Oauth2CodeClient) Delete() *Oauth2CodeDelete {
+	mutation := newOauth2CodeMutation(c.config, OpDelete)
+	return &Oauth2CodeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *Oauth2CodeClient) DeleteOne(_m *Oauth2Code) *Oauth2CodeDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *Oauth2CodeClient) DeleteOneID(id int) *Oauth2CodeDeleteOne {
+	builder := c.Delete().Where(oauth2code.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &Oauth2CodeDeleteOne{builder}
+}
+
+// Query returns a query builder for Oauth2Code.
+func (c *Oauth2CodeClient) Query() *Oauth2CodeQuery {
+	return &Oauth2CodeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOauth2Code},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Oauth2Code entity by its id.
+func (c *Oauth2CodeClient) Get(ctx context.Context, id int) (*Oauth2Code, error) {
+	return c.Query().Where(oauth2code.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *Oauth2CodeClient) GetX(ctx context.Context, id int) *Oauth2Code {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *Oauth2CodeClient) Hooks() []Hook {
+	return c.hooks.Oauth2Code
+}
+
+// Interceptors returns the client interceptors.
+func (c *Oauth2CodeClient) Interceptors() []Interceptor {
+	return c.inters.Oauth2Code
+}
+
+func (c *Oauth2CodeClient) mutate(ctx context.Context, m *Oauth2CodeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&Oauth2CodeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&Oauth2CodeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&Oauth2CodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&Oauth2CodeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Oauth2Code mutation op: %q", m.Op())
+	}
+}
+
+// Oauth2RefreshTokenClient is a client for the Oauth2RefreshToken schema.
+type Oauth2RefreshTokenClient struct {
+	config
+}
+
+// NewOauth2RefreshTokenClient returns a client for the Oauth2RefreshToken from the given config.
+func NewOauth2RefreshTokenClient(c config) *Oauth2RefreshTokenClient {
+	return &Oauth2RefreshTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `oauth2refreshtoken.Hooks(f(g(h())))`.
+func (c *Oauth2RefreshTokenClient) Use(hooks ...Hook) {
+	c.hooks.Oauth2RefreshToken = append(c.hooks.Oauth2RefreshToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `oauth2refreshtoken.Intercept(f(g(h())))`.
+func (c *Oauth2RefreshTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Oauth2RefreshToken = append(c.inters.Oauth2RefreshToken, interceptors...)
+}
+
+// Create returns a builder for creating a Oauth2RefreshToken entity.
+func (c *Oauth2RefreshTokenClient) Create() *Oauth2RefreshTokenCreate {
+	mutation := newOauth2RefreshTokenMutation(c.config, OpCreate)
+	return &Oauth2RefreshTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Oauth2RefreshToken entities.
+func (c *Oauth2RefreshTokenClient) CreateBulk(builders ...*Oauth2RefreshTokenCreate) *Oauth2RefreshTokenCreateBulk {
+	return &Oauth2RefreshTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *Oauth2RefreshTokenClient) MapCreateBulk(slice any, setFunc func(*Oauth2RefreshTokenCreate, int)) *Oauth2RefreshTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &Oauth2RefreshTokenCreateBulk{err: fmt.Errorf("calling to Oauth2RefreshTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*Oauth2RefreshTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &Oauth2RefreshTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Oauth2RefreshToken.
+func (c *Oauth2RefreshTokenClient) Update() *Oauth2RefreshTokenUpdate {
+	mutation := newOauth2RefreshTokenMutation(c.config, OpUpdate)
+	return &Oauth2RefreshTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *Oauth2RefreshTokenClient) UpdateOne(_m *Oauth2RefreshToken) *Oauth2RefreshTokenUpdateOne {
+	mutation := newOauth2RefreshTokenMutation(c.config, OpUpdateOne, withOauth2RefreshToken(_m))
+	return &Oauth2RefreshTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *Oauth2RefreshTokenClient) UpdateOneID(id int) *Oauth2RefreshTokenUpdateOne {
+	mutation := newOauth2RefreshTokenMutation(c.config, OpUpdateOne, withOauth2RefreshTokenID(id))
+	return &Oauth2RefreshTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Oauth2RefreshToken.
+func (c *Oauth2RefreshTokenClient) Delete() *Oauth2RefreshTokenDelete {
+	mutation := newOauth2RefreshTokenMutation(c.config, OpDelete)
+	return &Oauth2RefreshTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *Oauth2RefreshTokenClient) DeleteOne(_m *Oauth2RefreshToken) *Oauth2RefreshTokenDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *Oauth2RefreshTokenClient) DeleteOneID(id int) *Oauth2RefreshTokenDeleteOne {
+	builder := c.Delete().Where(oauth2refreshtoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &Oauth2RefreshTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for Oauth2RefreshToken.
+func (c *Oauth2RefreshTokenClient) Query() *Oauth2RefreshTokenQuery {
+	return &Oauth2RefreshTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOauth2RefreshToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Oauth2RefreshToken entity by its id.
+func (c *Oauth2RefreshTokenClient) Get(ctx context.Context, id int) (*Oauth2RefreshToken, error) {
+	return c.Query().Where(oauth2refreshtoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *Oauth2RefreshTokenClient) GetX(ctx context.Context, id int) *Oauth2RefreshToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *Oauth2RefreshTokenClient) Hooks() []Hook {
+	return c.hooks.Oauth2RefreshToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *Oauth2RefreshTokenClient) Interceptors() []Interceptor {
+	return c.inters.Oauth2RefreshToken
+}
+
+func (c *Oauth2RefreshTokenClient) mutate(ctx context.Context, m *Oauth2RefreshTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&Oauth2RefreshTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&Oauth2RefreshTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&Oauth2RefreshTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&Oauth2RefreshTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Oauth2RefreshToken mutation op: %q", m.Op())
+	}
+}
+
 // PageClient is a client for the Page schema.
 type PageClient struct {
 	config
@@ -1343,6 +1635,139 @@ func (c *PayOrderClient) mutate(ctx context.Context, m *PayOrderMutation) (Value
 	}
 }
 
+// PostClient is a client for the Post schema.
+type PostClient struct {
+	config
+}
+
+// NewPostClient returns a client for the Post from the given config.
+func NewPostClient(c config) *PostClient {
+	return &PostClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `post.Hooks(f(g(h())))`.
+func (c *PostClient) Use(hooks ...Hook) {
+	c.hooks.Post = append(c.hooks.Post, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `post.Intercept(f(g(h())))`.
+func (c *PostClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Post = append(c.inters.Post, interceptors...)
+}
+
+// Create returns a builder for creating a Post entity.
+func (c *PostClient) Create() *PostCreate {
+	mutation := newPostMutation(c.config, OpCreate)
+	return &PostCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Post entities.
+func (c *PostClient) CreateBulk(builders ...*PostCreate) *PostCreateBulk {
+	return &PostCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PostClient) MapCreateBulk(slice any, setFunc func(*PostCreate, int)) *PostCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PostCreateBulk{err: fmt.Errorf("calling to PostClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PostCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PostCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Post.
+func (c *PostClient) Update() *PostUpdate {
+	mutation := newPostMutation(c.config, OpUpdate)
+	return &PostUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PostClient) UpdateOne(_m *Post) *PostUpdateOne {
+	mutation := newPostMutation(c.config, OpUpdateOne, withPost(_m))
+	return &PostUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PostClient) UpdateOneID(id int) *PostUpdateOne {
+	mutation := newPostMutation(c.config, OpUpdateOne, withPostID(id))
+	return &PostUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Post.
+func (c *PostClient) Delete() *PostDelete {
+	mutation := newPostMutation(c.config, OpDelete)
+	return &PostDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PostClient) DeleteOne(_m *Post) *PostDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PostClient) DeleteOneID(id int) *PostDeleteOne {
+	builder := c.Delete().Where(post.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PostDeleteOne{builder}
+}
+
+// Query returns a query builder for Post.
+func (c *PostClient) Query() *PostQuery {
+	return &PostQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePost},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Post entity by its id.
+func (c *PostClient) Get(ctx context.Context, id int) (*Post, error) {
+	return c.Query().Where(post.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PostClient) GetX(ctx context.Context, id int) *Post {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PostClient) Hooks() []Hook {
+	return c.hooks.Post
+}
+
+// Interceptors returns the client interceptors.
+func (c *PostClient) Interceptors() []Interceptor {
+	return c.inters.Post
+}
+
+func (c *PostClient) mutate(ctx context.Context, m *PostMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PostCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PostUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PostUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PostDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Post mutation op: %q", m.Op())
+	}
+}
+
 // SettingClient is a client for the Setting schema.
 type SettingClient struct {
 	config
@@ -1612,11 +2037,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, Article, Comment, File, ModelSchema, Page, PayChannel, PayOrder, Setting,
-		User []ent.Hook
+		Album, Comment, File, ModelSchema, Oauth2AccessToken, Oauth2Code,
+		Oauth2RefreshToken, Page, PayChannel, PayOrder, Post, Setting, User []ent.Hook
 	}
 	inters struct {
-		Album, Article, Comment, File, ModelSchema, Page, PayChannel, PayOrder, Setting,
+		Album, Comment, File, ModelSchema, Oauth2AccessToken, Oauth2Code,
+		Oauth2RefreshToken, Page, PayChannel, PayOrder, Post, Setting,
 		User []ent.Interceptor
 	}
 )

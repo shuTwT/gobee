@@ -8,6 +8,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/payorder"
 	"gobee/internal/database"
+	"gobee/internal/model"
 )
 
 // @Summary 获取支付订单列表
@@ -19,7 +20,7 @@ import (
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders [get]
 func ListPayOrder(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
+	client := database.DB
 	orders, err := client.PayOrder.Query().All(c.Context())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -42,7 +43,7 @@ func ListPayOrder(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders [post]
 func CreatePayOrder(c *fiber.Ctx) error {
-	client := c.Locals("client").(*ent.Client)
+	client := database.DB
 	var order struct {
 		ChannelID  string `json:"channel_id"`
 		OrderID    string `json:"order_id"`
@@ -59,9 +60,7 @@ func CreatePayOrder(c *fiber.Ctx) error {
 		Raw        string `json:"raw"`
 	}
 	if err := c.BodyParser(&order); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
 	newOrder, err := client.PayOrder.Create().
@@ -80,9 +79,7 @@ func CreatePayOrder(c *fiber.Ctx) error {
 		SetRaw(order.Raw).
 		Save(c.Context())
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 	return c.JSON(fiber.Map{
 		"data": newOrder,
@@ -104,9 +101,8 @@ func UpdatePayOrder(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid ID format",
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format"))
 	}
 
 	var order struct {
@@ -125,9 +121,7 @@ func UpdatePayOrder(c *fiber.Ctx) error {
 		Raw        string `json:"raw"`
 	}
 	if err := c.BodyParser(&order); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
 	updatedOrder, err := client.PayOrder.UpdateOneID(id).
@@ -146,13 +140,9 @@ func UpdatePayOrder(c *fiber.Ctx) error {
 		SetRaw(order.Raw).
 		Save(c.Context())
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"data": updatedOrder,
-	})
+	return c.JSON(model.NewSuccess("success", updatedOrder))
 }
 
 // @Summary 查询支付订单
@@ -180,17 +170,12 @@ func QueryPayOrder(c *fiber.Ctx) error {
 		Only(c.Context())
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": "PayOrder not found",
-			})
+			return c.JSON(model.NewError(fiber.StatusNotFound,
+				"PayOrder not found"))
 		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"data": order,
-	})
+	return c.JSON(model.NewSuccess("success", order))
 }
 
 // @Summary 删除支付订单
@@ -208,23 +193,21 @@ func DeletePayOrder(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid ID format",
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format",
+		))
 	}
 
 	err = client.PayOrder.DeleteOneID(id).Exec(c.Context())
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": "PayOrder not found",
-			})
+			return c.JSON(model.NewError(fiber.StatusBadRequest,
+				"PayOrder not found",
+			))
 		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"message": "PayOrder deleted successfully",
-	})
+	return c.JSON(model.NewSuccess("success",
+		nil,
+	))
 }

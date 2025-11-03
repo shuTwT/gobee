@@ -14,20 +14,26 @@ type Tx struct {
 	config
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
-	// Article is the client for interacting with the Article builders.
-	Article *ArticleClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// ModelSchema is the client for interacting with the ModelSchema builders.
 	ModelSchema *ModelSchemaClient
+	// Oauth2AccessToken is the client for interacting with the Oauth2AccessToken builders.
+	Oauth2AccessToken *Oauth2AccessTokenClient
+	// Oauth2Code is the client for interacting with the Oauth2Code builders.
+	Oauth2Code *Oauth2CodeClient
+	// Oauth2RefreshToken is the client for interacting with the Oauth2RefreshToken builders.
+	Oauth2RefreshToken *Oauth2RefreshTokenClient
 	// Page is the client for interacting with the Page builders.
 	Page *PageClient
 	// PayChannel is the client for interacting with the PayChannel builders.
 	PayChannel *PayChannelClient
 	// PayOrder is the client for interacting with the PayOrder builders.
 	PayOrder *PayOrderClient
+	// Post is the client for interacting with the Post builders.
+	Post *PostClient
 	// Setting is the client for interacting with the Setting builders.
 	Setting *SettingClient
 	// User is the client for interacting with the User builders.
@@ -164,13 +170,16 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Album = NewAlbumClient(tx.config)
-	tx.Article = NewArticleClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.ModelSchema = NewModelSchemaClient(tx.config)
+	tx.Oauth2AccessToken = NewOauth2AccessTokenClient(tx.config)
+	tx.Oauth2Code = NewOauth2CodeClient(tx.config)
+	tx.Oauth2RefreshToken = NewOauth2RefreshTokenClient(tx.config)
 	tx.Page = NewPageClient(tx.config)
 	tx.PayChannel = NewPayChannelClient(tx.config)
 	tx.PayOrder = NewPayOrderClient(tx.config)
+	tx.Post = NewPostClient(tx.config)
 	tx.Setting = NewSettingClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

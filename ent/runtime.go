@@ -4,12 +4,15 @@ package ent
 
 import (
 	"gobee/ent/album"
-	"gobee/ent/article"
 	"gobee/ent/comment"
 	"gobee/ent/file"
+	"gobee/ent/oauth2accesstoken"
+	"gobee/ent/oauth2code"
+	"gobee/ent/oauth2refreshtoken"
 	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
+	"gobee/ent/post"
 	"gobee/ent/schema"
 	"gobee/ent/setting"
 	"gobee/ent/user"
@@ -57,43 +60,6 @@ func init() {
 	albumDescDescription := albumFields[1].Descriptor()
 	// album.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	album.DescriptionValidator = albumDescDescription.Validators[0].(func(string) error)
-	articleMixin := schema.Article{}.Mixin()
-	articleMixinFields0 := articleMixin[0].Fields()
-	_ = articleMixinFields0
-	articleFields := schema.Article{}.Fields()
-	_ = articleFields
-	// articleDescCreatedAt is the schema descriptor for created_at field.
-	articleDescCreatedAt := articleMixinFields0[0].Descriptor()
-	// article.DefaultCreatedAt holds the default value on creation for the created_at field.
-	article.DefaultCreatedAt = articleDescCreatedAt.Default.(func() time.Time)
-	// articleDescUpdatedAt is the schema descriptor for updated_at field.
-	articleDescUpdatedAt := articleMixinFields0[1].Descriptor()
-	// article.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	article.DefaultUpdatedAt = articleDescUpdatedAt.Default.(func() time.Time)
-	// article.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	article.UpdateDefaultUpdatedAt = articleDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// articleDescTitle is the schema descriptor for title field.
-	articleDescTitle := articleFields[0].Descriptor()
-	// article.TitleValidator is a validator for the "title" field. It is called by the builders before save.
-	article.TitleValidator = func() func(string) error {
-		validators := articleDescTitle.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(title string) error {
-			for _, fn := range fns {
-				if err := fn(title); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// articleDescContent is the schema descriptor for content field.
-	articleDescContent := articleFields[1].Descriptor()
-	// article.ContentValidator is a validator for the "content" field. It is called by the builders before save.
-	article.ContentValidator = articleDescContent.Validators[0].(func(string) error)
 	commentMixin := schema.Comment{}.Mixin()
 	commentMixinFields0 := commentMixin[0].Fields()
 	_ = commentMixinFields0
@@ -202,6 +168,249 @@ func init() {
 		return func(url string) error {
 			for _, fn := range fns {
 				if err := fn(url); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	oauth2accesstokenMixin := schema.Oauth2AccessToken{}.Mixin()
+	oauth2accesstokenMixinFields0 := oauth2accesstokenMixin[0].Fields()
+	_ = oauth2accesstokenMixinFields0
+	oauth2accesstokenFields := schema.Oauth2AccessToken{}.Fields()
+	_ = oauth2accesstokenFields
+	// oauth2accesstokenDescCreatedAt is the schema descriptor for created_at field.
+	oauth2accesstokenDescCreatedAt := oauth2accesstokenMixinFields0[0].Descriptor()
+	// oauth2accesstoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	oauth2accesstoken.DefaultCreatedAt = oauth2accesstokenDescCreatedAt.Default.(func() time.Time)
+	// oauth2accesstokenDescUpdatedAt is the schema descriptor for updated_at field.
+	oauth2accesstokenDescUpdatedAt := oauth2accesstokenMixinFields0[1].Descriptor()
+	// oauth2accesstoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	oauth2accesstoken.DefaultUpdatedAt = oauth2accesstokenDescUpdatedAt.Default.(func() time.Time)
+	// oauth2accesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	oauth2accesstoken.UpdateDefaultUpdatedAt = oauth2accesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// oauth2accesstokenDescAccessToken is the schema descriptor for access_token field.
+	oauth2accesstokenDescAccessToken := oauth2accesstokenFields[1].Descriptor()
+	// oauth2accesstoken.AccessTokenValidator is a validator for the "access_token" field. It is called by the builders before save.
+	oauth2accesstoken.AccessTokenValidator = func() func(string) error {
+		validators := oauth2accesstokenDescAccessToken.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(access_token string) error {
+			for _, fn := range fns {
+				if err := fn(access_token); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// oauth2accesstokenDescRefreshToken is the schema descriptor for refresh_token field.
+	oauth2accesstokenDescRefreshToken := oauth2accesstokenFields[2].Descriptor()
+	// oauth2accesstoken.RefreshTokenValidator is a validator for the "refresh_token" field. It is called by the builders before save.
+	oauth2accesstoken.RefreshTokenValidator = func() func(string) error {
+		validators := oauth2accesstokenDescRefreshToken.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(refresh_token string) error {
+			for _, fn := range fns {
+				if err := fn(refresh_token); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// oauth2accesstokenDescClientID is the schema descriptor for client_id field.
+	oauth2accesstokenDescClientID := oauth2accesstokenFields[3].Descriptor()
+	// oauth2accesstoken.ClientIDValidator is a validator for the "client_id" field. It is called by the builders before save.
+	oauth2accesstoken.ClientIDValidator = func() func(string) error {
+		validators := oauth2accesstokenDescClientID.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(client_id string) error {
+			for _, fn := range fns {
+				if err := fn(client_id); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// oauth2accesstokenDescScope is the schema descriptor for scope field.
+	oauth2accesstokenDescScope := oauth2accesstokenFields[4].Descriptor()
+	// oauth2accesstoken.ScopeValidator is a validator for the "scope" field. It is called by the builders before save.
+	oauth2accesstoken.ScopeValidator = func() func(string) error {
+		validators := oauth2accesstokenDescScope.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(scope string) error {
+			for _, fn := range fns {
+				if err := fn(scope); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	oauth2codeMixin := schema.Oauth2Code{}.Mixin()
+	oauth2codeMixinFields0 := oauth2codeMixin[0].Fields()
+	_ = oauth2codeMixinFields0
+	oauth2codeFields := schema.Oauth2Code{}.Fields()
+	_ = oauth2codeFields
+	// oauth2codeDescCreatedAt is the schema descriptor for created_at field.
+	oauth2codeDescCreatedAt := oauth2codeMixinFields0[0].Descriptor()
+	// oauth2code.DefaultCreatedAt holds the default value on creation for the created_at field.
+	oauth2code.DefaultCreatedAt = oauth2codeDescCreatedAt.Default.(func() time.Time)
+	// oauth2codeDescUpdatedAt is the schema descriptor for updated_at field.
+	oauth2codeDescUpdatedAt := oauth2codeMixinFields0[1].Descriptor()
+	// oauth2code.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	oauth2code.DefaultUpdatedAt = oauth2codeDescUpdatedAt.Default.(func() time.Time)
+	// oauth2code.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	oauth2code.UpdateDefaultUpdatedAt = oauth2codeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// oauth2codeDescCode is the schema descriptor for code field.
+	oauth2codeDescCode := oauth2codeFields[1].Descriptor()
+	// oauth2code.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	oauth2code.CodeValidator = func() func(string) error {
+		validators := oauth2codeDescCode.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(code string) error {
+			for _, fn := range fns {
+				if err := fn(code); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// oauth2codeDescClientID is the schema descriptor for client_id field.
+	oauth2codeDescClientID := oauth2codeFields[3].Descriptor()
+	// oauth2code.ClientIDValidator is a validator for the "client_id" field. It is called by the builders before save.
+	oauth2code.ClientIDValidator = func() func(string) error {
+		validators := oauth2codeDescClientID.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(client_id string) error {
+			for _, fn := range fns {
+				if err := fn(client_id); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// oauth2codeDescRedirectURI is the schema descriptor for redirect_uri field.
+	oauth2codeDescRedirectURI := oauth2codeFields[4].Descriptor()
+	// oauth2code.RedirectURIValidator is a validator for the "redirect_uri" field. It is called by the builders before save.
+	oauth2code.RedirectURIValidator = func() func(string) error {
+		validators := oauth2codeDescRedirectURI.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(redirect_uri string) error {
+			for _, fn := range fns {
+				if err := fn(redirect_uri); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// oauth2codeDescScope is the schema descriptor for scope field.
+	oauth2codeDescScope := oauth2codeFields[5].Descriptor()
+	// oauth2code.ScopeValidator is a validator for the "scope" field. It is called by the builders before save.
+	oauth2code.ScopeValidator = func() func(string) error {
+		validators := oauth2codeDescScope.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(scope string) error {
+			for _, fn := range fns {
+				if err := fn(scope); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	oauth2refreshtokenMixin := schema.Oauth2RefreshToken{}.Mixin()
+	oauth2refreshtokenMixinFields0 := oauth2refreshtokenMixin[0].Fields()
+	_ = oauth2refreshtokenMixinFields0
+	oauth2refreshtokenFields := schema.Oauth2RefreshToken{}.Fields()
+	_ = oauth2refreshtokenFields
+	// oauth2refreshtokenDescCreatedAt is the schema descriptor for created_at field.
+	oauth2refreshtokenDescCreatedAt := oauth2refreshtokenMixinFields0[0].Descriptor()
+	// oauth2refreshtoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	oauth2refreshtoken.DefaultCreatedAt = oauth2refreshtokenDescCreatedAt.Default.(func() time.Time)
+	// oauth2refreshtokenDescUpdatedAt is the schema descriptor for updated_at field.
+	oauth2refreshtokenDescUpdatedAt := oauth2refreshtokenMixinFields0[1].Descriptor()
+	// oauth2refreshtoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	oauth2refreshtoken.DefaultUpdatedAt = oauth2refreshtokenDescUpdatedAt.Default.(func() time.Time)
+	// oauth2refreshtoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	oauth2refreshtoken.UpdateDefaultUpdatedAt = oauth2refreshtokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// oauth2refreshtokenDescRefreshToken is the schema descriptor for refresh_token field.
+	oauth2refreshtokenDescRefreshToken := oauth2refreshtokenFields[1].Descriptor()
+	// oauth2refreshtoken.RefreshTokenValidator is a validator for the "refresh_token" field. It is called by the builders before save.
+	oauth2refreshtoken.RefreshTokenValidator = func() func(string) error {
+		validators := oauth2refreshtokenDescRefreshToken.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(refresh_token string) error {
+			for _, fn := range fns {
+				if err := fn(refresh_token); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// oauth2refreshtokenDescClientID is the schema descriptor for client_id field.
+	oauth2refreshtokenDescClientID := oauth2refreshtokenFields[2].Descriptor()
+	// oauth2refreshtoken.ClientIDValidator is a validator for the "client_id" field. It is called by the builders before save.
+	oauth2refreshtoken.ClientIDValidator = func() func(string) error {
+		validators := oauth2refreshtokenDescClientID.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(client_id string) error {
+			for _, fn := range fns {
+				if err := fn(client_id); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// oauth2refreshtokenDescScope is the schema descriptor for scope field.
+	oauth2refreshtokenDescScope := oauth2refreshtokenFields[3].Descriptor()
+	// oauth2refreshtoken.ScopeValidator is a validator for the "scope" field. It is called by the builders before save.
+	oauth2refreshtoken.ScopeValidator = func() func(string) error {
+		validators := oauth2refreshtokenDescScope.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(scope string) error {
+			for _, fn := range fns {
+				if err := fn(scope); err != nil {
 					return err
 				}
 			}
@@ -333,6 +542,71 @@ func init() {
 	payorderDescState := payorderFields[10].Descriptor()
 	// payorder.DefaultState holds the default value on creation for the state field.
 	payorder.DefaultState = payorderDescState.Default.(string)
+	postMixin := schema.Post{}.Mixin()
+	postMixinFields0 := postMixin[0].Fields()
+	_ = postMixinFields0
+	postFields := schema.Post{}.Fields()
+	_ = postFields
+	// postDescCreatedAt is the schema descriptor for created_at field.
+	postDescCreatedAt := postMixinFields0[0].Descriptor()
+	// post.DefaultCreatedAt holds the default value on creation for the created_at field.
+	post.DefaultCreatedAt = postDescCreatedAt.Default.(func() time.Time)
+	// postDescUpdatedAt is the schema descriptor for updated_at field.
+	postDescUpdatedAt := postMixinFields0[1].Descriptor()
+	// post.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	post.DefaultUpdatedAt = postDescUpdatedAt.Default.(func() time.Time)
+	// post.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	post.UpdateDefaultUpdatedAt = postDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// postDescTitle is the schema descriptor for title field.
+	postDescTitle := postFields[0].Descriptor()
+	// post.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	post.TitleValidator = func() func(string) error {
+		validators := postDescTitle.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(title string) error {
+			for _, fn := range fns {
+				if err := fn(title); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// postDescContent is the schema descriptor for content field.
+	postDescContent := postFields[1].Descriptor()
+	// post.ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	post.ContentValidator = postDescContent.Validators[0].(func(string) error)
+	// postDescIsPublished is the schema descriptor for is_published field.
+	postDescIsPublished := postFields[2].Descriptor()
+	// post.DefaultIsPublished holds the default value on creation for the is_published field.
+	post.DefaultIsPublished = postDescIsPublished.Default.(bool)
+	// postDescViewCount is the schema descriptor for view_count field.
+	postDescViewCount := postFields[4].Descriptor()
+	// post.DefaultViewCount holds the default value on creation for the view_count field.
+	post.DefaultViewCount = postDescViewCount.Default.(int)
+	// post.ViewCountValidator is a validator for the "view_count" field. It is called by the builders before save.
+	post.ViewCountValidator = postDescViewCount.Validators[0].(func(int) error)
+	// postDescCommentCount is the schema descriptor for comment_count field.
+	postDescCommentCount := postFields[5].Descriptor()
+	// post.DefaultCommentCount holds the default value on creation for the comment_count field.
+	post.DefaultCommentCount = postDescCommentCount.Default.(int)
+	// post.CommentCountValidator is a validator for the "comment_count" field. It is called by the builders before save.
+	post.CommentCountValidator = postDescCommentCount.Validators[0].(func(int) error)
+	// postDescCover is the schema descriptor for cover field.
+	postDescCover := postFields[6].Descriptor()
+	// post.CoverValidator is a validator for the "cover" field. It is called by the builders before save.
+	post.CoverValidator = postDescCover.Validators[0].(func(string) error)
+	// postDescKeywords is the schema descriptor for keywords field.
+	postDescKeywords := postFields[7].Descriptor()
+	// post.KeywordsValidator is a validator for the "keywords" field. It is called by the builders before save.
+	post.KeywordsValidator = postDescKeywords.Validators[0].(func(string) error)
+	// postDescCopyright is the schema descriptor for copyright field.
+	postDescCopyright := postFields[8].Descriptor()
+	// post.CopyrightValidator is a validator for the "copyright" field. It is called by the builders before save.
+	post.CopyrightValidator = postDescCopyright.Validators[0].(func(string) error)
 	settingMixin := schema.Setting{}.Mixin()
 	settingMixinFields0 := settingMixin[0].Fields()
 	_ = settingMixinFields0

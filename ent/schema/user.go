@@ -1,3 +1,6 @@
+/**
+ * 用户
+ */
 package schema
 
 import (

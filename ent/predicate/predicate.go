@@ -9,9 +9,6 @@ import (
 // Album is the predicate function for album builders.
 type Album func(*sql.Selector)
 
-// Article is the predicate function for article builders.
-type Article func(*sql.Selector)
-
 // Comment is the predicate function for comment builders.
 type Comment func(*sql.Selector)
 
@@ -21,6 +18,15 @@ type File func(*sql.Selector)
 // ModelSchema is the predicate function for modelschema builders.
 type ModelSchema func(*sql.Selector)
 
+// Oauth2AccessToken is the predicate function for oauth2accesstoken builders.
+type Oauth2AccessToken func(*sql.Selector)
+
+// Oauth2Code is the predicate function for oauth2code builders.
+type Oauth2Code func(*sql.Selector)
+
+// Oauth2RefreshToken is the predicate function for oauth2refreshtoken builders.
+type Oauth2RefreshToken func(*sql.Selector)
+
 // Page is the predicate function for page builders.
 type Page func(*sql.Selector)
 
@@ -29,6 +35,9 @@ type PayChannel func(*sql.Selector)
 
 // PayOrder is the predicate function for payorder builders.
 type PayOrder func(*sql.Selector)
+
+// Post is the predicate function for post builders.
+type Post func(*sql.Selector)
 
 // Setting is the predicate function for setting builders.
 type Setting func(*sql.Selector)

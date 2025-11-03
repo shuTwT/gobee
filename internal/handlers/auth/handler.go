@@ -67,13 +67,13 @@ func Login(c *fiber.Ctx) error {
 		))
 	}
 
-	expires := time.Now().Add(time.Hour * 24).Unix()
+	expires := time.Now().Add(time.Hour * 24).UnixMilli()
 	// 生成JWT令牌
 	claims := jwt.MapClaims{
 		"id":    u.ID,
 		"email": u.Email,
 		"name":  u.Name,
-		"exp":   time.Now().Add(time.Hour * 24).Unix(), // 24小时过期
+		"exp":   expires, // 24小时过期
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 

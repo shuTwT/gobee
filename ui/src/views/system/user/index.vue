@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon, type DataTableColumns } from 'naive-ui'
 import { Pencil,RefreshOutline } from '@vicons/ionicons5'
+import * as userApi from '@/api/system/user'
 
 // 分页配置
 const pagination = reactive({
@@ -32,7 +33,7 @@ const columns: DataTableColumns<any> = [
   },
   {
     title: '邮箱',
-    key: 'id',
+    key: 'email',
     width: 180,
     ellipsis: {
       tooltip: true,
@@ -40,7 +41,7 @@ const columns: DataTableColumns<any> = [
   },
   {
     title: '用户名',
-    key: 'id',
+    key: 'name',
     width: 180,
     ellipsis: {
       tooltip: true,
@@ -48,7 +49,7 @@ const columns: DataTableColumns<any> = [
   },
   {
     title: '手机号',
-    key: 'id',
+    key: 'phoneNumber',
     width: 180,
     ellipsis: {
       tooltip: true,
@@ -74,6 +75,12 @@ const columns: DataTableColumns<any> = [
     },
   },
 ]
+
+onMounted(()=>{
+  userApi.getUserList().then(res=>{
+    dataList.value = res.data || []
+  })
+})
 </script>
 <template>
   <div class="container-fluid p-6">

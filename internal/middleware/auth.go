@@ -1,16 +1,17 @@
 package middleware
 
 import (
+	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
-	jwtware "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 // Protected 保护需要认证的路由
 func Protected() fiber.Handler {
 	return jwtware.New(jwtware.Config{
-		SigningKey:     []byte("your-secret-key"), // 注意：在生产环境中应该使用环境变量存储密钥
-		SigningMethod:  "HS256",
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: "HS256",
+			Key:    []byte("your-secret-key")}, // 注意：在生产环境中应该使用环境变量存储密钥
 		ErrorHandler:   jwtError,
 		SuccessHandler: jwtSuccess,
 	})

@@ -4,7 +4,7 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/article"
+	"gobee/ent/post"
 	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
@@ -12,26 +12,26 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ArticleDelete is the builder for deleting a Article entity.
-type ArticleDelete struct {
+// PostDelete is the builder for deleting a Post entity.
+type PostDelete struct {
 	config
 	hooks    []Hook
-	mutation *ArticleMutation
+	mutation *PostMutation
 }
 
-// Where appends a list predicates to the ArticleDelete builder.
-func (_d *ArticleDelete) Where(ps ...predicate.Article) *ArticleDelete {
+// Where appends a list predicates to the PostDelete builder.
+func (_d *PostDelete) Where(ps ...predicate.Post) *PostDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *ArticleDelete) Exec(ctx context.Context) (int, error) {
+func (_d *PostDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ArticleDelete) ExecX(ctx context.Context) int {
+func (_d *PostDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *ArticleDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *ArticleDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(article.Table, sqlgraph.NewFieldSpec(article.FieldID, field.TypeInt))
+func (_d *PostDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(post.Table, sqlgraph.NewFieldSpec(post.FieldID, field.TypeInt))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *ArticleDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// ArticleDeleteOne is the builder for deleting a single Article entity.
-type ArticleDeleteOne struct {
-	_d *ArticleDelete
+// PostDeleteOne is the builder for deleting a single Post entity.
+type PostDeleteOne struct {
+	_d *PostDelete
 }
 
-// Where appends a list predicates to the ArticleDelete builder.
-func (_d *ArticleDeleteOne) Where(ps ...predicate.Article) *ArticleDeleteOne {
+// Where appends a list predicates to the PostDelete builder.
+func (_d *PostDeleteOne) Where(ps ...predicate.Post) *PostDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *ArticleDeleteOne) Exec(ctx context.Context) error {
+func (_d *PostDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{article.Label}
+		return &NotFoundError{post.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ArticleDeleteOne) ExecX(ctx context.Context) {
+func (_d *PostDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}
