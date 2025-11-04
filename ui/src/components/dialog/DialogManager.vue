@@ -98,7 +98,7 @@ function handleClose(options: DialogOptions, index: number, args = { command: 'c
       <span>{{ options.title }}</span>
     </template>
     <template #header-extra>
-      <n-button :quaternary="true" style="width: 22px;height: 22px;padding: 0;" @click="()=>{
+      <n-button tabindex="-1" :quaternary="true" style="width: 22px;height: 22px;padding: 0;" @click="()=>{
         options.fullscreen = !options.fullscreen;
         eventsCallback(
           'fullscreenCallBack',

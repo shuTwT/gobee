@@ -5,8 +5,10 @@ import (
 	initialize_handler "gobee/internal/handlers/initialize"
 	paychannel_handler "gobee/internal/handlers/pay_channel"
 	payorder_handler "gobee/internal/handlers/pay_order"
+	post_handler "gobee/internal/handlers/post"
 	route_handler "gobee/internal/handlers/route"
 	setting_handler "gobee/internal/handlers/setting"
+	storagestrategy_handler "gobee/internal/handlers/storage_strategy"
 	user_handler "gobee/internal/handlers/user"
 	"gobee/internal/middleware"
 
@@ -47,26 +49,43 @@ func Initialize(router *fiber.App) {
 			payChannelApi := apiV1.Group("/pay-channel")
 			{
 				payChannelApi.Get("/list", paychannel_handler.ListPayChannel)
-				payChannelApi.Get("/create", paychannel_handler.CreatePayChannel)
-				payChannelApi.Get("/update", paychannel_handler.UpdatePayChannel)
-				payChannelApi.Get("/query", paychannel_handler.QueryPayChannel)
-				payChannelApi.Get("/delete", paychannel_handler.DeletePayChannel)
+				payChannelApi.Post("/create", paychannel_handler.CreatePayChannel)
+				payChannelApi.Put("/update/:id", paychannel_handler.UpdatePayChannel)
+				payChannelApi.Get("/query/:id", paychannel_handler.QueryPayChannel)
+				payChannelApi.Delete("/delete/:id", paychannel_handler.DeletePayChannel)
 			}
 			payOrderApi := apiV1.Group("/pay-order")
 			{
 				payOrderApi.Get("/list", payorder_handler.ListPayOrder)
-				payOrderApi.Get("/create", payorder_handler.CreatePayOrder)
-				payOrderApi.Get("/update", payorder_handler.UpdatePayOrder)
-				payOrderApi.Get("/query", payorder_handler.QueryPayOrder)
-				payOrderApi.Get("/delete", payorder_handler.DeletePayOrder)
+				payOrderApi.Put("/create", payorder_handler.CreatePayOrder)
+				payOrderApi.Put("/update/:id", payorder_handler.UpdatePayOrder)
+				payOrderApi.Get("/query/:id", payorder_handler.QueryPayOrder)
+				payOrderApi.Delete("/delete/:id", payorder_handler.DeletePayOrder)
 			}
 			userApi := apiV1.Group("/user")
 			{
 				userApi.Get("/list", user_handler.ListUser)
-				userApi.Get("/create", user_handler.CreateUser)
-				userApi.Get("/update", user_handler.UpdateUser)
-				userApi.Get("/query", user_handler.QueryUser)
-				userApi.Get("/delete", user_handler.DeleteUser)
+				userApi.Post("/create", user_handler.CreateUser)
+				userApi.Put("/update/:id", user_handler.UpdateUser)
+				userApi.Get("/query/:id", user_handler.QueryUser)
+				userApi.Delete("/delete/:id", user_handler.DeleteUser)
+			}
+			postApi := apiV1.Group("/post")
+			{
+				postApi.Get("/list", post_handler.ListPost)
+				postApi.Post("/create", post_handler.CreatePost)
+				postApi.Put("/update/:id", post_handler.UpdatePost)
+				postApi.Get("/query/:id", post_handler.QueryPost)
+				postApi.Delete("/delete/:id", post_handler.DeletePost)
+			}
+			storageStrategyApi := apiV1.Group("/storage-strategy")
+			{
+				storageStrategyApi.Get("/list", storagestrategy_handler.ListStorageStrategy)
+				storageStrategyApi.Post("/create", storagestrategy_handler.CreateStorageStrategy)
+				storageStrategyApi.Put("/update/:id", storagestrategy_handler.UpdateStorageStrategy)
+				storageStrategyApi.Get("/query/:id", storagestrategy_handler.QueryStorageStrategy)
+				storageStrategyApi.Delete("/delete/:id", storagestrategy_handler.DeleteStorageStrategy)
+				storageStrategyApi.Put("/default/:id", storagestrategy_handler.SetDefaultStorageStrategy)
 			}
 		}
 	}

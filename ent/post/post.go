@@ -37,6 +37,8 @@ const (
 	FieldCopyright = "copyright"
 	// FieldAuthor holds the string denoting the author field in the database.
 	FieldAuthor = "author"
+	// FieldSummary holds the string denoting the summary field in the database.
+	FieldSummary = "summary"
 	// Table holds the table name of the post in the database.
 	Table = "posts"
 )
@@ -56,6 +58,7 @@ var Columns = []string{
 	FieldKeywords,
 	FieldCopyright,
 	FieldAuthor,
+	FieldSummary,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -95,6 +98,10 @@ var (
 	KeywordsValidator func(string) error
 	// CopyrightValidator is a validator for the "copyright" field. It is called by the builders before save.
 	CopyrightValidator func(string) error
+	// DefaultAuthor holds the default value on creation for the "author" field.
+	DefaultAuthor string
+	// SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
+	SummaryValidator func(string) error
 )
 
 // OrderOption defines the ordering options for the Post queries.
@@ -163,4 +170,9 @@ func ByCopyright(opts ...sql.OrderTermOption) OrderOption {
 // ByAuthor orders the results by the author field.
 func ByAuthor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthor, opts...).ToFunc()
+}
+
+// BySummary orders the results by the summary field.
+func BySummary(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSummary, opts...).ToFunc()
 }

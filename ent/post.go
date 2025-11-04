@@ -40,7 +40,9 @@ type Post struct {
 	// 文章版权
 	Copyright string `json:"copyright,omitempty"`
 	// 作者
-	Author       string `json:"author,omitempty"`
+	Author string `json:"author,omitempty"`
+	// 文章摘要
+	Summary      string `json:"summary,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -53,7 +55,7 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case post.FieldID, post.FieldViewCount, post.FieldCommentCount:
 			values[i] = new(sql.NullInt64)
-		case post.FieldTitle, post.FieldContent, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor:
+		case post.FieldTitle, post.FieldContent, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
 			values[i] = new(sql.NullString)
 		case post.FieldCreatedAt, post.FieldUpdatedAt, post.FieldPublishedAt:
 			values[i] = new(sql.NullTime)
@@ -150,6 +152,12 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Author = value.String
 			}
+		case post.FieldSummary:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field summary", values[i])
+			} else if value.Valid {
+				_m.Summary = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -221,6 +229,9 @@ func (_m *Post) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("author=")
 	builder.WriteString(_m.Author)
+	builder.WriteString(", ")
+	builder.WriteString("summary=")
+	builder.WriteString(_m.Summary)
 	builder.WriteByte(')')
 	return builder.String()
 }

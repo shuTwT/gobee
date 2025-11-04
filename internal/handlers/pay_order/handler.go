@@ -23,13 +23,9 @@ func ListPayOrder(c *fiber.Ctx) error {
 	client := database.DB
 	orders, err := client.PayOrder.Query().All(c.Context())
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"data": orders,
-	})
+	return c.JSON(model.NewSuccess("success", orders))
 }
 
 // @Summary 创建支付订单
@@ -81,9 +77,7 @@ func CreatePayOrder(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(fiber.Map{
-		"data": newOrder,
-	})
+	return c.JSON(model.NewSuccess("success", newOrder))
 }
 
 // @Summary 更新支付订单
@@ -160,9 +154,9 @@ func QueryPayOrder(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid ID format",
-		})
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format",
+		))
 	}
 
 	order, err := client.PayOrder.Query().

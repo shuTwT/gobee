@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import '@wangeditor-next/editor/dist/css/style.css' // 引入 css
 import { Editor, Toolbar } from '@wangeditor-next/editor-for-vue'
+import { useRoute } from 'vue-router'
+import * as postApi from '@/api/post'
+import SettingForm from '../settingForm.vue'
+import { addDialog } from '@/components/dialog'
 
+const route = useRoute()
 const mode = 'default'
 const editorRef = shallowRef()
 
@@ -13,6 +18,22 @@ const editorConfig = { placeholder: '请输入内容...' }
 const handleCreated = (editor: any) => {
   editorRef.value = editor // 记录 editor 实例，重要！
 }
+
+const openSettingDialog = () => {
+  addDialog({
+    props:{},
+    contentRenderer:()=>h(SettingForm)
+  })
+}
+
+onMounted(()=>{
+  const id = route.query.id
+  if(id){
+    postApi.queryPost(id+"").then((res)=>{
+      valueHtml.value = res.data.content
+    })
+  }
+})
 
 onBeforeUnmount(() => {
   const editor = editorRef.value
@@ -42,7 +63,7 @@ onBeforeUnmount(() => {
         <div class="pt-6 flex justify-end pr-6 items-center">
           <n-button style="margin-right: 10px"> 历史版本 </n-button>
           <n-button style="margin-right: 10px"> 预览 </n-button>
-          <n-button style="margin-right: 10px"> 设置 </n-button>
+          <n-button style="margin-right: 10px" @click="openSettingDialog"> 设置 </n-button>
           <n-button style="margin-right: 10px"> 保存 </n-button>
           <n-button type="primary" size="large"> 发布 </n-button>
         </div>

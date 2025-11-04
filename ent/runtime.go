@@ -15,6 +15,7 @@ import (
 	"gobee/ent/post"
 	"gobee/ent/schema"
 	"gobee/ent/setting"
+	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
 	"time"
 )
@@ -607,6 +608,14 @@ func init() {
 	postDescCopyright := postFields[8].Descriptor()
 	// post.CopyrightValidator is a validator for the "copyright" field. It is called by the builders before save.
 	post.CopyrightValidator = postDescCopyright.Validators[0].(func(string) error)
+	// postDescAuthor is the schema descriptor for author field.
+	postDescAuthor := postFields[9].Descriptor()
+	// post.DefaultAuthor holds the default value on creation for the author field.
+	post.DefaultAuthor = postDescAuthor.Default.(string)
+	// postDescSummary is the schema descriptor for summary field.
+	postDescSummary := postFields[10].Descriptor()
+	// post.SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
+	post.SummaryValidator = postDescSummary.Validators[0].(func(string) error)
 	settingMixin := schema.Setting{}.Mixin()
 	settingMixinFields0 := settingMixin[0].Fields()
 	_ = settingMixinFields0
@@ -662,6 +671,53 @@ func init() {
 	settingDescComment := settingFields[2].Descriptor()
 	// setting.CommentValidator is a validator for the "comment" field. It is called by the builders before save.
 	setting.CommentValidator = settingDescComment.Validators[0].(func(string) error)
+	storagestrategyMixin := schema.StorageStrategy{}.Mixin()
+	storagestrategyMixinFields0 := storagestrategyMixin[0].Fields()
+	_ = storagestrategyMixinFields0
+	storagestrategyFields := schema.StorageStrategy{}.Fields()
+	_ = storagestrategyFields
+	// storagestrategyDescCreatedAt is the schema descriptor for created_at field.
+	storagestrategyDescCreatedAt := storagestrategyMixinFields0[0].Descriptor()
+	// storagestrategy.DefaultCreatedAt holds the default value on creation for the created_at field.
+	storagestrategy.DefaultCreatedAt = storagestrategyDescCreatedAt.Default.(func() time.Time)
+	// storagestrategyDescUpdatedAt is the schema descriptor for updated_at field.
+	storagestrategyDescUpdatedAt := storagestrategyMixinFields0[1].Descriptor()
+	// storagestrategy.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	storagestrategy.DefaultUpdatedAt = storagestrategyDescUpdatedAt.Default.(func() time.Time)
+	// storagestrategy.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	storagestrategy.UpdateDefaultUpdatedAt = storagestrategyDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// storagestrategyDescName is the schema descriptor for name field.
+	storagestrategyDescName := storagestrategyFields[0].Descriptor()
+	// storagestrategy.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	storagestrategy.NameValidator = storagestrategyDescName.Validators[0].(func(string) error)
+	// storagestrategyDescNodeID is the schema descriptor for node_id field.
+	storagestrategyDescNodeID := storagestrategyFields[2].Descriptor()
+	// storagestrategy.DefaultNodeID holds the default value on creation for the node_id field.
+	storagestrategy.DefaultNodeID = storagestrategyDescNodeID.Default.(string)
+	// storagestrategyDescBucket is the schema descriptor for bucket field.
+	storagestrategyDescBucket := storagestrategyFields[3].Descriptor()
+	// storagestrategy.BucketValidator is a validator for the "bucket" field. It is called by the builders before save.
+	storagestrategy.BucketValidator = storagestrategyDescBucket.Validators[0].(func(string) error)
+	// storagestrategyDescAccessKey is the schema descriptor for access_key field.
+	storagestrategyDescAccessKey := storagestrategyFields[4].Descriptor()
+	// storagestrategy.DefaultAccessKey holds the default value on creation for the access_key field.
+	storagestrategy.DefaultAccessKey = storagestrategyDescAccessKey.Default.(string)
+	// storagestrategyDescSecretKey is the schema descriptor for secret_key field.
+	storagestrategyDescSecretKey := storagestrategyFields[5].Descriptor()
+	// storagestrategy.DefaultSecretKey holds the default value on creation for the secret_key field.
+	storagestrategy.DefaultSecretKey = storagestrategyDescSecretKey.Default.(string)
+	// storagestrategyDescBasePath is the schema descriptor for base_path field.
+	storagestrategyDescBasePath := storagestrategyFields[6].Descriptor()
+	// storagestrategy.DefaultBasePath holds the default value on creation for the base_path field.
+	storagestrategy.DefaultBasePath = storagestrategyDescBasePath.Default.(string)
+	// storagestrategyDescDomain is the schema descriptor for domain field.
+	storagestrategyDescDomain := storagestrategyFields[7].Descriptor()
+	// storagestrategy.DefaultDomain holds the default value on creation for the domain field.
+	storagestrategy.DefaultDomain = storagestrategyDescDomain.Default.(string)
+	// storagestrategyDescMaster is the schema descriptor for master field.
+	storagestrategyDescMaster := storagestrategyFields[8].Descriptor()
+	// storagestrategy.DefaultMaster holds the default value on creation for the master field.
+	storagestrategy.DefaultMaster = storagestrategyDescMaster.Default.(bool)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0

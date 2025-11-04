@@ -31,6 +31,7 @@ import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 import SettingForm from './settingForm.vue'
 import { addDialog } from '@/components/dialog'
 import { useRouter } from 'vue-router'
+import * as postApi from '@/api/post'
 
 const message = useMessage()
 const dialog = useDialog()
@@ -45,10 +46,7 @@ const dateRange = ref<[number,number]|null>(null)
 
 // 表格加载状态
 const loading = ref(false)
-const saving = ref(false)
 
-// 编辑弹窗控制
-const showEditModal = ref(false)
 
 // 分页配置
 const pagination = reactive({
@@ -72,32 +70,8 @@ const statusOptions = [
   { label: '已归档', value: 'archived' },
 ]
 
-// 表单校验规则
-const rules = {
-  title: {
-    required: true,
-    message: '请输入文章标题',
-    trigger: ['blur', 'input'],
-  },
-  content: {
-    required: true,
-    message: '请输入文章内容',
-    trigger: ['blur', 'input'],
-  },
-}
-
-// 表单数据
-const postForm = reactive({
-  id: '',
-  title: '',
-  summary: '',
-  content: '',
-  tags: [],
-  status: 'draft',
-})
-
 // 模拟文章数据
-const postList = ref([
+const dataList = ref([
   {
     id: '1',
     title: '示例文章1',
@@ -148,6 +122,7 @@ const columns :DataTableColumns<any>= [
         draft: { text: '草稿', type: 'default' },
         published: { text: '已发布', type: 'success' },
         archived: { text: '已归档', type: 'warning' },
+        undefined: { text: '未知', type: 'error' },
       }
       const status = statusMap[row.status]
       return h(NTag, { type: status.type, size: 'small' }, { default: () => status.text })
@@ -285,52 +260,22 @@ const columns :DataTableColumns<any>= [
   },
 ]
 
-// 筛选后的文章列表
-const filteredPostList = computed(() => {
-  let filtered = postList.value
-
-  // 关键词搜索
-  if (searchKeyword.value) {
-    const keyword = searchKeyword.value.toLowerCase()
-    filtered = filtered.filter(
-      (post) =>
-        post.title.toLowerCase().includes(keyword) ||
-        post.summary.toLowerCase().includes(keyword),
-    )
-  }
-
-  // 状态筛选
-  if (filterStatus.value) {
-    filtered = filtered.filter((post) => post.status === filterStatus.value)
-  }
-
-  // 日期范围筛选
-  if (dateRange.value) {
-    const [startDate, endDate] = dateRange.value
-    filtered = filtered.filter((post) => {
-      const postDate = new Date(post.createdAt).valueOf()
-      return postDate >= startDate && postDate <= endDate
-    })
-  }
-
-  return filtered
-})
 
 // 创建文章
 const createPost = () => {
-  postForm.id = ''
-  postForm.title = ''
-  postForm.summary = ''
-  postForm.content = ''
-  postForm.tags = []
-  postForm.status = 'draft'
-  showEditModal.value = true
+  postApi.createPost({
+    title:'未命名的文章',
+    content:'<p>此处是文章内容</p>',
+  })
 }
 
 // 编辑文章
 const editPost = (post: any) => {
   router.push({
-    name:"PostEditor"
+    name:"PostEditor",
+    query:{
+      id:post.id
+    }
   })
 }
 
@@ -350,7 +295,6 @@ const publishPost = (row: any) => {
 
 // 文章设置
 const settingPost = (row: any) => {
-  // TODO: 实现文章设置功能
   addDialog({
     props:{},
     contentRenderer:()=>h(SettingForm)
@@ -387,7 +331,7 @@ const clonePost = (row: any) => {
       newPost.id = Date.now()
       newPost.title = `${newPost.title} (副本)`
       newPost.status = 'draft'
-      postList.value.unshift(newPost)
+      dataList.value.unshift(newPost)
       message.success('克隆成功')
     },
   })
@@ -402,47 +346,10 @@ const deletePost = (row: any) => {
     negativeText: '取消',
     onPositiveClick: () => {
       message.success('删除成功')
-      const index = postList.value.findIndex((item) => item.id === row.id)
-      postList.value.splice(index, 1)
+      const index = dataList.value.findIndex((item) => item.id === row.id)
+      dataList.value.splice(index, 1)
     },
   })
-}
-
-// 保存文章
-const savePost = async () => {
-  saving.value = true
-  try {
-    // 模拟API调用
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    if (postForm.id) {
-      // 更新现有文章
-      const index = postList.value.findIndex((item) => item.id === postForm.id)
-      if (index !== -1) {
-        postList.value[index] = {
-          ...postList.value[index],
-          ...postForm,
-          updatedAt: new Date().toLocaleString('zh-CN'),
-        }
-      }
-    } else {
-      // 创建新文章
-      postList.value.unshift({
-        ...postForm,
-        id: String(Date.now()),
-        author: '管理员',
-        views: 0,
-        comments: 0,
-        createdAt: new Date().toLocaleString('zh-CN'),
-        updatedAt: new Date().toLocaleString('zh-CN'),
-      })
-    }
-    message.success('文章保存成功')
-    showEditModal.value = false
-  } catch {
-    message.error('文章保存失败')
-  } finally {
-    saving.value = false
-  }
 }
 
 // 处理搜索
@@ -463,6 +370,15 @@ const handleRefresh = () => {
     loading.value = false
   }, 1000)
 }
+
+const onSearch = async()=>{
+  const res = await postApi.getPostList()
+  console.log(res)
+  dataList.value = res.data
+}
+onMounted(()=>{
+  onSearch()
+})
 </script>
 
 <template>
@@ -517,7 +433,7 @@ const handleRefresh = () => {
       <!-- 文章列表 -->
       <n-data-table
         :columns="columns"
-        :data="filteredPostList"
+        :data="dataList"
         :loading="loading"
         :pagination="pagination"
         :row-key="(row) => row.id"

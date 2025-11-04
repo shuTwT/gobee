@@ -18,6 +18,7 @@ import (
 	"gobee/ent/payorder"
 	"gobee/ent/post"
 	"gobee/ent/setting"
+	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
 	"reflect"
 	"sync"
@@ -97,6 +98,7 @@ func checkColumn(t, c string) error {
 			payorder.Table:           payorder.ValidColumn,
 			post.Table:               post.ValidColumn,
 			setting.Table:            setting.ValidColumn,
+			storagestrategy.Table:    storagestrategy.ValidColumn,
 			user.Table:               user.ValidColumn,
 		})
 	})

@@ -42,6 +42,16 @@ export default [
       },
     },
     {
+      path: "/storage-strategy",
+      name:"StorageStrategyManagement",
+      component:()=>import('@/views/storage-strategy/index.vue'),
+      meta:{
+        title:'存储策略管理',
+        showLink:true,
+        roles:['admin','common']
+      }
+    },
+    {
       path: '/file',
       name: 'FileManagement',
       component: () => import('@/views/file/index.vue'),

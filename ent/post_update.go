@@ -212,6 +212,26 @@ func (_u *PostUpdate) SetNillableAuthor(v *string) *PostUpdate {
 	return _u
 }
 
+// SetSummary sets the "summary" field.
+func (_u *PostUpdate) SetSummary(v string) *PostUpdate {
+	_u.mutation.SetSummary(v)
+	return _u
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableSummary(v *string) *PostUpdate {
+	if v != nil {
+		_u.SetSummary(*v)
+	}
+	return _u
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (_u *PostUpdate) ClearSummary() *PostUpdate {
+	_u.mutation.ClearSummary()
+	return _u
+}
+
 // Mutation returns the PostMutation object of the builder.
 func (_u *PostUpdate) Mutation() *PostMutation {
 	return _u.mutation
@@ -290,6 +310,11 @@ func (_u *PostUpdate) check() error {
 			return &ValidationError{Name: "copyright", err: fmt.Errorf(`ent: validator failed for field "Post.copyright": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Summary(); ok {
+		if err := post.SummaryValidator(v); err != nil {
+			return &ValidationError{Name: "summary", err: fmt.Errorf(`ent: validator failed for field "Post.summary": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -355,6 +380,12 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Author(); ok {
 		_spec.SetField(post.FieldAuthor, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Summary(); ok {
+		_spec.SetField(post.FieldSummary, field.TypeString, value)
+	}
+	if _u.mutation.SummaryCleared() {
+		_spec.ClearField(post.FieldSummary, field.TypeString)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -560,6 +591,26 @@ func (_u *PostUpdateOne) SetNillableAuthor(v *string) *PostUpdateOne {
 	return _u
 }
 
+// SetSummary sets the "summary" field.
+func (_u *PostUpdateOne) SetSummary(v string) *PostUpdateOne {
+	_u.mutation.SetSummary(v)
+	return _u
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableSummary(v *string) *PostUpdateOne {
+	if v != nil {
+		_u.SetSummary(*v)
+	}
+	return _u
+}
+
+// ClearSummary clears the value of the "summary" field.
+func (_u *PostUpdateOne) ClearSummary() *PostUpdateOne {
+	_u.mutation.ClearSummary()
+	return _u
+}
+
 // Mutation returns the PostMutation object of the builder.
 func (_u *PostUpdateOne) Mutation() *PostMutation {
 	return _u.mutation
@@ -651,6 +702,11 @@ func (_u *PostUpdateOne) check() error {
 			return &ValidationError{Name: "copyright", err: fmt.Errorf(`ent: validator failed for field "Post.copyright": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Summary(); ok {
+		if err := post.SummaryValidator(v); err != nil {
+			return &ValidationError{Name: "summary", err: fmt.Errorf(`ent: validator failed for field "Post.summary": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -733,6 +789,12 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	}
 	if value, ok := _u.mutation.Author(); ok {
 		_spec.SetField(post.FieldAuthor, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Summary(); ok {
+		_spec.SetField(post.FieldSummary, field.TypeString, value)
+	}
+	if _u.mutation.SummaryCleared() {
+		_spec.ClearField(post.FieldSummary, field.TypeString)
 	}
 	_node = &Post{config: _u.config}
 	_spec.Assign = _node.assignValues

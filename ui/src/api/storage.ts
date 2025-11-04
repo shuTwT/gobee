@@ -1,5 +1,5 @@
 import {http} from '@/utils/http'
-import type { ApiResponse } from './utils'
+import { BASE_URL, type ApiResponse } from './utils'
 
 export interface StorageStrategy {
   id: number
@@ -10,7 +10,7 @@ export interface StorageStrategy {
   secret_key?: string
   bucket?: string
   region?: string
-  is_default: boolean
+  master: boolean
   created_at: string
   updated_at: string
 }
@@ -23,7 +23,7 @@ export interface CreateStorageStrategyParams {
   secret_key?: string
   bucket?: string
   region?: string
-  is_default: boolean
+  master: boolean
 }
 
 export interface UpdateStorageStrategyParams extends Partial<CreateStorageStrategyParams> {
@@ -32,25 +32,25 @@ export interface UpdateStorageStrategyParams extends Partial<CreateStorageStrate
 
 // 获取存储策略列表
 export const getStorageStrategyList = () => {
-  return http.request<ApiResponse<StorageStrategy[]>>('get','/api/storage/strategies')
+  return http.request<ApiResponse<StorageStrategy[]>>('get',`${BASE_URL}/v1/storage-strategy/list`)
 }
 
 // 创建存储策略
 export const createStorageStrategy = (data: CreateStorageStrategyParams) => {
-  return http.request('post','/api/storage/strategies', {data})
+  return http.request('post',`${BASE_URL}/v1/storage-strategy/create`, {data})
 }
 
 // 更新存储策略
 export const updateStorageStrategy = (data: UpdateStorageStrategyParams) => {
-  return http.request('put',`/api/storage/strategies/${data.id}`, {data})
+  return http.request('put',`${BASE_URL}/v1/storage-strategy/update/${data.id}`, {data})
 }
 
 // 删除存储策略
 export const deleteStorageStrategy = (id: number) => {
-  return http.request('delete',`/api/storage/strategies/${id}`)
+  return http.request('delete',`${BASE_URL}/v1/storage-strategy/delete/${id}`)
 }
 
 // 设置默认存储策略
 export const setDefaultStorageStrategy = (id: number) => {
-  return http.request('put',`/api/storage/strategies/${id}/default`)
+  return http.request('put',`${BASE_URL}/v1/storage-strategy/default/${id}`)
 }

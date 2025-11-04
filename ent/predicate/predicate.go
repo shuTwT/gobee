@@ -42,5 +42,8 @@ type Post func(*sql.Selector)
 // Setting is the predicate function for setting builders.
 type Setting func(*sql.Selector)
 
+// StorageStrategy is the predicate function for storagestrategy builders.
+type StorageStrategy func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

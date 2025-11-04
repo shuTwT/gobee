@@ -36,6 +36,8 @@ type Tx struct {
 	Post *PostClient
 	// Setting is the client for interacting with the Setting builders.
 	Setting *SettingClient
+	// StorageStrategy is the client for interacting with the StorageStrategy builders.
+	StorageStrategy *StorageStrategyClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -181,6 +183,7 @@ func (tx *Tx) init() {
 	tx.PayOrder = NewPayOrderClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
 	tx.Setting = NewSettingClient(tx.config)
+	tx.StorageStrategy = NewStorageStrategyClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

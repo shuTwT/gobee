@@ -164,6 +164,28 @@ func (_c *PostCreate) SetAuthor(v string) *PostCreate {
 	return _c
 }
 
+// SetNillableAuthor sets the "author" field if the given value is not nil.
+func (_c *PostCreate) SetNillableAuthor(v *string) *PostCreate {
+	if v != nil {
+		_c.SetAuthor(*v)
+	}
+	return _c
+}
+
+// SetSummary sets the "summary" field.
+func (_c *PostCreate) SetSummary(v string) *PostCreate {
+	_c.mutation.SetSummary(v)
+	return _c
+}
+
+// SetNillableSummary sets the "summary" field if the given value is not nil.
+func (_c *PostCreate) SetNillableSummary(v *string) *PostCreate {
+	if v != nil {
+		_c.SetSummary(*v)
+	}
+	return _c
+}
+
 // Mutation returns the PostMutation object of the builder.
 func (_c *PostCreate) Mutation() *PostMutation {
 	return _c.mutation
@@ -218,6 +240,10 @@ func (_c *PostCreate) defaults() {
 	if _, ok := _c.mutation.CommentCount(); !ok {
 		v := post.DefaultCommentCount
 		_c.mutation.SetCommentCount(v)
+	}
+	if _, ok := _c.mutation.Author(); !ok {
+		v := post.DefaultAuthor
+		_c.mutation.SetAuthor(v)
 	}
 }
 
@@ -281,6 +307,11 @@ func (_c *PostCreate) check() error {
 	}
 	if _, ok := _c.mutation.Author(); !ok {
 		return &ValidationError{Name: "author", err: errors.New(`ent: missing required field "Post.author"`)}
+	}
+	if v, ok := _c.mutation.Summary(); ok {
+		if err := post.SummaryValidator(v); err != nil {
+			return &ValidationError{Name: "summary", err: fmt.Errorf(`ent: validator failed for field "Post.summary": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -355,6 +386,10 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Author(); ok {
 		_spec.SetField(post.FieldAuthor, field.TypeString, value)
 		_node.Author = value
+	}
+	if value, ok := _c.mutation.Summary(); ok {
+		_spec.SetField(post.FieldSummary, field.TypeString, value)
+		_node.Summary = value
 	}
 	return _node, _spec
 }

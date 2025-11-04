@@ -28,7 +28,8 @@ func (Post) Fields() []ent.Field {
 		field.String("cover").Optional().MaxLen(512).Comment("文章封面"),
 		field.String("keywords").Optional().MaxLen(255).Comment("文章关键词"),
 		field.String("copyright").Optional().MaxLen(512).Comment("文章版权"),
-		field.String("author").Comment("作者"),
+		field.String("author").Default("匿名作者").Comment("作者"),
+		field.String("summary").Optional().MaxLen(512).Comment("文章摘要"),
 	}
 }
 

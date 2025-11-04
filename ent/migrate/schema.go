@@ -193,7 +193,8 @@ var (
 		{Name: "cover", Type: field.TypeString, Nullable: true, Size: 512},
 		{Name: "keywords", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "copyright", Type: field.TypeString, Nullable: true, Size: 512},
-		{Name: "author", Type: field.TypeString},
+		{Name: "author", Type: field.TypeString, Default: "匿名作者"},
+		{Name: "summary", Type: field.TypeString, Nullable: true, Size: 512},
 	}
 	// PostsTable holds the schema information for the "posts" table.
 	PostsTable = &schema.Table{
@@ -215,6 +216,27 @@ var (
 		Name:       "settings",
 		Columns:    SettingsColumns,
 		PrimaryKey: []*schema.Column{SettingsColumns[0]},
+	}
+	// StorageStrategiesColumns holds the columns for the "storage_strategies" table.
+	StorageStrategiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"local", "s3"}, Default: "local"},
+		{Name: "node_id", Type: field.TypeString, Default: ""},
+		{Name: "bucket", Type: field.TypeString},
+		{Name: "access_key", Type: field.TypeString, Default: ""},
+		{Name: "secret_key", Type: field.TypeString, Default: ""},
+		{Name: "base_path", Type: field.TypeString, Default: ""},
+		{Name: "domain", Type: field.TypeString, Default: ""},
+		{Name: "master", Type: field.TypeBool, Default: false},
+	}
+	// StorageStrategiesTable holds the schema information for the "storage_strategies" table.
+	StorageStrategiesTable = &schema.Table{
+		Name:       "storage_strategies",
+		Columns:    StorageStrategiesColumns,
+		PrimaryKey: []*schema.Column{StorageStrategiesColumns[0]},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -248,6 +270,7 @@ var (
 		PayOrdersTable,
 		PostsTable,
 		SettingsTable,
+		StorageStrategiesTable,
 		UsersTable,
 	}
 )

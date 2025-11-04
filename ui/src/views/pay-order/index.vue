@@ -222,6 +222,7 @@ import {
   TimeOutline,
   EyeOutline,
 } from '@vicons/ionicons5'
+import * as payOrderApi from '@/api/payOrder'
 
 const message = useMessage()
 
@@ -556,6 +557,10 @@ const calculateTodayStats = () => {
     todayOrders.length > 0 ? (successOrders.length / todayOrders.length) * 100 : 0
 }
 
+const onSearch = async ()=>{
+  const res = await payOrderApi.getPayOrderList()
+}
+
 // 加载订单列表
 const loadOrderList = async () => {
   loading.value = true
@@ -688,6 +693,7 @@ const loadOrderList = async () => {
 
 onMounted(() => {
   loadOrderList()
+  onSearch()
 })
 </script>
 
