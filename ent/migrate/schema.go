@@ -225,6 +225,8 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"local", "s3"}, Default: "local"},
 		{Name: "node_id", Type: field.TypeString, Default: ""},
+		{Name: "endpoint", Type: field.TypeString, Default: ""},
+		{Name: "region", Type: field.TypeString, Default: ""},
 		{Name: "bucket", Type: field.TypeString},
 		{Name: "access_key", Type: field.TypeString, Default: ""},
 		{Name: "secret_key", Type: field.TypeString, Default: ""},

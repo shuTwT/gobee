@@ -5,10 +5,18 @@ import (
 	"gobee/ent/storagestrategy"
 	"gobee/internal/database"
 	"gobee/internal/model"
+	"gobee/internal/services/storage"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
+
+type StorageStrategyList struct {
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Type   string `json:"type"`
+	Master bool   `json:"master"`
+}
 
 func ListStorageStrategy(c *fiber.Ctx) error {
 	client := database.DB
@@ -17,6 +25,24 @@ func ListStorageStrategy(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("success", strategies))
+}
+
+func ListStorageStrategyAll(c *fiber.Ctx) error {
+	client := database.DB
+	strategies, err := client.StorageStrategy.Query().All(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	var strategyList []StorageStrategyList
+	for _, strategy := range strategies {
+		strategyList = append(strategyList, StorageStrategyList{
+			ID:     strategy.ID,
+			Name:   strategy.Name,
+			Type:   string(strategy.Type),
+			Master: strategy.Master,
+		})
+	}
+	return c.JSON(model.NewSuccess("success", strategyList))
 }
 
 func CreateStorageStrategy(c *fiber.Ctx) error {
@@ -34,6 +60,8 @@ func CreateStorageStrategy(c *fiber.Ctx) error {
 		SetSecretKey(strategy.SecretKey).
 		SetBasePath(strategy.BasePath).
 		SetDomain(strategy.Domain).
+		SetRegion(strategy.Region).
+		SetEndpoint(strategy.Endpoint).
 		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
@@ -61,10 +89,14 @@ func UpdateStorageStrategy(c *fiber.Ctx) error {
 		SetSecretKey(strategy.SecretKey).
 		SetBasePath(strategy.BasePath).
 		SetDomain(strategy.Domain).
+		SetRegion(strategy.Region).
+		SetEndpoint(strategy.Endpoint).
 		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
+	// 清除缓存
+	storage.ClearCache()
 	return c.JSON(model.NewSuccess("success", newStrategy))
 }
 
@@ -94,6 +126,8 @@ func DeleteStorageStrategy(c *fiber.Ctx) error {
 	if err := client.StorageStrategy.DeleteOneID(id).Exec(c.Context()); err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
+	// 清除缓存
+	storage.ClearCache()
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
@@ -112,5 +146,7 @@ func SetDefaultStorageStrategy(c *fiber.Ctx) error {
 	if err := client.StorageStrategy.UpdateOneID(id).SetMaster(true).Exec(c.Context()); err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
+	// 清除缓存
+	storage.ClearCache()
 	return c.JSON(model.NewSuccess("success", nil))
 }

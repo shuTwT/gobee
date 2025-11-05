@@ -8702,6 +8702,8 @@ type StorageStrategyMutation struct {
 	name          *string
 	_type         *storagestrategy.Type
 	node_id       *string
+	endpoint      *string
+	region        *string
 	bucket        *string
 	access_key    *string
 	secret_key    *string
@@ -8992,6 +8994,78 @@ func (m *StorageStrategyMutation) ResetNodeID() {
 	m.node_id = nil
 }
 
+// SetEndpoint sets the "endpoint" field.
+func (m *StorageStrategyMutation) SetEndpoint(s string) {
+	m.endpoint = &s
+}
+
+// Endpoint returns the value of the "endpoint" field in the mutation.
+func (m *StorageStrategyMutation) Endpoint() (r string, exists bool) {
+	v := m.endpoint
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndpoint returns the old "endpoint" field's value of the StorageStrategy entity.
+// If the StorageStrategy object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StorageStrategyMutation) OldEndpoint(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEndpoint is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEndpoint requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndpoint: %w", err)
+	}
+	return oldValue.Endpoint, nil
+}
+
+// ResetEndpoint resets all changes to the "endpoint" field.
+func (m *StorageStrategyMutation) ResetEndpoint() {
+	m.endpoint = nil
+}
+
+// SetRegion sets the "region" field.
+func (m *StorageStrategyMutation) SetRegion(s string) {
+	m.region = &s
+}
+
+// Region returns the value of the "region" field in the mutation.
+func (m *StorageStrategyMutation) Region() (r string, exists bool) {
+	v := m.region
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRegion returns the old "region" field's value of the StorageStrategy entity.
+// If the StorageStrategy object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StorageStrategyMutation) OldRegion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRegion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRegion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRegion: %w", err)
+	}
+	return oldValue.Region, nil
+}
+
+// ResetRegion resets all changes to the "region" field.
+func (m *StorageStrategyMutation) ResetRegion() {
+	m.region = nil
+}
+
 // SetBucket sets the "bucket" field.
 func (m *StorageStrategyMutation) SetBucket(s string) {
 	m.bucket = &s
@@ -9242,7 +9316,7 @@ func (m *StorageStrategyMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *StorageStrategyMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, storagestrategy.FieldCreatedAt)
 	}
@@ -9257,6 +9331,12 @@ func (m *StorageStrategyMutation) Fields() []string {
 	}
 	if m.node_id != nil {
 		fields = append(fields, storagestrategy.FieldNodeID)
+	}
+	if m.endpoint != nil {
+		fields = append(fields, storagestrategy.FieldEndpoint)
+	}
+	if m.region != nil {
+		fields = append(fields, storagestrategy.FieldRegion)
 	}
 	if m.bucket != nil {
 		fields = append(fields, storagestrategy.FieldBucket)
@@ -9294,6 +9374,10 @@ func (m *StorageStrategyMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case storagestrategy.FieldNodeID:
 		return m.NodeID()
+	case storagestrategy.FieldEndpoint:
+		return m.Endpoint()
+	case storagestrategy.FieldRegion:
+		return m.Region()
 	case storagestrategy.FieldBucket:
 		return m.Bucket()
 	case storagestrategy.FieldAccessKey:
@@ -9325,6 +9409,10 @@ func (m *StorageStrategyMutation) OldField(ctx context.Context, name string) (en
 		return m.OldType(ctx)
 	case storagestrategy.FieldNodeID:
 		return m.OldNodeID(ctx)
+	case storagestrategy.FieldEndpoint:
+		return m.OldEndpoint(ctx)
+	case storagestrategy.FieldRegion:
+		return m.OldRegion(ctx)
 	case storagestrategy.FieldBucket:
 		return m.OldBucket(ctx)
 	case storagestrategy.FieldAccessKey:
@@ -9380,6 +9468,20 @@ func (m *StorageStrategyMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNodeID(v)
+		return nil
+	case storagestrategy.FieldEndpoint:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndpoint(v)
+		return nil
+	case storagestrategy.FieldRegion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRegion(v)
 		return nil
 	case storagestrategy.FieldBucket:
 		v, ok := value.(string)
@@ -9486,6 +9588,12 @@ func (m *StorageStrategyMutation) ResetField(name string) error {
 		return nil
 	case storagestrategy.FieldNodeID:
 		m.ResetNodeID()
+		return nil
+	case storagestrategy.FieldEndpoint:
+		m.ResetEndpoint()
+		return nil
+	case storagestrategy.FieldRegion:
+		m.ResetRegion()
 		return nil
 	case storagestrategy.FieldBucket:
 		m.ResetBucket()

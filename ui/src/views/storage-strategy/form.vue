@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FormInst, FormRules } from 'naive-ui'
-import type{ FormItemProps, FormProps } from './utils/types'
+import type { FormItemProps, FormProps } from './utils/types'
 
 const props = defineProps<FormProps>()
 
@@ -52,7 +52,7 @@ defineExpose({ getData })
     label-width="100"
     require-mark-placement="right-hanging"
   >
-    <n-form-item label="策略名称" path="name" >
+    <n-form-item label="策略名称" path="name">
       <n-input v-model:value="formData.name" placeholder="请输入策略名称" />
     </n-form-item>
     <n-form-item label="存储类型" path="type">
@@ -62,19 +62,14 @@ defineExpose({ getData })
         placeholder="请选择存储类型"
       />
     </n-form-item>
-    <n-form-item
-      v-if="formData.type === 'local'"
-      label="基础路径"
-      path="base_path"
-    >
+    <n-form-item v-if="formData.type === 'local'" label="基础路径" path="base_path">
       <n-input v-model:value="formData.base_path" placeholder="请输入基础路径" />
     </n-form-item>
-    <n-form-item
-      v-if="formData.type === 's3'"
-      label="节点 ID"
-      path="node_id"
-    >
+    <n-form-item v-if="formData.type === 's3'" label="节点 ID" path="node_id">
       <n-input v-model:value="formData.node_id" placeholder="请输入节点 ID" />
+    </n-form-item>
+    <n-form-item v-if="formData.type === 's3'" label="端点" path="endpoint">
+      <n-input v-model:value="formData.endpoint" placeholder="请输入节点 ID" />
     </n-form-item>
 
     <template v-if="formData.type === 's3'">
@@ -89,10 +84,11 @@ defineExpose({ getData })
           placeholder="请输入Secret Key"
         />
       </n-form-item>
-    </template>
-    <template v-if="formData.type === 's3'">
       <n-form-item label="Bucket" path="bucket">
         <n-input v-model:value="formData.bucket" placeholder="请输入Bucket" />
+      </n-form-item>
+      <n-form-item label="region" path="region">
+        <n-input v-model:value="formData.region" placeholder="请输入Region" />
       </n-form-item>
     </template>
     <n-form-item label="访问域名" path="domain">

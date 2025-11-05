@@ -22,6 +22,8 @@ func (StorageStrategy) Fields() []ent.Field {
 		field.String("name").Unique().NotEmpty().Comment("策略名称"),
 		field.Enum("type").Values("local", "s3").Default("local").Comment("策略类型"),
 		field.String("node_id").Default("").Comment("节点 ID"),
+		field.String("endpoint").Default("").Comment("端点"),
+		field.String("region").Default("").Comment("region"),
 		field.String("bucket").NotEmpty().Comment("存储桶名称"),
 		field.String("access_key").Default("").Comment("accessKey"),
 		field.String("secret_key").Default("").Comment("secret_key"),

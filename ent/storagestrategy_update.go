@@ -76,6 +76,34 @@ func (_u *StorageStrategyUpdate) SetNillableNodeID(v *string) *StorageStrategyUp
 	return _u
 }
 
+// SetEndpoint sets the "endpoint" field.
+func (_u *StorageStrategyUpdate) SetEndpoint(v string) *StorageStrategyUpdate {
+	_u.mutation.SetEndpoint(v)
+	return _u
+}
+
+// SetNillableEndpoint sets the "endpoint" field if the given value is not nil.
+func (_u *StorageStrategyUpdate) SetNillableEndpoint(v *string) *StorageStrategyUpdate {
+	if v != nil {
+		_u.SetEndpoint(*v)
+	}
+	return _u
+}
+
+// SetRegion sets the "region" field.
+func (_u *StorageStrategyUpdate) SetRegion(v string) *StorageStrategyUpdate {
+	_u.mutation.SetRegion(v)
+	return _u
+}
+
+// SetNillableRegion sets the "region" field if the given value is not nil.
+func (_u *StorageStrategyUpdate) SetNillableRegion(v *string) *StorageStrategyUpdate {
+	if v != nil {
+		_u.SetRegion(*v)
+	}
+	return _u
+}
+
 // SetBucket sets the "bucket" field.
 func (_u *StorageStrategyUpdate) SetBucket(v string) *StorageStrategyUpdate {
 	_u.mutation.SetBucket(v)
@@ -245,6 +273,12 @@ func (_u *StorageStrategyUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if value, ok := _u.mutation.NodeID(); ok {
 		_spec.SetField(storagestrategy.FieldNodeID, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Endpoint(); ok {
+		_spec.SetField(storagestrategy.FieldEndpoint, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Region(); ok {
+		_spec.SetField(storagestrategy.FieldRegion, field.TypeString, value)
+	}
 	if value, ok := _u.mutation.Bucket(); ok {
 		_spec.SetField(storagestrategy.FieldBucket, field.TypeString, value)
 	}
@@ -327,6 +361,34 @@ func (_u *StorageStrategyUpdateOne) SetNodeID(v string) *StorageStrategyUpdateOn
 func (_u *StorageStrategyUpdateOne) SetNillableNodeID(v *string) *StorageStrategyUpdateOne {
 	if v != nil {
 		_u.SetNodeID(*v)
+	}
+	return _u
+}
+
+// SetEndpoint sets the "endpoint" field.
+func (_u *StorageStrategyUpdateOne) SetEndpoint(v string) *StorageStrategyUpdateOne {
+	_u.mutation.SetEndpoint(v)
+	return _u
+}
+
+// SetNillableEndpoint sets the "endpoint" field if the given value is not nil.
+func (_u *StorageStrategyUpdateOne) SetNillableEndpoint(v *string) *StorageStrategyUpdateOne {
+	if v != nil {
+		_u.SetEndpoint(*v)
+	}
+	return _u
+}
+
+// SetRegion sets the "region" field.
+func (_u *StorageStrategyUpdateOne) SetRegion(v string) *StorageStrategyUpdateOne {
+	_u.mutation.SetRegion(v)
+	return _u
+}
+
+// SetNillableRegion sets the "region" field if the given value is not nil.
+func (_u *StorageStrategyUpdateOne) SetNillableRegion(v *string) *StorageStrategyUpdateOne {
+	if v != nil {
+		_u.SetRegion(*v)
 	}
 	return _u
 }
@@ -529,6 +591,12 @@ func (_u *StorageStrategyUpdateOne) sqlSave(ctx context.Context) (_node *Storage
 	}
 	if value, ok := _u.mutation.NodeID(); ok {
 		_spec.SetField(storagestrategy.FieldNodeID, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Endpoint(); ok {
+		_spec.SetField(storagestrategy.FieldEndpoint, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Region(); ok {
+		_spec.SetField(storagestrategy.FieldRegion, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Bucket(); ok {
 		_spec.SetField(storagestrategy.FieldBucket, field.TypeString, value)

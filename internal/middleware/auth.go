@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"gobee/internal/model"
+
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -19,9 +21,9 @@ func Protected() fiber.Handler {
 
 // jwtError 处理JWT错误
 func jwtError(c *fiber.Ctx, err error) error {
-	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-		"error": "Unauthorized",
-	})
+	return c.JSON(model.NewError(fiber.StatusUnauthorized,
+		"Unauthorized",
+	))
 }
 
 // jwtSuccess 处理JWT验证成功

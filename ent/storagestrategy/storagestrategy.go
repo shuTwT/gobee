@@ -24,6 +24,10 @@ const (
 	FieldType = "type"
 	// FieldNodeID holds the string denoting the node_id field in the database.
 	FieldNodeID = "node_id"
+	// FieldEndpoint holds the string denoting the endpoint field in the database.
+	FieldEndpoint = "endpoint"
+	// FieldRegion holds the string denoting the region field in the database.
+	FieldRegion = "region"
 	// FieldBucket holds the string denoting the bucket field in the database.
 	FieldBucket = "bucket"
 	// FieldAccessKey holds the string denoting the access_key field in the database.
@@ -48,6 +52,8 @@ var Columns = []string{
 	FieldName,
 	FieldType,
 	FieldNodeID,
+	FieldEndpoint,
+	FieldRegion,
 	FieldBucket,
 	FieldAccessKey,
 	FieldSecretKey,
@@ -77,6 +83,10 @@ var (
 	NameValidator func(string) error
 	// DefaultNodeID holds the default value on creation for the "node_id" field.
 	DefaultNodeID string
+	// DefaultEndpoint holds the default value on creation for the "endpoint" field.
+	DefaultEndpoint string
+	// DefaultRegion holds the default value on creation for the "region" field.
+	DefaultRegion string
 	// BucketValidator is a validator for the "bucket" field. It is called by the builders before save.
 	BucketValidator func(string) error
 	// DefaultAccessKey holds the default value on creation for the "access_key" field.
@@ -148,6 +158,16 @@ func ByType(opts ...sql.OrderTermOption) OrderOption {
 // ByNodeID orders the results by the node_id field.
 func ByNodeID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNodeID, opts...).ToFunc()
+}
+
+// ByEndpoint orders the results by the endpoint field.
+func ByEndpoint(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEndpoint, opts...).ToFunc()
+}
+
+// ByRegion orders the results by the region field.
+func ByRegion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRegion, opts...).ToFunc()
 }
 
 // ByBucket orders the results by the bucket field.

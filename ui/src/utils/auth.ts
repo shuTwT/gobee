@@ -43,7 +43,6 @@ export function setToken(data:DataInfo<Date>){
   const cookieString = JSON.stringify({accessToken,refreshToken,expires})
 
   if(expires > 0){
-    console.log("expires",(expires - Date.now()) / 86400000)
     Cookies.set(tokenKey, cookieString, {
       expires: (expires - Date.now()) / 86400000
     });

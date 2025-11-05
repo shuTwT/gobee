@@ -35,6 +35,11 @@ export const getStorageStrategyList = () => {
   return http.request<ApiResponse<StorageStrategy[]>>('get',`${BASE_URL}/v1/storage-strategy/list`)
 }
 
+// 获取所有存储策略
+export const getStorageStrategyListAll = () => {
+  return http.request<ApiResponse<StorageStrategy[]>>('get',`${BASE_URL}/v1/storage-strategy/list-all`)
+}
+
 // 创建存储策略
 export const createStorageStrategy = (data: CreateStorageStrategyParams) => {
   return http.request('post',`${BASE_URL}/v1/storage-strategy/create`, {data})

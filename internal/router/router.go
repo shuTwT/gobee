@@ -2,6 +2,7 @@ package router
 
 import (
 	auth_handler "gobee/internal/handlers/auth"
+	file_handler "gobee/internal/handlers/file"
 	initialize_handler "gobee/internal/handlers/initialize"
 	paychannel_handler "gobee/internal/handlers/pay_channel"
 	payorder_handler "gobee/internal/handlers/pay_order"
@@ -46,6 +47,11 @@ func Initialize(router *fiber.App) {
 			apiV1.Get("/settings", setting_handler.GetSettings)
 			// 登录身份验证中间件
 			apiV1.Use(middleware.Protected())
+
+			fileApi := apiV1.Group("/file")
+			{
+				fileApi.Post("/upload", file_handler.Upload)
+			}
 			payChannelApi := apiV1.Group("/pay-channel")
 			{
 				payChannelApi.Get("/list", paychannel_handler.ListPayChannel)
@@ -81,6 +87,7 @@ func Initialize(router *fiber.App) {
 			storageStrategyApi := apiV1.Group("/storage-strategy")
 			{
 				storageStrategyApi.Get("/list", storagestrategy_handler.ListStorageStrategy)
+				storageStrategyApi.Get("/list-all", storagestrategy_handler.ListStorageStrategyAll)
 				storageStrategyApi.Post("/create", storagestrategy_handler.CreateStorageStrategy)
 				storageStrategyApi.Put("/update/:id", storagestrategy_handler.UpdateStorageStrategy)
 				storageStrategyApi.Get("/query/:id", storagestrategy_handler.QueryStorageStrategy)

@@ -74,6 +74,16 @@ func NodeID(v string) predicate.StorageStrategy {
 	return predicate.StorageStrategy(sql.FieldEQ(FieldNodeID, v))
 }
 
+// Endpoint applies equality check predicate on the "endpoint" field. It's identical to EndpointEQ.
+func Endpoint(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldEQ(FieldEndpoint, v))
+}
+
+// Region applies equality check predicate on the "region" field. It's identical to RegionEQ.
+func Region(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldEQ(FieldRegion, v))
+}
+
 // Bucket applies equality check predicate on the "bucket" field. It's identical to BucketEQ.
 func Bucket(v string) predicate.StorageStrategy {
 	return predicate.StorageStrategy(sql.FieldEQ(FieldBucket, v))
@@ -332,6 +342,136 @@ func NodeIDEqualFold(v string) predicate.StorageStrategy {
 // NodeIDContainsFold applies the ContainsFold predicate on the "node_id" field.
 func NodeIDContainsFold(v string) predicate.StorageStrategy {
 	return predicate.StorageStrategy(sql.FieldContainsFold(FieldNodeID, v))
+}
+
+// EndpointEQ applies the EQ predicate on the "endpoint" field.
+func EndpointEQ(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldEQ(FieldEndpoint, v))
+}
+
+// EndpointNEQ applies the NEQ predicate on the "endpoint" field.
+func EndpointNEQ(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldNEQ(FieldEndpoint, v))
+}
+
+// EndpointIn applies the In predicate on the "endpoint" field.
+func EndpointIn(vs ...string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldIn(FieldEndpoint, vs...))
+}
+
+// EndpointNotIn applies the NotIn predicate on the "endpoint" field.
+func EndpointNotIn(vs ...string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldNotIn(FieldEndpoint, vs...))
+}
+
+// EndpointGT applies the GT predicate on the "endpoint" field.
+func EndpointGT(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldGT(FieldEndpoint, v))
+}
+
+// EndpointGTE applies the GTE predicate on the "endpoint" field.
+func EndpointGTE(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldGTE(FieldEndpoint, v))
+}
+
+// EndpointLT applies the LT predicate on the "endpoint" field.
+func EndpointLT(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldLT(FieldEndpoint, v))
+}
+
+// EndpointLTE applies the LTE predicate on the "endpoint" field.
+func EndpointLTE(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldLTE(FieldEndpoint, v))
+}
+
+// EndpointContains applies the Contains predicate on the "endpoint" field.
+func EndpointContains(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldContains(FieldEndpoint, v))
+}
+
+// EndpointHasPrefix applies the HasPrefix predicate on the "endpoint" field.
+func EndpointHasPrefix(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldHasPrefix(FieldEndpoint, v))
+}
+
+// EndpointHasSuffix applies the HasSuffix predicate on the "endpoint" field.
+func EndpointHasSuffix(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldHasSuffix(FieldEndpoint, v))
+}
+
+// EndpointEqualFold applies the EqualFold predicate on the "endpoint" field.
+func EndpointEqualFold(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldEqualFold(FieldEndpoint, v))
+}
+
+// EndpointContainsFold applies the ContainsFold predicate on the "endpoint" field.
+func EndpointContainsFold(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldContainsFold(FieldEndpoint, v))
+}
+
+// RegionEQ applies the EQ predicate on the "region" field.
+func RegionEQ(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldEQ(FieldRegion, v))
+}
+
+// RegionNEQ applies the NEQ predicate on the "region" field.
+func RegionNEQ(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldNEQ(FieldRegion, v))
+}
+
+// RegionIn applies the In predicate on the "region" field.
+func RegionIn(vs ...string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldIn(FieldRegion, vs...))
+}
+
+// RegionNotIn applies the NotIn predicate on the "region" field.
+func RegionNotIn(vs ...string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldNotIn(FieldRegion, vs...))
+}
+
+// RegionGT applies the GT predicate on the "region" field.
+func RegionGT(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldGT(FieldRegion, v))
+}
+
+// RegionGTE applies the GTE predicate on the "region" field.
+func RegionGTE(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldGTE(FieldRegion, v))
+}
+
+// RegionLT applies the LT predicate on the "region" field.
+func RegionLT(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldLT(FieldRegion, v))
+}
+
+// RegionLTE applies the LTE predicate on the "region" field.
+func RegionLTE(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldLTE(FieldRegion, v))
+}
+
+// RegionContains applies the Contains predicate on the "region" field.
+func RegionContains(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldContains(FieldRegion, v))
+}
+
+// RegionHasPrefix applies the HasPrefix predicate on the "region" field.
+func RegionHasPrefix(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldHasPrefix(FieldRegion, v))
+}
+
+// RegionHasSuffix applies the HasSuffix predicate on the "region" field.
+func RegionHasSuffix(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldHasSuffix(FieldRegion, v))
+}
+
+// RegionEqualFold applies the EqualFold predicate on the "region" field.
+func RegionEqualFold(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldEqualFold(FieldRegion, v))
+}
+
+// RegionContainsFold applies the ContainsFold predicate on the "region" field.
+func RegionContainsFold(v string) predicate.StorageStrategy {
+	return predicate.StorageStrategy(sql.FieldContainsFold(FieldRegion, v))
 }
 
 // BucketEQ applies the EQ predicate on the "bucket" field.

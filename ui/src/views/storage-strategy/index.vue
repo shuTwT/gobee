@@ -117,11 +117,13 @@ const openEditDialog = (title='新增',row?:FormItemProps) => {
         id: row?.id || undefined,
         name: row?.name || '',
         type: row?.type || 's3',
+        endpoint:row?.endpoint||'',
         base_path: row?.base_path || '',
         node_id: row?.node_id || '',
         access_key: row?.access_key || '',
         secret_key: row?.secret_key || '',
         bucket: row?.bucket || '',
+        region: row?.region||'',
         domain: row?.domain || '',
         master: row?.master || false,
       },
@@ -131,6 +133,7 @@ const openEditDialog = (title='新增',row?:FormItemProps) => {
     beforeSure: async (done) => {
       try {
         const curData = await formRef.value?.getData()
+        console.log(curData)
         const chores = () => {
           message.success('创建成功喵~')
           done()

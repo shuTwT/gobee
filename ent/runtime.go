@@ -694,28 +694,36 @@ func init() {
 	storagestrategyDescNodeID := storagestrategyFields[2].Descriptor()
 	// storagestrategy.DefaultNodeID holds the default value on creation for the node_id field.
 	storagestrategy.DefaultNodeID = storagestrategyDescNodeID.Default.(string)
+	// storagestrategyDescEndpoint is the schema descriptor for endpoint field.
+	storagestrategyDescEndpoint := storagestrategyFields[3].Descriptor()
+	// storagestrategy.DefaultEndpoint holds the default value on creation for the endpoint field.
+	storagestrategy.DefaultEndpoint = storagestrategyDescEndpoint.Default.(string)
+	// storagestrategyDescRegion is the schema descriptor for region field.
+	storagestrategyDescRegion := storagestrategyFields[4].Descriptor()
+	// storagestrategy.DefaultRegion holds the default value on creation for the region field.
+	storagestrategy.DefaultRegion = storagestrategyDescRegion.Default.(string)
 	// storagestrategyDescBucket is the schema descriptor for bucket field.
-	storagestrategyDescBucket := storagestrategyFields[3].Descriptor()
+	storagestrategyDescBucket := storagestrategyFields[5].Descriptor()
 	// storagestrategy.BucketValidator is a validator for the "bucket" field. It is called by the builders before save.
 	storagestrategy.BucketValidator = storagestrategyDescBucket.Validators[0].(func(string) error)
 	// storagestrategyDescAccessKey is the schema descriptor for access_key field.
-	storagestrategyDescAccessKey := storagestrategyFields[4].Descriptor()
+	storagestrategyDescAccessKey := storagestrategyFields[6].Descriptor()
 	// storagestrategy.DefaultAccessKey holds the default value on creation for the access_key field.
 	storagestrategy.DefaultAccessKey = storagestrategyDescAccessKey.Default.(string)
 	// storagestrategyDescSecretKey is the schema descriptor for secret_key field.
-	storagestrategyDescSecretKey := storagestrategyFields[5].Descriptor()
+	storagestrategyDescSecretKey := storagestrategyFields[7].Descriptor()
 	// storagestrategy.DefaultSecretKey holds the default value on creation for the secret_key field.
 	storagestrategy.DefaultSecretKey = storagestrategyDescSecretKey.Default.(string)
 	// storagestrategyDescBasePath is the schema descriptor for base_path field.
-	storagestrategyDescBasePath := storagestrategyFields[6].Descriptor()
+	storagestrategyDescBasePath := storagestrategyFields[8].Descriptor()
 	// storagestrategy.DefaultBasePath holds the default value on creation for the base_path field.
 	storagestrategy.DefaultBasePath = storagestrategyDescBasePath.Default.(string)
 	// storagestrategyDescDomain is the schema descriptor for domain field.
-	storagestrategyDescDomain := storagestrategyFields[7].Descriptor()
+	storagestrategyDescDomain := storagestrategyFields[9].Descriptor()
 	// storagestrategy.DefaultDomain holds the default value on creation for the domain field.
 	storagestrategy.DefaultDomain = storagestrategyDescDomain.Default.(string)
 	// storagestrategyDescMaster is the schema descriptor for master field.
-	storagestrategyDescMaster := storagestrategyFields[8].Descriptor()
+	storagestrategyDescMaster := storagestrategyFields[10].Descriptor()
 	// storagestrategy.DefaultMaster holds the default value on creation for the master field.
 	storagestrategy.DefaultMaster = storagestrategyDescMaster.Default.(bool)
 	userMixin := schema.User{}.Mixin()

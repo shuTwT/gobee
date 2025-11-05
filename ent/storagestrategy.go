@@ -27,6 +27,10 @@ type StorageStrategy struct {
 	Type storagestrategy.Type `json:"type,omitempty"`
 	// 节点 ID
 	NodeID string `json:"node_id,omitempty"`
+	// 端点
+	Endpoint string `json:"endpoint,omitempty"`
+	// region
+	Region string `json:"region,omitempty"`
 	// 存储桶名称
 	Bucket string `json:"bucket,omitempty"`
 	// accessKey
@@ -51,7 +55,7 @@ func (*StorageStrategy) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case storagestrategy.FieldID:
 			values[i] = new(sql.NullInt64)
-		case storagestrategy.FieldName, storagestrategy.FieldType, storagestrategy.FieldNodeID, storagestrategy.FieldBucket, storagestrategy.FieldAccessKey, storagestrategy.FieldSecretKey, storagestrategy.FieldBasePath, storagestrategy.FieldDomain:
+		case storagestrategy.FieldName, storagestrategy.FieldType, storagestrategy.FieldNodeID, storagestrategy.FieldEndpoint, storagestrategy.FieldRegion, storagestrategy.FieldBucket, storagestrategy.FieldAccessKey, storagestrategy.FieldSecretKey, storagestrategy.FieldBasePath, storagestrategy.FieldDomain:
 			values[i] = new(sql.NullString)
 		case storagestrategy.FieldCreatedAt, storagestrategy.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -105,6 +109,18 @@ func (_m *StorageStrategy) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field node_id", values[i])
 			} else if value.Valid {
 				_m.NodeID = value.String
+			}
+		case storagestrategy.FieldEndpoint:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field endpoint", values[i])
+			} else if value.Valid {
+				_m.Endpoint = value.String
+			}
+		case storagestrategy.FieldRegion:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field region", values[i])
+			} else if value.Valid {
+				_m.Region = value.String
 			}
 		case storagestrategy.FieldBucket:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -192,6 +208,12 @@ func (_m *StorageStrategy) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("node_id=")
 	builder.WriteString(_m.NodeID)
+	builder.WriteString(", ")
+	builder.WriteString("endpoint=")
+	builder.WriteString(_m.Endpoint)
+	builder.WriteString(", ")
+	builder.WriteString("region=")
+	builder.WriteString(_m.Region)
 	builder.WriteString(", ")
 	builder.WriteString("bucket=")
 	builder.WriteString(_m.Bucket)

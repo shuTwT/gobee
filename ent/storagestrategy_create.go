@@ -82,6 +82,34 @@ func (_c *StorageStrategyCreate) SetNillableNodeID(v *string) *StorageStrategyCr
 	return _c
 }
 
+// SetEndpoint sets the "endpoint" field.
+func (_c *StorageStrategyCreate) SetEndpoint(v string) *StorageStrategyCreate {
+	_c.mutation.SetEndpoint(v)
+	return _c
+}
+
+// SetNillableEndpoint sets the "endpoint" field if the given value is not nil.
+func (_c *StorageStrategyCreate) SetNillableEndpoint(v *string) *StorageStrategyCreate {
+	if v != nil {
+		_c.SetEndpoint(*v)
+	}
+	return _c
+}
+
+// SetRegion sets the "region" field.
+func (_c *StorageStrategyCreate) SetRegion(v string) *StorageStrategyCreate {
+	_c.mutation.SetRegion(v)
+	return _c
+}
+
+// SetNillableRegion sets the "region" field if the given value is not nil.
+func (_c *StorageStrategyCreate) SetNillableRegion(v *string) *StorageStrategyCreate {
+	if v != nil {
+		_c.SetRegion(*v)
+	}
+	return _c
+}
+
 // SetBucket sets the "bucket" field.
 func (_c *StorageStrategyCreate) SetBucket(v string) *StorageStrategyCreate {
 	_c.mutation.SetBucket(v)
@@ -209,6 +237,14 @@ func (_c *StorageStrategyCreate) defaults() {
 		v := storagestrategy.DefaultNodeID
 		_c.mutation.SetNodeID(v)
 	}
+	if _, ok := _c.mutation.Endpoint(); !ok {
+		v := storagestrategy.DefaultEndpoint
+		_c.mutation.SetEndpoint(v)
+	}
+	if _, ok := _c.mutation.Region(); !ok {
+		v := storagestrategy.DefaultRegion
+		_c.mutation.SetRegion(v)
+	}
 	if _, ok := _c.mutation.AccessKey(); !ok {
 		v := storagestrategy.DefaultAccessKey
 		_c.mutation.SetAccessKey(v)
@@ -257,6 +293,12 @@ func (_c *StorageStrategyCreate) check() error {
 	}
 	if _, ok := _c.mutation.NodeID(); !ok {
 		return &ValidationError{Name: "node_id", err: errors.New(`ent: missing required field "StorageStrategy.node_id"`)}
+	}
+	if _, ok := _c.mutation.Endpoint(); !ok {
+		return &ValidationError{Name: "endpoint", err: errors.New(`ent: missing required field "StorageStrategy.endpoint"`)}
+	}
+	if _, ok := _c.mutation.Region(); !ok {
+		return &ValidationError{Name: "region", err: errors.New(`ent: missing required field "StorageStrategy.region"`)}
 	}
 	if _, ok := _c.mutation.Bucket(); !ok {
 		return &ValidationError{Name: "bucket", err: errors.New(`ent: missing required field "StorageStrategy.bucket"`)}
@@ -326,6 +368,14 @@ func (_c *StorageStrategyCreate) createSpec() (*StorageStrategy, *sqlgraph.Creat
 	if value, ok := _c.mutation.NodeID(); ok {
 		_spec.SetField(storagestrategy.FieldNodeID, field.TypeString, value)
 		_node.NodeID = value
+	}
+	if value, ok := _c.mutation.Endpoint(); ok {
+		_spec.SetField(storagestrategy.FieldEndpoint, field.TypeString, value)
+		_node.Endpoint = value
+	}
+	if value, ok := _c.mutation.Region(); ok {
+		_spec.SetField(storagestrategy.FieldRegion, field.TypeString, value)
+		_node.Region = value
 	}
 	if value, ok := _c.mutation.Bucket(); ok {
 		_spec.SetField(storagestrategy.FieldBucket, field.TypeString, value)

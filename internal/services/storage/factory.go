@@ -1,7 +1,11 @@
 package storage
 
 import (
+	"context"
 	"fmt"
+	"gobee/ent"
+	"gobee/ent/storagestrategy"
+	"gobee/internal/database"
 	"gobee/internal/services/storage/ftp"
 	"gobee/internal/services/storage/local"
 	"gobee/internal/services/storage/s3"
@@ -19,6 +23,8 @@ const (
 	StorageQiniu   StorageType = "qiniu"
 	StorageHuawei  StorageType = "huawei"
 )
+
+var uploaderCache = map[int]Uploader{}
 
 // StorageConfig 存储配置
 type StorageConfig struct {
@@ -54,4 +60,77 @@ func NewUploader(config StorageConfig) (Uploader, error) {
 	default:
 		return nil, fmt.Errorf("不支持的存储类型: %s", config.Type)
 	}
+}
+
+func ClearCache() {
+	for id := range uploaderCache {
+		delete(uploaderCache, id)
+	}
+}
+
+// 获取上传器，如果不存在就新建
+func GetUploader(strategy *ent.StorageStrategy) (Uploader, error) {
+	if uploader, ok := uploaderCache[strategy.ID]; ok {
+		return uploader, nil
+	}
+
+	// 从数据库获取配置
+	storageStrategy, err := GetStorageStrategyByID(strategy.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	var config StorageConfig
+
+	if storageStrategy.Type == "s3" {
+		config = StorageConfig{
+			Type:       StorageS3,
+			Endpoint:   storageStrategy.Endpoint,
+			Region:     storageStrategy.Region,
+			AccessKey:  storageStrategy.AccessKey,
+			SecretKey:  storageStrategy.SecretKey,
+			BucketName: storageStrategy.Bucket,
+		}
+	} else {
+		config = StorageConfig{
+			Type:     StorageLocal,
+			BasePath: storageStrategy.BasePath,
+			BaseURL:  "",
+		}
+	}
+
+	// 创建上传器
+	uploader, err := NewUploader(config)
+	if err != nil {
+		return nil, err
+	}
+
+	// 缓存上传器
+	uploaderCache[strategy.ID] = uploader
+
+	return uploader, nil
+}
+
+/**
+ * GetMasterStorageStrategy 获取主存储策略
+ * @return (*ent.StorageStrategy, error)
+ */
+func GetMasterStorageStrategy() (*ent.StorageStrategy, error) {
+	client := database.DB
+	// 找到 master 为 true 的
+	strategy, err := client.StorageStrategy.Query().Where(storagestrategy.Master(true)).First(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return strategy, nil
+}
+
+func GetStorageStrategyByID(id int) (*ent.StorageStrategy, error) {
+	client := database.DB
+	// 找到 master 为 true 的
+	strategy, err := client.StorageStrategy.Query().Where(storagestrategy.ID(id)).First(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return strategy, nil
 }
