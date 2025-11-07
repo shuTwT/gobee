@@ -60,6 +60,14 @@ func (_c *FileCreate) SetPath(v string) *FileCreate {
 	return _c
 }
 
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (_c *FileCreate) SetNillablePath(v *string) *FileCreate {
+	if v != nil {
+		_c.SetPath(*v)
+	}
+	return _c
+}
+
 // SetURL sets the "url" field.
 func (_c *FileCreate) SetURL(v string) *FileCreate {
 	_c.mutation.SetURL(v)
@@ -120,6 +128,10 @@ func (_c *FileCreate) defaults() {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := file.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := _c.mutation.Path(); !ok {
+		v := file.DefaultPath
+		_c.mutation.SetPath(v)
 	}
 }
 

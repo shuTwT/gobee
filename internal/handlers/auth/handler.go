@@ -10,7 +10,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/user"
 	"gobee/internal/database"
-	"gobee/internal/model"
+	"gobee/pkg/domain/model"
 )
 
 // LoginRequest 登录请求结构

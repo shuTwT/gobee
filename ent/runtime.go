@@ -4,6 +4,7 @@ package ent
 
 import (
 	"gobee/ent/album"
+	"gobee/ent/albumphoto"
 	"gobee/ent/comment"
 	"gobee/ent/file"
 	"gobee/ent/oauth2accesstoken"
@@ -42,25 +43,21 @@ func init() {
 	// albumDescName is the schema descriptor for name field.
 	albumDescName := albumFields[0].Descriptor()
 	// album.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	album.NameValidator = func() func(string) error {
-		validators := albumDescName.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(name string) error {
-			for _, fn := range fns {
-				if err := fn(name); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
+	album.NameValidator = albumDescName.Validators[0].(func(string) error)
 	// albumDescDescription is the schema descriptor for description field.
 	albumDescDescription := albumFields[1].Descriptor()
 	// album.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	album.DescriptionValidator = albumDescDescription.Validators[0].(func(string) error)
+	// albumDescSort is the schema descriptor for sort field.
+	albumDescSort := albumFields[2].Descriptor()
+	// album.DefaultSort holds the default value on creation for the sort field.
+	album.DefaultSort = albumDescSort.Default.(int)
+	albumphotoFields := schema.AlbumPhoto{}.Fields()
+	_ = albumphotoFields
+	// albumphotoDescViewCount is the schema descriptor for view_count field.
+	albumphotoDescViewCount := albumphotoFields[1].Descriptor()
+	// albumphoto.DefaultViewCount holds the default value on creation for the view_count field.
+	albumphoto.DefaultViewCount = albumphotoDescViewCount.Default.(int)
 	commentMixin := schema.Comment{}.Mixin()
 	commentMixinFields0 := commentMixin[0].Fields()
 	_ = commentMixinFields0
@@ -141,22 +138,10 @@ func init() {
 	}()
 	// fileDescPath is the schema descriptor for path field.
 	fileDescPath := fileFields[1].Descriptor()
+	// file.DefaultPath holds the default value on creation for the path field.
+	file.DefaultPath = fileDescPath.Default.(string)
 	// file.PathValidator is a validator for the "path" field. It is called by the builders before save.
-	file.PathValidator = func() func(string) error {
-		validators := fileDescPath.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(_path string) error {
-			for _, fn := range fns {
-				if err := fn(_path); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
+	file.PathValidator = fileDescPath.Validators[0].(func(string) error)
 	// fileDescURL is the schema descriptor for url field.
 	fileDescURL := fileFields[2].Descriptor()
 	// file.URLValidator is a validator for the "url" field. It is called by the builders before save.

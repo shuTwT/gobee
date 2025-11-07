@@ -4,7 +4,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/post"
 	"gobee/internal/database"
-	"gobee/internal/model"
+	"gobee/pkg/domain/model"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"

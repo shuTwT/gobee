@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import { zhCN, dateZhCN } from 'naive-ui'
 import hljs from 'highlight.js'
 import DialogManager from '@/components/dialog/DialogManager.vue'
 </script>
 
 <template>
-  <n-config-provider class="w-full h-full" :hljs="hljs">
+  <n-config-provider class="w-full h-full" :locale="zhCN" :date-locale="dateZhCN" :hljs="hljs">
     <n-notification-provider>
       <n-message-provider>
         <n-modal-provider>

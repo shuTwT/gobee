@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"gobee/internal/model"
+	"gobee/pkg/domain/model"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"

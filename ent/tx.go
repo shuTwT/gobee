@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
+	// AlbumPhoto is the client for interacting with the AlbumPhoto builders.
+	AlbumPhoto *AlbumPhotoClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// File is the client for interacting with the File builders.
@@ -172,6 +174,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Album = NewAlbumClient(tx.config)
+	tx.AlbumPhoto = NewAlbumPhotoClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.ModelSchema = NewModelSchemaClient(tx.config)

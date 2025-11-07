@@ -9,7 +9,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/user"
 	"gobee/internal/database"
-	"gobee/internal/model"
+	"gobee/pkg/domain/model"
 )
 
 // @Summary 获取用户列表

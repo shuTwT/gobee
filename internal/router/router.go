@@ -1,6 +1,9 @@
 package router
 
 import (
+	album_handler "gobee/internal/handlers/album"
+	albumphoto_handler "gobee/internal/handlers/album_photo"
+	api_interface_handler "gobee/internal/handlers/api_interface"
 	auth_handler "gobee/internal/handlers/auth"
 	file_handler "gobee/internal/handlers/file"
 	initialize_handler "gobee/internal/handlers/initialize"
@@ -43,6 +46,8 @@ func Initialize(router *fiber.App) {
 			})
 			apiV1.Get("/routes", route_handler.GetRoutes)
 
+			apiV1.Get("/api-interface/all-routes", api_interface_handler.GetAllRoutes)
+
 			// 系统设置接口
 			apiV1.Get("/settings", setting_handler.GetSettings)
 			// 登录身份验证中间件
@@ -50,6 +55,10 @@ func Initialize(router *fiber.App) {
 
 			fileApi := apiV1.Group("/file")
 			{
+				fileApi.Get("/list", file_handler.ListFile)
+				fileApi.Get("/page", file_handler.ListFilePage)
+				fileApi.Get("/query/:id", file_handler.QueryFile)
+				fileApi.Delete("/delete/:id", file_handler.DeleteFile)
 				fileApi.Post("/upload", file_handler.Upload)
 			}
 			payChannelApi := apiV1.Group("/pay-channel")
@@ -94,6 +103,23 @@ func Initialize(router *fiber.App) {
 				storageStrategyApi.Delete("/delete/:id", storagestrategy_handler.DeleteStorageStrategy)
 				storageStrategyApi.Put("/default/:id", storagestrategy_handler.SetDefaultStorageStrategy)
 			}
+			albumApi := apiV1.Group("/album")
+			{
+				albumApi.Get("/list", album_handler.ListAlbum)
+				albumApi.Post("/create", album_handler.CreateAlbum)
+				albumApi.Put("/update/:id", album_handler.UpdateAlbum)
+				albumApi.Get("/query/:id", album_handler.QueryAlbum)
+				albumApi.Delete("/delete/:id", album_handler.DeleteAlbum)
+			}
+			albumPhotoApi := apiV1.Group("/album-photo")
+			{
+				albumPhotoApi.Get("/list", albumphoto_handler.ListAlbumPhoto)
+				albumPhotoApi.Post("/create", albumphoto_handler.CreateAlbumPhoto)
+				albumPhotoApi.Put("/update/:id", albumphoto_handler.UpdateAlbumPhoto)
+				albumPhotoApi.Get("/query/:id", albumphoto_handler.QueryAlbumPhoto)
+				albumPhotoApi.Delete("/delete/:id", albumphoto_handler.DeleteAlbumPhoto)
+			}
+
 		}
 	}
 }

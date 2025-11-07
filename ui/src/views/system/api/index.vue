@@ -235,6 +235,7 @@ import {
   PlayOutline,
   PencilOutline
 } from '@vicons/ionicons5'
+import * as routesApi from '@/api/routes'
 
 const message = useMessage()
 
@@ -840,8 +841,13 @@ const loadApiList = async () => {
   }
 }
 
+const onSearch=()=>{
+  routesApi.getAllRoutes()
+}
+
 onMounted(() => {
   loadApiList()
+  onSearch()
 })
 </script>
 

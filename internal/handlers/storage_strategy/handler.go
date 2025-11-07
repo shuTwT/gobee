@@ -4,8 +4,8 @@ import (
 	"gobee/ent"
 	"gobee/ent/storagestrategy"
 	"gobee/internal/database"
-	"gobee/internal/model"
 	"gobee/internal/services/storage"
+	"gobee/pkg/domain/model"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"

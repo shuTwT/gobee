@@ -8,7 +8,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/paychannel"
 	"gobee/internal/database"
-	"gobee/internal/model"
+	"gobee/pkg/domain/model"
 )
 
 // @Summary 获取支付渠道列表

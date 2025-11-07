@@ -68,6 +68,20 @@ func (_c *AlbumCreate) SetNillableDescription(v *string) *AlbumCreate {
 	return _c
 }
 
+// SetSort sets the "sort" field.
+func (_c *AlbumCreate) SetSort(v int) *AlbumCreate {
+	_c.mutation.SetSort(v)
+	return _c
+}
+
+// SetNillableSort sets the "sort" field if the given value is not nil.
+func (_c *AlbumCreate) SetNillableSort(v *int) *AlbumCreate {
+	if v != nil {
+		_c.SetSort(*v)
+	}
+	return _c
+}
+
 // Mutation returns the AlbumMutation object of the builder.
 func (_c *AlbumCreate) Mutation() *AlbumMutation {
 	return _c.mutation
@@ -110,6 +124,10 @@ func (_c *AlbumCreate) defaults() {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := album.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := _c.mutation.Sort(); !ok {
+		v := album.DefaultSort
+		_c.mutation.SetSort(v)
 	}
 }
 
@@ -175,6 +193,10 @@ func (_c *AlbumCreate) createSpec() (*Album, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(album.FieldDescription, field.TypeString, value)
 		_node.Description = value
+	}
+	if value, ok := _c.mutation.Sort(); ok {
+		_spec.SetField(album.FieldSort, field.TypeInt, value)
+		_node.Sort = value
 	}
 	return _node, _spec
 }

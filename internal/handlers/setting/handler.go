@@ -2,8 +2,8 @@ package setting_handler
 
 import (
 	"gobee/internal/database"
-	"gobee/internal/model"
 	"gobee/internal/services/setting"
+	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -74,6 +74,11 @@ func Description(v string) predicate.Album {
 	return predicate.Album(sql.FieldEQ(FieldDescription, v))
 }
 
+// Sort applies equality check predicate on the "sort" field. It's identical to SortEQ.
+func Sort(v int) predicate.Album {
+	return predicate.Album(sql.FieldEQ(FieldSort, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Album {
 	return predicate.Album(sql.FieldEQ(FieldCreatedAt, v))
@@ -292,6 +297,56 @@ func DescriptionEqualFold(v string) predicate.Album {
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
 func DescriptionContainsFold(v string) predicate.Album {
 	return predicate.Album(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// SortEQ applies the EQ predicate on the "sort" field.
+func SortEQ(v int) predicate.Album {
+	return predicate.Album(sql.FieldEQ(FieldSort, v))
+}
+
+// SortNEQ applies the NEQ predicate on the "sort" field.
+func SortNEQ(v int) predicate.Album {
+	return predicate.Album(sql.FieldNEQ(FieldSort, v))
+}
+
+// SortIn applies the In predicate on the "sort" field.
+func SortIn(vs ...int) predicate.Album {
+	return predicate.Album(sql.FieldIn(FieldSort, vs...))
+}
+
+// SortNotIn applies the NotIn predicate on the "sort" field.
+func SortNotIn(vs ...int) predicate.Album {
+	return predicate.Album(sql.FieldNotIn(FieldSort, vs...))
+}
+
+// SortGT applies the GT predicate on the "sort" field.
+func SortGT(v int) predicate.Album {
+	return predicate.Album(sql.FieldGT(FieldSort, v))
+}
+
+// SortGTE applies the GTE predicate on the "sort" field.
+func SortGTE(v int) predicate.Album {
+	return predicate.Album(sql.FieldGTE(FieldSort, v))
+}
+
+// SortLT applies the LT predicate on the "sort" field.
+func SortLT(v int) predicate.Album {
+	return predicate.Album(sql.FieldLT(FieldSort, v))
+}
+
+// SortLTE applies the LTE predicate on the "sort" field.
+func SortLTE(v int) predicate.Album {
+	return predicate.Album(sql.FieldLTE(FieldSort, v))
+}
+
+// SortIsNil applies the IsNil predicate on the "sort" field.
+func SortIsNil() predicate.Album {
+	return predicate.Album(sql.FieldIsNull(FieldSort))
+}
+
+// SortNotNil applies the NotNil predicate on the "sort" field.
+func SortNotNil() predicate.Album {
+	return predicate.Album(sql.FieldNotNull(FieldSort))
 }
 
 // And groups predicates with the AND operator between them.

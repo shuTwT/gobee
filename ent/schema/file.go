@@ -20,7 +20,7 @@ func (File) Mixin() []ent.Mixin {
 func (File) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().MaxLen(255).Comment("文件名称"),
-		field.String("path").NotEmpty().MaxLen(512).Comment("文件路径"),
+		field.String("path").Default("").MaxLen(512).Comment("文件路径"),
 		field.String("url").NotEmpty().MaxLen(1024).Comment("文件地址"),
 		field.String("type").Comment("文件类型"),
 		field.String("size").Comment("文件大小"),

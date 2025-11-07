@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import * as albumApi from '@/api/album'
+import * as albumPhotoApi from '@/api/albumPhoto'
+import { addDialog } from '@/components/dialog'
+import albumPhotoForm from "./albumPhotoForm.vue"
+
+
 const albumFormData = ref({
   name: '',
 })
@@ -16,6 +22,39 @@ const pagination = reactive({
     pagination.pageSize = pageSize
     pagination.page = 1
   },
+})
+
+const albumList = ref([])
+const albumPhotoList = ref([])
+
+const onSearchAlbum=async()=>{
+  const res=await albumApi.getAlbumList()
+  if (res.code === 200) {
+    albumList.value = res.data || []
+  }
+}
+
+const onSearchAlbumPhoto=async()=>{
+  const res=await albumPhotoApi.getAlbumPhotoList({
+    page:pagination.page,
+    pageSize:pagination.pageSize,
+  })
+  if (res.code === 200) {
+    albumPhotoList.value = res.data || []
+  }
+}
+
+const openAlbumPhotoDialog=(title='新增',row?:any)=>{
+  addDialog({
+    title:`${title}新增相片`,
+    props:{},
+    contentRenderer:()=>h(albumPhotoForm)
+  })
+}
+
+onMounted(()=>{
+  onSearchAlbum()
+  onSearchAlbumPhoto()
 })
 </script>
 <template>
@@ -49,9 +88,9 @@ const pagination = reactive({
           </n-card>
         </n-gi>
         <n-gi span="2">
-          <n-card title="相册列表">
+          <n-card title="相片列表">
             <template #header-extra>
-              <n-button type="primary"> <i class="fas fa-upload mr-2"></i>上传照片 </n-button>
+              <n-button type="primary" @click="openAlbumPhotoDialog('新增')"> <i class="fas fa-upload mr-2"></i>新增 </n-button>
             </template>
             <div id="photoList" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               <!-- 示例照片卡片 -->

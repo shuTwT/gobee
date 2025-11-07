@@ -22,8 +22,9 @@ func (Album) Mixin() []ent.Mixin {
 // Fields of the Album.
 func (Album) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().MaxLen(255),
-		field.String("description").Optional().MaxLen(255),
+		field.String("name").NotEmpty().Unique().Comment("相册分类名称"),
+		field.String("description").Optional().MaxLen(255).Comment("相册分类描述"),
+		field.Int("sort").Optional().Default(0).Comment("相册分类排序"),
 	}
 }
 

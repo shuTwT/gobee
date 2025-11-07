@@ -21,10 +21,12 @@ type Album struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// Name holds the value of the "name" field.
+	// 相册分类名称
 	Name string `json:"name,omitempty"`
-	// Description holds the value of the "description" field.
-	Description  string `json:"description,omitempty"`
+	// 相册分类描述
+	Description string `json:"description,omitempty"`
+	// 相册分类排序
+	Sort         int `json:"sort,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -33,7 +35,7 @@ func (*Album) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case album.FieldID:
+		case album.FieldID, album.FieldSort:
 			values[i] = new(sql.NullInt64)
 		case album.FieldName, album.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -84,6 +86,12 @@ func (_m *Album) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Description = value.String
 			}
+		case album.FieldSort:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field sort", values[i])
+			} else if value.Valid {
+				_m.Sort = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -131,6 +139,9 @@ func (_m *Album) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(_m.Description)
+	builder.WriteString(", ")
+	builder.WriteString("sort=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Sort))
 	builder.WriteByte(')')
 	return builder.String()
 }

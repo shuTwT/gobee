@@ -62,6 +62,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultPath holds the default value on creation for the "path" field.
+	DefaultPath string
 	// PathValidator is a validator for the "path" field. It is called by the builders before save.
 	PathValidator func(string) error
 	// URLValidator is a validator for the "url" field. It is called by the builders before save.

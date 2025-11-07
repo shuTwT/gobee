@@ -8,7 +8,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/payorder"
 	"gobee/internal/database"
-	"gobee/internal/model"
+	"gobee/pkg/domain/model"
 )
 
 // @Summary 获取支付订单列表

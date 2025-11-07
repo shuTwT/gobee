@@ -68,6 +68,33 @@ func (_u *AlbumUpdate) ClearDescription() *AlbumUpdate {
 	return _u
 }
 
+// SetSort sets the "sort" field.
+func (_u *AlbumUpdate) SetSort(v int) *AlbumUpdate {
+	_u.mutation.ResetSort()
+	_u.mutation.SetSort(v)
+	return _u
+}
+
+// SetNillableSort sets the "sort" field if the given value is not nil.
+func (_u *AlbumUpdate) SetNillableSort(v *int) *AlbumUpdate {
+	if v != nil {
+		_u.SetSort(*v)
+	}
+	return _u
+}
+
+// AddSort adds value to the "sort" field.
+func (_u *AlbumUpdate) AddSort(v int) *AlbumUpdate {
+	_u.mutation.AddSort(v)
+	return _u
+}
+
+// ClearSort clears the value of the "sort" field.
+func (_u *AlbumUpdate) ClearSort() *AlbumUpdate {
+	_u.mutation.ClearSort()
+	return _u
+}
+
 // Mutation returns the AlbumMutation object of the builder.
 func (_u *AlbumUpdate) Mutation() *AlbumMutation {
 	return _u.mutation
@@ -148,6 +175,15 @@ func (_u *AlbumUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(album.FieldDescription, field.TypeString)
 	}
+	if value, ok := _u.mutation.Sort(); ok {
+		_spec.SetField(album.FieldSort, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedSort(); ok {
+		_spec.AddField(album.FieldSort, field.TypeInt, value)
+	}
+	if _u.mutation.SortCleared() {
+		_spec.ClearField(album.FieldSort, field.TypeInt)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{album.Label}
@@ -205,6 +241,33 @@ func (_u *AlbumUpdateOne) SetNillableDescription(v *string) *AlbumUpdateOne {
 // ClearDescription clears the value of the "description" field.
 func (_u *AlbumUpdateOne) ClearDescription() *AlbumUpdateOne {
 	_u.mutation.ClearDescription()
+	return _u
+}
+
+// SetSort sets the "sort" field.
+func (_u *AlbumUpdateOne) SetSort(v int) *AlbumUpdateOne {
+	_u.mutation.ResetSort()
+	_u.mutation.SetSort(v)
+	return _u
+}
+
+// SetNillableSort sets the "sort" field if the given value is not nil.
+func (_u *AlbumUpdateOne) SetNillableSort(v *int) *AlbumUpdateOne {
+	if v != nil {
+		_u.SetSort(*v)
+	}
+	return _u
+}
+
+// AddSort adds value to the "sort" field.
+func (_u *AlbumUpdateOne) AddSort(v int) *AlbumUpdateOne {
+	_u.mutation.AddSort(v)
+	return _u
+}
+
+// ClearSort clears the value of the "sort" field.
+func (_u *AlbumUpdateOne) ClearSort() *AlbumUpdateOne {
+	_u.mutation.ClearSort()
 	return _u
 }
 
@@ -317,6 +380,15 @@ func (_u *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error)
 	}
 	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(album.FieldDescription, field.TypeString)
+	}
+	if value, ok := _u.mutation.Sort(); ok {
+		_spec.SetField(album.FieldSort, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedSort(); ok {
+		_spec.AddField(album.FieldSort, field.TypeInt, value)
+	}
+	if _u.mutation.SortCleared() {
+		_spec.ClearField(album.FieldSort, field.TypeInt)
 	}
 	_node = &Album{config: _u.config}
 	_spec.Assign = _node.assignValues
