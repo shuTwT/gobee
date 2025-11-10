@@ -84,6 +84,38 @@ func UpdatePostSetting(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", newPost))
 }
 
+func PublishPost(c *fiber.Ctx) error {
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format"))
+	}
+	newPost, err := client.Post.UpdateOneID(id).
+		SetIsPublished(true).
+		Save(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", newPost))
+}
+
+func UnpublishPost(c *fiber.Ctx) error {
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format"))
+	}
+	newPost, err := client.Post.UpdateOneID(id).
+		SetIsPublished(false).
+		Save(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", newPost))
+}
+
 func QueryPost(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))

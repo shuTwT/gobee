@@ -97,6 +97,8 @@ func Initialize(router *fiber.App) {
 				postApi.Post("/create", post_handler.CreatePost).Name("postCreate")
 				postApi.Put("/update/content/:id", post_handler.UpdatePostContent).Name("postUpdateContent")
 				postApi.Put("/update/setting/:id", post_handler.UpdatePostSetting).Name("postUpdateSetting")
+				postApi.Put("/publish/:id", post_handler.PublishPost).Name("postPublish")
+				postApi.Put("/unpublish/:id", post_handler.UnpublishPost).Name("postUnpublish")
 				postApi.Get("/query/:id", post_handler.QueryPost).Name("postQuery")
 				postApi.Delete("/delete/:id", post_handler.DeletePost).Name("postDelete")
 			}

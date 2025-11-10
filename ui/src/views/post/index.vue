@@ -261,6 +261,16 @@ const createPost = () => {
   postApi.createPost({
     title: '未命名的文章',
     content: '<p>此处是文章内容</p>',
+  }).then((res) => {
+    if (res.code === 200) {
+      message.success('创建成功')
+      router.push({
+        name: 'PostEditor',
+        query: {
+          id: res.data.id,
+        },
+      })
+    }
   })
 }
 
@@ -363,7 +373,14 @@ const handleRefresh = () => {
 }
 
 const onSearch = async () => {
-  const res = await postApi.getPostList()
+  const res = await postApi.getPostList({
+    page: pagination.page,
+    page_size: pagination.pageSize,
+    title: searchKeyword,
+    status: filterStatus,
+    start_date: dateRange.value?.[0],
+    end_date: dateRange.value?.[1],
+  })
   console.log(res)
   dataList.value = res.data
 }

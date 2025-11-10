@@ -9,12 +9,18 @@ export function usePostHook() {
   const dialog = useDialog()
 
   // 保存文章
-  const savePost = (row:any)=>{
-    postApi.updatePostContent(row.id,{
-      content:row.content
-    }).then((res)=>{
-      message.success('保存成功')
+  const savePost = (row: any) => {
+    return new Promise((resolve, reject) => {
+      postApi.updatePostContent(row.id, {
+        content: row.content
+      }).then((res) => {
+        message.success('保存成功')
+        resolve(true)
+      }).catch((err) => {
+        reject(err)
+      })
     })
+
   }
 
   // 文章设置
@@ -23,64 +29,99 @@ export function usePostHook() {
     messsageReactive = message.info('加载中...', {
       duration: 0,
     })
-    postApi
-      .queryPost(row.id)
-      .then((res) => {
-        const formRef = ref()
-        addDialog<FormProps>({
-          title: `文章设置`,
-          props: {
-            formInline: {
-              id: row.id ?? undefined,
-              title: res.data.title ?? '',
-              alias: res.data.alias ?? '',
-              categorys: res.data.categorys ?? [],
-              tags: res.data.tags ?? [],
-              autogenSummary: res.data.autogenSummary ?? false,
-              author: res.data.author ?? '',
-              allowComments: res.data.allowComments ?? false,
-              pinToTop: res.data.pinToTop ?? false,
-              visible: res.data.visible ?? false,
-              cover: res.data.cover ?? '',
+    return new Promise((resolve, reject) => {
+      postApi
+        .queryPost(row.id)
+        .then((res) => {
+          const formRef = ref()
+          addDialog<FormProps>({
+            title: `文章设置`,
+            props: {
+              formInline: {
+                id: res.data.id ?? undefined,
+                title: res.data.title ?? '',
+                alias: res.data.alias ?? '',
+                categorys: res.data.categorys ?? [],
+                tags: res.data.tags ?? [],
+                is_autogen_summary: res.data.is_autogen_summary ?? false,
+                author: res.data.author ?? '',
+                is_allow_comments: res.data.is_allow_comments ?? true,
+                is_pin_to_top: res.data.is_pin_to_top ?? false,
+                is_visible: res.data.is_visible ?? true,
+                cover: res.data.cover ?? '',
+              },
             },
-          },
-          contentRenderer: ({ options }) =>
-            h(SettingForm, { ref: formRef, formInline: options.props!.formInline }),
-          beforeSure: async (done) => {
-            try {
-              const curData = await formRef.value?.getData()
-              console.log(curData)
-              const chores = () => {
-                message.success('更新成功喵~')
-                done()
+            contentRenderer: ({ options }) =>
+              h(SettingForm, { ref: formRef, formInline: options.props!.formInline }),
+            beforeSure: async (done) => {
+              try {
+                const curData = await formRef.value?.getData()
+                console.log(curData)
+                const chores = () => {
+                  message.success('更新成功喵~')
+                  done()
+                  resolve(true)
+                }
+                postApi.updatePostSetting(row.id, curData).then(() => {
+                  chores()
+                })
 
-              }
-              postApi.updatePostSetting(row.id,curData).then(() => {
-                chores()
-              })
-
-            } catch {}
-          },
+              } catch { }
+            },
+          })
         })
-      })
-      .catch((err) => {})
-      .finally(() => {
-        messsageReactive.destroy()
-      })
+        .catch((err) => { })
+        .finally(() => {
+          messsageReactive.destroy()
+        })
+    })
+
   }
 
   // 发布文章
   const publishPost = (row: any) => {
-    dialog.info({
-      title: '确认',
-      content: '确定要发布该文章吗？',
-      positiveText: '确定',
-      negativeText: '取消',
-      onPositiveClick: () => {
-        row.status = 'published'
-        message.success('发布成功')
-      },
+    return new Promise((resolve, reject) => {
+      dialog.info({
+        title: '确认',
+        content: '确定要发布该文章吗？',
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: () => {
+          postApi.publishPost(row.id).then(() => {
+            message.success('发布成功')
+            resolve(true)
+          }).catch(() => {
+            message.error('发布失败')
+            reject(false)
+          })
+
+        },
+      })
     })
+
+  }
+
+  // 取消发布文章
+  const unpublishPost = (row: any) => {
+    return new Promise((resolve, reject) => {
+      dialog.info({
+        title: '确认',
+        content: '确定要取消发布该文章吗？',
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: () => {
+          postApi.unpublishPost(row.id).then(() => {
+            message.success('取消发布成功')
+            resolve(true)
+          }).catch(() => {
+            message.error('取消发布失败')
+            reject(false)
+          })
+
+        },
+      })
+    })
+
   }
 
   // 分享文章
@@ -105,6 +146,7 @@ export function usePostHook() {
     savePost,
     settingPost,
     publishPost,
+    unpublishPost,
     sharePost,
     exportPost,
     copyPostContent,

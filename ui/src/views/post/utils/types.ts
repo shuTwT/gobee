@@ -4,11 +4,11 @@ export type FormItemProps = {
   alias:string,
   categorys:any[],
   tags:any[],
-  autogenSummary:boolean,
+  is_autogen_summary:boolean,
   author:string,
-  allowComments:boolean,
-  pinToTop:boolean,
-  visible:boolean,
+  is_allow_comments:boolean,
+  is_pin_to_top:boolean,
+  is_visible:boolean,
   cover:string
 }
 

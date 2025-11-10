@@ -17,6 +17,14 @@ export const updatePostSetting = (id:number|string,data:any) =>{
   return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/post/update/setting/${id}`,{data})
 }
 
+export const publishPost = (id:number|string) =>{
+  return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/post/publish/${id}`)
+}
+
+export const unpublishPost = (id:number|string) =>{
+  return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/post/unpublish/${id}`)
+}
+
 export const queryPost = (id:number|string) =>{
   return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/post/query/${id}`)
 }

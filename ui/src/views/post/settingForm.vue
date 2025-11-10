@@ -10,7 +10,6 @@ const formRef = ref<FormInst|null>()
 const formData = ref(props.formInline)
 const rules:FormRules = {
   title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
-  alias: [{ required: true, message: '请输入别名', trigger: 'blur' }],
 }
 
 const categoryOptions = ref([])
@@ -50,20 +49,20 @@ defineExpose({getData})
     <n-form-item label="标签" path="tags">
       <n-select v-model:value="formData.tags" :multiple="true" :filterable="true" :options="tagOptions"/>
     </n-form-item>
-    <n-form-item label="自动生成摘要" path="autogenSummary">
-      <n-checkbox v-model:checked="formData.autogenSummary"/>
+    <n-form-item label="自动生成摘要" path="is_autogen_summary">
+      <n-checkbox v-model:checked="formData.is_autogen_summary"/>
     </n-form-item>
     <n-form-item label="作者" path="author">
       <n-input v-model:value="formData.author"/>
     </n-form-item>
-    <n-form-item label="允许评论" path="allowComments">
-      <n-checkbox v-model:checked="formData.allowComments"/>
+    <n-form-item label="允许评论" path="is_allow_comments">
+      <n-checkbox v-model:checked="formData.is_allow_comments"/>
     </n-form-item>
-    <n-form-item label="是否置顶" path="pinToTop">
-      <n-checkbox v-model:checked="formData.pinToTop"/>
+    <n-form-item label="是否置顶" path="is_pin_to_top">
+      <n-checkbox v-model:checked="formData.is_pin_to_top"/>
     </n-form-item>
-    <n-form-item label="可见性" path="visible">
-      <n-checkbox v-model:checked="formData.visible"/>
+    <n-form-item label="可见性" path="is_visible">
+      <n-checkbox v-model:checked="formData.is_visible"/>
     </n-form-item>
     <n-form-item label="封面" path="cover">
       <n-input v-model:value="formData.cover"/>
