@@ -3,8 +3,9 @@ import '@wangeditor-next/editor/dist/css/style.css' // 引入 css
 import { Editor, Toolbar } from '@wangeditor-next/editor-for-vue'
 import { useRoute } from 'vue-router'
 import * as postApi from '@/api/post'
-import SettingForm from '../settingForm.vue'
-import { addDialog } from '@/components/dialog'
+import { usePostHook } from '../utils/hook'
+
+const { settingPost,savePost,publishPost } = usePostHook()
 
 const route = useRoute()
 const mode = 'default'
@@ -20,10 +21,18 @@ const handleCreated = (editor: any) => {
 }
 
 const openSettingDialog = () => {
-  addDialog({
-    props:{},
-    contentRenderer:()=>h(SettingForm)
+  settingPost({id:route.query.id})
+}
+
+const handleSave=()=>{
+  savePost({
+    id:route.query.id,
+    content:valueHtml.value
   })
+}
+
+const handlePublish = () => {
+  publishPost({id:route.query.id})
 }
 
 onMounted(()=>{
@@ -64,8 +73,8 @@ onBeforeUnmount(() => {
           <n-button style="margin-right: 10px"> 历史版本 </n-button>
           <n-button style="margin-right: 10px"> 预览 </n-button>
           <n-button style="margin-right: 10px" @click="openSettingDialog"> 设置 </n-button>
-          <n-button style="margin-right: 10px"> 保存 </n-button>
-          <n-button type="primary" size="large"> 发布 </n-button>
+          <n-button style="margin-right: 10px" @click="handleSave"> 保存 </n-button>
+          <n-button type="primary" size="large" @click="handlePublish"> 发布 </n-button>
         </div>
         <n-divider />
         <n-tabs type="segment" animated>

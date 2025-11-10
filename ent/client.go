@@ -13,6 +13,7 @@ import (
 
 	"gobee/ent/album"
 	"gobee/ent/albumphoto"
+	"gobee/ent/apiperms"
 	"gobee/ent/comment"
 	"gobee/ent/file"
 	"gobee/ent/modelschema"
@@ -26,6 +27,7 @@ import (
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
+	"gobee/ent/webhook"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -41,6 +43,8 @@ type Client struct {
 	Album *AlbumClient
 	// AlbumPhoto is the client for interacting with the AlbumPhoto builders.
 	AlbumPhoto *AlbumPhotoClient
+	// ApiPerms is the client for interacting with the ApiPerms builders.
+	ApiPerms *ApiPermsClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// File is the client for interacting with the File builders.
@@ -67,6 +71,8 @@ type Client struct {
 	StorageStrategy *StorageStrategyClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// WebHook is the client for interacting with the WebHook builders.
+	WebHook *WebHookClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -80,6 +86,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Album = NewAlbumClient(c.config)
 	c.AlbumPhoto = NewAlbumPhotoClient(c.config)
+	c.ApiPerms = NewApiPermsClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.ModelSchema = NewModelSchemaClient(c.config)
@@ -93,6 +100,7 @@ func (c *Client) init() {
 	c.Setting = NewSettingClient(c.config)
 	c.StorageStrategy = NewStorageStrategyClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.WebHook = NewWebHookClient(c.config)
 }
 
 type (
@@ -187,6 +195,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:             cfg,
 		Album:              NewAlbumClient(cfg),
 		AlbumPhoto:         NewAlbumPhotoClient(cfg),
+		ApiPerms:           NewApiPermsClient(cfg),
 		Comment:            NewCommentClient(cfg),
 		File:               NewFileClient(cfg),
 		ModelSchema:        NewModelSchemaClient(cfg),
@@ -200,6 +209,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Setting:            NewSettingClient(cfg),
 		StorageStrategy:    NewStorageStrategyClient(cfg),
 		User:               NewUserClient(cfg),
+		WebHook:            NewWebHookClient(cfg),
 	}, nil
 }
 
@@ -221,6 +231,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:             cfg,
 		Album:              NewAlbumClient(cfg),
 		AlbumPhoto:         NewAlbumPhotoClient(cfg),
+		ApiPerms:           NewApiPermsClient(cfg),
 		Comment:            NewCommentClient(cfg),
 		File:               NewFileClient(cfg),
 		ModelSchema:        NewModelSchemaClient(cfg),
@@ -234,6 +245,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Setting:            NewSettingClient(cfg),
 		StorageStrategy:    NewStorageStrategyClient(cfg),
 		User:               NewUserClient(cfg),
+		WebHook:            NewWebHookClient(cfg),
 	}, nil
 }
 
@@ -263,9 +275,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.AlbumPhoto, c.Comment, c.File, c.ModelSchema, c.Oauth2AccessToken,
-		c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel, c.PayOrder, c.Post,
-		c.Setting, c.StorageStrategy, c.User,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.File, c.ModelSchema,
+		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
+		c.PayOrder, c.Post, c.Setting, c.StorageStrategy, c.User, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -275,9 +287,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.AlbumPhoto, c.Comment, c.File, c.ModelSchema, c.Oauth2AccessToken,
-		c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel, c.PayOrder, c.Post,
-		c.Setting, c.StorageStrategy, c.User,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.File, c.ModelSchema,
+		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
+		c.PayOrder, c.Post, c.Setting, c.StorageStrategy, c.User, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -290,6 +302,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Album.mutate(ctx, m)
 	case *AlbumPhotoMutation:
 		return c.AlbumPhoto.mutate(ctx, m)
+	case *ApiPermsMutation:
+		return c.ApiPerms.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
 	case *FileMutation:
@@ -316,6 +330,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.StorageStrategy.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
+	case *WebHookMutation:
+		return c.WebHook.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -584,6 +600,139 @@ func (c *AlbumPhotoClient) mutate(ctx context.Context, m *AlbumPhotoMutation) (V
 		return (&AlbumPhotoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown AlbumPhoto mutation op: %q", m.Op())
+	}
+}
+
+// ApiPermsClient is a client for the ApiPerms schema.
+type ApiPermsClient struct {
+	config
+}
+
+// NewApiPermsClient returns a client for the ApiPerms from the given config.
+func NewApiPermsClient(c config) *ApiPermsClient {
+	return &ApiPermsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `apiperms.Hooks(f(g(h())))`.
+func (c *ApiPermsClient) Use(hooks ...Hook) {
+	c.hooks.ApiPerms = append(c.hooks.ApiPerms, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `apiperms.Intercept(f(g(h())))`.
+func (c *ApiPermsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ApiPerms = append(c.inters.ApiPerms, interceptors...)
+}
+
+// Create returns a builder for creating a ApiPerms entity.
+func (c *ApiPermsClient) Create() *ApiPermsCreate {
+	mutation := newApiPermsMutation(c.config, OpCreate)
+	return &ApiPermsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ApiPerms entities.
+func (c *ApiPermsClient) CreateBulk(builders ...*ApiPermsCreate) *ApiPermsCreateBulk {
+	return &ApiPermsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ApiPermsClient) MapCreateBulk(slice any, setFunc func(*ApiPermsCreate, int)) *ApiPermsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ApiPermsCreateBulk{err: fmt.Errorf("calling to ApiPermsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ApiPermsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ApiPermsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ApiPerms.
+func (c *ApiPermsClient) Update() *ApiPermsUpdate {
+	mutation := newApiPermsMutation(c.config, OpUpdate)
+	return &ApiPermsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ApiPermsClient) UpdateOne(_m *ApiPerms) *ApiPermsUpdateOne {
+	mutation := newApiPermsMutation(c.config, OpUpdateOne, withApiPerms(_m))
+	return &ApiPermsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ApiPermsClient) UpdateOneID(id int) *ApiPermsUpdateOne {
+	mutation := newApiPermsMutation(c.config, OpUpdateOne, withApiPermsID(id))
+	return &ApiPermsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ApiPerms.
+func (c *ApiPermsClient) Delete() *ApiPermsDelete {
+	mutation := newApiPermsMutation(c.config, OpDelete)
+	return &ApiPermsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ApiPermsClient) DeleteOne(_m *ApiPerms) *ApiPermsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ApiPermsClient) DeleteOneID(id int) *ApiPermsDeleteOne {
+	builder := c.Delete().Where(apiperms.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ApiPermsDeleteOne{builder}
+}
+
+// Query returns a query builder for ApiPerms.
+func (c *ApiPermsClient) Query() *ApiPermsQuery {
+	return &ApiPermsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeApiPerms},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ApiPerms entity by its id.
+func (c *ApiPermsClient) Get(ctx context.Context, id int) (*ApiPerms, error) {
+	return c.Query().Where(apiperms.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ApiPermsClient) GetX(ctx context.Context, id int) *ApiPerms {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ApiPermsClient) Hooks() []Hook {
+	return c.hooks.ApiPerms
+}
+
+// Interceptors returns the client interceptors.
+func (c *ApiPermsClient) Interceptors() []Interceptor {
+	return c.inters.ApiPerms
+}
+
+func (c *ApiPermsClient) mutate(ctx context.Context, m *ApiPermsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ApiPermsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ApiPermsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ApiPermsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ApiPermsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ApiPerms mutation op: %q", m.Op())
 	}
 }
 
@@ -2316,16 +2465,149 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 	}
 }
 
+// WebHookClient is a client for the WebHook schema.
+type WebHookClient struct {
+	config
+}
+
+// NewWebHookClient returns a client for the WebHook from the given config.
+func NewWebHookClient(c config) *WebHookClient {
+	return &WebHookClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `webhook.Hooks(f(g(h())))`.
+func (c *WebHookClient) Use(hooks ...Hook) {
+	c.hooks.WebHook = append(c.hooks.WebHook, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `webhook.Intercept(f(g(h())))`.
+func (c *WebHookClient) Intercept(interceptors ...Interceptor) {
+	c.inters.WebHook = append(c.inters.WebHook, interceptors...)
+}
+
+// Create returns a builder for creating a WebHook entity.
+func (c *WebHookClient) Create() *WebHookCreate {
+	mutation := newWebHookMutation(c.config, OpCreate)
+	return &WebHookCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of WebHook entities.
+func (c *WebHookClient) CreateBulk(builders ...*WebHookCreate) *WebHookCreateBulk {
+	return &WebHookCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *WebHookClient) MapCreateBulk(slice any, setFunc func(*WebHookCreate, int)) *WebHookCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &WebHookCreateBulk{err: fmt.Errorf("calling to WebHookClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*WebHookCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &WebHookCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for WebHook.
+func (c *WebHookClient) Update() *WebHookUpdate {
+	mutation := newWebHookMutation(c.config, OpUpdate)
+	return &WebHookUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *WebHookClient) UpdateOne(_m *WebHook) *WebHookUpdateOne {
+	mutation := newWebHookMutation(c.config, OpUpdateOne, withWebHook(_m))
+	return &WebHookUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *WebHookClient) UpdateOneID(id int) *WebHookUpdateOne {
+	mutation := newWebHookMutation(c.config, OpUpdateOne, withWebHookID(id))
+	return &WebHookUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for WebHook.
+func (c *WebHookClient) Delete() *WebHookDelete {
+	mutation := newWebHookMutation(c.config, OpDelete)
+	return &WebHookDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *WebHookClient) DeleteOne(_m *WebHook) *WebHookDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *WebHookClient) DeleteOneID(id int) *WebHookDeleteOne {
+	builder := c.Delete().Where(webhook.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &WebHookDeleteOne{builder}
+}
+
+// Query returns a query builder for WebHook.
+func (c *WebHookClient) Query() *WebHookQuery {
+	return &WebHookQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeWebHook},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a WebHook entity by its id.
+func (c *WebHookClient) Get(ctx context.Context, id int) (*WebHook, error) {
+	return c.Query().Where(webhook.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *WebHookClient) GetX(ctx context.Context, id int) *WebHook {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *WebHookClient) Hooks() []Hook {
+	return c.hooks.WebHook
+}
+
+// Interceptors returns the client interceptors.
+func (c *WebHookClient) Interceptors() []Interceptor {
+	return c.inters.WebHook
+}
+
+func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&WebHookCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&WebHookUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&WebHookUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&WebHookDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown WebHook mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, Comment, File, ModelSchema, Oauth2AccessToken, Oauth2Code,
-		Oauth2RefreshToken, Page, PayChannel, PayOrder, Post, Setting, StorageStrategy,
-		User []ent.Hook
+		Album, AlbumPhoto, ApiPerms, Comment, File, ModelSchema, Oauth2AccessToken,
+		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder, Post, Setting,
+		StorageStrategy, User, WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, Comment, File, ModelSchema, Oauth2AccessToken, Oauth2Code,
-		Oauth2RefreshToken, Page, PayChannel, PayOrder, Post, Setting, StorageStrategy,
-		User []ent.Interceptor
+		Album, AlbumPhoto, ApiPerms, Comment, File, ModelSchema, Oauth2AccessToken,
+		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder, Post, Setting,
+		StorageStrategy, User, WebHook []ent.Interceptor
 	}
 )

@@ -12,7 +12,7 @@ import {
 } from 'naive-ui'
 import type { DataTableColumns } from 'naive-ui'
 import {
-  getCommentList,
+  getCommentPage,
   getCommentDetail,
   approveComment,
   rejectComment,
@@ -42,11 +42,11 @@ const currentComment = ref<Comment | null>(null)
 const fetchComments = async () => {
   loading.value = true
   try {
-    const res = await getCommentList({
+    const res = await getCommentPage({
       page: pagination.value.page,
       pageSize: pagination.value.pageSize,
     })
-    data.value = res.data.data
+    data.value = res.data.records
     pagination.value.itemCount = res.data.total
   } catch (err) {
     message.error('获取评论列表失败')
@@ -59,7 +59,7 @@ const fetchComments = async () => {
 const handleView = async (row: Comment) => {
   try {
     const res = await getCommentDetail(row.id)
-    currentComment.value = res.data.data
+    currentComment.value = res.data
     showModal.value = true
   } catch (err) {
     message.error('获取评论详情失败')
@@ -212,7 +212,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="comment-manager">
+  <div class="container-fluid p-6">
     <n-card title="评论管理" class="comment-card">
       <!-- 头部操作栏 -->
        <div class="header-section">

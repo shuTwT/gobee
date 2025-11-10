@@ -88,23 +88,22 @@ class HttpService {
     const instance = HttpService.axiosInstance;
     instance.interceptors.response.use(
       async (response) =>{
-        console.log(response)
         const code = response.data.code || 200
         let msg = response.data.msg || response.statusText || "未知错误"
 
         if(code ===401){
           msg = "登录过期，请重新登录"
           console.error(msg)
-          // dialog.warning({
-          //   title: "登录过期",
-          //   content: msg,
-          //   positiveText:"确定",
-          //   onPositiveClick: () => {
-          //     useUserStoreHook().logOut()
-          //   }
-          // })
+          if(window.$dialog) window.$dialog.warning({
+            title: "登录过期",
+            content: msg,
+            positiveText:"确定",
+            onPositiveClick: () => {
+              useUserStoreHook().logOut()
+            }
+          })
         }else if(code!==200){
-          // message.error(msg)
+          if(window.$message) window.$message.error(msg)
           return Promise.reject(new Error(msg))
         }
         return response.data

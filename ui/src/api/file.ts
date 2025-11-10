@@ -1,5 +1,5 @@
 import {http} from '@/utils/http'
-import { BASE_URL, type ApiResponse,type TableResponsse } from './utils'
+import { BASE_URL, type ApiResponse,type TableResponse } from './utils'
 
 type FileListResponse = {
   id: number;
@@ -13,7 +13,7 @@ export const getFileList = () =>{
 }
 
 export const getFilePage = (params:any) =>{
-  return http.request<TableResponsse<FileListResponse[]>>('get',`${BASE_URL}/v1/file/page`,{params})
+  return http.request<TableResponse<FileListResponse[]>>('get',`${BASE_URL}/v1/file/page`,{params})
 }
 
 export const queryFile = (id: number) =>{

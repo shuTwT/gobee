@@ -3,6 +3,7 @@ package cmd
 import (
 	"gobee/config"
 	"gobee/internal/router"
+	apiinterface "gobee/internal/services/api_interface"
 	"gobee/pkg"
 
 	"github.com/gofiber/fiber/v2"
@@ -44,6 +45,8 @@ func InitializeApp() *fiber.App {
 	app.Use(logger.New())
 
 	router.Initialize(app)
+
+	apiinterface.SyncRoutes(app)
 
 	return app
 }

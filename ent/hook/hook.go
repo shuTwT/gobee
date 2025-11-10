@@ -32,6 +32,18 @@ func (f AlbumPhotoFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlbumPhotoMutation", m)
 }
 
+// The ApiPermsFunc type is an adapter to allow the use of ordinary
+// function as ApiPerms mutator.
+type ApiPermsFunc func(context.Context, *ent.ApiPermsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ApiPermsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ApiPermsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiPermsMutation", m)
+}
+
 // The CommentFunc type is an adapter to allow the use of ordinary
 // function as Comment mutator.
 type CommentFunc func(context.Context, *ent.CommentMutation) (ent.Value, error)
@@ -186,6 +198,18 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+}
+
+// The WebHookFunc type is an adapter to allow the use of ordinary
+// function as WebHook mutator.
+type WebHookFunc func(context.Context, *ent.WebHookMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WebHookFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.WebHookMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.WebHookMutation", m)
 }
 
 // Condition is a hook condition function.

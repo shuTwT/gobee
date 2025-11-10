@@ -32,8 +32,31 @@ func GetSettings(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
+	settingsMap := make(map[string]string)
+	for _, s := range settings {
+		settingsMap[s.Key] = s.Value
+	}
+
 	return c.JSON(model.NewSuccess("success", fiber.Map{
-		"settings":    settings,
+		"settings":    settingsMap,
 		"initialized": initialized,
 	}))
+}
+
+func GetSettingsMap(c *fiber.Ctx) error {
+	client := database.DB
+	ctx := c.Context()
+
+	// 获取所有系统设置
+	settings, err := setting.GetAllSettings(ctx, client)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	settingsMap := make(map[string]string)
+	for _, s := range settings {
+		settingsMap[s.Key] = s.Value
+	}
+
+	return c.JSON(model.NewSuccess("success", settingsMap))
 }

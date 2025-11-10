@@ -48,6 +48,26 @@ func (_u *PostUpdate) SetNillableTitle(v *string) *PostUpdate {
 	return _u
 }
 
+// SetAlias sets the "alias" field.
+func (_u *PostUpdate) SetAlias(v string) *PostUpdate {
+	_u.mutation.SetAlias(v)
+	return _u
+}
+
+// SetNillableAlias sets the "alias" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableAlias(v *string) *PostUpdate {
+	if v != nil {
+		_u.SetAlias(*v)
+	}
+	return _u
+}
+
+// ClearAlias clears the value of the "alias" field.
+func (_u *PostUpdate) ClearAlias() *PostUpdate {
+	_u.mutation.ClearAlias()
+	return _u
+}
+
 // SetContent sets the "content" field.
 func (_u *PostUpdate) SetContent(v string) *PostUpdate {
 	_u.mutation.SetContent(v)
@@ -72,6 +92,62 @@ func (_u *PostUpdate) SetIsPublished(v bool) *PostUpdate {
 func (_u *PostUpdate) SetNillableIsPublished(v *bool) *PostUpdate {
 	if v != nil {
 		_u.SetIsPublished(*v)
+	}
+	return _u
+}
+
+// SetIsAutogenSummary sets the "is_autogen_summary" field.
+func (_u *PostUpdate) SetIsAutogenSummary(v bool) *PostUpdate {
+	_u.mutation.SetIsAutogenSummary(v)
+	return _u
+}
+
+// SetNillableIsAutogenSummary sets the "is_autogen_summary" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableIsAutogenSummary(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetIsAutogenSummary(*v)
+	}
+	return _u
+}
+
+// SetIsVisible sets the "is_visible" field.
+func (_u *PostUpdate) SetIsVisible(v bool) *PostUpdate {
+	_u.mutation.SetIsVisible(v)
+	return _u
+}
+
+// SetNillableIsVisible sets the "is_visible" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableIsVisible(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetIsVisible(*v)
+	}
+	return _u
+}
+
+// SetIsTipToTop sets the "is_tip_to_top" field.
+func (_u *PostUpdate) SetIsTipToTop(v bool) *PostUpdate {
+	_u.mutation.SetIsTipToTop(v)
+	return _u
+}
+
+// SetNillableIsTipToTop sets the "is_tip_to_top" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableIsTipToTop(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetIsTipToTop(*v)
+	}
+	return _u
+}
+
+// SetIsAllowComment sets the "is_allow_comment" field.
+func (_u *PostUpdate) SetIsAllowComment(v bool) *PostUpdate {
+	_u.mutation.SetIsAllowComment(v)
+	return _u
+}
+
+// SetNillableIsAllowComment sets the "is_allow_comment" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableIsAllowComment(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetIsAllowComment(*v)
 	}
 	return _u
 }
@@ -280,6 +356,11 @@ func (_u *PostUpdate) check() error {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Post.title": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Alias(); ok {
+		if err := post.AliasValidator(v); err != nil {
+			return &ValidationError{Name: "alias", err: fmt.Errorf(`ent: validator failed for field "Post.alias": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Content(); ok {
 		if err := post.ContentValidator(v); err != nil {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
@@ -336,11 +417,29 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(post.FieldTitle, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Alias(); ok {
+		_spec.SetField(post.FieldAlias, field.TypeString, value)
+	}
+	if _u.mutation.AliasCleared() {
+		_spec.ClearField(post.FieldAlias, field.TypeString)
+	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.IsPublished(); ok {
 		_spec.SetField(post.FieldIsPublished, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsAutogenSummary(); ok {
+		_spec.SetField(post.FieldIsAutogenSummary, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsVisible(); ok {
+		_spec.SetField(post.FieldIsVisible, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsTipToTop(); ok {
+		_spec.SetField(post.FieldIsTipToTop, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsAllowComment(); ok {
+		_spec.SetField(post.FieldIsAllowComment, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)
@@ -427,6 +526,26 @@ func (_u *PostUpdateOne) SetNillableTitle(v *string) *PostUpdateOne {
 	return _u
 }
 
+// SetAlias sets the "alias" field.
+func (_u *PostUpdateOne) SetAlias(v string) *PostUpdateOne {
+	_u.mutation.SetAlias(v)
+	return _u
+}
+
+// SetNillableAlias sets the "alias" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableAlias(v *string) *PostUpdateOne {
+	if v != nil {
+		_u.SetAlias(*v)
+	}
+	return _u
+}
+
+// ClearAlias clears the value of the "alias" field.
+func (_u *PostUpdateOne) ClearAlias() *PostUpdateOne {
+	_u.mutation.ClearAlias()
+	return _u
+}
+
 // SetContent sets the "content" field.
 func (_u *PostUpdateOne) SetContent(v string) *PostUpdateOne {
 	_u.mutation.SetContent(v)
@@ -451,6 +570,62 @@ func (_u *PostUpdateOne) SetIsPublished(v bool) *PostUpdateOne {
 func (_u *PostUpdateOne) SetNillableIsPublished(v *bool) *PostUpdateOne {
 	if v != nil {
 		_u.SetIsPublished(*v)
+	}
+	return _u
+}
+
+// SetIsAutogenSummary sets the "is_autogen_summary" field.
+func (_u *PostUpdateOne) SetIsAutogenSummary(v bool) *PostUpdateOne {
+	_u.mutation.SetIsAutogenSummary(v)
+	return _u
+}
+
+// SetNillableIsAutogenSummary sets the "is_autogen_summary" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableIsAutogenSummary(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetIsAutogenSummary(*v)
+	}
+	return _u
+}
+
+// SetIsVisible sets the "is_visible" field.
+func (_u *PostUpdateOne) SetIsVisible(v bool) *PostUpdateOne {
+	_u.mutation.SetIsVisible(v)
+	return _u
+}
+
+// SetNillableIsVisible sets the "is_visible" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableIsVisible(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetIsVisible(*v)
+	}
+	return _u
+}
+
+// SetIsTipToTop sets the "is_tip_to_top" field.
+func (_u *PostUpdateOne) SetIsTipToTop(v bool) *PostUpdateOne {
+	_u.mutation.SetIsTipToTop(v)
+	return _u
+}
+
+// SetNillableIsTipToTop sets the "is_tip_to_top" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableIsTipToTop(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetIsTipToTop(*v)
+	}
+	return _u
+}
+
+// SetIsAllowComment sets the "is_allow_comment" field.
+func (_u *PostUpdateOne) SetIsAllowComment(v bool) *PostUpdateOne {
+	_u.mutation.SetIsAllowComment(v)
+	return _u
+}
+
+// SetNillableIsAllowComment sets the "is_allow_comment" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableIsAllowComment(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetIsAllowComment(*v)
 	}
 	return _u
 }
@@ -672,6 +847,11 @@ func (_u *PostUpdateOne) check() error {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Post.title": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Alias(); ok {
+		if err := post.AliasValidator(v); err != nil {
+			return &ValidationError{Name: "alias", err: fmt.Errorf(`ent: validator failed for field "Post.alias": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Content(); ok {
 		if err := post.ContentValidator(v); err != nil {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
@@ -745,11 +925,29 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(post.FieldTitle, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Alias(); ok {
+		_spec.SetField(post.FieldAlias, field.TypeString, value)
+	}
+	if _u.mutation.AliasCleared() {
+		_spec.ClearField(post.FieldAlias, field.TypeString)
+	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.IsPublished(); ok {
 		_spec.SetField(post.FieldIsPublished, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsAutogenSummary(); ok {
+		_spec.SetField(post.FieldIsAutogenSummary, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsVisible(); ok {
+		_spec.SetField(post.FieldIsVisible, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsTipToTop(); ok {
+		_spec.SetField(post.FieldIsTipToTop, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsAllowComment(); ok {
+		_spec.SetField(post.FieldIsAllowComment, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)

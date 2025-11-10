@@ -1,10 +1,10 @@
 import type { DialogOptions } from "./types"
 import {useTimeoutFn} from "@vueuse/core"
 
-const dialogStore = ref<Array<DialogOptions>>([])
+const dialogStore = ref<Array<DialogOptions<any>>>([])
 
 /** 打开弹窗 */
-const addDialog = (options:DialogOptions)=>{
+const addDialog = <P=Record<string,any>>(options:DialogOptions<P>)=>{
   const dialog = Object.assign({
     width:'600px',
     fullscreen:false,

@@ -94,7 +94,7 @@ const footerHeight = ref(50)
 const sidebarCollapsedWidth = ref(58)
 const loading = computed(() => menuData.value.length === 0)
 
-const { layout, verticalLayout } = useLayoutMenu({
+const { layout, verticalLayout,activeKey } = useLayoutMenu({
   mode: layoutMode,
   menus: menuOptions,
 })
@@ -159,6 +159,10 @@ const getBreadcrumb = () => {
   levelList.value = matched.filter((item) => item?.meta && item?.meta.title !== false)
 }
 
+const gotoUserCenter = ()=>{
+  router.push({name:'UserCenter'})
+}
+
 watch(
   () => [route.path, usePermissionStore().wholeMenus],
   () => {
@@ -176,6 +180,7 @@ watch(
 
 onMounted(() => {
   getBreadcrumb()
+  activeKey.value = route.name?.toString() || ''
 })
 </script>
 <template>
@@ -239,15 +244,17 @@ onMounted(() => {
           <div class="bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-2 shadow-sm">
             <div class="flex items-center space-x-3">
               <n-avatar
+                class="cursor-pointer"
                 :style="{
                   color: 'yellow',
                   backgroundColor: 'red',
                 }"
+                @click="gotoUserCenter"
               >
                 M
               </n-avatar>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                <p class="text-sm font-medium text-gray-900 dark:text-white truncate cursor-pointer" @click="gotoUserCenter">
                   {{ userStore.username }}
                 </p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">

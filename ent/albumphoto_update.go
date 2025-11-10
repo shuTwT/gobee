@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"gobee/ent/albumphoto"
 	"gobee/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -24,6 +25,12 @@ type AlbumPhotoUpdate struct {
 // Where appends a list predicates to the AlbumPhotoUpdate builder.
 func (_u *AlbumPhotoUpdate) Where(ps ...predicate.AlbumPhoto) *AlbumPhotoUpdate {
 	_u.mutation.Where(ps...)
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *AlbumPhotoUpdate) SetUpdatedAt(v time.Time) *AlbumPhotoUpdate {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -90,6 +97,7 @@ func (_u *AlbumPhotoUpdate) Mutation() *AlbumPhotoMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *AlbumPhotoUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -115,6 +123,14 @@ func (_u *AlbumPhotoUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *AlbumPhotoUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := albumphoto.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (_u *AlbumPhotoUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(albumphoto.Table, albumphoto.Columns, sqlgraph.NewFieldSpec(albumphoto.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
@@ -123,6 +139,9 @@ func (_u *AlbumPhotoUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(albumphoto.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.ImageURL(); ok {
 		_spec.SetField(albumphoto.FieldImageURL, field.TypeString, value)
@@ -157,6 +176,12 @@ type AlbumPhotoUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *AlbumPhotoMutation
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *AlbumPhotoUpdateOne) SetUpdatedAt(v time.Time) *AlbumPhotoUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetImageURL sets the "image_url" field.
@@ -235,6 +260,7 @@ func (_u *AlbumPhotoUpdateOne) Select(field string, fields ...string) *AlbumPhot
 
 // Save executes the query and returns the updated AlbumPhoto entity.
 func (_u *AlbumPhotoUpdateOne) Save(ctx context.Context) (*AlbumPhoto, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -257,6 +283,14 @@ func (_u *AlbumPhotoUpdateOne) Exec(ctx context.Context) error {
 func (_u *AlbumPhotoUpdateOne) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_u *AlbumPhotoUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := albumphoto.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -285,6 +319,9 @@ func (_u *AlbumPhotoUpdateOne) sqlSave(ctx context.Context) (_node *AlbumPhoto, 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(albumphoto.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.ImageURL(); ok {
 		_spec.SetField(albumphoto.FieldImageURL, field.TypeString, value)

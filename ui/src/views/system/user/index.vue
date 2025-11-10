@@ -2,7 +2,11 @@
 import { NButton, NIcon, type DataTableColumns } from 'naive-ui'
 import { Pencil,RefreshOutline } from '@vicons/ionicons5'
 import * as userApi from '@/api/system/user'
+import { addDialog } from '@/components/dialog'
+import EditForm from './editForm.vue'
 
+
+const showModal = ref(false)
 // 分页配置
 const pagination = reactive({
   page: 1,
@@ -66,6 +70,9 @@ const columns: DataTableColumns<any> = [
           size: 'small',
           type: 'primary',
           quaternary: true,
+          onClick: (row) => {
+            openEditDialog('编辑',row)
+          },
         },
         {
           icon: () => h(NIcon, {}, () => h(Pencil)),
@@ -75,6 +82,23 @@ const columns: DataTableColumns<any> = [
     },
   },
 ]
+
+const openEditDialog=(title="新增",row?:any)=>{
+  const formRef = ref<any>(null)
+  addDialog({
+    title:`${title}用户`,
+    props:{
+      formInline:{
+        id:row?.id || undefined,
+        email:row?.email || '',
+        name:row?.name || '',
+        phone_number:row?.phone_number || '',
+        password:row?.password || '',
+      }
+    },
+    contentRenderer:({ options })=> h(EditForm,{ref:formRef,formInline:options.props!.formInline}),
+  })
+}
 
 onMounted(()=>{
   userApi.getUserList().then(res=>{
@@ -91,7 +115,7 @@ onMounted(()=>{
 
         </div>
         <div class="action-section">
-          <n-button type="primary"  style="margin-right: 12px"> <i class="bi bi-plus"></i> 添加用户 </n-button>
+          <n-button type="primary"  style="margin-right: 12px" @click="openEditDialog('新增')"> <i class="bi bi-plus"></i> 添加用户 </n-button>
           <n-button>
             <template #icon>
               <n-icon><refresh-outline /></n-icon>
@@ -112,31 +136,25 @@ onMounted(()=>{
   </div>
 
   <!-- 添加/编辑用户模态框 -->
-  <n-modal>
+  <n-modal v-model:show="showModal" preset="dialog" :closable="true">
     <template #header>
-      <h5 class="modal-title" id="userModalTitle">添加用户</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      <h5 class="modal-title" >添加用户</h5>
     </template>
     <template #default>
-      <form id="userForm">
-        <input type="hidden" id="userId" />
-        <div class="mb-3">
-          <label for="email" class="form-label">邮箱</label>
-          <input type="email" class="form-control" id="email" required />
-        </div>
-        <div class="mb-3">
-          <label for="name" class="form-label">用户名</label>
-          <input type="text" class="form-control" id="name" required />
-        </div>
-        <div class="mb-3">
-          <label for="phoneNumber" class="form-label">手机号</label>
-          <input type="tel" class="form-control" id="phoneNumber" />
-        </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">密码</label>
-          <input type="password" class="form-control" id="password" required />
-        </div>
-      </form>
+      <n-form>
+        <n-form-item label="邮箱" path="email">
+          <n-input/>
+        </n-form-item>
+        <n-form-item label="用户名" path="username">
+          <n-input/>
+        </n-form-item>
+        <n-form-item label="手机号" path="phonenumber">
+          <n-input/>
+        </n-form-item>
+        <n-form-item label="密码" path="password">
+          <n-input/>
+        </n-form-item>
+      </n-form>
     </template>
     <template #action>
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>

@@ -23,10 +23,20 @@ type Post struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// 文章标题
 	Title string `json:"title,omitempty"`
+	// 文章别名
+	Alias string `json:"alias,omitempty"`
 	// 文章内容
 	Content string `json:"content,omitempty"`
 	// 是否已发布
 	IsPublished bool `json:"is_published,omitempty"`
+	// 是否自动生成摘要
+	IsAutogenSummary bool `json:"is_autogen_summary,omitempty"`
+	// 是否可见
+	IsVisible bool `json:"is_visible,omitempty"`
+	// 是否置顶
+	IsTipToTop bool `json:"is_tip_to_top,omitempty"`
+	// 是否允许评论
+	IsAllowComment bool `json:"is_allow_comment,omitempty"`
 	// 发布时间
 	PublishedAt time.Time `json:"published_at,omitempty"`
 	// 浏览次数
@@ -51,11 +61,11 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case post.FieldIsPublished:
+		case post.FieldIsPublished, post.FieldIsAutogenSummary, post.FieldIsVisible, post.FieldIsTipToTop, post.FieldIsAllowComment:
 			values[i] = new(sql.NullBool)
 		case post.FieldID, post.FieldViewCount, post.FieldCommentCount:
 			values[i] = new(sql.NullInt64)
-		case post.FieldTitle, post.FieldContent, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
+		case post.FieldTitle, post.FieldAlias, post.FieldContent, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
 			values[i] = new(sql.NullString)
 		case post.FieldCreatedAt, post.FieldUpdatedAt, post.FieldPublishedAt:
 			values[i] = new(sql.NullTime)
@@ -98,6 +108,12 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Title = value.String
 			}
+		case post.FieldAlias:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field alias", values[i])
+			} else if value.Valid {
+				_m.Alias = value.String
+			}
 		case post.FieldContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field content", values[i])
@@ -109,6 +125,30 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field is_published", values[i])
 			} else if value.Valid {
 				_m.IsPublished = value.Bool
+			}
+		case post.FieldIsAutogenSummary:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_autogen_summary", values[i])
+			} else if value.Valid {
+				_m.IsAutogenSummary = value.Bool
+			}
+		case post.FieldIsVisible:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_visible", values[i])
+			} else if value.Valid {
+				_m.IsVisible = value.Bool
+			}
+		case post.FieldIsTipToTop:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_tip_to_top", values[i])
+			} else if value.Valid {
+				_m.IsTipToTop = value.Bool
+			}
+		case post.FieldIsAllowComment:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_allow_comment", values[i])
+			} else if value.Valid {
+				_m.IsAllowComment = value.Bool
 			}
 		case post.FieldPublishedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -203,11 +243,26 @@ func (_m *Post) String() string {
 	builder.WriteString("title=")
 	builder.WriteString(_m.Title)
 	builder.WriteString(", ")
+	builder.WriteString("alias=")
+	builder.WriteString(_m.Alias)
+	builder.WriteString(", ")
 	builder.WriteString("content=")
 	builder.WriteString(_m.Content)
 	builder.WriteString(", ")
 	builder.WriteString("is_published=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsPublished))
+	builder.WriteString(", ")
+	builder.WriteString("is_autogen_summary=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsAutogenSummary))
+	builder.WriteString(", ")
+	builder.WriteString("is_visible=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsVisible))
+	builder.WriteString(", ")
+	builder.WriteString("is_tip_to_top=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsTipToTop))
+	builder.WriteString(", ")
+	builder.WriteString("is_allow_comment=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsAllowComment))
 	builder.WriteString(", ")
 	builder.WriteString("published_at=")
 	builder.WriteString(_m.PublishedAt.Format(time.ANSIC))

@@ -10,6 +10,12 @@ type AlbumPhoto struct {
 	ent.Schema
 }
 
+func (AlbumPhoto) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		BaseMixin{},
+	}
+}
+
 // Fields of the AlbumPhoto.
 func (AlbumPhoto) Fields() []ent.Field {
 	return []ent.Field{

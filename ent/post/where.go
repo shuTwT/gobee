@@ -69,6 +69,11 @@ func Title(v string) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldTitle, v))
 }
 
+// Alias applies equality check predicate on the "alias" field. It's identical to AliasEQ.
+func Alias(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldAlias, v))
+}
+
 // Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
 func Content(v string) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldContent, v))
@@ -77,6 +82,26 @@ func Content(v string) predicate.Post {
 // IsPublished applies equality check predicate on the "is_published" field. It's identical to IsPublishedEQ.
 func IsPublished(v bool) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldIsPublished, v))
+}
+
+// IsAutogenSummary applies equality check predicate on the "is_autogen_summary" field. It's identical to IsAutogenSummaryEQ.
+func IsAutogenSummary(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsAutogenSummary, v))
+}
+
+// IsVisible applies equality check predicate on the "is_visible" field. It's identical to IsVisibleEQ.
+func IsVisible(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsVisible, v))
+}
+
+// IsTipToTop applies equality check predicate on the "is_tip_to_top" field. It's identical to IsTipToTopEQ.
+func IsTipToTop(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsTipToTop, v))
+}
+
+// IsAllowComment applies equality check predicate on the "is_allow_comment" field. It's identical to IsAllowCommentEQ.
+func IsAllowComment(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsAllowComment, v))
 }
 
 // PublishedAt applies equality check predicate on the "published_at" field. It's identical to PublishedAtEQ.
@@ -264,6 +289,81 @@ func TitleContainsFold(v string) predicate.Post {
 	return predicate.Post(sql.FieldContainsFold(FieldTitle, v))
 }
 
+// AliasEQ applies the EQ predicate on the "alias" field.
+func AliasEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldAlias, v))
+}
+
+// AliasNEQ applies the NEQ predicate on the "alias" field.
+func AliasNEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldAlias, v))
+}
+
+// AliasIn applies the In predicate on the "alias" field.
+func AliasIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldIn(FieldAlias, vs...))
+}
+
+// AliasNotIn applies the NotIn predicate on the "alias" field.
+func AliasNotIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldNotIn(FieldAlias, vs...))
+}
+
+// AliasGT applies the GT predicate on the "alias" field.
+func AliasGT(v string) predicate.Post {
+	return predicate.Post(sql.FieldGT(FieldAlias, v))
+}
+
+// AliasGTE applies the GTE predicate on the "alias" field.
+func AliasGTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldGTE(FieldAlias, v))
+}
+
+// AliasLT applies the LT predicate on the "alias" field.
+func AliasLT(v string) predicate.Post {
+	return predicate.Post(sql.FieldLT(FieldAlias, v))
+}
+
+// AliasLTE applies the LTE predicate on the "alias" field.
+func AliasLTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldLTE(FieldAlias, v))
+}
+
+// AliasContains applies the Contains predicate on the "alias" field.
+func AliasContains(v string) predicate.Post {
+	return predicate.Post(sql.FieldContains(FieldAlias, v))
+}
+
+// AliasHasPrefix applies the HasPrefix predicate on the "alias" field.
+func AliasHasPrefix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasPrefix(FieldAlias, v))
+}
+
+// AliasHasSuffix applies the HasSuffix predicate on the "alias" field.
+func AliasHasSuffix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasSuffix(FieldAlias, v))
+}
+
+// AliasIsNil applies the IsNil predicate on the "alias" field.
+func AliasIsNil() predicate.Post {
+	return predicate.Post(sql.FieldIsNull(FieldAlias))
+}
+
+// AliasNotNil applies the NotNil predicate on the "alias" field.
+func AliasNotNil() predicate.Post {
+	return predicate.Post(sql.FieldNotNull(FieldAlias))
+}
+
+// AliasEqualFold applies the EqualFold predicate on the "alias" field.
+func AliasEqualFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldEqualFold(FieldAlias, v))
+}
+
+// AliasContainsFold applies the ContainsFold predicate on the "alias" field.
+func AliasContainsFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldContainsFold(FieldAlias, v))
+}
+
 // ContentEQ applies the EQ predicate on the "content" field.
 func ContentEQ(v string) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldContent, v))
@@ -337,6 +437,46 @@ func IsPublishedEQ(v bool) predicate.Post {
 // IsPublishedNEQ applies the NEQ predicate on the "is_published" field.
 func IsPublishedNEQ(v bool) predicate.Post {
 	return predicate.Post(sql.FieldNEQ(FieldIsPublished, v))
+}
+
+// IsAutogenSummaryEQ applies the EQ predicate on the "is_autogen_summary" field.
+func IsAutogenSummaryEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsAutogenSummary, v))
+}
+
+// IsAutogenSummaryNEQ applies the NEQ predicate on the "is_autogen_summary" field.
+func IsAutogenSummaryNEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldIsAutogenSummary, v))
+}
+
+// IsVisibleEQ applies the EQ predicate on the "is_visible" field.
+func IsVisibleEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsVisible, v))
+}
+
+// IsVisibleNEQ applies the NEQ predicate on the "is_visible" field.
+func IsVisibleNEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldIsVisible, v))
+}
+
+// IsTipToTopEQ applies the EQ predicate on the "is_tip_to_top" field.
+func IsTipToTopEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsTipToTop, v))
+}
+
+// IsTipToTopNEQ applies the NEQ predicate on the "is_tip_to_top" field.
+func IsTipToTopNEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldIsTipToTop, v))
+}
+
+// IsAllowCommentEQ applies the EQ predicate on the "is_allow_comment" field.
+func IsAllowCommentEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsAllowComment, v))
+}
+
+// IsAllowCommentNEQ applies the NEQ predicate on the "is_allow_comment" field.
+func IsAllowCommentNEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldIsAllowComment, v))
 }
 
 // PublishedAtEQ applies the EQ predicate on the "published_at" field.

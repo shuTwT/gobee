@@ -19,10 +19,20 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
+	// FieldAlias holds the string denoting the alias field in the database.
+	FieldAlias = "alias"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
 	// FieldIsPublished holds the string denoting the is_published field in the database.
 	FieldIsPublished = "is_published"
+	// FieldIsAutogenSummary holds the string denoting the is_autogen_summary field in the database.
+	FieldIsAutogenSummary = "is_autogen_summary"
+	// FieldIsVisible holds the string denoting the is_visible field in the database.
+	FieldIsVisible = "is_visible"
+	// FieldIsTipToTop holds the string denoting the is_tip_to_top field in the database.
+	FieldIsTipToTop = "is_tip_to_top"
+	// FieldIsAllowComment holds the string denoting the is_allow_comment field in the database.
+	FieldIsAllowComment = "is_allow_comment"
 	// FieldPublishedAt holds the string denoting the published_at field in the database.
 	FieldPublishedAt = "published_at"
 	// FieldViewCount holds the string denoting the view_count field in the database.
@@ -49,8 +59,13 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldTitle,
+	FieldAlias,
 	FieldContent,
 	FieldIsPublished,
+	FieldIsAutogenSummary,
+	FieldIsVisible,
+	FieldIsTipToTop,
+	FieldIsAllowComment,
 	FieldPublishedAt,
 	FieldViewCount,
 	FieldCommentCount,
@@ -80,10 +95,20 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	TitleValidator func(string) error
+	// AliasValidator is a validator for the "alias" field. It is called by the builders before save.
+	AliasValidator func(string) error
 	// ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	ContentValidator func(string) error
 	// DefaultIsPublished holds the default value on creation for the "is_published" field.
 	DefaultIsPublished bool
+	// DefaultIsAutogenSummary holds the default value on creation for the "is_autogen_summary" field.
+	DefaultIsAutogenSummary bool
+	// DefaultIsVisible holds the default value on creation for the "is_visible" field.
+	DefaultIsVisible bool
+	// DefaultIsTipToTop holds the default value on creation for the "is_tip_to_top" field.
+	DefaultIsTipToTop bool
+	// DefaultIsAllowComment holds the default value on creation for the "is_allow_comment" field.
+	DefaultIsAllowComment bool
 	// DefaultViewCount holds the default value on creation for the "view_count" field.
 	DefaultViewCount int
 	// ViewCountValidator is a validator for the "view_count" field. It is called by the builders before save.
@@ -127,6 +152,11 @@ func ByTitle(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTitle, opts...).ToFunc()
 }
 
+// ByAlias orders the results by the alias field.
+func ByAlias(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAlias, opts...).ToFunc()
+}
+
 // ByContent orders the results by the content field.
 func ByContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContent, opts...).ToFunc()
@@ -135,6 +165,26 @@ func ByContent(opts ...sql.OrderTermOption) OrderOption {
 // ByIsPublished orders the results by the is_published field.
 func ByIsPublished(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsPublished, opts...).ToFunc()
+}
+
+// ByIsAutogenSummary orders the results by the is_autogen_summary field.
+func ByIsAutogenSummary(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsAutogenSummary, opts...).ToFunc()
+}
+
+// ByIsVisible orders the results by the is_visible field.
+func ByIsVisible(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsVisible, opts...).ToFunc()
+}
+
+// ByIsTipToTop orders the results by the is_tip_to_top field.
+func ByIsTipToTop(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsTipToTop, opts...).ToFunc()
+}
+
+// ByIsAllowComment orders the results by the is_allow_comment field.
+func ByIsAllowComment(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsAllowComment, opts...).ToFunc()
 }
 
 // ByPublishedAt orders the results by the published_at field.

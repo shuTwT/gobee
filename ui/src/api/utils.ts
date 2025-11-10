@@ -11,4 +11,4 @@ export type TableResult<T = any> = {
   total:number
 }
 
-export type TableResponsse<T = any> = ApiResponse<TableResult<T>>
+export type TableResponse<T = any> = ApiResponse<TableResult<T>>

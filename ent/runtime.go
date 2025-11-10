@@ -5,6 +5,7 @@ package ent
 import (
 	"gobee/ent/album"
 	"gobee/ent/albumphoto"
+	"gobee/ent/apiperms"
 	"gobee/ent/comment"
 	"gobee/ent/file"
 	"gobee/ent/oauth2accesstoken"
@@ -18,6 +19,7 @@ import (
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
+	"gobee/ent/webhook"
 	"time"
 )
 
@@ -52,12 +54,52 @@ func init() {
 	albumDescSort := albumFields[2].Descriptor()
 	// album.DefaultSort holds the default value on creation for the sort field.
 	album.DefaultSort = albumDescSort.Default.(int)
+	albumphotoMixin := schema.AlbumPhoto{}.Mixin()
+	albumphotoMixinFields0 := albumphotoMixin[0].Fields()
+	_ = albumphotoMixinFields0
 	albumphotoFields := schema.AlbumPhoto{}.Fields()
 	_ = albumphotoFields
+	// albumphotoDescCreatedAt is the schema descriptor for created_at field.
+	albumphotoDescCreatedAt := albumphotoMixinFields0[0].Descriptor()
+	// albumphoto.DefaultCreatedAt holds the default value on creation for the created_at field.
+	albumphoto.DefaultCreatedAt = albumphotoDescCreatedAt.Default.(func() time.Time)
+	// albumphotoDescUpdatedAt is the schema descriptor for updated_at field.
+	albumphotoDescUpdatedAt := albumphotoMixinFields0[1].Descriptor()
+	// albumphoto.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	albumphoto.DefaultUpdatedAt = albumphotoDescUpdatedAt.Default.(func() time.Time)
+	// albumphoto.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	albumphoto.UpdateDefaultUpdatedAt = albumphotoDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// albumphotoDescViewCount is the schema descriptor for view_count field.
 	albumphotoDescViewCount := albumphotoFields[1].Descriptor()
 	// albumphoto.DefaultViewCount holds the default value on creation for the view_count field.
 	albumphoto.DefaultViewCount = albumphotoDescViewCount.Default.(int)
+	apipermsMixin := schema.ApiPerms{}.Mixin()
+	apipermsMixinFields0 := apipermsMixin[0].Fields()
+	_ = apipermsMixinFields0
+	apipermsFields := schema.ApiPerms{}.Fields()
+	_ = apipermsFields
+	// apipermsDescCreatedAt is the schema descriptor for created_at field.
+	apipermsDescCreatedAt := apipermsMixinFields0[0].Descriptor()
+	// apiperms.DefaultCreatedAt holds the default value on creation for the created_at field.
+	apiperms.DefaultCreatedAt = apipermsDescCreatedAt.Default.(func() time.Time)
+	// apipermsDescUpdatedAt is the schema descriptor for updated_at field.
+	apipermsDescUpdatedAt := apipermsMixinFields0[1].Descriptor()
+	// apiperms.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	apiperms.DefaultUpdatedAt = apipermsDescUpdatedAt.Default.(func() time.Time)
+	// apiperms.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	apiperms.UpdateDefaultUpdatedAt = apipermsDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// apipermsDescPermissionType is the schema descriptor for permission_type field.
+	apipermsDescPermissionType := apipermsFields[4].Descriptor()
+	// apiperms.DefaultPermissionType holds the default value on creation for the permission_type field.
+	apiperms.DefaultPermissionType = apipermsDescPermissionType.Default.(string)
+	// apipermsDescRoles is the schema descriptor for roles field.
+	apipermsDescRoles := apipermsFields[5].Descriptor()
+	// apiperms.DefaultRoles holds the default value on creation for the roles field.
+	apiperms.DefaultRoles = apipermsDescRoles.Default.([]string)
+	// apipermsDescStatus is the schema descriptor for status field.
+	apipermsDescStatus := apipermsFields[6].Descriptor()
+	// apiperms.DefaultStatus holds the default value on creation for the status field.
+	apiperms.DefaultStatus = apipermsDescStatus.Default.(string)
 	commentMixin := schema.Comment{}.Mixin()
 	commentMixinFields0 := commentMixin[0].Fields()
 	_ = commentMixinFields0
@@ -561,44 +603,78 @@ func init() {
 			return nil
 		}
 	}()
+	// postDescAlias is the schema descriptor for alias field.
+	postDescAlias := postFields[1].Descriptor()
+	// post.AliasValidator is a validator for the "alias" field. It is called by the builders before save.
+	post.AliasValidator = func() func(string) error {
+		validators := postDescAlias.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(alias string) error {
+			for _, fn := range fns {
+				if err := fn(alias); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// postDescContent is the schema descriptor for content field.
-	postDescContent := postFields[1].Descriptor()
+	postDescContent := postFields[2].Descriptor()
 	// post.ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	post.ContentValidator = postDescContent.Validators[0].(func(string) error)
 	// postDescIsPublished is the schema descriptor for is_published field.
-	postDescIsPublished := postFields[2].Descriptor()
+	postDescIsPublished := postFields[3].Descriptor()
 	// post.DefaultIsPublished holds the default value on creation for the is_published field.
 	post.DefaultIsPublished = postDescIsPublished.Default.(bool)
+	// postDescIsAutogenSummary is the schema descriptor for is_autogen_summary field.
+	postDescIsAutogenSummary := postFields[4].Descriptor()
+	// post.DefaultIsAutogenSummary holds the default value on creation for the is_autogen_summary field.
+	post.DefaultIsAutogenSummary = postDescIsAutogenSummary.Default.(bool)
+	// postDescIsVisible is the schema descriptor for is_visible field.
+	postDescIsVisible := postFields[5].Descriptor()
+	// post.DefaultIsVisible holds the default value on creation for the is_visible field.
+	post.DefaultIsVisible = postDescIsVisible.Default.(bool)
+	// postDescIsTipToTop is the schema descriptor for is_tip_to_top field.
+	postDescIsTipToTop := postFields[6].Descriptor()
+	// post.DefaultIsTipToTop holds the default value on creation for the is_tip_to_top field.
+	post.DefaultIsTipToTop = postDescIsTipToTop.Default.(bool)
+	// postDescIsAllowComment is the schema descriptor for is_allow_comment field.
+	postDescIsAllowComment := postFields[7].Descriptor()
+	// post.DefaultIsAllowComment holds the default value on creation for the is_allow_comment field.
+	post.DefaultIsAllowComment = postDescIsAllowComment.Default.(bool)
 	// postDescViewCount is the schema descriptor for view_count field.
-	postDescViewCount := postFields[4].Descriptor()
+	postDescViewCount := postFields[9].Descriptor()
 	// post.DefaultViewCount holds the default value on creation for the view_count field.
 	post.DefaultViewCount = postDescViewCount.Default.(int)
 	// post.ViewCountValidator is a validator for the "view_count" field. It is called by the builders before save.
 	post.ViewCountValidator = postDescViewCount.Validators[0].(func(int) error)
 	// postDescCommentCount is the schema descriptor for comment_count field.
-	postDescCommentCount := postFields[5].Descriptor()
+	postDescCommentCount := postFields[10].Descriptor()
 	// post.DefaultCommentCount holds the default value on creation for the comment_count field.
 	post.DefaultCommentCount = postDescCommentCount.Default.(int)
 	// post.CommentCountValidator is a validator for the "comment_count" field. It is called by the builders before save.
 	post.CommentCountValidator = postDescCommentCount.Validators[0].(func(int) error)
 	// postDescCover is the schema descriptor for cover field.
-	postDescCover := postFields[6].Descriptor()
+	postDescCover := postFields[11].Descriptor()
 	// post.CoverValidator is a validator for the "cover" field. It is called by the builders before save.
 	post.CoverValidator = postDescCover.Validators[0].(func(string) error)
 	// postDescKeywords is the schema descriptor for keywords field.
-	postDescKeywords := postFields[7].Descriptor()
+	postDescKeywords := postFields[12].Descriptor()
 	// post.KeywordsValidator is a validator for the "keywords" field. It is called by the builders before save.
 	post.KeywordsValidator = postDescKeywords.Validators[0].(func(string) error)
 	// postDescCopyright is the schema descriptor for copyright field.
-	postDescCopyright := postFields[8].Descriptor()
+	postDescCopyright := postFields[13].Descriptor()
 	// post.CopyrightValidator is a validator for the "copyright" field. It is called by the builders before save.
 	post.CopyrightValidator = postDescCopyright.Validators[0].(func(string) error)
 	// postDescAuthor is the schema descriptor for author field.
-	postDescAuthor := postFields[9].Descriptor()
+	postDescAuthor := postFields[14].Descriptor()
 	// post.DefaultAuthor holds the default value on creation for the author field.
 	post.DefaultAuthor = postDescAuthor.Default.(string)
 	// postDescSummary is the schema descriptor for summary field.
-	postDescSummary := postFields[10].Descriptor()
+	postDescSummary := postFields[15].Descriptor()
 	// post.SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
 	post.SummaryValidator = postDescSummary.Validators[0].(func(string) error)
 	settingMixin := schema.Setting{}.Mixin()
@@ -772,6 +848,75 @@ func init() {
 		return func(password string) error {
 			for _, fn := range fns {
 				if err := fn(password); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	webhookMixin := schema.WebHook{}.Mixin()
+	webhookMixinFields0 := webhookMixin[0].Fields()
+	_ = webhookMixinFields0
+	webhookFields := schema.WebHook{}.Fields()
+	_ = webhookFields
+	// webhookDescCreatedAt is the schema descriptor for created_at field.
+	webhookDescCreatedAt := webhookMixinFields0[0].Descriptor()
+	// webhook.DefaultCreatedAt holds the default value on creation for the created_at field.
+	webhook.DefaultCreatedAt = webhookDescCreatedAt.Default.(func() time.Time)
+	// webhookDescUpdatedAt is the schema descriptor for updated_at field.
+	webhookDescUpdatedAt := webhookMixinFields0[1].Descriptor()
+	// webhook.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	webhook.DefaultUpdatedAt = webhookDescUpdatedAt.Default.(func() time.Time)
+	// webhook.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	webhook.UpdateDefaultUpdatedAt = webhookDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// webhookDescName is the schema descriptor for name field.
+	webhookDescName := webhookFields[0].Descriptor()
+	// webhook.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	webhook.NameValidator = func() func(string) error {
+		validators := webhookDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// webhookDescURL is the schema descriptor for url field.
+	webhookDescURL := webhookFields[1].Descriptor()
+	// webhook.URLValidator is a validator for the "url" field. It is called by the builders before save.
+	webhook.URLValidator = func() func(string) error {
+		validators := webhookDescURL.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(url string) error {
+			for _, fn := range fns {
+				if err := fn(url); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// webhookDescEvent is the schema descriptor for event field.
+	webhookDescEvent := webhookFields[2].Descriptor()
+	// webhook.EventValidator is a validator for the "event" field. It is called by the builders before save.
+	webhook.EventValidator = func() func(string) error {
+		validators := webhookDescEvent.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(event string) error {
+			for _, fn := range fns {
+				if err := fn(event); err != nil {
 					return err
 				}
 			}

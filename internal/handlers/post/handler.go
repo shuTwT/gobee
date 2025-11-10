@@ -35,7 +35,7 @@ func CreatePost(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", newPost))
 }
 
-func UpdatePost(c *fiber.Ctx) error {
+func UpdatePostContent(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -43,12 +43,40 @@ func UpdatePost(c *fiber.Ctx) error {
 			"Invalid ID format"))
 	}
 	var post *ent.Post
-	if err := c.BodyParser(&post); err != nil {
+	if err = c.BodyParser(&post); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	newPost, err := client.Post.UpdateOneID(id).
+		SetContent(post.Content).
+		Save(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", newPost))
+}
+
+func UpdatePostSetting(c *fiber.Ctx) error {
+	client := database.DB
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format"))
+	}
+	var post *ent.Post
+	if err = c.BodyParser(&post); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 	newPost, err := client.Post.UpdateOneID(id).
 		SetTitle(post.Title).
-		SetContent(post.Content).
+		SetCover(post.Cover).
+		SetKeywords(post.Keywords).
+		SetCopyright(post.Copyright).
+		SetAuthor(post.Author).
+		SetIsPublished(post.IsPublished).
+		SetIsAutogenSummary(post.IsAutogenSummary).
+		SetIsVisible(post.IsVisible).
+		SetIsTipToTop(post.IsTipToTop).
+		SetIsAllowComment(post.IsAllowComment).
 		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))

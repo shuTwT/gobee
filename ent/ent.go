@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"gobee/ent/album"
 	"gobee/ent/albumphoto"
+	"gobee/ent/apiperms"
 	"gobee/ent/comment"
 	"gobee/ent/file"
 	"gobee/ent/modelschema"
@@ -21,6 +22,7 @@ import (
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
+	"gobee/ent/webhook"
 	"reflect"
 	"sync"
 
@@ -89,6 +91,7 @@ func checkColumn(t, c string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			album.Table:              album.ValidColumn,
 			albumphoto.Table:         albumphoto.ValidColumn,
+			apiperms.Table:           apiperms.ValidColumn,
 			comment.Table:            comment.ValidColumn,
 			file.Table:               file.ValidColumn,
 			modelschema.Table:        modelschema.ValidColumn,
@@ -102,6 +105,7 @@ func checkColumn(t, c string) error {
 			setting.Table:            setting.ValidColumn,
 			storagestrategy.Table:    storagestrategy.ValidColumn,
 			user.Table:               user.ValidColumn,
+			webhook.Table:            webhook.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { BASE_URL, type ApiResponse } from "./utils";
+import { BASE_URL, type ApiResponse, type TableResponse } from "./utils";
 
 // 评论状态
 export enum CommentStatus {
@@ -33,39 +33,40 @@ export interface Comment {
   };
 }
 
-// 评论列表响应类型
-export interface CommentListResponse {
-  data: Comment[];
-  total: number;
-  page: number;
-  pageSize: number;
-}
-
 // 获取评论列表
 export const getCommentList = (params: {
   page?: number;
   pageSize?: number;
   status?: CommentStatus;
 }) => {
-  return http.request<ApiResponse<CommentListResponse>>('get',`${BASE_URL}/v1/comments`, { params });
+  return http.request<ApiResponse<Comment>>('get',`${BASE_URL}/v1/comment`, { params });
+};
+
+// 获取评论分页列表
+export const getCommentPage = (params: {
+  page?: number;
+  pageSize?: number;
+  status?: CommentStatus;
+}) => {
+  return http.request<TableResponse<Comment>>('get',`${BASE_URL}/v1/comment/page`, { params });
 };
 
 // 获取评论详情
 export const getCommentDetail = (id: number) => {
-  return http.request<ApiResponse<Comment>>('get',`${BASE_URL}/v1/comments/${id}`);
+  return http.request<ApiResponse<Comment>>('get',`${BASE_URL}/v1/comment/${id}`);
 };
 
 // 审核评论
 export const approveComment = (id: number) => {
-  return http.request<ApiResponse<Comment>>('put',`${BASE_URL}/v1/comments/${id}/approve`);
+  return http.request<ApiResponse<Comment>>('put',`${BASE_URL}/v1/comment/${id}/approve`);
 };
 
 // 拒绝评论
 export const rejectComment = (id: number) => {
-  return http.request<ApiResponse<Comment>>('put',`${BASE_URL}/v1/comments/${id}/reject`);
+  return http.request<ApiResponse<Comment>>('put',`${BASE_URL}/v1/comment/${id}/reject`);
 };
 
 // 删除评论
 export const deleteComment = (id: number) => {
-  return http.request<ApiResponse<null>>('delete',`${BASE_URL}/v1/comments/${id}`);
+  return http.request<ApiResponse<null>>('delete',`${BASE_URL}/v1/comment/${id}`);
 };

@@ -262,12 +262,12 @@ func (_q *AlbumPhotoQuery) Clone() *AlbumPhotoQuery {
 // Example:
 //
 //	var v []struct {
-//		ImageURL string `json:"image_url,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.AlbumPhoto.Query().
-//		GroupBy(albumphoto.FieldImageURL).
+//		GroupBy(albumphoto.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *AlbumPhotoQuery) GroupBy(field string, fields ...string) *AlbumPhotoGroupBy {
@@ -285,11 +285,11 @@ func (_q *AlbumPhotoQuery) GroupBy(field string, fields ...string) *AlbumPhotoGr
 // Example:
 //
 //	var v []struct {
-//		ImageURL string `json:"image_url,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.AlbumPhoto.Query().
-//		Select(albumphoto.FieldImageURL).
+//		Select(albumphoto.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (_q *AlbumPhotoQuery) Select(fields ...string) *AlbumPhotoSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

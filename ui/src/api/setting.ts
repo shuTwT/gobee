@@ -3,14 +3,7 @@ import { BASE_URL, type ApiResponse } from "./utils";
 
 // 系统设置接口返回类型
 export interface SettingResponse {
-  settings: Array<{
-    id: number;
-    key: string;
-    value: string;
-    comment: string;
-    created_at: string;
-    updated_at: string;
-  }>;
+  settings: Record<string,string>;
   initialized: boolean;
 }
 
@@ -18,3 +11,7 @@ export interface SettingResponse {
 export const getSettings = () => {
   return http.request<ApiResponse<SettingResponse>>('get',`${BASE_URL}/v1/settings`);
 };
+
+export const getSettingsMap = ()=>{
+  return http.request<ApiResponse<Record<string,string>>>('get',`${BASE_URL}/v1/settings/map`);
+}

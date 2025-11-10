@@ -16,6 +16,8 @@ type Tx struct {
 	Album *AlbumClient
 	// AlbumPhoto is the client for interacting with the AlbumPhoto builders.
 	AlbumPhoto *AlbumPhotoClient
+	// ApiPerms is the client for interacting with the ApiPerms builders.
+	ApiPerms *ApiPermsClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// File is the client for interacting with the File builders.
@@ -42,6 +44,8 @@ type Tx struct {
 	StorageStrategy *StorageStrategyClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// WebHook is the client for interacting with the WebHook builders.
+	WebHook *WebHookClient
 
 	// lazily loaded.
 	client     *Client
@@ -175,6 +179,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Album = NewAlbumClient(tx.config)
 	tx.AlbumPhoto = NewAlbumPhotoClient(tx.config)
+	tx.ApiPerms = NewApiPermsClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.ModelSchema = NewModelSchemaClient(tx.config)
@@ -188,6 +193,7 @@ func (tx *Tx) init() {
 	tx.Setting = NewSettingClient(tx.config)
 	tx.StorageStrategy = NewStorageStrategyClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.WebHook = NewWebHookClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

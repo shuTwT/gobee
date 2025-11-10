@@ -23,8 +23,8 @@ interface ModalButtonProps extends ButtonProps {
   })=>void
 }
 
-interface DialogOptions extends ModalProps{
-  props?:Record<string,any>
+interface DialogOptions<P=Record<string,any>> extends ModalProps{
+  props?:P
   visible?:boolean
   fullscreen?:boolean
   /** 自定义底部按钮操作 */

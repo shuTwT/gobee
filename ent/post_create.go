@@ -54,6 +54,20 @@ func (_c *PostCreate) SetTitle(v string) *PostCreate {
 	return _c
 }
 
+// SetAlias sets the "alias" field.
+func (_c *PostCreate) SetAlias(v string) *PostCreate {
+	_c.mutation.SetAlias(v)
+	return _c
+}
+
+// SetNillableAlias sets the "alias" field if the given value is not nil.
+func (_c *PostCreate) SetNillableAlias(v *string) *PostCreate {
+	if v != nil {
+		_c.SetAlias(*v)
+	}
+	return _c
+}
+
 // SetContent sets the "content" field.
 func (_c *PostCreate) SetContent(v string) *PostCreate {
 	_c.mutation.SetContent(v)
@@ -70,6 +84,62 @@ func (_c *PostCreate) SetIsPublished(v bool) *PostCreate {
 func (_c *PostCreate) SetNillableIsPublished(v *bool) *PostCreate {
 	if v != nil {
 		_c.SetIsPublished(*v)
+	}
+	return _c
+}
+
+// SetIsAutogenSummary sets the "is_autogen_summary" field.
+func (_c *PostCreate) SetIsAutogenSummary(v bool) *PostCreate {
+	_c.mutation.SetIsAutogenSummary(v)
+	return _c
+}
+
+// SetNillableIsAutogenSummary sets the "is_autogen_summary" field if the given value is not nil.
+func (_c *PostCreate) SetNillableIsAutogenSummary(v *bool) *PostCreate {
+	if v != nil {
+		_c.SetIsAutogenSummary(*v)
+	}
+	return _c
+}
+
+// SetIsVisible sets the "is_visible" field.
+func (_c *PostCreate) SetIsVisible(v bool) *PostCreate {
+	_c.mutation.SetIsVisible(v)
+	return _c
+}
+
+// SetNillableIsVisible sets the "is_visible" field if the given value is not nil.
+func (_c *PostCreate) SetNillableIsVisible(v *bool) *PostCreate {
+	if v != nil {
+		_c.SetIsVisible(*v)
+	}
+	return _c
+}
+
+// SetIsTipToTop sets the "is_tip_to_top" field.
+func (_c *PostCreate) SetIsTipToTop(v bool) *PostCreate {
+	_c.mutation.SetIsTipToTop(v)
+	return _c
+}
+
+// SetNillableIsTipToTop sets the "is_tip_to_top" field if the given value is not nil.
+func (_c *PostCreate) SetNillableIsTipToTop(v *bool) *PostCreate {
+	if v != nil {
+		_c.SetIsTipToTop(*v)
+	}
+	return _c
+}
+
+// SetIsAllowComment sets the "is_allow_comment" field.
+func (_c *PostCreate) SetIsAllowComment(v bool) *PostCreate {
+	_c.mutation.SetIsAllowComment(v)
+	return _c
+}
+
+// SetNillableIsAllowComment sets the "is_allow_comment" field if the given value is not nil.
+func (_c *PostCreate) SetNillableIsAllowComment(v *bool) *PostCreate {
+	if v != nil {
+		_c.SetIsAllowComment(*v)
 	}
 	return _c
 }
@@ -233,6 +303,22 @@ func (_c *PostCreate) defaults() {
 		v := post.DefaultIsPublished
 		_c.mutation.SetIsPublished(v)
 	}
+	if _, ok := _c.mutation.IsAutogenSummary(); !ok {
+		v := post.DefaultIsAutogenSummary
+		_c.mutation.SetIsAutogenSummary(v)
+	}
+	if _, ok := _c.mutation.IsVisible(); !ok {
+		v := post.DefaultIsVisible
+		_c.mutation.SetIsVisible(v)
+	}
+	if _, ok := _c.mutation.IsTipToTop(); !ok {
+		v := post.DefaultIsTipToTop
+		_c.mutation.SetIsTipToTop(v)
+	}
+	if _, ok := _c.mutation.IsAllowComment(); !ok {
+		v := post.DefaultIsAllowComment
+		_c.mutation.SetIsAllowComment(v)
+	}
 	if _, ok := _c.mutation.ViewCount(); !ok {
 		v := post.DefaultViewCount
 		_c.mutation.SetViewCount(v)
@@ -263,6 +349,11 @@ func (_c *PostCreate) check() error {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Post.title": %w`, err)}
 		}
 	}
+	if v, ok := _c.mutation.Alias(); ok {
+		if err := post.AliasValidator(v); err != nil {
+			return &ValidationError{Name: "alias", err: fmt.Errorf(`ent: validator failed for field "Post.alias": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.Content(); !ok {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Post.content"`)}
 	}
@@ -273,6 +364,18 @@ func (_c *PostCreate) check() error {
 	}
 	if _, ok := _c.mutation.IsPublished(); !ok {
 		return &ValidationError{Name: "is_published", err: errors.New(`ent: missing required field "Post.is_published"`)}
+	}
+	if _, ok := _c.mutation.IsAutogenSummary(); !ok {
+		return &ValidationError{Name: "is_autogen_summary", err: errors.New(`ent: missing required field "Post.is_autogen_summary"`)}
+	}
+	if _, ok := _c.mutation.IsVisible(); !ok {
+		return &ValidationError{Name: "is_visible", err: errors.New(`ent: missing required field "Post.is_visible"`)}
+	}
+	if _, ok := _c.mutation.IsTipToTop(); !ok {
+		return &ValidationError{Name: "is_tip_to_top", err: errors.New(`ent: missing required field "Post.is_tip_to_top"`)}
+	}
+	if _, ok := _c.mutation.IsAllowComment(); !ok {
+		return &ValidationError{Name: "is_allow_comment", err: errors.New(`ent: missing required field "Post.is_allow_comment"`)}
 	}
 	if _, ok := _c.mutation.ViewCount(); !ok {
 		return &ValidationError{Name: "view_count", err: errors.New(`ent: missing required field "Post.view_count"`)}
@@ -351,6 +454,10 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_spec.SetField(post.FieldTitle, field.TypeString, value)
 		_node.Title = value
 	}
+	if value, ok := _c.mutation.Alias(); ok {
+		_spec.SetField(post.FieldAlias, field.TypeString, value)
+		_node.Alias = value
+	}
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
 		_node.Content = value
@@ -358,6 +465,22 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.IsPublished(); ok {
 		_spec.SetField(post.FieldIsPublished, field.TypeBool, value)
 		_node.IsPublished = value
+	}
+	if value, ok := _c.mutation.IsAutogenSummary(); ok {
+		_spec.SetField(post.FieldIsAutogenSummary, field.TypeBool, value)
+		_node.IsAutogenSummary = value
+	}
+	if value, ok := _c.mutation.IsVisible(); ok {
+		_spec.SetField(post.FieldIsVisible, field.TypeBool, value)
+		_node.IsVisible = value
+	}
+	if value, ok := _c.mutation.IsTipToTop(); ok {
+		_spec.SetField(post.FieldIsTipToTop, field.TypeBool, value)
+		_node.IsTipToTop = value
+	}
+	if value, ok := _c.mutation.IsAllowComment(); ok {
+		_spec.SetField(post.FieldIsAllowComment, field.TypeBool, value)
+		_node.IsAllowComment = value
 	}
 	if value, ok := _c.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"gobee/ent/albumphoto"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -17,6 +18,34 @@ type AlbumPhotoCreate struct {
 	config
 	mutation *AlbumPhotoMutation
 	hooks    []Hook
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (_c *AlbumPhotoCreate) SetCreatedAt(v time.Time) *AlbumPhotoCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *AlbumPhotoCreate) SetNillableCreatedAt(v *time.Time) *AlbumPhotoCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *AlbumPhotoCreate) SetUpdatedAt(v time.Time) *AlbumPhotoCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *AlbumPhotoCreate) SetNillableUpdatedAt(v *time.Time) *AlbumPhotoCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
 }
 
 // SetImageURL sets the "image_url" field.
@@ -80,6 +109,14 @@ func (_c *AlbumPhotoCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *AlbumPhotoCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := albumphoto.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := albumphoto.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := _c.mutation.ViewCount(); !ok {
 		v := albumphoto.DefaultViewCount
 		_c.mutation.SetViewCount(v)
@@ -88,6 +125,12 @@ func (_c *AlbumPhotoCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *AlbumPhotoCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "AlbumPhoto.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "AlbumPhoto.updated_at"`)}
+	}
 	if _, ok := _c.mutation.ImageURL(); !ok {
 		return &ValidationError{Name: "image_url", err: errors.New(`ent: missing required field "AlbumPhoto.image_url"`)}
 	}
@@ -123,6 +166,14 @@ func (_c *AlbumPhotoCreate) createSpec() (*AlbumPhoto, *sqlgraph.CreateSpec) {
 		_node = &AlbumPhoto{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(albumphoto.Table, sqlgraph.NewFieldSpec(albumphoto.FieldID, field.TypeInt))
 	)
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(albumphoto.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(albumphoto.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
 	if value, ok := _c.mutation.ImageURL(); ok {
 		_spec.SetField(albumphoto.FieldImageURL, field.TypeString, value)
 		_node.ImageURL = value

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
 import {
   NCard,
   NButton,
@@ -28,25 +27,22 @@ import {
 } from '@vicons/ionicons5'
 import { h } from 'vue'
 import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
-import SettingForm from './settingForm.vue'
-import { addDialog } from '@/components/dialog'
 import { useRouter } from 'vue-router'
 import * as postApi from '@/api/post'
+import { usePostHook } from './utils/hook'
 
 const message = useMessage()
 const dialog = useDialog()
 const router = useRouter()
-
-
+const { settingPost } = usePostHook()
 
 // 搜索和筛选
 const searchKeyword = ref('')
 const filterStatus = ref(null)
-const dateRange = ref<[number,number]|null>(null)
+const dateRange = ref<[number, number] | null>(null)
 
 // 表格加载状态
 const loading = ref(false)
-
 
 // 分页配置
 const pagination = reactive({
@@ -97,7 +93,7 @@ const dataList = ref([
 ])
 
 // 表格列配置
-const columns :DataTableColumns<any>= [
+const columns: DataTableColumns<any> = [
   {
     title: '标题',
     key: 'title',
@@ -154,14 +150,14 @@ const columns :DataTableColumns<any>= [
     width: 100,
     fixed: 'right',
     render: (row: any) => {
-      const options:DropdownMixedOption[] = [
+      const options: DropdownMixedOption[] = [
         {
           label: '编辑',
           key: 'edit',
           icon: () => h(NIcon, null, { default: () => h(CreateOutline) }),
         },
         {
-          label: row.status === 'draft'?'发布':'取消发布',
+          label: row.status === 'draft' ? '发布' : '取消发布',
           key: 'publish',
           icon: () => h(NIcon, null, { default: () => h(SendOutline) }),
         },
@@ -197,12 +193,12 @@ const columns :DataTableColumns<any>= [
         {
           label: '删除',
           key: 'delete',
-          type:'danger',
+          type: 'danger',
           icon: () => h(NIcon, null, { default: () => h(TrashOutline) }),
           disabled: row.status === 'published',
-          props:{
-            class:'n-dropdown-option-body--danger'
-          }
+          props: {
+            class: 'n-dropdown-option-body--danger',
+          },
         },
       ]
 
@@ -215,7 +211,7 @@ const columns :DataTableColumns<any>= [
             publishPost(row)
             break
           case 'setting':
-            settingPost(row)
+            handleSettingPost(row)
             break
           case 'share':
             sharePost(row)
@@ -239,7 +235,7 @@ const columns :DataTableColumns<any>= [
         NDropdown,
         {
           trigger: 'hover',
-          options:options,
+          options: options,
           onSelect: handleSelect,
         },
         {
@@ -260,22 +256,21 @@ const columns :DataTableColumns<any>= [
   },
 ]
 
-
 // 创建文章
 const createPost = () => {
   postApi.createPost({
-    title:'未命名的文章',
-    content:'<p>此处是文章内容</p>',
+    title: '未命名的文章',
+    content: '<p>此处是文章内容</p>',
   })
 }
 
 // 编辑文章
 const editPost = (post: any) => {
   router.push({
-    name:"PostEditor",
-    query:{
-      id:post.id
-    }
+    name: 'PostEditor',
+    query: {
+      id: post.id,
+    },
   })
 }
 
@@ -293,12 +288,8 @@ const publishPost = (row: any) => {
   })
 }
 
-// 文章设置
-const settingPost = (row: any) => {
-  addDialog({
-    props:{},
-    contentRenderer:()=>h(SettingForm)
-  })
+const handleSettingPost = (row:any)=>{
+  settingPost(row)
 }
 
 // 分享文章
@@ -371,12 +362,12 @@ const handleRefresh = () => {
   }, 1000)
 }
 
-const onSearch = async()=>{
+const onSearch = async () => {
   const res = await postApi.getPostList()
   console.log(res)
   dataList.value = res.data
 }
-onMounted(()=>{
+onMounted(() => {
   onSearch()
 })
 </script>

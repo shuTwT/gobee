@@ -246,7 +246,7 @@ const filterMethod = ref<string | null>(null)
 
 // 表格数据
 const loading = ref(false)
-const apiList = ref<ApiItem[]>([])
+const dataList = ref<ApiItem[]>([])
 const checkedRowKeys = ref<(string|number)[]>([])
 
 // 模态框状态
@@ -308,28 +308,14 @@ const roleTreeData: TreeOption[] = [
   {
     label: '管理员角色',
     key: 'admin',
-    children: [
-      { label: '超级管理员', key: 'super_admin' },
-      { label: '系统管理员', key: 'system_admin' },
-      { label: '内容管理员', key: 'content_admin' }
-    ]
   },
   {
     label: '用户角色',
     key: 'user',
-    children: [
-      { label: '普通用户', key: 'normal_user' },
-      { label: 'VIP用户', key: 'vip_user' },
-      { label: '高级用户', key: 'premium_user' }
-    ]
   },
   {
     label: '访客角色',
     key: 'guest',
-    children: [
-      { label: '游客', key: 'guest_user' },
-      { label: '未验证用户', key: 'unverified_user' }
-    ]
   }
 ]
 
@@ -339,6 +325,7 @@ const pagination = reactive({
   pageSize: 10,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
+  itemCount:0,
   onChange: (page: number) => {
     pagination.page = page
   },
@@ -355,8 +342,8 @@ interface ApiItem {
   path: string
   method: string
   description: string
-  permission: 'public' | 'private'
-  allowedRoles: string[]
+  permission_type: 'public' | 'private'
+  roles: string[]
   category: string
   status: 'active' | 'inactive'
   createdAt: string
@@ -425,8 +412,8 @@ const columns: DataTableColumns<ApiItem> = [
     key: 'permission',
     width: 100,
     render: (row) => {
-      const icon = row.permission === 'public' ? GlobeOutline : LockClosedOutline
-      const type = row.permission === 'public' ? 'success' : 'warning'
+      const icon = row.permission_type === 'public' ? GlobeOutline : LockClosedOutline
+      const type = row.permission_type === 'public' ? 'success' : 'warning'
       return h(
         'div',
         {
@@ -438,7 +425,7 @@ const columns: DataTableColumns<ApiItem> = [
         },
         [
           h(NIcon, {},()=> h(icon)),
-          h(NTag, { type }, ()=>row.permission === 'public' ? '公开' : '私有')
+          h(NTag, { type }, ()=>row.permission_type === 'public' ? '公开' : '私有')
         ]
       )
     }
@@ -511,7 +498,7 @@ const columns: DataTableColumns<ApiItem> = [
 
 // 筛选后的API列表
 const filteredApiList = computed(() => {
-  let filtered = apiList.value
+  let filtered = dataList.value
 
   // 关键词搜索
   if (searchKeyword.value) {
@@ -525,7 +512,7 @@ const filteredApiList = computed(() => {
 
   // 权限筛选
   if (filterPermission.value) {
-    filtered = filtered.filter(api => api.permission === filterPermission.value)
+    filtered = filtered.filter(api => api.permission_type === filterPermission.value)
   }
 
   // 方法筛选
@@ -579,8 +566,8 @@ const handleCheck = (keys: Array<string|number>) => {
 // 打开权限设置模态框
 const openPermissionModal = (api: ApiItem) => {
   currentApi.value = api
-  permissionForm.permissionType = api.permission
-  permissionForm.allowedRoles = [...api.allowedRoles]
+  permissionForm.permissionType = api.permission_type
+  permissionForm.allowedRoles = api.roles ??[]
   showPermissionModal.value = true
 }
 
@@ -612,11 +599,13 @@ const savePermissionSettings = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000))
 
     // 更新本地数据
-    const api = apiList.value.find(item => item.id === currentApi.value!.id)
+    const api = dataList.value.find(item => item.id === currentApi.value!.id)
     if (api) {
-      api.permission = permissionForm.permissionType
-      api.allowedRoles = [...permissionForm.allowedRoles]
+      api.permission_type = permissionForm.permissionType
+      api.roles = [...permissionForm.allowedRoles]
     }
+
+    console.log(api)
 
     message.success('权限设置保存成功')
     showPermissionModal.value = false
@@ -691,13 +680,13 @@ const executeBatchOperation = async () => {
 
     // 更新本地数据
     checkedRowKeys.value.forEach(key => {
-      const api = apiList.value.find(item => item.id === key)
+      const api = dataList.value.find(item => item.id === key)
       if (api) {
-        api.permission = batchForm.permissionType
+        api.permission_type = batchForm.permissionType
         if (batchForm.permissionType === 'private') {
-          api.allowedRoles = [...batchForm.allowedRoles]
+          api.roles = [...batchForm.allowedRoles]
         } else {
-          api.allowedRoles = []
+          api.roles = []
         }
       }
     })
@@ -728,15 +717,15 @@ const loadApiList = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000))
 
     // 模拟数据
-    apiList.value = [
+    dataList.value = [
       {
         id: '1',
         name: '用户登录',
         path: '/api/auth/login',
         method: 'POST',
         description: '用户登录接口，验证用户身份',
-        permission: 'public',
-        allowedRoles: [],
+        permission_type: 'public',
+        roles: [],
         category: '认证',
         status: 'active',
         createdAt: '2024-01-15 10:00:00',
@@ -748,8 +737,8 @@ const loadApiList = async () => {
         path: '/api/user/profile',
         method: 'GET',
         description: '获取当前登录用户的详细信息',
-        permission: 'private',
-        allowedRoles: ['normal_user', 'vip_user', 'super_admin'],
+        permission_type: 'private',
+        roles: ['normal_user', 'vip_user', 'super_admin'],
         category: '用户',
         status: 'active',
         createdAt: '2024-01-15 10:30:00',
@@ -761,8 +750,8 @@ const loadApiList = async () => {
         path: '/api/article/create',
         method: 'POST',
         description: '创建新的文章内容',
-        permission: 'private',
-        allowedRoles: ['content_admin', 'super_admin'],
+        permission_type: 'private',
+        roles: ['content_admin', 'super_admin'],
         category: '内容',
         status: 'active',
         createdAt: '2024-01-15 11:00:00',
@@ -774,8 +763,8 @@ const loadApiList = async () => {
         path: '/api/article/list',
         method: 'GET',
         description: '获取文章列表，支持分页和筛选',
-        permission: 'public',
-        allowedRoles: [],
+        permission_type: 'public',
+        roles: [],
         category: '内容',
         status: 'active',
         createdAt: '2024-01-15 11:30:00',
@@ -787,8 +776,8 @@ const loadApiList = async () => {
         path: '/api/article/delete',
         method: 'DELETE',
         description: '删除指定的文章',
-        permission: 'private',
-        allowedRoles: ['content_admin', 'super_admin'],
+        permission_type: 'private',
+        roles: ['content_admin', 'super_admin'],
         category: '内容',
         status: 'active',
         createdAt: '2024-01-15 12:00:00',
@@ -800,8 +789,8 @@ const loadApiList = async () => {
         path: '/api/file/upload',
         method: 'POST',
         description: '上传文件到服务器',
-        permission: 'private',
-        allowedRoles: ['normal_user', 'vip_user', 'super_admin'],
+        permission_type: 'private',
+        roles: ['normal_user', 'vip_user', 'super_admin'],
         category: '文件',
         status: 'active',
         createdAt: '2024-01-15 12:30:00',
@@ -813,8 +802,8 @@ const loadApiList = async () => {
         path: '/api/system/settings',
         method: 'GET',
         description: '获取系统配置信息',
-        permission: 'private',
-        allowedRoles: ['system_admin', 'super_admin'],
+        permission_type: 'private',
+        roles: ['system_admin', 'super_admin'],
         category: '系统',
         status: 'active',
         createdAt: '2024-01-15 13:00:00',
@@ -826,8 +815,8 @@ const loadApiList = async () => {
         path: '/api/system/settings',
         method: 'PUT',
         description: '更新系统配置信息',
-        permission: 'private',
-        allowedRoles: ['super_admin'],
+        permission_type: 'private',
+        roles: ['super_admin'],
         category: '系统',
         status: 'active',
         createdAt: '2024-01-15 13:30:00',
@@ -842,11 +831,16 @@ const loadApiList = async () => {
 }
 
 const onSearch=()=>{
-  routesApi.getAllRoutes()
+  routesApi.getAllRoutes().then(res=>{
+    if(res.code===200){
+      dataList.value=res.data.records
+      pagination.itemCount=res.data.total
+    }
+  })
 }
 
 onMounted(() => {
-  loadApiList()
+  // loadApiList()
   onSearch()
 })
 </script>

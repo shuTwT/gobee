@@ -68,7 +68,7 @@ const columns: DataTableColumns<any> = [
         NSpace,
         {},
         {
-          default: [
+          default: ()=>[
             h(
               NButton,
               {
@@ -97,7 +97,7 @@ const columns: DataTableColumns<any> = [
                       default: () => '删除',
                     },
                   ),
-                  default:()=>"确认删除吗？"
+                default:()=>"确认删除吗？"
               },
             ),
           ],

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gobee/ent/albumphoto"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -16,6 +17,10 @@ type AlbumPhoto struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// 图片地址
 	ImageURL string `json:"image_url,omitempty"`
 	// 查看次数
@@ -34,6 +39,8 @@ func (*AlbumPhoto) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case albumphoto.FieldImageURL:
 			values[i] = new(sql.NullString)
+		case albumphoto.FieldCreatedAt, albumphoto.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -55,6 +62,18 @@ func (_m *AlbumPhoto) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
+		case albumphoto.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = value.Time
+			}
+		case albumphoto.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = value.Time
+			}
 		case albumphoto.FieldImageURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field image_url", values[i])
@@ -109,6 +128,12 @@ func (_m *AlbumPhoto) String() string {
 	var builder strings.Builder
 	builder.WriteString("AlbumPhoto(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
 	builder.WriteString("image_url=")
 	builder.WriteString(_m.ImageURL)
 	builder.WriteString(", ")

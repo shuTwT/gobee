@@ -7,6 +7,8 @@ const webhookFormData = ref({
   webhookEvents: [],
 })
 
+const showModal =ref(false)
+
 // 分页配置
 const pagination = reactive({
   page: 1,
@@ -82,6 +84,10 @@ const eventOptions = ref([
     label: '内容更新',
   },
 ])
+
+const openEditDialog=(title="新增",row?:any)=>{
+  showModal.value = true
+}
 </script>
 <template>
   <div class="container-fluid p-6">
@@ -90,7 +96,7 @@ const eventOptions = ref([
       <div class="header-section">
         <div class="search-section"></div>
         <div class="action-section">
-          <n-button type="primary"  style="margin-right: 12px"> <i class="bi bi-plus"></i> 添加webhook </n-button>
+          <n-button type="primary"  style="margin-right: 12px" @click="openEditDialog('新增')"> <i class="bi bi-plus"></i> 添加webhook </n-button>
           <n-button>
             <template #icon>
               <n-icon><refresh-outline /></n-icon>
@@ -110,19 +116,23 @@ const eventOptions = ref([
     </n-card>
 
     <!-- Add/Edit Webhook Modal -->
-    <n-modal>
+    <n-modal v-model:show="showModal" preset="dialog" :closable="true">
       <template #header> 添加 Webhook </template>
       <n-form>
         <n-form-item label="url">
           <n-input v-model:value="webhookFormData.webhookUrl" placeholder="请输入 Webhook URL" />
         </n-form-item>
         <n-form-item label="事件">
-          <n-checkbox-group v-model:value="webhookFormData.webhookEvents" :options="eventOptions" />
+          <n-checkbox-group v-model:value="webhookFormData.webhookEvents" :options="eventOptions">
+            <n-space item-style="display:flex;">
+              <n-checkbox v-for="(item,index) in eventOptions" :key="index" :value="item.value" :label="item.label" />
+            </n-space>
+          </n-checkbox-group>
         </n-form-item>
       </n-form>
       <template #action>
         <div class="items-center px-4 py-3">
-          <n-button type="primary"> 保存 </n-button>
+          <n-button type="primary" style="margin-right: 10px;"> 保存 </n-button>
           <n-button type="default"> 取消 </n-button>
         </div>
       </template>

@@ -9,8 +9,12 @@ export const createPost = (data:any) =>{
   return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/post/create`,{data})
 }
 
-export const updatePost = (data:any) =>{
-  return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/post/update`,{data})
+export const updatePostContent = (id:number|string,data:any) =>{
+  return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/post/update/content/${id}`,{data})
+}
+
+export const updatePostSetting = (id:number|string,data:any) =>{
+  return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/post/update/setting/${id}`,{data})
 }
 
 export const queryPost = (id:number|string) =>{
