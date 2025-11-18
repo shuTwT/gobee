@@ -204,7 +204,13 @@ onMounted(() => {
       :builtin-theme-overrides="layoutThemeOverrides"
       logo-class="flex justify-center"
     >
-      <template #logo>logo</template>
+      <template #logo>
+        <n-image
+          src="/console/logo.png"
+          :preview-disabled="true"
+          width="64"
+        />
+      </template>
       <template #nav-left>
         <template v-if="!isMobile">
           <div class="flex items-center h-full pl-6">

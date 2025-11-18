@@ -19,6 +19,19 @@ const personalizedSetting = ref({
   theme: 'light',
   notifications: false,
 })
+const personalAccessTokenList = ref([])
+const personalAccessTokenColumns = ref([
+  {
+    title: '令牌名称',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: '令牌值',
+    dataIndex: 'token',
+    key: 'token',
+  },
+])
 
 const activeTab = ref('profile')
 </script>
@@ -30,6 +43,7 @@ const activeTab = ref('profile')
       <n-tabs v-model:value="activeTab" type="segment" animated>
         <n-tab-pane name="profile" tab="详情"></n-tab-pane>
         <n-tab-pane name="setting" tab="个性化"></n-tab-pane>
+        <n-tab-pane name="personalAccessToken" tab="个人令牌"></n-tab-pane>
       </n-tabs>
     </div>
     <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-6">
@@ -85,6 +99,20 @@ const activeTab = ref('profile')
             </button>
           </div>
         </n-form>
+      </template>
+      <template v-else-if="activeTab === 'personalAccessToken'">
+        <h3 class="text-xl font-semibold text-gray-900 dar
+        k:text-white mb-4">个人令牌</h3>
+        <div class="flex justify-between">
+          <p class="text-gray-700 dark:text-gray-300 mb-4">
+            个人令牌用于访问 API。请妥善保管，不要分享给他人。
+          </p>
+          <div>
+            <n-button type="primary">创建</n-button>
+          </div>
+        </div>
+
+        <n-data-table :columns="personalAccessTokenColumns" :data="personalAccessTokenList" />
       </template>
     </div>
   </div>

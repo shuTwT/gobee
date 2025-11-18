@@ -3,7 +3,7 @@ import { store } from '..'
 import { useStorageLocal } from '@/utils/utils'
 import { removeToken, setToken, userKey, type DataInfo } from '@/utils/auth'
 import { passwordLogin } from '@/api/auth'
-import { resetRouter } from '@/router'
+import router, { resetRouter } from '@/router'
 
 export const useUserStore = defineStore('user', () => {
   /**
@@ -93,6 +93,7 @@ export const useUserStore = defineStore('user', () => {
     permissions.value = []
     removeToken()
     resetRouter()
+    router.push({path: '/login'})
   }
 
   async function handleRefreshToken(data:any){
