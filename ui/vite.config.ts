@@ -17,8 +17,10 @@ export default defineConfig({
     vueDevTools(),
     tailwindcss(),
     AutoImport({
+      dts:"types/auto-imports.d.ts",
       imports: [
         'vue',
+        'vue-router',
         {
           'naive-ui': [
             'useDialog',
@@ -30,6 +32,11 @@ export default defineConfig({
       ]
     }),
     Components({
+      dts:"types/components.d.ts",
+      types:[{
+        from:'vue-router',
+        names:['RouterLink','RouterView']
+      }],
       resolvers: [NaiveUiResolver()]
     })
   ],

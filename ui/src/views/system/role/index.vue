@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NTag } from 'naive-ui'
+import { NTag,NDataTable } from 'naive-ui'
 import * as roleApi from '@/api/system/role'
 import type { DataTableColumns } from 'naive-ui'
 import { RefreshOutline } from '@vicons/ionicons5'
