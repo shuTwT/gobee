@@ -11,9 +11,25 @@ func GetAllSettings(ctx context.Context, client *ent.Client) ([]*ent.Setting, er
 	return client.Setting.Query().All(ctx)
 }
 
+func ExistSettingByKey(ctx context.Context, client *ent.Client, key string) (bool, error) {
+	return client.Setting.Query().Where(setting.KeyEQ(key)).Exist(ctx)
+}
+
 // GetSettingByKey 根据键获取设置
 func GetSettingByKey(ctx context.Context, client *ent.Client, key string) (*ent.Setting, error) {
 	return client.Setting.Query().Where(setting.KeyEQ(key)).Only(ctx)
+}
+
+func UpdateSettingByKey(ctx context.Context, client *ent.Client, key string, value string) error {
+	_, err := client.Setting.Update().Where(setting.KeyEQ(key)).SetValue(value).Save(ctx)
+	return err
+}
+
+func CreateSettingIfNotExist(ctx context.Context, client *ent.Client, key string, value string) error {
+
+	_, err := client.Setting.Create().SetKey(key).SetValue(value).Save(ctx)
+
+	return err
 }
 
 // IsSystemInitialized 检查系统是否已初始化
@@ -22,7 +38,7 @@ func IsSystemInitialized(ctx context.Context, client *ent.Client) (bool, error) 
 	exists, err := client.Setting.Query().
 		Where(setting.KeyEQ("system_initialized")).
 		Exist(ctx)
-	
+
 	return exists, err
 }
 

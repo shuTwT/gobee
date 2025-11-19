@@ -144,11 +144,6 @@ func (_c *SettingCreate) check() error {
 	if _, ok := _c.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Setting.value"`)}
 	}
-	if v, ok := _c.mutation.Value(); ok {
-		if err := setting.ValueValidator(v); err != nil {
-			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "Setting.value": %w`, err)}
-		}
-	}
 	if v, ok := _c.mutation.Comment(); ok {
 		if err := setting.CommentValidator(v); err != nil {
 			return &ValidationError{Name: "comment", err: fmt.Errorf(`ent: validator failed for field "Setting.comment": %w`, err)}

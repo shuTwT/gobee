@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
 import type { SettingsProps } from '../utils/types';
+import * as settingApi from '@/api/system/setting'
 
 const props = defineProps<{
   settings:SettingsProps
@@ -43,6 +44,7 @@ const aiLoading = ref(false)
 const saveAISettings = async () => {
   aiLoading.value = true
   try {
+    await settingApi.saveSettings(aiForm)
     await new Promise(resolve => setTimeout(resolve, 1000))
     emit('refresh')
     message.success('AI设置保存成功')

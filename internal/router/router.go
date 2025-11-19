@@ -58,6 +58,7 @@ func Initialize(router *fiber.App) {
 			settingsApi := apiV1.Group("/settings")
 			{
 				settingsApi.Get("/map", setting_handler.GetSettingsMap).Name("settingsMap")
+				settingsApi.Post("/save", setting_handler.SaveSettings).Name("settingsSave")
 			}
 
 			fileApi := apiV1.Group("/file")

@@ -130,11 +130,6 @@ func (_u *SettingUpdate) check() error {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "Setting.key": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Value(); ok {
-		if err := setting.ValueValidator(v); err != nil {
-			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "Setting.value": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Comment(); ok {
 		if err := setting.CommentValidator(v); err != nil {
 			return &ValidationError{Name: "comment", err: fmt.Errorf(`ent: validator failed for field "Setting.comment": %w`, err)}
@@ -303,11 +298,6 @@ func (_u *SettingUpdateOne) check() error {
 	if v, ok := _u.mutation.Key(); ok {
 		if err := setting.KeyValidator(v); err != nil {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "Setting.key": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.Value(); ok {
-		if err := setting.ValueValidator(v); err != nil {
-			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "Setting.value": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Comment(); ok {

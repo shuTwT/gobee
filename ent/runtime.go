@@ -770,24 +770,6 @@ func init() {
 			return nil
 		}
 	}()
-	// settingDescValue is the schema descriptor for value field.
-	settingDescValue := settingFields[1].Descriptor()
-	// setting.ValueValidator is a validator for the "value" field. It is called by the builders before save.
-	setting.ValueValidator = func() func(string) error {
-		validators := settingDescValue.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(value string) error {
-			for _, fn := range fns {
-				if err := fn(value); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
 	// settingDescComment is the schema descriptor for comment field.
 	settingDescComment := settingFields[2].Descriptor()
 	// setting.CommentValidator is a validator for the "comment" field. It is called by the builders before save.

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
 import type { SettingsProps } from '../utils/types';
+import * as settingApi from '@/api/system/setting'
 
 const props = defineProps<{
   settings:SettingsProps
@@ -46,6 +47,7 @@ watch(()=>props.settings,(newSettings)=>{
 const saveNotificationSettings = async () => {
   notificationLoading.value = true
   try {
+    await settingApi.saveSettings(notificationForm)
     await new Promise(resolve => setTimeout(resolve, 1000))
     emit('refresh')
     message.success('通知设置保存成功')

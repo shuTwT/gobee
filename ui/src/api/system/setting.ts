@@ -15,3 +15,7 @@ export const getSettings = () => {
 export const getSettingsMap = ()=>{
   return http.request<ApiResponse<Record<string,string>>>('get',`${BASE_URL}/v1/settings/map`);
 }
+
+export const saveSettings = (data:Record<string,any>)=>{
+  return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/settings/save`,{data})
+}

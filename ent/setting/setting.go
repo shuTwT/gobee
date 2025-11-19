@@ -56,8 +56,6 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// KeyValidator is a validator for the "key" field. It is called by the builders before save.
 	KeyValidator func(string) error
-	// ValueValidator is a validator for the "value" field. It is called by the builders before save.
-	ValueValidator func(string) error
 	// CommentValidator is a validator for the "comment" field. It is called by the builders before save.
 	CommentValidator func(string) error
 )

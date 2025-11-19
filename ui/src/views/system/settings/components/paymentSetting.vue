@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
 import type { SettingsProps } from '../utils/types';
+import * as settingApi from '@/api/system/setting'
 
 
 const props = defineProps<{
@@ -43,6 +44,7 @@ watch(()=>props.settings,(newSettings)=>{
 const savePaymentSettings = async () => {
   paymentLoading.value = true
   try {
+    await settingApi.saveSettings(paymentForm)
     await new Promise(resolve => setTimeout(resolve, 1000))
     emit('refresh')
     message.success('支付设置保存成功')

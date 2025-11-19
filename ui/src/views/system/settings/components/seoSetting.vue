@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
 import type { SettingsProps } from '../utils/types';
+import * as settingApi from '@/api/system/setting'
 
 const props = defineProps<{
   settings:SettingsProps
@@ -48,6 +49,7 @@ watch(()=>props.settings,(newSettings)=>{
 const saveSEOSettings = async () => {
   seoLoading.value = true
   try {
+    await settingApi.saveSettings(seoForm)
     await new Promise(resolve => setTimeout(resolve, 1000))
     emit('refresh')
     message.success('SEO设置保存成功')

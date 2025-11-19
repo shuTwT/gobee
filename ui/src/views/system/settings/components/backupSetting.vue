@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
 import type { SettingsProps } from '../utils/types';
+import * as settingApi from '@/api/system/setting'
 
 const props = defineProps<{
   settings:SettingsProps
@@ -59,6 +60,7 @@ const remoteStorageOptions = [
 const saveBackupSettings = async () => {
   backupLoading.value = true
   try {
+    await settingApi.saveSettings(backupForm)
     await new Promise((resolve) => setTimeout(resolve, 1000))
     emit('refresh')
     message.success('备份设置保存成功')

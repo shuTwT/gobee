@@ -271,7 +271,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "key", Type: field.TypeString, Size: 255},
-		{Name: "value", Type: field.TypeString, Size: 255},
+		{Name: "value", Type: field.TypeString},
 		{Name: "comment", Type: field.TypeString, Nullable: true, Size: 512},
 	}
 	// SettingsTable holds the schema information for the "settings" table.
