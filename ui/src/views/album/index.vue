@@ -24,23 +24,23 @@ const pagination = reactive({
   },
 })
 
-const albumList = ref([])
-const albumPhotoList = ref([])
+const albumList = ref<any[]>([])
+const albumPhotoList = ref<any[]>([])
 
 const onSearchAlbum=async()=>{
-  const res=await albumApi.getAlbumList()
+  const res=await albumApi.getAlbumPage()
   if (res.code === 200) {
-    albumList.value = res.data || []
+    albumList.value = res.data.records || []
   }
 }
 
 const onSearchAlbumPhoto=async()=>{
-  const res=await albumPhotoApi.getAlbumPhotoList({
+  const res=await albumPhotoApi.getAlbumPhotoPage({
     page:pagination.page,
     pageSize:pagination.pageSize,
   })
   if (res.code === 200) {
-    albumPhotoList.value = res.data || []
+    albumPhotoList.value = res.data.records || []
   }
 }
 
@@ -66,7 +66,8 @@ onMounted(()=>{
         <n-gi span="1">
           <n-card title="相册列表">
             <template #header-extra>
-              <n-button type="primary"> <i class="fas fa-plus mr-2"></i>新增相册 </n-button>
+              <n-button type="primary" style="margin-right: 5px;"> <i class="fas fa-plus mr-2"></i>新增相册 </n-button>
+              <n-button>刷新</n-button>
             </template>
             <ul id="albumList" class="space-y-2">
               <!-- 示例相册 -->
@@ -85,12 +86,23 @@ onMounted(()=>{
                 <span class="text-sm text-gray-500 dark:text-gray-400">120 张</span>
               </li>
             </ul>
+            <div class="mt-4 flex justify-end">
+              <n-pagination
+                :page="pagination.page"
+                :page-size="pagination.pageSize"
+                :show-size-picker="pagination.showSizePicker"
+                :page-sizes="pagination.pageSizes"
+                @on-change="pagination.onChange"
+                @on-update-page-size="pagination.onUpdatePageSize"
+              />
+            </div>
           </n-card>
         </n-gi>
         <n-gi span="2">
           <n-card title="相片列表">
             <template #header-extra>
-              <n-button type="primary" @click="openAlbumPhotoDialog('新增')"> <i class="fas fa-upload mr-2"></i>新增 </n-button>
+              <n-button type="primary" @click="openAlbumPhotoDialog('新增')" style="margin-right: 5px;"> <i class="fas fa-upload mr-2"></i>新增 </n-button>
+              <n-button>刷新</n-button>
             </template>
             <div id="photoList" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               <!-- 示例照片卡片 -->
@@ -121,6 +133,16 @@ onMounted(()=>{
                   <p class="text-xs text-gray-500 dark:text-gray-400">2023-01-02</p>
                 </div>
               </div>
+            </div>
+            <div class="mt-4 flex justify-end">
+              <n-pagination
+                :page="pagination.page"
+                :page-size="pagination.pageSize"
+                :show-size-picker="pagination.showSizePicker"
+                :page-sizes="pagination.pageSizes"
+                @on-change="pagination.onChange"
+                @on-update-page-size="pagination.onUpdatePageSize"
+              />
             </div>
           </n-card>
         </n-gi>

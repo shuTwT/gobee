@@ -9,6 +9,8 @@ import (
 	"gobee/ent"
 	"gobee/ent/user"
 	"gobee/internal/database"
+	role_service "gobee/internal/services/role"
+	user_service "gobee/internal/services/user"
 	"gobee/pkg/domain/model"
 )
 
@@ -21,16 +23,23 @@ import (
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/users [get]
 func ListUser(c *fiber.Ctx) error {
-	client := database.DB
-	users, err := client.User.Query().All(c.Context())
+	users, err := user_service.ListUser(c)
 	if err != nil {
 		return c.JSON(model.NewError(-1, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("success", users))
+	userRespList := []model.UserResp{}
+	for _, user := range users {
+		userRespList = append(userRespList, model.UserResp{
+			ID:     user.ID,
+			Name:   user.Name,
+			Email:  user.Email,
+			RoleID: &user.RoleID,
+		})
+	}
+	return c.JSON(model.NewSuccess("success", userRespList))
 }
 
 func ListUserPage(c *fiber.Ctx) error {
-	client := database.DB
 	pageQuery := model.PageQuery{}
 	err := c.QueryParser(&pageQuery)
 	if err != nil {
@@ -39,26 +48,27 @@ func ListUserPage(c *fiber.Ctx) error {
 		))
 	}
 
-	count, err := client.User.Query().Count(c.UserContext())
-
+	count, users, err := user_service.ListUserPage(c, pageQuery)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
 		))
 	}
-
-	users, err := client.User.Query().
-		Offset((pageQuery.Page - 1) * pageQuery.Size).
-		Limit(pageQuery.Size).
-		All(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError,
-			err.Error(),
-		))
+	userRespList := []model.UserResp{}
+	for _, user := range users {
+		userResp := model.UserResp{
+			ID:     user.ID,
+			Name:   user.Name,
+			Email:  user.Email,
+			RoleID: &user.RoleID,
+		}
+		role, _ := role_service.QueryRole(c, user.RoleID)
+		userResp.Role = role
+		userRespList = append(userRespList, userResp)
 	}
-	pageResult := model.PageResult[*ent.User]{
+	pageResult := model.PageResult[model.UserResp]{
 		Total:   int64(count),
-		Records: users,
+		Records: userRespList,
 	}
 	return c.JSON(model.NewSuccess("success", pageResult))
 }

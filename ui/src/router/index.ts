@@ -75,9 +75,9 @@ router.beforeEach((to, _from, next) => {
         toCorrectRoute()
       }
     } else {
-
+      console.log(usePermissionStoreHook().wholeMenus.length)
       // 刷新
-      if(usePermissionStoreHook().wholeMenus.length===0 &&to.path!=="/login"){
+      if(usePermissionStoreHook().wholeMenus.length===0 &&to.path!=="/login"&&to.path!=="/initialize"){
         initRouter().then((router:Router)=>{
           if(typeof to.name==="string"&&to.name!==""){
             router.push(to.fullPath)

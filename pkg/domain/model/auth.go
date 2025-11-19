@@ -7,7 +7,7 @@ type LoginRequest struct {
 }
 
 type LoginResp struct {
-	AccessToken string   `json:"access_token"`
+	AccessToken string   `json:"accessToken"`
 	Expires     int64    `json:"expires"`
 	Username    string   `json:"username"`
 	Roles       []string `json:"roles"`

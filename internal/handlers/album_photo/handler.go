@@ -1,6 +1,7 @@
 package albumphoto
 
 import (
+	"gobee/ent"
 	"gobee/ent/albumphoto"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
@@ -17,6 +18,29 @@ func ListAlbumPhoto(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("success", albumPhotos))
+}
+
+func ListAlbumPhotoPage(c *fiber.Ctx) error {
+	client := database.DB
+	pageQuery := model.PageQuery{}
+	if err := c.QueryParser(&pageQuery); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	count, err := client.AlbumPhoto.Query().
+		Count(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	albumPhotos, err := client.AlbumPhoto.Query().
+		All(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	pageResult := model.PageResult[*ent.AlbumPhoto]{
+		Total:   int64(count),
+		Records: albumPhotos,
+	}
+	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
 func CreateAlbumPhoto(c *fiber.Ctx) error {

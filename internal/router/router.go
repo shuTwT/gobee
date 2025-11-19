@@ -131,6 +131,7 @@ func Initialize(router *fiber.App) {
 			albumApi := apiV1.Group("/album")
 			{
 				albumApi.Get("/list", album_handler.ListAlbum).Name("albumList")
+				albumApi.Get("/page", album_handler.ListAlbumPage).Name("albumPage")
 				albumApi.Post("/create", album_handler.CreateAlbum).Name("albumCreate")
 				albumApi.Put("/update/:id", album_handler.UpdateAlbum).Name("albumUpdate")
 				albumApi.Get("/query/:id", album_handler.QueryAlbum).Name("albumQuery")
@@ -139,6 +140,7 @@ func Initialize(router *fiber.App) {
 			albumPhotoApi := apiV1.Group("/album-photo")
 			{
 				albumPhotoApi.Get("/list", albumphoto_handler.ListAlbumPhoto).Name("albumPhotoList")
+				albumPhotoApi.Get("/page", albumphoto_handler.ListAlbumPhotoPage).Name("albumPhotoPage")
 				albumPhotoApi.Post("/create", albumphoto_handler.CreateAlbumPhoto).Name("albumPhotoCreate")
 				albumPhotoApi.Put("/update/:id", albumphoto_handler.UpdateAlbumPhoto).Name("albumPhotoUpdate")
 				albumPhotoApi.Get("/query/:id", albumphoto_handler.QueryAlbumPhoto).Name("albumPhotoQuery")

@@ -4,6 +4,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/role"
 	"gobee/internal/database"
+	role_service "gobee/internal/services/role"
 	"gobee/pkg/domain/model"
 	"strconv"
 
@@ -144,14 +145,13 @@ func UpdateRole(c *fiber.Ctx) error {
 }
 
 func QueryRole(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format",
 		))
 	}
-	role, err := client.Role.Query().Where(role.IDEQ(id)).First(c.Context())
+	role, err := role_service.QueryRole(c, id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),

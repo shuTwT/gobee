@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"gobee/ent"
 	"gobee/internal/database"
-	"gobee/internal/services"
 	"gobee/internal/services/setting"
+	services "gobee/internal/services/user"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"

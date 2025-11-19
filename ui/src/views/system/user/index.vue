@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NButton, NIcon,NDataTable, type DataTableColumns } from 'naive-ui'
+import { NButton, NIcon,NDataTable, type DataTableColumns, NTag } from 'naive-ui'
 import { Pencil,RefreshOutline } from '@vicons/ionicons5'
 import * as userApi from '@/api/system/user'
 import { addDialog } from '@/components/dialog'
@@ -54,10 +54,21 @@ const columns: DataTableColumns<any> = [
   },
   {
     title: '手机号',
-    key: 'phoneNumber',
+    key: 'phone_number',
     width: 180,
     ellipsis: {
       tooltip: true,
+    },
+  },
+    {
+    title: '角色',
+    key: 'role_id',
+    width: 180,
+    ellipsis: {
+      tooltip: true,
+    },
+    render: (row) => {
+      return h(NTag,{type:'primary'},()=>row.role?.name || '无')
     },
   },
   {
