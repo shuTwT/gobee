@@ -81,7 +81,7 @@ import notifySetting from './components/notifySetting.vue'
 import seoSetting from './components/seoSetting.vue'
 import backupSetting from './components/backupSetting.vue'
 import logSetting from './components/logSetting.vue'
-import * as settingsApi from '@/api/setting'
+import * as settingsApi from '@/api/system/setting'
 import type { SettingsProps } from './utils/types'
 
 const message = useMessage()

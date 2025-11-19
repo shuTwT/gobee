@@ -13,12 +13,6 @@ import (
 	"gobee/pkg/domain/model"
 )
 
-// LoginRequest 登录请求结构
-type LoginRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
-}
-
 // @Summary 用户登录
 // @Description 验证用户凭据并返回JWT令牌
 // @Tags auth
@@ -31,7 +25,7 @@ type LoginRequest struct {
 // @Failure 500 {object} model.HttpError
 // @Router /auth/login/password [post]
 func Login(c *fiber.Ctx) error {
-	var req LoginRequest
+	var req *model.LoginRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(
 			fiber.StatusBadRequest,
@@ -86,10 +80,10 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// 返回令牌
-	return c.JSON(model.NewSuccess("Login successful", fiber.Map{
-		"accessToken": t,
-		"expires":     expires,
-		"username":    u.Name,
-		"roles":       []string{"admin"},
+	return c.JSON(model.NewSuccess("Login successful", model.LoginResp{
+		AccessToken: t,
+		Expires:     expires,
+		Username:    u.Name,
+		Roles:       []string{"admin"},
 	}))
 }

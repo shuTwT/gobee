@@ -15,6 +15,7 @@ import (
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
 	"gobee/ent/post"
+	"gobee/ent/role"
 	"gobee/ent/schema"
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
@@ -33,11 +34,11 @@ func init() {
 	albumFields := schema.Album{}.Fields()
 	_ = albumFields
 	// albumDescCreatedAt is the schema descriptor for created_at field.
-	albumDescCreatedAt := albumMixinFields0[0].Descriptor()
+	albumDescCreatedAt := albumMixinFields0[1].Descriptor()
 	// album.DefaultCreatedAt holds the default value on creation for the created_at field.
 	album.DefaultCreatedAt = albumDescCreatedAt.Default.(func() time.Time)
 	// albumDescUpdatedAt is the schema descriptor for updated_at field.
-	albumDescUpdatedAt := albumMixinFields0[1].Descriptor()
+	albumDescUpdatedAt := albumMixinFields0[2].Descriptor()
 	// album.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	album.DefaultUpdatedAt = albumDescUpdatedAt.Default.(func() time.Time)
 	// album.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -60,11 +61,11 @@ func init() {
 	albumphotoFields := schema.AlbumPhoto{}.Fields()
 	_ = albumphotoFields
 	// albumphotoDescCreatedAt is the schema descriptor for created_at field.
-	albumphotoDescCreatedAt := albumphotoMixinFields0[0].Descriptor()
+	albumphotoDescCreatedAt := albumphotoMixinFields0[1].Descriptor()
 	// albumphoto.DefaultCreatedAt holds the default value on creation for the created_at field.
 	albumphoto.DefaultCreatedAt = albumphotoDescCreatedAt.Default.(func() time.Time)
 	// albumphotoDescUpdatedAt is the schema descriptor for updated_at field.
-	albumphotoDescUpdatedAt := albumphotoMixinFields0[1].Descriptor()
+	albumphotoDescUpdatedAt := albumphotoMixinFields0[2].Descriptor()
 	// albumphoto.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	albumphoto.DefaultUpdatedAt = albumphotoDescUpdatedAt.Default.(func() time.Time)
 	// albumphoto.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -79,11 +80,11 @@ func init() {
 	apipermsFields := schema.ApiPerms{}.Fields()
 	_ = apipermsFields
 	// apipermsDescCreatedAt is the schema descriptor for created_at field.
-	apipermsDescCreatedAt := apipermsMixinFields0[0].Descriptor()
+	apipermsDescCreatedAt := apipermsMixinFields0[1].Descriptor()
 	// apiperms.DefaultCreatedAt holds the default value on creation for the created_at field.
 	apiperms.DefaultCreatedAt = apipermsDescCreatedAt.Default.(func() time.Time)
 	// apipermsDescUpdatedAt is the schema descriptor for updated_at field.
-	apipermsDescUpdatedAt := apipermsMixinFields0[1].Descriptor()
+	apipermsDescUpdatedAt := apipermsMixinFields0[2].Descriptor()
 	// apiperms.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	apiperms.DefaultUpdatedAt = apipermsDescUpdatedAt.Default.(func() time.Time)
 	// apiperms.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -106,11 +107,11 @@ func init() {
 	commentFields := schema.Comment{}.Fields()
 	_ = commentFields
 	// commentDescCreatedAt is the schema descriptor for created_at field.
-	commentDescCreatedAt := commentMixinFields0[0].Descriptor()
+	commentDescCreatedAt := commentMixinFields0[1].Descriptor()
 	// comment.DefaultCreatedAt holds the default value on creation for the created_at field.
 	comment.DefaultCreatedAt = commentDescCreatedAt.Default.(func() time.Time)
 	// commentDescUpdatedAt is the schema descriptor for updated_at field.
-	commentDescUpdatedAt := commentMixinFields0[1].Descriptor()
+	commentDescUpdatedAt := commentMixinFields0[2].Descriptor()
 	// comment.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	comment.DefaultUpdatedAt = commentDescUpdatedAt.Default.(func() time.Time)
 	// comment.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -151,11 +152,11 @@ func init() {
 	fileFields := schema.File{}.Fields()
 	_ = fileFields
 	// fileDescCreatedAt is the schema descriptor for created_at field.
-	fileDescCreatedAt := fileMixinFields0[0].Descriptor()
+	fileDescCreatedAt := fileMixinFields0[1].Descriptor()
 	// file.DefaultCreatedAt holds the default value on creation for the created_at field.
 	file.DefaultCreatedAt = fileDescCreatedAt.Default.(func() time.Time)
 	// fileDescUpdatedAt is the schema descriptor for updated_at field.
-	fileDescUpdatedAt := fileMixinFields0[1].Descriptor()
+	fileDescUpdatedAt := fileMixinFields0[2].Descriptor()
 	// file.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	file.DefaultUpdatedAt = fileDescUpdatedAt.Default.(func() time.Time)
 	// file.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -208,11 +209,11 @@ func init() {
 	oauth2accesstokenFields := schema.Oauth2AccessToken{}.Fields()
 	_ = oauth2accesstokenFields
 	// oauth2accesstokenDescCreatedAt is the schema descriptor for created_at field.
-	oauth2accesstokenDescCreatedAt := oauth2accesstokenMixinFields0[0].Descriptor()
+	oauth2accesstokenDescCreatedAt := oauth2accesstokenMixinFields0[1].Descriptor()
 	// oauth2accesstoken.DefaultCreatedAt holds the default value on creation for the created_at field.
 	oauth2accesstoken.DefaultCreatedAt = oauth2accesstokenDescCreatedAt.Default.(func() time.Time)
 	// oauth2accesstokenDescUpdatedAt is the schema descriptor for updated_at field.
-	oauth2accesstokenDescUpdatedAt := oauth2accesstokenMixinFields0[1].Descriptor()
+	oauth2accesstokenDescUpdatedAt := oauth2accesstokenMixinFields0[2].Descriptor()
 	// oauth2accesstoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	oauth2accesstoken.DefaultUpdatedAt = oauth2accesstokenDescUpdatedAt.Default.(func() time.Time)
 	// oauth2accesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -295,11 +296,11 @@ func init() {
 	oauth2codeFields := schema.Oauth2Code{}.Fields()
 	_ = oauth2codeFields
 	// oauth2codeDescCreatedAt is the schema descriptor for created_at field.
-	oauth2codeDescCreatedAt := oauth2codeMixinFields0[0].Descriptor()
+	oauth2codeDescCreatedAt := oauth2codeMixinFields0[1].Descriptor()
 	// oauth2code.DefaultCreatedAt holds the default value on creation for the created_at field.
 	oauth2code.DefaultCreatedAt = oauth2codeDescCreatedAt.Default.(func() time.Time)
 	// oauth2codeDescUpdatedAt is the schema descriptor for updated_at field.
-	oauth2codeDescUpdatedAt := oauth2codeMixinFields0[1].Descriptor()
+	oauth2codeDescUpdatedAt := oauth2codeMixinFields0[2].Descriptor()
 	// oauth2code.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	oauth2code.DefaultUpdatedAt = oauth2codeDescUpdatedAt.Default.(func() time.Time)
 	// oauth2code.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -382,11 +383,11 @@ func init() {
 	oauth2refreshtokenFields := schema.Oauth2RefreshToken{}.Fields()
 	_ = oauth2refreshtokenFields
 	// oauth2refreshtokenDescCreatedAt is the schema descriptor for created_at field.
-	oauth2refreshtokenDescCreatedAt := oauth2refreshtokenMixinFields0[0].Descriptor()
+	oauth2refreshtokenDescCreatedAt := oauth2refreshtokenMixinFields0[1].Descriptor()
 	// oauth2refreshtoken.DefaultCreatedAt holds the default value on creation for the created_at field.
 	oauth2refreshtoken.DefaultCreatedAt = oauth2refreshtokenDescCreatedAt.Default.(func() time.Time)
 	// oauth2refreshtokenDescUpdatedAt is the schema descriptor for updated_at field.
-	oauth2refreshtokenDescUpdatedAt := oauth2refreshtokenMixinFields0[1].Descriptor()
+	oauth2refreshtokenDescUpdatedAt := oauth2refreshtokenMixinFields0[2].Descriptor()
 	// oauth2refreshtoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	oauth2refreshtoken.DefaultUpdatedAt = oauth2refreshtokenDescUpdatedAt.Default.(func() time.Time)
 	// oauth2refreshtoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -451,11 +452,11 @@ func init() {
 	pageFields := schema.Page{}.Fields()
 	_ = pageFields
 	// pageDescCreatedAt is the schema descriptor for created_at field.
-	pageDescCreatedAt := pageMixinFields0[0].Descriptor()
+	pageDescCreatedAt := pageMixinFields0[1].Descriptor()
 	// page.DefaultCreatedAt holds the default value on creation for the created_at field.
 	page.DefaultCreatedAt = pageDescCreatedAt.Default.(func() time.Time)
 	// pageDescUpdatedAt is the schema descriptor for updated_at field.
-	pageDescUpdatedAt := pageMixinFields0[1].Descriptor()
+	pageDescUpdatedAt := pageMixinFields0[2].Descriptor()
 	// page.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	page.DefaultUpdatedAt = pageDescUpdatedAt.Default.(func() time.Time)
 	// page.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -488,11 +489,11 @@ func init() {
 	paychannelFields := schema.PayChannel{}.Fields()
 	_ = paychannelFields
 	// paychannelDescCreatedAt is the schema descriptor for created_at field.
-	paychannelDescCreatedAt := paychannelMixinFields0[0].Descriptor()
+	paychannelDescCreatedAt := paychannelMixinFields0[1].Descriptor()
 	// paychannel.DefaultCreatedAt holds the default value on creation for the created_at field.
 	paychannel.DefaultCreatedAt = paychannelDescCreatedAt.Default.(func() time.Time)
 	// paychannelDescUpdatedAt is the schema descriptor for updated_at field.
-	paychannelDescUpdatedAt := paychannelMixinFields0[1].Descriptor()
+	paychannelDescUpdatedAt := paychannelMixinFields0[2].Descriptor()
 	// paychannel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	paychannel.DefaultUpdatedAt = paychannelDescUpdatedAt.Default.(func() time.Time)
 	// paychannel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -557,11 +558,11 @@ func init() {
 	payorderFields := schema.PayOrder{}.Fields()
 	_ = payorderFields
 	// payorderDescCreatedAt is the schema descriptor for created_at field.
-	payorderDescCreatedAt := payorderMixinFields0[0].Descriptor()
+	payorderDescCreatedAt := payorderMixinFields0[1].Descriptor()
 	// payorder.DefaultCreatedAt holds the default value on creation for the created_at field.
 	payorder.DefaultCreatedAt = payorderDescCreatedAt.Default.(func() time.Time)
 	// payorderDescUpdatedAt is the schema descriptor for updated_at field.
-	payorderDescUpdatedAt := payorderMixinFields0[1].Descriptor()
+	payorderDescUpdatedAt := payorderMixinFields0[2].Descriptor()
 	// payorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	payorder.DefaultUpdatedAt = payorderDescUpdatedAt.Default.(func() time.Time)
 	// payorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -576,11 +577,11 @@ func init() {
 	postFields := schema.Post{}.Fields()
 	_ = postFields
 	// postDescCreatedAt is the schema descriptor for created_at field.
-	postDescCreatedAt := postMixinFields0[0].Descriptor()
+	postDescCreatedAt := postMixinFields0[1].Descriptor()
 	// post.DefaultCreatedAt holds the default value on creation for the created_at field.
 	post.DefaultCreatedAt = postDescCreatedAt.Default.(func() time.Time)
 	// postDescUpdatedAt is the schema descriptor for updated_at field.
-	postDescUpdatedAt := postMixinFields0[1].Descriptor()
+	postDescUpdatedAt := postMixinFields0[2].Descriptor()
 	// post.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	post.DefaultUpdatedAt = postDescUpdatedAt.Default.(func() time.Time)
 	// post.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -677,17 +678,76 @@ func init() {
 	postDescSummary := postFields[15].Descriptor()
 	// post.SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
 	post.SummaryValidator = postDescSummary.Validators[0].(func(string) error)
+	roleMixin := schema.Role{}.Mixin()
+	roleMixinFields0 := roleMixin[0].Fields()
+	_ = roleMixinFields0
+	roleFields := schema.Role{}.Fields()
+	_ = roleFields
+	// roleDescCreatedAt is the schema descriptor for created_at field.
+	roleDescCreatedAt := roleMixinFields0[1].Descriptor()
+	// role.DefaultCreatedAt holds the default value on creation for the created_at field.
+	role.DefaultCreatedAt = roleDescCreatedAt.Default.(func() time.Time)
+	// roleDescUpdatedAt is the schema descriptor for updated_at field.
+	roleDescUpdatedAt := roleMixinFields0[2].Descriptor()
+	// role.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	role.DefaultUpdatedAt = roleDescUpdatedAt.Default.(func() time.Time)
+	// role.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	role.UpdateDefaultUpdatedAt = roleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// roleDescName is the schema descriptor for name field.
+	roleDescName := roleFields[0].Descriptor()
+	// role.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	role.NameValidator = func() func(string) error {
+		validators := roleDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// roleDescCode is the schema descriptor for code field.
+	roleDescCode := roleFields[1].Descriptor()
+	// role.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	role.CodeValidator = func() func(string) error {
+		validators := roleDescCode.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(code string) error {
+			for _, fn := range fns {
+				if err := fn(code); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// roleDescDescription is the schema descriptor for description field.
+	roleDescDescription := roleFields[2].Descriptor()
+	// role.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	role.DescriptionValidator = roleDescDescription.Validators[0].(func(string) error)
+	// roleDescIsDefault is the schema descriptor for is_default field.
+	roleDescIsDefault := roleFields[3].Descriptor()
+	// role.DefaultIsDefault holds the default value on creation for the is_default field.
+	role.DefaultIsDefault = roleDescIsDefault.Default.(bool)
 	settingMixin := schema.Setting{}.Mixin()
 	settingMixinFields0 := settingMixin[0].Fields()
 	_ = settingMixinFields0
 	settingFields := schema.Setting{}.Fields()
 	_ = settingFields
 	// settingDescCreatedAt is the schema descriptor for created_at field.
-	settingDescCreatedAt := settingMixinFields0[0].Descriptor()
+	settingDescCreatedAt := settingMixinFields0[1].Descriptor()
 	// setting.DefaultCreatedAt holds the default value on creation for the created_at field.
 	setting.DefaultCreatedAt = settingDescCreatedAt.Default.(func() time.Time)
 	// settingDescUpdatedAt is the schema descriptor for updated_at field.
-	settingDescUpdatedAt := settingMixinFields0[1].Descriptor()
+	settingDescUpdatedAt := settingMixinFields0[2].Descriptor()
 	// setting.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	setting.DefaultUpdatedAt = settingDescUpdatedAt.Default.(func() time.Time)
 	// setting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -738,11 +798,11 @@ func init() {
 	storagestrategyFields := schema.StorageStrategy{}.Fields()
 	_ = storagestrategyFields
 	// storagestrategyDescCreatedAt is the schema descriptor for created_at field.
-	storagestrategyDescCreatedAt := storagestrategyMixinFields0[0].Descriptor()
+	storagestrategyDescCreatedAt := storagestrategyMixinFields0[1].Descriptor()
 	// storagestrategy.DefaultCreatedAt holds the default value on creation for the created_at field.
 	storagestrategy.DefaultCreatedAt = storagestrategyDescCreatedAt.Default.(func() time.Time)
 	// storagestrategyDescUpdatedAt is the schema descriptor for updated_at field.
-	storagestrategyDescUpdatedAt := storagestrategyMixinFields0[1].Descriptor()
+	storagestrategyDescUpdatedAt := storagestrategyMixinFields0[2].Descriptor()
 	// storagestrategy.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	storagestrategy.DefaultUpdatedAt = storagestrategyDescUpdatedAt.Default.(func() time.Time)
 	// storagestrategy.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -793,11 +853,11 @@ func init() {
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userMixinFields0[0].Descriptor()
+	userDescCreatedAt := userMixinFields0[1].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userMixinFields0[1].Descriptor()
+	userDescUpdatedAt := userMixinFields0[2].Descriptor()
 	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -860,11 +920,11 @@ func init() {
 	webhookFields := schema.WebHook{}.Fields()
 	_ = webhookFields
 	// webhookDescCreatedAt is the schema descriptor for created_at field.
-	webhookDescCreatedAt := webhookMixinFields0[0].Descriptor()
+	webhookDescCreatedAt := webhookMixinFields0[1].Descriptor()
 	// webhook.DefaultCreatedAt holds the default value on creation for the created_at field.
 	webhook.DefaultCreatedAt = webhookDescCreatedAt.Default.(func() time.Time)
 	// webhookDescUpdatedAt is the schema descriptor for updated_at field.
-	webhookDescUpdatedAt := webhookMixinFields0[1].Descriptor()
+	webhookDescUpdatedAt := webhookMixinFields0[2].Descriptor()
 	// webhook.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	webhook.DefaultUpdatedAt = webhookDescUpdatedAt.Default.(func() time.Time)
 	// webhook.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

@@ -29,6 +29,40 @@ func ListUser(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", users))
 }
 
+func ListUserPage(c *fiber.Ctx) error {
+	client := database.DB
+	pageQuery := model.PageQuery{}
+	err := c.QueryParser(&pageQuery)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			err.Error(),
+		))
+	}
+
+	count, err := client.User.Query().Count(c.UserContext())
+
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError,
+			err.Error(),
+		))
+	}
+
+	users, err := client.User.Query().
+		Offset((pageQuery.Page - 1) * pageQuery.Size).
+		Limit(pageQuery.Size).
+		All(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError,
+			err.Error(),
+		))
+	}
+	pageResult := model.PageResult[*ent.User]{
+		Total:   int64(count),
+		Records: users,
+	}
+	return c.JSON(model.NewSuccess("success", pageResult))
+}
+
 // @Summary 创建用户
 // @Description 创建一个新用户
 // @Tags users
@@ -41,12 +75,7 @@ func ListUser(c *fiber.Ctx) error {
 // @Router /api/v1/users [post]
 func CreateUser(c *fiber.Ctx) error {
 	client := database.DB
-	var userData struct {
-		Email       string `json:"email"`
-		Name        string `json:"name"`
-		PhoneNumber string `json:"phone_number"`
-		Password    string `json:"password"`
-	}
+	var userData *model.UserCreateReq
 	if err := c.BodyParser(&userData); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),
@@ -116,6 +145,7 @@ func CreateUser(c *fiber.Ctx) error {
 // @Router /api/v1/users/{id} [put]
 func UpdateUser(c *fiber.Ctx) error {
 	client := database.DB
+	var err error
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -123,12 +153,8 @@ func UpdateUser(c *fiber.Ctx) error {
 		))
 	}
 
-	var userData struct {
-		Name        string `json:"name"`
-		PhoneNumber string `json:"phone_number"`
-		Password    string `json:"password"`
-	}
-	if err := c.BodyParser(&userData); err != nil {
+	var userData *model.UserUpdateReq
+	if err = c.BodyParser(&userData); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),
 		))
@@ -145,7 +171,8 @@ func UpdateUser(c *fiber.Ctx) error {
 	// 如果提供了新手机号
 	if userData.PhoneNumber != "" {
 		// 检查手机号是否已被其他用户使用
-		exists, err := client.User.Query().
+		var exists bool
+		exists, err = client.User.Query().
 			Where(
 				user.And(
 					user.PhoneNumberEQ(userData.PhoneNumber),
@@ -168,7 +195,8 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	// 如果提供了新密码
 	if userData.Password != "" {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
+		var hashedPassword []byte
+		hashedPassword, err = bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return c.JSON(model.NewError(fiber.StatusInternalServerError,
 				"Failed to hash password",

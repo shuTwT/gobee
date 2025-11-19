@@ -5,6 +5,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -39,10 +40,15 @@ func (User) Fields() []ent.Field {
 		field.String("password").
 			NotEmpty().MaxLen(255).
 			Sensitive(),
+		field.Int("role_id").Optional().Comment("角色ID"),
 	}
 }
 
 // Edges of the User.
 func (User) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("role", Role.Type).
+			Ref("users").
+			Unique().Field("role_id"),
+	}
 }

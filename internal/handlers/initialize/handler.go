@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"fmt"
+	"gobee/ent"
 	"gobee/internal/database"
 	"gobee/internal/services"
 	"gobee/internal/services/setting"
@@ -10,20 +11,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 )
-
-// InitializeRequest 定义了初始化请求的结构
-type InitializeRequest struct {
-	DBType          string `json:"dbType" validate:"required,oneof=sqlite mysql postgres"`
-	DBHost          string `json:"dbHost"`
-	DBPort          int    `json:"dbPort"`
-	DBUser          string `json:"dbUser"`
-	DBPassword      string `json:"dbPassword"`
-	DBName          string `json:"dbName"`
-	AdminUsername   string `json:"adminUsername" validate:"required"`
-	AdminPassword   string `json:"adminPassword" validate:"required,min=6"`
-	ConfirmPassword string `json:"confirmPassword" validate:"required,min=6"`
-	AdminEmail      string `json:"adminEmail" validate:"required,email"`
-}
 
 // Initialize 处理系统初始化请求
 // @Summary 系统初始化
@@ -38,7 +25,7 @@ type InitializeRequest struct {
 // @Failure 500 {object} model.ErrorResponse "服务器内部错误"
 // @Router /initialize [post]
 func Initialize(c *fiber.Ctx) error {
-	var req InitializeRequest
+	var req *model.InitializeRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -96,11 +83,14 @@ func Initialize(c *fiber.Ctx) error {
 	// 	return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("数据库初始化失败: %v", err)))
 	// }
 
+	// 创建角色e
+	initRole(c)
 	// 创建超级管理员账户
 	adminUser, err := services.CreateUser(services.CreateUserRequest{
 		Username: req.AdminUsername,
 		Password: req.AdminPassword,
 		Email:    req.AdminEmail,
+		RoleId:   1,
 	})
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("创建超级管理员账户失败: %v", err)))
@@ -113,4 +103,29 @@ func Initialize(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(model.NewSuccess("系统初始化成功", nil))
+}
+
+func initRole(c *fiber.Ctx) *ent.Role {
+	client := database.DB
+	// 初始化角色
+	role := client.Role.Create().
+		SetID(1).
+		SetName("超级管理员").
+		SetCode("superAdmin").
+		SetIsDefault(true).
+		SaveX(c.UserContext())
+	client.Role.Create().
+		SetID(2).
+		SetName("访客").
+		SetCode("guest").
+		SetIsDefault(true).
+		SaveX(c.UserContext())
+	client.Role.Create().
+		SetID(3).
+		SetName("普通用户").
+		SetCode("common").
+		SetIsDefault(true).
+		SaveX(c.UserContext())
+
+	return role
 }

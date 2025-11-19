@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { BASE_URL, type ApiResponse } from "./utils";
+import { BASE_URL, type ApiResponse } from "@/api/utils";
 
 // 系统设置接口返回类型
 export interface SettingResponse {

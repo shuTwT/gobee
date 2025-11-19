@@ -11,13 +11,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type StorageStrategyList struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Type   string `json:"type"`
-	Master bool   `json:"master"`
-}
-
 func ListStorageStrategy(c *fiber.Ctx) error {
 	client := database.DB
 	strategies, err := client.StorageStrategy.Query().All(c.Context())
@@ -33,9 +26,9 @@ func ListStorageStrategyAll(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	var strategyList []StorageStrategyList
+	var strategyList []model.StorageStrategyListResp
 	for _, strategy := range strategies {
-		strategyList = append(strategyList, StorageStrategyList{
+		strategyList = append(strategyList, model.StorageStrategyListResp{
 			ID:     strategy.ID,
 			Name:   strategy.Name,
 			Type:   string(strategy.Type),
@@ -76,13 +69,13 @@ func UpdateStorageStrategy(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	var strategy *ent.StorageStrategy
-	if err := c.BodyParser(&strategy); err != nil {
+	var strategy *model.StorageStrategyUpdateReq
+	if err = c.BodyParser(&strategy); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 	newStrategy, err := client.StorageStrategy.UpdateOneID(id).
 		SetName(strategy.Name).
-		SetType(strategy.Type).
+		SetType(storagestrategy.Type(strategy.Type)).
 		SetNodeID(strategy.NodeID).
 		SetBucket(strategy.Bucket).
 		SetAccessKey(strategy.AccessKey).

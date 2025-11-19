@@ -78,6 +78,12 @@ func (_c *Oauth2RefreshTokenCreate) SetExpireAt(v time.Time) *Oauth2RefreshToken
 	return _c
 }
 
+// SetID sets the "id" field.
+func (_c *Oauth2RefreshTokenCreate) SetID(v int) *Oauth2RefreshTokenCreate {
+	_c.mutation.SetID(v)
+	return _c
+}
+
 // Mutation returns the Oauth2RefreshTokenMutation object of the builder.
 func (_c *Oauth2RefreshTokenCreate) Mutation() *Oauth2RefreshTokenMutation {
 	return _c.mutation
@@ -175,8 +181,10 @@ func (_c *Oauth2RefreshTokenCreate) sqlSave(ctx context.Context) (*Oauth2Refresh
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -187,6 +195,10 @@ func (_c *Oauth2RefreshTokenCreate) createSpec() (*Oauth2RefreshToken, *sqlgraph
 		_node = &Oauth2RefreshToken{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(oauth2refreshtoken.Table, sqlgraph.NewFieldSpec(oauth2refreshtoken.FieldID, field.TypeInt))
 	)
+	if id, ok := _c.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(oauth2refreshtoken.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -263,7 +275,7 @@ func (_c *Oauth2RefreshTokenCreateBulk) Save(ctx context.Context) ([]*Oauth2Refr
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

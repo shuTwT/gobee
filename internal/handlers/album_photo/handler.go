@@ -1,7 +1,6 @@
 package albumphoto
 
 import (
-	"gobee/ent"
 	"gobee/ent/albumphoto"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
@@ -21,7 +20,7 @@ func ListAlbumPhoto(c *fiber.Ctx) error {
 }
 
 func CreateAlbumPhoto(c *fiber.Ctx) error {
-	var albumPhoto *ent.AlbumPhoto
+	var albumPhoto *model.AlbumPhotoCreateReq
 	if err := c.BodyParser(&albumPhoto); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -35,12 +34,17 @@ func CreateAlbumPhoto(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", albumPhoto))
 }
 func UpdateAlbumPhoto(c *fiber.Ctx) error {
-	var albumPhoto *ent.AlbumPhoto
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format"))
+	}
+	var albumPhoto *model.AlbumPhotoUpdateReq
 	if err := c.BodyParser(&albumPhoto); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 	client := database.DB
-	if err := client.AlbumPhoto.UpdateOneID(albumPhoto.ID).
+	if err := client.AlbumPhoto.UpdateOneID(id).
 		SetImageURL(albumPhoto.ImageURL).
 		Exec(c.Context()); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))

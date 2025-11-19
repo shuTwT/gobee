@@ -72,6 +72,12 @@ func (_c *PayChannelCreate) SetConfig(v string) *PayChannelCreate {
 	return _c
 }
 
+// SetID sets the "id" field.
+func (_c *PayChannelCreate) SetID(v int) *PayChannelCreate {
+	_c.mutation.SetID(v)
+	return _c
+}
+
 // Mutation returns the PayChannelMutation object of the builder.
 func (_c *PayChannelCreate) Mutation() *PayChannelMutation {
 	return _c.mutation
@@ -166,8 +172,10 @@ func (_c *PayChannelCreate) sqlSave(ctx context.Context) (*PayChannel, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -178,6 +186,10 @@ func (_c *PayChannelCreate) createSpec() (*PayChannel, *sqlgraph.CreateSpec) {
 		_node = &PayChannel{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(paychannel.Table, sqlgraph.NewFieldSpec(paychannel.FieldID, field.TypeInt))
 	)
+	if id, ok := _c.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(paychannel.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -250,7 +262,7 @@ func (_c *PayChannelCreateBulk) Save(ctx context.Context) ([]*PayChannel, error)
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

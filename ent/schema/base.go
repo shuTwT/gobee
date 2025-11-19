@@ -19,6 +19,9 @@ func (BaseMixin) Fields() []ent.Field {
 		// field.UUID("id", uuid.UUID{}).
 		// 	Default(uuid.New).
 		// 	StorageKey("oid"),
+		field.Int("id").
+			Unique().    // 主键唯一（必选）
+			Immutable(), // 不可修改（可选，推荐）
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),

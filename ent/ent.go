@@ -19,6 +19,7 @@ import (
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
 	"gobee/ent/post"
+	"gobee/ent/role"
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
@@ -102,6 +103,7 @@ func checkColumn(t, c string) error {
 			paychannel.Table:         paychannel.ValidColumn,
 			payorder.Table:           payorder.ValidColumn,
 			post.Table:               post.ValidColumn,
+			role.Table:               role.ValidColumn,
 			setting.Table:            setting.ValidColumn,
 			storagestrategy.Table:    storagestrategy.ValidColumn,
 			user.Table:               user.ValidColumn,

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { NDescriptions,NDescriptionsItem } from 'naive-ui'
 const colorOptions = ref([
   {
     value: 'light',

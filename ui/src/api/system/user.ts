@@ -1,8 +1,12 @@
 import { http } from "@/utils/http";
-import { BASE_URL, type ApiResponse } from "../utils";
+import { BASE_URL, type ApiResponse, type TableResponse } from "@/api/utils";
 
 export const getUserList = () => {
   return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/user/list`)
+}
+
+export const getUserPage = (params?:any) => {
+  return http.request<TableResponse<any>>('get',`${BASE_URL}/v1/user/page`,{params})
 }
 
 export const createUser = () => {

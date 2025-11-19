@@ -38,6 +38,8 @@ type Tx struct {
 	PayOrder *PayOrderClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
+	// Role is the client for interacting with the Role builders.
+	Role *RoleClient
 	// Setting is the client for interacting with the Setting builders.
 	Setting *SettingClient
 	// StorageStrategy is the client for interacting with the StorageStrategy builders.
@@ -190,6 +192,7 @@ func (tx *Tx) init() {
 	tx.PayChannel = NewPayChannelClient(tx.config)
 	tx.PayOrder = NewPayOrderClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
+	tx.Role = NewRoleClient(tx.config)
 	tx.Setting = NewSettingClient(tx.config)
 	tx.StorageStrategy = NewStorageStrategyClient(tx.config)
 	tx.User = NewUserClient(tx.config)

@@ -106,9 +106,9 @@ npm run dev
 
 当项目成功启动后，你可以通过以下地址访问：
 
-- 🏠 **前端页面**: http://localhost:3000
-- 🔧 **管理后台**: http://localhost:3000/console
-- 📚 **API 文档**: http://localhost:3000/api/v1
+- 🏠 **前端页面**: http://localhost:13000
+- 🔧 **管理后台**: http://localhost:13000/console
+- 📚 **API 文档**: http://localhost:13000/api/v1
 
 ### ⚙️ 环境配置
 

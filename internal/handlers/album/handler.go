@@ -59,7 +59,7 @@ func ListAlbumPage(c *fiber.Ctx) error {
 }
 
 func CreateAlbum(c *fiber.Ctx) error {
-	var album *ent.Album
+	var album *model.AlbumCreateReq
 	if err := c.BodyParser(&album); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -80,7 +80,7 @@ func UpdateAlbum(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	var album *ent.Album
+	var album *model.AlbumUpdateReq
 	if err := c.BodyParser(&album); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}

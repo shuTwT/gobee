@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NButton, NIcon, type DataTableColumns } from 'naive-ui'
+import { NButton, NIcon,NDataTable, type DataTableColumns } from 'naive-ui'
 import { Pencil,RefreshOutline } from '@vicons/ionicons5'
 import * as userApi from '@/api/system/user'
 import { addDialog } from '@/components/dialog'
@@ -12,6 +12,7 @@ const pagination = reactive({
   page: 1,
   pageSize: 10,
   showSizePicker: true,
+  total: 0,
   pageSizes: [10, 20, 50, 100],
   onChange: (page: number) => {
     pagination.page = page
@@ -22,7 +23,7 @@ const pagination = reactive({
   },
 })
 
-const dataList = ref([])
+const dataList = ref<any>([])
 const loading = ref(false)
 
 // 表格列定义
@@ -100,10 +101,18 @@ const openEditDialog=(title="新增",row?:any)=>{
   })
 }
 
-onMounted(()=>{
-  userApi.getUserList().then(res=>{
-    dataList.value = res.data || []
+const onSearch= ()=>{
+  userApi.getUserPage({
+    pageNum: pagination.page,
+    pageSize: pagination.pageSize,
+  }).then(res=>{
+    dataList.value = res.data.records || []
+    pagination.total = res.data.total || 0
   })
+}
+
+onMounted(()=>{
+  onSearch()
 })
 </script>
 <template>
@@ -115,8 +124,8 @@ onMounted(()=>{
 
         </div>
         <div class="action-section">
-          <n-button type="primary"  style="margin-right: 12px" @click="openEditDialog('新增')"> <i class="bi bi-plus"></i> 添加用户 </n-button>
-          <n-button>
+          <n-button type="primary" style="margin-right: 12px" @click="openEditDialog('新增')"> <i class="bi bi-plus"></i> 添加用户 </n-button>
+          <n-button @click="onSearch()">
             <template #icon>
               <n-icon><refresh-outline /></n-icon>
             </template>

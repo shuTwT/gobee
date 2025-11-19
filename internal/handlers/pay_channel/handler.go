@@ -40,12 +40,7 @@ func ListPayChannel(c *fiber.Ctx) error {
 // @Router /api/v1/paychannels [post]
 func CreatePayChannel(c *fiber.Ctx) error {
 	client := database.DB
-	var channel struct {
-		Name   string `json:"name"`
-		Code   string `json:"code"`
-		Type   string `json:"type"`
-		Config string `json:"config"`
-	}
+	var channel *model.PayChannelCreateReq
 	if err := c.BodyParser(&channel); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -81,12 +76,7 @@ func UpdatePayChannel(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
 	}
 
-	var channel struct {
-		Name   string `json:"name"`
-		Code   string `json:"code"`
-		Type   string `json:"type"`
-		Config string `json:"config"`
-	}
+	var channel *model.PayChannelUpdateReq
 	if err := c.BodyParser(&channel); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}

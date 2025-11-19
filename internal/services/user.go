@@ -12,6 +12,7 @@ type CreateUserRequest struct {
 	Username string `validate:"required"`
 	Password string `validate:"required"`
 	Email    string `validate:"required,email"`
+	RoleId   int
 }
 
 func CreateUser(req CreateUserRequest) (*ent.User, error) {
@@ -24,7 +25,7 @@ func CreateUser(req CreateUserRequest) (*ent.User, error) {
 		SetName(req.Username).
 		SetPassword(string(hashedPassword)).
 		SetEmail(req.Email).
-		// SetRole(user.RoleAdmin).
+		SetRoleID(req.RoleId).
 		Save(context.Background())
 
 	if err != nil {

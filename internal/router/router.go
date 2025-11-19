@@ -11,6 +11,7 @@ import (
 	paychannel_handler "gobee/internal/handlers/pay_channel"
 	payorder_handler "gobee/internal/handlers/pay_order"
 	post_handler "gobee/internal/handlers/post"
+	role_handler "gobee/internal/handlers/role"
 	route_handler "gobee/internal/handlers/route"
 	setting_handler "gobee/internal/handlers/setting"
 	storagestrategy_handler "gobee/internal/handlers/storage_strategy"
@@ -83,9 +84,19 @@ func Initialize(router *fiber.App) {
 				payOrderApi.Get("/query/:id", payorder_handler.QueryPayOrder).Name("payOrderQuery")
 				payOrderApi.Delete("/delete/:id", payorder_handler.DeletePayOrder).Name("payOrderDelete")
 			}
+			roleApi := apiV1.Group("/role")
+			{
+				roleApi.Get("/list", role_handler.ListRole).Name("roleList")
+				roleApi.Get("/page", role_handler.ListRolePage).Name("rolePage")
+				roleApi.Post("/create", role_handler.CreateRole).Name("roleCreate")
+				roleApi.Put("/update/:id", role_handler.UpdateRole).Name("roleUpdate")
+				roleApi.Get("/query/:id", role_handler.QueryRole).Name("roleQuery")
+				roleApi.Delete("/delete/:id", role_handler.DeleteRole).Name("roleDelete")
+			}
 			userApi := apiV1.Group("/user")
 			{
 				userApi.Get("/list", user_handler.ListUser).Name("userList")
+				userApi.Get("/page", user_handler.ListUserPage).Name("userPage")
 				userApi.Post("/create", user_handler.CreateUser).Name("userCreate")
 				userApi.Put("/update/:id", user_handler.UpdateUser).Name("userUpdate")
 				userApi.Get("/query/:id", user_handler.QueryUser).Name("userQuery")

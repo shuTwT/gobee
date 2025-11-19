@@ -249,6 +249,22 @@ var (
 		Columns:    PostsColumns,
 		PrimaryKey: []*schema.Column{PostsColumns[0]},
 	}
+	// RolesColumns holds the columns for the "roles" table.
+	RolesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "code", Type: field.TypeString, Unique: true, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 512},
+		{Name: "is_default", Type: field.TypeBool, Default: false},
+	}
+	// RolesTable holds the schema information for the "roles" table.
+	RolesTable = &schema.Table{
+		Name:       "roles",
+		Columns:    RolesColumns,
+		PrimaryKey: []*schema.Column{RolesColumns[0]},
+	}
 	// SettingsColumns holds the columns for the "settings" table.
 	SettingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -298,12 +314,21 @@ var (
 		{Name: "phone_number", Type: field.TypeString, Unique: true, Nullable: true, Size: 20},
 		{Name: "phone_number_verified", Type: field.TypeBool, Default: false},
 		{Name: "password", Type: field.TypeString, Size: 255},
+		{Name: "role_id", Type: field.TypeInt, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "users_roles_users",
+				Columns:    []*schema.Column{UsersColumns[9]},
+				RefColumns: []*schema.Column{RolesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// WebHooksColumns holds the columns for the "web_hooks" table.
 	WebHooksColumns = []*schema.Column{
@@ -335,6 +360,7 @@ var (
 		PayChannelsTable,
 		PayOrdersTable,
 		PostsTable,
+		RolesTable,
 		SettingsTable,
 		StorageStrategiesTable,
 		UsersTable,
@@ -343,4 +369,5 @@ var (
 )
 
 func init() {
+	UsersTable.ForeignKeys[0].RefTable = RolesTable
 }

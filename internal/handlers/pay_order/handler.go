@@ -40,21 +40,7 @@ func ListPayOrder(c *fiber.Ctx) error {
 // @Router /api/v1/payorders [post]
 func CreatePayOrder(c *fiber.Ctx) error {
 	client := database.DB
-	var order struct {
-		ChannelID  string `json:"channel_id"`
-		OrderID    string `json:"order_id"`
-		OutTradeNo string `json:"out_trade_no"`
-		TotalFee   string `json:"total_fee"`
-		Subject    string `json:"subject"`
-		Body       string `json:"body"`
-		NotifyURL  string `json:"notify_url"`
-		ReturnURL  string `json:"return_url"`
-		Extra      string `json:"extra"`
-		PayURL     string `json:"pay_url"`
-		State      string `json:"state"`
-		ErrorMsg   string `json:"error_msg"`
-		Raw        string `json:"raw"`
-	}
+	var order *model.PayOrderCreateReq
 	if err := c.BodyParser(&order); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -99,22 +85,8 @@ func UpdatePayOrder(c *fiber.Ctx) error {
 			"Invalid ID format"))
 	}
 
-	var order struct {
-		ChannelID  string `json:"channel_id"`
-		OrderID    string `json:"order_id"`
-		OutTradeNo string `json:"out_trade_no"`
-		TotalFee   string `json:"total_fee"`
-		Subject    string `json:"subject"`
-		Body       string `json:"body"`
-		NotifyURL  string `json:"notify_url"`
-		ReturnURL  string `json:"return_url"`
-		Extra      string `json:"extra"`
-		PayURL     string `json:"pay_url"`
-		State      string `json:"state"`
-		ErrorMsg   string `json:"error_msg"`
-		Raw        string `json:"raw"`
-	}
-	if err := c.BodyParser(&order); err != nil {
+	var order *model.PayOrderUpdateReq
+	if err = c.BodyParser(&order); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
