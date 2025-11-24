@@ -1,20 +1,42 @@
 <script setup lang="ts">
 import { FileTraySharp } from "@vicons/ionicons5"
+import type { AlbumPhotoFormProps } from "./utils/types";
+import type { FormInst, FormRules } from "naive-ui";
 
-const formData = ref({
-  name:"",
-  image_url:"",
-  description:""
-})
+const props = defineProps<AlbumPhotoFormProps>()
+
+const formRef = ref<FormInst|null>()
+const formData = ref(props.formInline)
+const rules:FormRules = {
+  title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
+}
+
+const getData = () => {
+  return new Promise((resolve, reject) => {
+    if (formRef.value) {
+      formRef.value?.validate((errors) => {
+        if (!errors) {
+          resolve(toRaw(formData.value))
+        } else {
+          reject(errors)
+        }
+      })
+    } else {
+      reject(new Error('表单实例不存在'))
+    }
+  })
+}
+
+defineExpose({getData})
 </script>
 <template>
-  <n-form>
+  <n-form ref="formRef" :rules="rules" :model="formData">
     <n-form-item label="相片名称" path="name">
       <n-input v-model:value="formData.name" />
     </n-form-item>
     <n-form-item label="图片地址" path="image_url">
-      <n-input-group v-model:value="formData.image_url" >
-        <n-input/>
+      <n-input-group >
+        <n-input v-model:value="formData.image_url"/>
         <n-button>
           <n-icon>
             <file-tray-sharp/>

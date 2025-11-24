@@ -28,7 +28,9 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
 		{Name: "image_url", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString},
 		{Name: "view_count", Type: field.TypeInt, Default: 0},
 		{Name: "album_id", Type: field.TypeInt},
 	}

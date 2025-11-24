@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import type { SettingsProps } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
 const message = useMessage()
 
 const securityFormRef = ref<FormInst | null>(null)
 const securityLoading = ref(false)
 
-const securityForm = reactive({
+const defaultForm = {
+  enableTwoFactor: false,
+  maxLoginAttempts: 5,
+  lockoutDuration: 15,
+  sessionTimeout: 120,
+  minPasswordLength: 8,
+  passwordComplexity: ['uppercase', 'lowercase', 'number'],
+  apiRateLimit: 100,
+  ipWhitelist: [] as string[],
+  ipBlacklist: [] as string[]
+}
+const securityForm = ref({
   enableTwoFactor: false,
   maxLoginAttempts: 5,
   lockoutDuration: 15,
@@ -24,25 +30,13 @@ const securityForm = reactive({
   ipBlacklist: [] as string[]
 })
 
-watch(()=>props.settings,(newSettings)=>{
-  securityForm.enableTwoFactor = newSettings.enableTwoFactor || false
-  securityForm.maxLoginAttempts = newSettings.maxLoginAttempts || 5
-  securityForm.lockoutDuration = newSettings.lockoutDuration || 15
-  securityForm.sessionTimeout = newSettings.sessionTimeout || 120
-  securityForm.minPasswordLength = newSettings.minPasswordLength || 8
-  securityForm.passwordComplexity = newSettings.passwordComplexity || ['uppercase', 'lowercase', 'number']
-  securityForm.apiRateLimit = newSettings.apiRateLimit || 100
-  securityForm.ipWhitelist = newSettings.ipWhitelist || []
-  securityForm.ipBlacklist = newSettings.ipBlacklist || []
-})
-
 // 保存安全设置
 const saveSecuritySettings = async () => {
   securityLoading.value = true
   try {
-    await settingApi.saveSettings(securityForm)
+    await settingApi.saveSettings('security',securityForm.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('安全设置保存成功')
   } catch {
     message.error('安全设置保存失败')
@@ -50,6 +44,15 @@ const saveSecuritySettings = async () => {
     securityLoading.value = false
   }
 }
+
+const onSearch = async ()=>{
+  const res = await settingApi.getSettingsMap('security')
+  securityForm.value = Object.assign({},defaultForm,res.data)
+}
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

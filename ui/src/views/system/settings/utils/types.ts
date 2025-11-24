@@ -1,5 +1,4 @@
-export type SettingsProps = Partial<{
-  //basicSetting
+export type basicSetting = {
   siteName: string
   siteDescription: string
   siteLogo: string
@@ -9,7 +8,8 @@ export type SettingsProps = Partial<{
   timezone: string
   dateFormat: string
   timeFormat: string
-  // aiConfig
+}
+export type AiSetting = {
   openaiApiKey: string
   openaiApiUrl: string
   aiModel: string
@@ -18,7 +18,8 @@ export type SettingsProps = Partial<{
   aiTopP: number
   aiFrequencyPenalty: number
   aiPresencePenalty: number
-  // emailSetting
+}
+export type EmailSetting = {
   smtpHost: string
   smtpPort: number
   smtpUsername: string
@@ -26,7 +27,8 @@ export type SettingsProps = Partial<{
   smtpEncryption: string
   senderEmail: string
   senderName: string
-  // siteSetting
+}
+export type SiteSetting = {
   maintenanceMode: boolean
   allowRegistration: boolean
   emailVerification: boolean
@@ -37,8 +39,10 @@ export type SettingsProps = Partial<{
   cacheTime: number
   enableSSL: boolean
   enableCDN: boolean
-  cdnUrl: ''
-  // securitySetting
+  cdnUrl: string
+}
+
+export type SecuritySetting = {
   enableTwoFactor: boolean
   maxLoginAttempts: number
   lockoutDuration: number
@@ -48,7 +52,9 @@ export type SettingsProps = Partial<{
   apiRateLimit: number
   ipWhitelist: string[]
   ipBlacklist: string[]
-  // paymentSetting
+}
+
+export type PaymentSetting = {
   enableAlipay: boolean
   alipayAppId: string
   alipayPrivateKey: string
@@ -60,7 +66,9 @@ export type SettingsProps = Partial<{
   paymentNotifyUrl: string
   orderTimeout: number
   refundReview: boolean
-  // notifySetting
+}
+
+export type NotifySetting = {
   enableEmailNotification: boolean
   enableSmsNotification: boolean
   enableInAppNotification: boolean
@@ -74,41 +82,48 @@ export type SettingsProps = Partial<{
   notifySystemError: boolean
   notifyMaintenance: boolean
   notificationEmail: string
-  // seoSetting
-    enableSEO: boolean,
-  siteTitleSuffix: string,
-  siteKeywords: string,
-  siteAuthor: string,
-  siteCopyright: string,
-  siteIcp: string,
-  sitePoliceIcp: string,
-  analyticsCode: string,
-  robotsContent: string,
-  autoGenerateSitemap: boolean,
-  urlRewrite: boolean,
+}
+
+export type SeoSetting = {
+  enableSEO: boolean
+  siteTitleSuffix: string
+  siteKeywords: string
+  siteAuthor: string
+  siteCopyright: string
+  siteIcp: string
+  sitePoliceIcp: string
+  analyticsCode: string
+  robotsContent: string
+  autoGenerateSitemap: boolean
+  urlRewrite: boolean
   custom404Content: string
-  // backupSetting
-    enableAutoBackup: boolean,
-  backupFrequency: string,
-  backupRetentionDays: number,
-  backupStorageLocation: string,
-  backupDatabase: boolean,
-  backupUploads: boolean,
-  backupConfig: boolean,
-  enableRemoteBackup: boolean,
-  remoteStorageType: string,
-  remoteStorageConfig: string,
-  // logSetting
-    enableSystemLogs: boolean,
-  logLevel: string,
-  logRetentionDays: number,
-  maxLogFileSize: number,
-  logUserActions: boolean,
-  logSystemErrors: boolean,
-  logDatabaseQueries: false,
-  logApiCalls: boolean,
-  logPaymentActions: boolean,
-  logStorageType: string,
-  externalLogService:string,
+}
+
+export type BackupSetting = {
+  enableAutoBackup: boolean
+  backupFrequency: string
+  backupRetentionDays: number
+  backupStorageLocation: string
+  backupDatabase: boolean
+  backupUploads: boolean
+  backupConfig: boolean
+  enableRemoteBackup: boolean
+  remoteStorageType: string
+  remoteStorageConfig: string
+}
+
+export type LogSetting = {
+  enableSystemLogs: boolean
+  logLevel: string
+  logRetentionDays: number
+  maxLogFileSize: number
+  logUserActions: boolean
+  logSystemErrors: boolean
+  logDatabaseQueries: false
+  logApiCalls: boolean
+  logPaymentActions: boolean
+  logStorageType: string
+  externalLogService: string
   externalLogConfig: string
-}>
+}
+export type SettingsProps = Partial<{}>

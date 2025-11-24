@@ -1,18 +1,27 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui';
-import type { SettingsProps } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
 const message = useMessage()
 
 const logsFormRef = ref<FormInst | null>(null)
 
 const logsLoading = ref(false)
-const logsForm = reactive({
+const defaultForm = {
+  enableSystemLogs: true,
+  logLevel: 'info',
+  logRetentionDays: 30,
+  maxLogFileSize: 100,
+  logUserActions: true,
+  logSystemErrors: true,
+  logDatabaseQueries: false,
+  logApiCalls: true,
+  logPaymentActions: true,
+  logStorageType: 'file',
+  externalLogService: 'none',
+  externalLogConfig: ''
+}
+const logsForm = ref({
   enableSystemLogs: true,
   logLevel: 'info',
   logRetentionDays: 30,
@@ -27,20 +36,6 @@ const logsForm = reactive({
   externalLogConfig: ''
 })
 
-watch(()=>props.settings,(newSettings)=>{
-  logsForm.enableSystemLogs = newSettings.enableSystemLogs || true
-  logsForm.logLevel = newSettings.logLevel || 'info'
-  logsForm.logRetentionDays = newSettings.logRetentionDays || 30
-  logsForm.maxLogFileSize = newSettings.maxLogFileSize || 100
-  logsForm.logUserActions = newSettings.logUserActions || true
-  logsForm.logSystemErrors = newSettings.logSystemErrors || true
-  logsForm.logDatabaseQueries = newSettings.logDatabaseQueries || false
-  logsForm.logApiCalls = newSettings.logApiCalls || true
-  logsForm.logPaymentActions = newSettings.logPaymentActions || true
-  logsForm.logStorageType = newSettings.logStorageType || 'file'
-  logsForm.externalLogService = newSettings.externalLogService || 'none'
-  logsForm.externalLogConfig = newSettings.externalLogConfig || ''
-})
 
 const logLevelOptions = [
   { label: '调试', value: 'debug' },
@@ -68,9 +63,9 @@ const externalLogServiceOptions = [
 const saveLogsSettings = async () => {
   logsLoading.value = true
   try {
-    await settingApi.saveSettings(logsForm)
+    await settingApi.saveSettings('log',logsForm.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('日志设置保存成功')
   } catch {
     message.error('日志设置保存失败')
@@ -101,6 +96,15 @@ const exportLogs = async () => {
     message.error('日志导出失败')
   }
 }
+
+const onSearch = async ()=>{
+  const res = await settingApi.getSettingsMap('log')
+  logsForm.value = Object.assign({},defaultForm,res.data)
+}
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

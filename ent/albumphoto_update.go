@@ -34,6 +34,20 @@ func (_u *AlbumPhotoUpdate) SetUpdatedAt(v time.Time) *AlbumPhotoUpdate {
 	return _u
 }
 
+// SetName sets the "name" field.
+func (_u *AlbumPhotoUpdate) SetName(v string) *AlbumPhotoUpdate {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *AlbumPhotoUpdate) SetNillableName(v *string) *AlbumPhotoUpdate {
+	if v != nil {
+		_u.SetName(*v)
+	}
+	return _u
+}
+
 // SetImageURL sets the "image_url" field.
 func (_u *AlbumPhotoUpdate) SetImageURL(v string) *AlbumPhotoUpdate {
 	_u.mutation.SetImageURL(v)
@@ -44,6 +58,20 @@ func (_u *AlbumPhotoUpdate) SetImageURL(v string) *AlbumPhotoUpdate {
 func (_u *AlbumPhotoUpdate) SetNillableImageURL(v *string) *AlbumPhotoUpdate {
 	if v != nil {
 		_u.SetImageURL(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *AlbumPhotoUpdate) SetDescription(v string) *AlbumPhotoUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *AlbumPhotoUpdate) SetNillableDescription(v *string) *AlbumPhotoUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
 	return _u
 }
@@ -143,8 +171,14 @@ func (_u *AlbumPhotoUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(albumphoto.FieldUpdatedAt, field.TypeTime, value)
 	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(albumphoto.FieldName, field.TypeString, value)
+	}
 	if value, ok := _u.mutation.ImageURL(); ok {
 		_spec.SetField(albumphoto.FieldImageURL, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(albumphoto.FieldDescription, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.ViewCount(); ok {
 		_spec.SetField(albumphoto.FieldViewCount, field.TypeInt, value)
@@ -184,6 +218,20 @@ func (_u *AlbumPhotoUpdateOne) SetUpdatedAt(v time.Time) *AlbumPhotoUpdateOne {
 	return _u
 }
 
+// SetName sets the "name" field.
+func (_u *AlbumPhotoUpdateOne) SetName(v string) *AlbumPhotoUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *AlbumPhotoUpdateOne) SetNillableName(v *string) *AlbumPhotoUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
+	}
+	return _u
+}
+
 // SetImageURL sets the "image_url" field.
 func (_u *AlbumPhotoUpdateOne) SetImageURL(v string) *AlbumPhotoUpdateOne {
 	_u.mutation.SetImageURL(v)
@@ -194,6 +242,20 @@ func (_u *AlbumPhotoUpdateOne) SetImageURL(v string) *AlbumPhotoUpdateOne {
 func (_u *AlbumPhotoUpdateOne) SetNillableImageURL(v *string) *AlbumPhotoUpdateOne {
 	if v != nil {
 		_u.SetImageURL(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *AlbumPhotoUpdateOne) SetDescription(v string) *AlbumPhotoUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *AlbumPhotoUpdateOne) SetNillableDescription(v *string) *AlbumPhotoUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
 	return _u
 }
@@ -323,8 +385,14 @@ func (_u *AlbumPhotoUpdateOne) sqlSave(ctx context.Context) (_node *AlbumPhoto, 
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(albumphoto.FieldUpdatedAt, field.TypeTime, value)
 	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(albumphoto.FieldName, field.TypeString, value)
+	}
 	if value, ok := _u.mutation.ImageURL(); ok {
 		_spec.SetField(albumphoto.FieldImageURL, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(albumphoto.FieldDescription, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.ViewCount(); ok {
 		_spec.SetField(albumphoto.FieldViewCount, field.TypeInt, value)

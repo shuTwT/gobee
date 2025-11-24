@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import type { SettingsProps } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
+
 const message = useMessage()
 // 选项数据
 const languageOptions = [
@@ -25,7 +21,7 @@ const timezoneOptions = [
 
 const formRef = ref<FormInst | null>(null)
 
-const basicForm = reactive({
+const basicForm = ref({
   siteName: '',
   siteDescription: '',
   siteLogo: '',
@@ -38,17 +34,6 @@ const basicForm = reactive({
   timeFormat: 'HH:mm:ss'
 })
 
-watch(()=>props.settings,(newSettings)=>{
-  basicForm.siteName = newSettings.siteName ?? ''
-  basicForm.siteDescription = newSettings.siteDescription ?? ''
-  basicForm.siteLogo = newSettings.siteLogo ?? ''
-  basicForm.siteFavicon = newSettings.siteFavicon ?? ''
-  basicForm.author = newSettings.author ?? ''
-  basicForm.language = newSettings.language ?? 'zh-CN'
-  basicForm.timezone = newSettings.timezone ?? 'Asia/Shanghai'
-  basicForm.dateFormat = newSettings.dateFormat ?? 'YYYY-MM-DD'
-  basicForm.timeFormat = newSettings.timeFormat ?? 'HH:mm:ss'
-})
 
 const basicLoading = ref(false)
 
@@ -56,9 +41,9 @@ const basicLoading = ref(false)
 const saveBasicSettings = async () => {
   basicLoading.value = true
   try {
-    await settingApi.saveSettings(basicForm)
+    await settingApi.saveSettings('basic',basicForm.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('基本设置保存成功')
   } catch {
     message.error('基本设置保存失败')
@@ -66,6 +51,15 @@ const saveBasicSettings = async () => {
     basicLoading.value = false
   }
 }
+
+const onSearch = async()=>{
+  const res = await settingApi.getSettingsMap('basic')
+  basicForm.value = res.data
+}
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

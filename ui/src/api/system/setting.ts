@@ -12,10 +12,10 @@ export const getSettings = () => {
   return http.request<ApiResponse<SettingResponse>>('get',`${BASE_URL}/v1/settings`);
 };
 
-export const getSettingsMap = ()=>{
-  return http.request<ApiResponse<Record<string,string>>>('get',`${BASE_URL}/v1/settings/map`);
+export const getSettingsMap = (key:string)=>{
+  return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/settings/json/${key}`);
 }
 
-export const saveSettings = (data:Record<string,any>)=>{
-  return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/settings/save`,{data})
+export const saveSettings = (key:string,data:Record<string,any>)=>{
+  return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/settings/json/save/${key}`,{data})
 }

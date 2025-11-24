@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"embed"
 	"gobee/config"
 	"gobee/internal/router"
 	apiinterface "gobee/internal/services/api_interface"
@@ -14,10 +15,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func InitializeApp() *fiber.App {
+func InitializeApp(moduleDefs embed.FS) *fiber.App {
 	godotenv.Load()
 	config.Init()
-	pkg.InitializeServices()
+	pkg.InitializeServices(moduleDefs)
 	engine := html.New("./views", ".tmpl")
 	engine.Debug(true)
 	engine.Reload(true)

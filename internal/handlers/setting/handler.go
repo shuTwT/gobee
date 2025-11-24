@@ -1,6 +1,7 @@
 package setting_handler
 
 import (
+	"encoding/json"
 	"gobee/internal/database"
 	setting_service "gobee/internal/services/setting"
 	"gobee/pkg/domain/model"
@@ -44,51 +45,69 @@ func GetSettings(c *fiber.Ctx) error {
 	}))
 }
 
-func GetSettingsMap(c *fiber.Ctx) error {
+func GetJsonSettingsMap(c *fiber.Ctx) error {
 	client := database.DB
 	ctx := c.Context()
 
+	key := c.Params("key")
+
+	var exist bool
+	var err error
+	exist, err = setting_service.ExistSettingByKey(ctx, client, key)
+	if err != nil {
+		log.Errorf("Error getting setting by key %s: %v", key, err)
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	if !exist {
+		return c.JSON(model.NewSuccess("Setting not found", map[string]any{}))
+	}
+
 	// 获取所有系统设置
-	settings, err := setting_service.GetAllSettings(ctx, client)
+	setting, err := setting_service.GetSettingByKey(ctx, client, key)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	settingsMap := make(map[string]string)
-	for _, s := range settings {
-		settingsMap[s.Key] = s.Value
+	var value any
+	if err := json.Unmarshal([]byte(setting.Value), &value); err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(model.NewSuccess("success", settingsMap))
+	return c.JSON(model.NewSuccess("success", value))
 }
 
 func SaveSettings(c *fiber.Ctx) error {
 	client := database.DB
 	ctx := c.Context()
 
+	key := c.Params("key")
+
 	var req map[string]interface{}
+
 	if err := c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	for key, val := range req {
-		var exist bool
-		var err error
-		exist, err = setting_service.ExistSettingByKey(ctx, client, key)
-		if err != nil {
-			log.Errorf("Error getting setting by key %s: %v", key, err)
-			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-		}
-		if exist {
-			err = setting_service.UpdateSettingByKey(ctx, client, key, val.(string))
-		} else {
-			err = setting_service.CreateSettingIfNotExist(ctx, client, key, val.(string))
-		}
-		if err != nil {
-			log.Errorf("Error updating/creating setting by key %s: %v", key, err)
-			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-		}
+	var exist bool
+	var err error
+	exist, err = setting_service.ExistSettingByKey(ctx, client, key)
+	if err != nil {
+		log.Errorf("Error getting setting by key %s: %v", key, err)
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	value, err := json.Marshal(req)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
 
+	if exist {
+		err = setting_service.UpdateSettingByKey(ctx, client, key, string(value))
+	} else {
+		err = setting_service.CreateSettingIfNotExist(ctx, client, key, string(value))
+	}
+	if err != nil {
+		log.Errorf("Error updating/creating setting by key %s: %v", key, err)
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
 	return c.JSON(model.NewSuccess("success", nil))

@@ -21,8 +21,12 @@ type AlbumPhoto struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 相片名称
+	Name string `json:"name,omitempty"`
 	// 图片地址
 	ImageURL string `json:"image_url,omitempty"`
+	// 相片描述
+	Description string `json:"description,omitempty"`
 	// 查看次数
 	ViewCount int `json:"view_count,omitempty"`
 	// 相册ID
@@ -37,7 +41,7 @@ func (*AlbumPhoto) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case albumphoto.FieldID, albumphoto.FieldViewCount, albumphoto.FieldAlbumID:
 			values[i] = new(sql.NullInt64)
-		case albumphoto.FieldImageURL:
+		case albumphoto.FieldName, albumphoto.FieldImageURL, albumphoto.FieldDescription:
 			values[i] = new(sql.NullString)
 		case albumphoto.FieldCreatedAt, albumphoto.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -74,11 +78,23 @@ func (_m *AlbumPhoto) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
+		case albumphoto.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				_m.Name = value.String
+			}
 		case albumphoto.FieldImageURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field image_url", values[i])
 			} else if value.Valid {
 				_m.ImageURL = value.String
+			}
+		case albumphoto.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				_m.Description = value.String
 			}
 		case albumphoto.FieldViewCount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -134,8 +150,14 @@ func (_m *AlbumPhoto) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(_m.Name)
+	builder.WriteString(", ")
 	builder.WriteString("image_url=")
 	builder.WriteString(_m.ImageURL)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(_m.Description)
 	builder.WriteString(", ")
 	builder.WriteString("view_count=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ViewCount))

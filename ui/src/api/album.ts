@@ -13,8 +13,8 @@ export const createAlbum = (data:any)=>{
   return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/album/create`,{data})
 }
 
-export const updateAlbum = (data:any)=>{
-  return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/album/update`,{data})
+export const updateAlbum = (id:number|string,data:any)=>{
+  return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/album/update/${id}`,{data})
 }
 
 export const queryAlbum = (id:number|string) =>{

@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui';
-import type { SettingsProps } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
 const message = useMessage()
 
 
@@ -17,7 +12,16 @@ const encryptionOptions = [
 ]
 
 const emailFormRef = ref<FormInst | null>(null)
-const emailForm = reactive({
+const defaultForm = {
+  smtpHost: '',
+  smtpPort: 587,
+  smtpUsername: '',
+  smtpPassword: '',
+  smtpEncryption: 'tls',
+  senderEmail: '',
+  senderName: ''
+}
+const emailForm = ref({
   smtpHost: '',
   smtpPort: 587,
   smtpUsername: '',
@@ -28,23 +32,15 @@ const emailForm = reactive({
 })
 const emailLoading = ref(false)
 
-watch(()=>props.settings,(newSettings)=>{
-  emailForm.smtpHost = newSettings.smtpHost || ''
-  emailForm.smtpPort = newSettings.smtpPort || 587
-  emailForm.smtpUsername = newSettings.smtpUsername || ''
-  emailForm.smtpPassword = newSettings.smtpPassword || ''
-  emailForm.smtpEncryption = newSettings.smtpEncryption || 'tls'
-  emailForm.senderEmail = newSettings.senderEmail || ''
-  emailForm.senderName = newSettings.senderName || ''
-})
+
 
 // 保存邮件设置
 const saveEmailSettings = async () => {
   emailLoading.value = true
   try {
-    await settingApi.saveSettings(emailForm)
+    await settingApi.saveSettings('email',emailForm.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('邮件设置保存成功')
   } catch {
     message.error('邮件设置保存失败')
@@ -62,6 +58,15 @@ const testEmailConnection = async () => {
     message.error('邮件连接测试失败')
   }
 }
+
+const onSearch = async()=>{
+  const res = await settingApi.getSettingsMap('email')
+  emailForm.value = Object.assign({},defaultForm,res.data)
+}
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

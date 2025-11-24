@@ -1,19 +1,27 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import type { SettingsProps } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
 const message = useMessage()
 
 const siteFormRef = ref<FormInst | null>(null)
 const siteLoading = ref(false)
 
+const defaultForm = {
+  maintenanceMode: false,
+  allowRegistration: true,
+  emailVerification: true,
+  commentModeration: true,
+  uploadLimit: 10,
+  allowedFileTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx'],
+  enableCache: true,
+  cacheTime: 60,
+  enableSSL: false,
+  enableCDN: false,
+  cdnUrl: '',
+}
 // 站点设置表单
-const siteForm = reactive({
+const siteForm = ref({
   maintenanceMode: false,
   allowRegistration: true,
   emailVerification: true,
@@ -27,27 +35,14 @@ const siteForm = reactive({
   cdnUrl: '',
 })
 
-watch(()=>props.settings,(newSettings)=>{
-  siteForm.maintenanceMode = newSettings.maintenanceMode || false
-  siteForm.allowRegistration = newSettings.allowRegistration || true
-  siteForm.emailVerification = newSettings.emailVerification || true
-  siteForm.commentModeration = newSettings.commentModeration || true
-  siteForm.uploadLimit = newSettings.uploadLimit || 10
-  siteForm.allowedFileTypes = newSettings.allowedFileTypes || ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx']
-  siteForm.enableCache = newSettings.enableCache || true
-  siteForm.cacheTime = newSettings.cacheTime || 60
-  siteForm.enableSSL = newSettings.enableSSL || false
-  siteForm.enableCDN = newSettings.enableCDN || false
-  siteForm.cdnUrl = newSettings.cdnUrl || ''
-})
 
 // 保存站点设置
 const saveSiteSettings = async () => {
   siteLoading.value = true
   try {
-    await settingApi.saveSettings(siteForm)
+    await settingApi.saveSettings('site',siteForm.value)
     await new Promise((resolve) => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('站点设置保存成功')
   } catch {
     message.error('站点设置保存失败')
@@ -55,6 +50,15 @@ const saveSiteSettings = async () => {
     siteLoading.value = false
   }
 }
+
+const onSearch = async()=>{
+  const res = await settingApi.getSettingsMap('site')
+  siteForm.value = Object.assign({},defaultForm,res.data)
+}
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

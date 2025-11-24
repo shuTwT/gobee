@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import type { SettingsProps } from '../utils/types';
+import type { AiSetting } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
 const message = useMessage()
 const aiModelOptions = [
   { label: 'GPT-3.5 Turbo', value: 'gpt-3.5-turbo' },
@@ -15,7 +11,17 @@ const aiModelOptions = [
   { label: 'GPT-4o', value: 'gpt-4o' }
 ]
 const aiFormRef = ref<FormInst|null>(null)
-const aiForm = reactive({
+const defaultForm = {
+  openaiApiKey: '',
+  openaiApiUrl: 'https://api.openai.com/v1',
+  aiModel: 'gpt-3.5-turbo',
+  aiTemperature: 0.7,
+  aiMaxTokens: 2048,
+  aiTopP: 1.0,
+  aiFrequencyPenalty: 0,
+  aiPresencePenalty: 0,
+}
+const aiForm = ref<AiSetting>({
   openaiApiKey: '',
   openaiApiUrl: 'https://api.openai.com/v1',
   aiModel: 'gpt-3.5-turbo',
@@ -26,27 +32,15 @@ const aiForm = reactive({
   aiPresencePenalty: 0,
 })
 
-watch(()=>props.settings, (newSettings) => {
-  aiForm.openaiApiKey = newSettings.openaiApiKey || ''
-  aiForm.openaiApiUrl = newSettings.openaiApiUrl || 'https://api.openai.com/v1'
-  aiForm.aiModel = newSettings.aiModel || 'gpt-3.5-turbo'
-  aiForm.aiTemperature = newSettings.aiTemperature || 0.7
-  aiForm.aiMaxTokens = newSettings.aiMaxTokens || 2048
-  aiForm.aiTopP = newSettings.aiTopP || 1.0
-  aiForm.aiFrequencyPenalty = newSettings.aiFrequencyPenalty || 0
-  aiForm.aiPresencePenalty = newSettings.aiPresencePenalty || 0
-},{
-  immediate:true
-})
 
 const aiLoading = ref(false)
 // 保存AI设置
 const saveAISettings = async () => {
   aiLoading.value = true
   try {
-    await settingApi.saveSettings(aiForm)
+    await settingApi.saveSettings('ai',aiForm.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('AI设置保存成功')
   } catch {
     message.error('AI设置保存失败')
@@ -64,6 +58,15 @@ const testAIConnection = async () => {
     message.error('AI连接测试失败')
   }
 }
+
+const onSearch=(async()=>{
+  const res = await settingApi.getSettingsMap('ai')
+  aiForm.value = Object.assign({},defaultForm,res.data)
+})
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

@@ -2,12 +2,12 @@
 import * as albumApi from '@/api/album'
 import * as albumPhotoApi from '@/api/albumPhoto'
 import { addDialog } from '@/components/dialog'
+import albumForm from "./albumForm.vue"
 import albumPhotoForm from "./albumPhotoForm.vue"
+import type { AlbumFormProps, AlbumPhotoFormProps } from './utils/types'
+import dayjs from "dayjs"
 
-
-const albumFormData = ref({
-  name: '',
-})
+const message = useMessage()
 
 // 分页配置
 const pagination = reactive({
@@ -28,9 +28,9 @@ const albumList = ref<any[]>([])
 const albumPhotoList = ref<any[]>([])
 
 const onSearchAlbum=async()=>{
-  const res=await albumApi.getAlbumPage()
+  const res=await albumApi.getAlbumList()
   if (res.code === 200) {
-    albumList.value = res.data.records || []
+    albumList.value = res.data || []
   }
 }
 
@@ -44,11 +44,78 @@ const onSearchAlbumPhoto=async()=>{
   }
 }
 
+const openAlbumDialog = (title='新增',row?:any)=>{
+  const formRef = ref()
+  addDialog<AlbumFormProps>({
+    title:`${title}相册`,
+    props:{
+      formInline:{
+        name:row?.name ??"",
+        description:row?.description ?? "",
+        sort:row?.sort ?? 0,
+      },
+    },
+    contentRenderer:({options})=>h(albumForm,{ref:formRef,formInline:options.props!.formInline}),
+    beforeSure:async(done)=>{
+      try{
+        const data=await formRef.value.getData()
+        const chores = ()=>{
+          message.success('操作成功')
+          done()
+        }
+        if(title=='新增'){
+          albumApi.createAlbum(data).then(()=>{
+            chores()
+            onSearchAlbum()
+          })
+        }else{
+          albumApi.updateAlbum(row?.id,data).then(()=>{
+            chores()
+            onSearchAlbum()
+          })
+        }
+      }catch{
+        done()
+      }
+    }
+  })
+}
+
 const openAlbumPhotoDialog=(title='新增',row?:any)=>{
-  addDialog({
+  const formRef = ref()
+  addDialog<AlbumPhotoFormProps>({
     title:`${title}新增相片`,
-    props:{},
-    contentRenderer:()=>h(albumPhotoForm)
+    props:{
+      formInline:{
+        name:row?.name ??"",
+        image_url:row?.image_url ??"",
+        description:row?.description ?? "",
+        album_id:row?.album_id ?? 0,
+      }
+    },
+    contentRenderer:({options})=>h(albumPhotoForm,{ref:formRef,formInline:options.props!.formInline}),
+    beforeSure:async(done)=>{
+      try{
+        const data=await formRef.value.getData()
+        const chores = ()=>{
+          message.success('操作成功')
+          done()
+        }
+        if(title=='新增'){
+          albumPhotoApi.createAlbumPhoto(data).then(()=>{
+            chores()
+            onSearchAlbumPhoto()
+          })
+        }else{
+          albumPhotoApi.updateAlbumPhoto(row?.id,data).then(()=>{
+            chores()
+            onSearchAlbumPhoto()
+          })
+        }
+      }catch{
+        done()
+      }
+    }
   })
 }
 
@@ -66,73 +133,47 @@ onMounted(()=>{
         <n-gi span="1">
           <n-card title="相册列表">
             <template #header-extra>
-              <n-button type="primary" style="margin-right: 5px;"> <i class="fas fa-plus mr-2"></i>新增相册 </n-button>
-              <n-button>刷新</n-button>
+              <n-button type="primary" style="margin-right: 5px;" @click="openAlbumDialog('新增')"> <i class="fas fa-plus mr-2"></i>新增相册 </n-button>
+              <n-button @click="onSearchAlbum()">刷新</n-button>
             </template>
             <ul id="albumList" class="space-y-2">
               <!-- 示例相册 -->
               <li
+                v-for="(item,index) in albumList"
+                :key="index"
                 class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 album-item"
-                data-album-id="1"
+                :data-album-id="item.id"
               >
-                <span class="text-gray-800 dark:text-gray-200">我的照片</span>
-                <span class="text-sm text-gray-500 dark:text-gray-400">50 张</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ item.name }}</span>
+                <span class="text-sm text-gray-500 dark:text-gray-400">0 张</span>
               </li>
-              <li
-                class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 album-item"
-                data-album-id="2"
-              >
-                <span class="text-gray-800 dark:text-gray-200">旅行回忆</span>
-                <span class="text-sm text-gray-500 dark:text-gray-400">120 张</span>
-              </li>
+
             </ul>
-            <div class="mt-4 flex justify-end">
-              <n-pagination
-                :page="pagination.page"
-                :page-size="pagination.pageSize"
-                :show-size-picker="pagination.showSizePicker"
-                :page-sizes="pagination.pageSizes"
-                @on-change="pagination.onChange"
-                @on-update-page-size="pagination.onUpdatePageSize"
-              />
-            </div>
           </n-card>
         </n-gi>
         <n-gi span="2">
           <n-card title="相片列表">
             <template #header-extra>
               <n-button type="primary" @click="openAlbumPhotoDialog('新增')" style="margin-right: 5px;"> <i class="fas fa-upload mr-2"></i>新增 </n-button>
-              <n-button>刷新</n-button>
+              <n-button @click="onSearchAlbumPhoto()">刷新</n-button>
             </template>
-            <div id="photoList" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               <!-- 示例照片卡片 -->
-              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden">
+              <div v-for="(item,index) in albumPhotoList" :key="index" class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden">
                 <n-image
-                  src="https://via.placeholder.com/150"
-                  alt="Photo 1"
+                  :src="item.image_url"
+                  :alt="item.name"
                   width="100%"
                   class="h-32 w-full"
                 />
                 <div class="p-3">
                   <p class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
-                    照片 1.jpg
+                    {{ item.name }}
                   </p>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">2023-01-01</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ dayjs(item.updated_at).format('YYYY-MM-DD HH:mm:ss') }}</p>
                 </div>
               </div>
-              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="Photo 2"
-                  class="w-full h-32 object-cover"
-                />
-                <div class="p-3">
-                  <p class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
-                    照片 2.png
-                  </p>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">2023-01-02</p>
-                </div>
-              </div>
+
             </div>
             <div class="mt-4 flex justify-end">
               <n-pagination
@@ -147,25 +188,6 @@ onMounted(()=>{
           </n-card>
         </n-gi>
       </n-grid>
-
-      <!-- 新增相册模态框 -->
-      <n-modal>
-        <div
-          class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800"
-        >
-          <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">新增相册</h3>
-          <n-form>
-            <n-form-item label="相册名称">
-              <n-input v-model:value="albumFormData.name" />
-            </n-form-item>
-          </n-form>
-
-          <div class="items-center px-4 py-3 mt-4">
-            <n-button id="saveAlbumBtn" type="primary"> 保存 </n-button>
-            <n-button id="cancelAlbumBtn" type="default"> 取消 </n-button>
-          </div>
-        </div>
-      </n-modal>
     </div>
 
     <!-- 上传照片模态框 -->

@@ -71,7 +71,7 @@ func init() {
 	// albumphoto.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	albumphoto.UpdateDefaultUpdatedAt = albumphotoDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// albumphotoDescViewCount is the schema descriptor for view_count field.
-	albumphotoDescViewCount := albumphotoFields[1].Descriptor()
+	albumphotoDescViewCount := albumphotoFields[3].Descriptor()
 	// albumphoto.DefaultViewCount holds the default value on creation for the view_count field.
 	albumphoto.DefaultViewCount = albumphotoDescViewCount.Default.(int)
 	apipermsMixin := schema.ApiPerms{}.Mixin()

@@ -1,0 +1,18 @@
+name = "Post"
+description = "用户"
+
+[[meta.permissions]]
+scope = "gobee:user:view"
+title = "用户阅读"
+
+[[meta.permissions]]
+scope = "gobee:user:create"
+title = "用户创建"
+
+[[meta.permissions]]
+scope = "gobee:user:update"
+title = "用户更新"
+
+[[meta.permissions]]
+scope = "gobee:user:delete"
+title = "用户删除"

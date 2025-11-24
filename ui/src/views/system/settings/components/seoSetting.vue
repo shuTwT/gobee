@@ -1,19 +1,29 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import type { SettingsProps } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
 const message = useMessage()
 
 const seoFormRef = ref<FormInst | null>(null)
 const seoLoading = ref(false)
 
+const defaultForm = {
+  enableSEO: true,
+  siteTitleSuffix: '',
+  siteKeywords: '',
+  siteDescription: '',
+  siteAuthor: '',
+  siteCopyright: '',
+  siteIcp: '',
+  sitePoliceIcp: '',
+  analyticsCode: '',
+  robotsContent: '',
+  autoGenerateSitemap: true,
+  urlRewrite: true,
+  custom404Content: ''
+}
 // SEO设置表单
-const seoForm = reactive({
+const seoForm = ref({
   enableSEO: true,
   siteTitleSuffix: '',
   siteKeywords: '',
@@ -29,29 +39,14 @@ const seoForm = reactive({
   custom404Content: ''
 })
 
-watch(()=>props.settings,(newSettings)=>{
-  seoForm.enableSEO = newSettings.enableSEO || true
-  seoForm.siteTitleSuffix = newSettings.siteTitleSuffix || ''
-  seoForm.siteKeywords = newSettings.siteKeywords || ''
-  seoForm.siteDescription = newSettings.siteDescription || ''
-  seoForm.siteAuthor = newSettings.siteAuthor || ''
-  seoForm.siteCopyright = newSettings.siteCopyright || ''
-  seoForm.siteIcp = newSettings.siteIcp || ''
-  seoForm.sitePoliceIcp = newSettings.sitePoliceIcp || ''
-  seoForm.analyticsCode = newSettings.analyticsCode || ''
-  seoForm.robotsContent = newSettings.robotsContent || ''
-  seoForm.autoGenerateSitemap = newSettings.autoGenerateSitemap || true
-  seoForm.urlRewrite = newSettings.urlRewrite || true
-  seoForm.custom404Content = newSettings.custom404Content || ''
-})
 
 // 保存SEO设置
 const saveSEOSettings = async () => {
   seoLoading.value = true
   try {
-    await settingApi.saveSettings(seoForm)
+    await settingApi.saveSettings('seo',seoForm.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('SEO设置保存成功')
   } catch {
     message.error('SEO设置保存失败')
@@ -69,6 +64,15 @@ const generateSitemap = async () => {
     message.error('Sitemap生成失败')
   }
 }
+
+const onSearch = async () =>{
+  const res = await settingApi.getSettingsMap('seo')
+  seoForm.value = Object.assign({},defaultForm,res.data)
+}
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

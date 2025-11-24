@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import type { SettingsProps } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
 const message = useMessage()
 
 const backupFormRef = ref<FormInst | null>(null)
 
 const backupLoading = ref(false)
-const backupForm = reactive({
+const defaultForm = {
+  enableAutoBackup: true,
+  backupFrequency: 'daily',
+  backupRetentionDays: 30,
+  backupStorageLocation: 'local',
+  backupDatabase: true,
+  backupUploads: true,
+  backupConfig: true,
+  enableRemoteBackup: false,
+  remoteStorageType: 's3',
+  remoteStorageConfig: '',
+}
+const backupForm = ref({
   enableAutoBackup: true,
   backupFrequency: 'daily',
   backupRetentionDays: 30,
@@ -24,19 +31,7 @@ const backupForm = reactive({
   remoteStorageType: 's3',
   remoteStorageConfig: '',
 })
-watch(()=>props.settings,(newSettings)=>{
-  backupForm.enableAutoBackup = newSettings.enableAutoBackup ?? true
-  backupForm.backupFrequency = newSettings.backupFrequency ?? 'daily'
-  backupForm.backupRetentionDays= newSettings.backupRetentionDays ?? 30
-  backupForm.backupStorageLocation= newSettings.backupStorageLocation='local'
-  backupForm.backupDatabase = newSettings.backupDatabase=true
-  backupForm.backupUploads = newSettings.backupUploads=true
-  backupForm.backupConfig = newSettings.backupConfig=true
-  backupForm.enableRemoteBackup = newSettings.enableRemoteBackup=false
-  backupForm.remoteStorageType = newSettings.remoteStorageType='s3'
-  backupForm.remoteStorageConfig = newSettings.remoteStorageConfig=''
 
-})
 const backupFrequencyOptions = [
   { label: '每小时', value: 'hourly' },
   { label: '每天', value: 'daily' },
@@ -60,9 +55,9 @@ const remoteStorageOptions = [
 const saveBackupSettings = async () => {
   backupLoading.value = true
   try {
-    await settingApi.saveSettings(backupForm)
+    await settingApi.saveSettings('backup',backupForm.value)
     await new Promise((resolve) => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('备份设置保存成功')
   } catch {
     message.error('备份设置保存失败')
@@ -85,6 +80,15 @@ const manualBackup = async () => {
 const viewBackupHistory = async () => {
   message.info('备份历史功能开发中...')
 }
+
+const onSearch = async ()=>{
+  const res = await settingApi.getSettingsMap('backup')
+  backupForm.value = Object.assign({},defaultForm,res.data)
+}
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

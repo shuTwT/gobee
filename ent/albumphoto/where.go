@@ -64,9 +64,19 @@ func UpdatedAt(v time.Time) predicate.AlbumPhoto {
 	return predicate.AlbumPhoto(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldEQ(FieldName, v))
+}
+
 // ImageURL applies equality check predicate on the "image_url" field. It's identical to ImageURLEQ.
 func ImageURL(v string) predicate.AlbumPhoto {
 	return predicate.AlbumPhoto(sql.FieldEQ(FieldImageURL, v))
+}
+
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldEQ(FieldDescription, v))
 }
 
 // ViewCount applies equality check predicate on the "view_count" field. It's identical to ViewCountEQ.
@@ -159,6 +169,71 @@ func UpdatedAtLTE(v time.Time) predicate.AlbumPhoto {
 	return predicate.AlbumPhoto(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldContainsFold(FieldName, v))
+}
+
 // ImageURLEQ applies the EQ predicate on the "image_url" field.
 func ImageURLEQ(v string) predicate.AlbumPhoto {
 	return predicate.AlbumPhoto(sql.FieldEQ(FieldImageURL, v))
@@ -222,6 +297,71 @@ func ImageURLEqualFold(v string) predicate.AlbumPhoto {
 // ImageURLContainsFold applies the ContainsFold predicate on the "image_url" field.
 func ImageURLContainsFold(v string) predicate.AlbumPhoto {
 	return predicate.AlbumPhoto(sql.FieldContainsFold(FieldImageURL, v))
+}
+
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.AlbumPhoto {
+	return predicate.AlbumPhoto(sql.FieldContainsFold(FieldDescription, v))
 }
 
 // ViewCountEQ applies the EQ predicate on the "view_count" field.

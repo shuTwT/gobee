@@ -12,8 +12,7 @@ const noticeList = ref([
 </script>
 <template>
   <div class="p-6">
-    <div class="p-6 bg-white dark:bg-gray-800 shadow-md rounded-lg">
-      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">仪表盘</h2>
+    <div class="p-6 max-w-[1600px] mx-auto">
 
       <!-- 统计概览 -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -65,7 +64,7 @@ const noticeList = ref([
       <div class="flex flex-col md:flex-row gap-6">
         <!-- 快捷访问 -->
         <div class="w-full md:w-1/2">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">快捷访问</h3>
+          <n-card title="快捷访问">
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <a
               href="/console/model-content"
@@ -103,12 +102,12 @@ const noticeList = ref([
               <span class="text-sm font-medium text-gray-700 dark:text-gray-200">模型管理</span>
             </a>
           </div>
+          </n-card>
         </div>
 
         <!-- 最新通知 -->
         <div class="w-full md:w-1/2">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">最新通知</h3>
-          <n-card>
+          <n-card title="最新通知">
             <n-list>
               <!-- 最多显示10条通知 -->
               <n-list-item v-for="(item, index) in noticeList" :key="index">

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"embed"
+
 	_ "github.com/mattn/go-sqlite3"
 
 	"gobee/cmd"
@@ -8,6 +10,9 @@ import (
 
 	_ "gobee/docs"
 )
+
+//go:embed assets/moduleDefs
+var moduleDefs embed.FS
 
 // @title Fiber Example API
 // @version 1.0
@@ -20,7 +25,7 @@ import (
 // @host localhost:3000
 // @BasePath /
 func main() {
-	app := cmd.InitializeApp()
+	app := cmd.InitializeApp(moduleDefs)
 	defer database.CloseDB()
 	app.Listen(":13000")
 }

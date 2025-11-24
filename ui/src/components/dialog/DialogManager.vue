@@ -10,13 +10,22 @@ defineOptions({
 
 const sureBtnMap = ref<Record<string, any>>({})
 
-const fullscreenStyle = (options:DialogOptions)=>options.fullscreen?{
-  maxHeight:'100vh',
-  height:'100vh',
-  width:'100%'
-}:{
-  maxHeight:'80vh',
-  width:options.width
+const fullscreenStyle = (options:DialogOptions)=>{
+  let styles:Record<string,any>
+  if(options.fullscreen){
+    styles={
+      maxHeight:'100vh',
+      height:'100vh',
+      width:'100%'
+    }
+  }else{
+    styles={
+      maxHeight:'80vh',
+      width:options.width
+    }
+  }
+
+  return styles
 }
 
 const footerButtons = computed(() => {
@@ -115,7 +124,7 @@ function handleClose(options: DialogOptions, index: number, args = { command: 'c
       </n-button>
     </template>
     <!-- content -->
-     <n-scrollbar style="height: calc(80vh - 128px);">
+     <n-scrollbar style="height: auto;">
       <div class="px-3">
         <component v-bind="options.props" :is="options.contentRenderer({ options, index })" />
       </div>

@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import type { SettingsProps } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
 const message = useMessage()
 
 const notificationFormRef = ref<FormInst | null>(null)
-const notificationForm = reactive({
+const defaultForm = {
+  enableEmailNotification: true,
+  enableSmsNotification: false,
+  enableInAppNotification: true,
+  notifyNewUserRegistration: true,
+  notifyLoginAbnormal: true,
+  notifyPasswordChange: true,
+  notifyNewOrder: true,
+  notifyOrderPaid: true,
+  notifyOrderShipped: true,
+  notifyOrderCompleted: true,
+  notifySystemError: true,
+  notifyMaintenance: true,
+  notificationEmail: ''
+}
+const notificationForm = ref({
   enableEmailNotification: true,
   enableSmsNotification: false,
   enableInAppNotification: true,
@@ -27,29 +37,14 @@ const notificationForm = reactive({
 })
 const notificationLoading = ref(false)
 
-watch(()=>props.settings,(newSettings)=>{
-  notificationForm.enableEmailNotification = newSettings.enableEmailNotification || true
-  notificationForm.enableSmsNotification = newSettings.enableSmsNotification || false
-  notificationForm.enableInAppNotification = newSettings.enableInAppNotification || true
-  notificationForm.notifyNewUserRegistration = newSettings.notifyNewUserRegistration || true
-  notificationForm.notifyLoginAbnormal = newSettings.notifyLoginAbnormal || true
-  notificationForm.notifyPasswordChange = newSettings.notifyPasswordChange || true
-  notificationForm.notifyNewOrder = newSettings.notifyNewOrder || true
-  notificationForm.notifyOrderPaid = newSettings.notifyOrderPaid || true
-  notificationForm.notifyOrderShipped = newSettings.notifyOrderShipped || true
-  notificationForm.notifyOrderCompleted = newSettings.notifyOrderCompleted || true
-  notificationForm.notifySystemError = newSettings.notifySystemError || true
-  notificationForm.notifyMaintenance = newSettings.notifyMaintenance || true
-  notificationForm.notificationEmail = newSettings.notificationEmail || ''
-})
 
 // 保存通知设置
 const saveNotificationSettings = async () => {
   notificationLoading.value = true
   try {
-    await settingApi.saveSettings(notificationForm)
+    await settingApi.saveSettings('notify',notificationForm.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('通知设置保存成功')
   } catch {
     message.error('通知设置保存失败')
@@ -67,6 +62,15 @@ const testNotification = async () => {
     message.error('通知测试失败')
   }
 }
+
+const onSearch = async()=>{
+  const res = await settingApi.getSettingsMap('notify')
+  notificationForm.value = Object.assign({},defaultForm,res.data)
+}
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

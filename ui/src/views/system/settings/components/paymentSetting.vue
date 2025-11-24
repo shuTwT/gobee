@@ -1,17 +1,24 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import type { SettingsProps } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
 
-
-const props = defineProps<{
-  settings:SettingsProps
-}>()
-const emit = defineEmits(["refresh"])
 const message = useMessage()
 const paymentFormRef = ref<FormInst | null>(null)
 
-const paymentForm = reactive({
+const defaultForm = {
+  enableAlipay: false,
+  alipayAppId: '',
+  alipayPrivateKey: '',
+  alipayPublicKey: '',
+  enableWechatPay: false,
+  wechatMchId: '',
+  wechatApiKey: '',
+  wechatAppId: '',
+  paymentNotifyUrl: '',
+  orderTimeout: 30,
+  refundReview: true
+}
+const paymentForm = ref({
   enableAlipay: false,
   alipayAppId: '',
   alipayPrivateKey: '',
@@ -26,27 +33,14 @@ const paymentForm = reactive({
 })
 const paymentLoading = ref(false)
 
-watch(()=>props.settings,(newSettings)=>{
-  paymentForm.enableAlipay = newSettings.enableAlipay || false
-  paymentForm.alipayAppId = newSettings.alipayAppId || ''
-  paymentForm.alipayPrivateKey = newSettings.alipayPrivateKey || ''
-  paymentForm.alipayPublicKey = newSettings.alipayPublicKey || ''
-  paymentForm.enableWechatPay = newSettings.enableWechatPay || false
-  paymentForm.wechatMchId = newSettings.wechatMchId || ''
-  paymentForm.wechatApiKey = newSettings.wechatApiKey || ''
-  paymentForm.wechatAppId = newSettings.wechatAppId || ''
-  paymentForm.paymentNotifyUrl = newSettings.paymentNotifyUrl || ''
-  paymentForm.orderTimeout = newSettings.orderTimeout || 30
-  paymentForm.refundReview = newSettings.refundReview || true
-})
 
 // 保存支付设置
 const savePaymentSettings = async () => {
   paymentLoading.value = true
   try {
-    await settingApi.saveSettings(paymentForm)
+    await settingApi.saveSettings('payment',paymentForm.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
-    emit('refresh')
+    onSearch()
     message.success('支付设置保存成功')
   } catch {
     message.error('支付设置保存失败')
@@ -64,6 +58,15 @@ const testPaymentConnection = async () => {
     message.error('支付连接测试失败')
   }
 }
+
+const onSearch = async()=>{
+  const res = await settingApi.getSettingsMap('payment')
+  paymentForm.value = Object.assign({},defaultForm, res.data)
+}
+
+onMounted(()=>{
+  onSearch()
+})
 </script>
 <template>
   <n-form

@@ -48,9 +48,21 @@ func (_c *AlbumPhotoCreate) SetNillableUpdatedAt(v *time.Time) *AlbumPhotoCreate
 	return _c
 }
 
+// SetName sets the "name" field.
+func (_c *AlbumPhotoCreate) SetName(v string) *AlbumPhotoCreate {
+	_c.mutation.SetName(v)
+	return _c
+}
+
 // SetImageURL sets the "image_url" field.
 func (_c *AlbumPhotoCreate) SetImageURL(v string) *AlbumPhotoCreate {
 	_c.mutation.SetImageURL(v)
+	return _c
+}
+
+// SetDescription sets the "description" field.
+func (_c *AlbumPhotoCreate) SetDescription(v string) *AlbumPhotoCreate {
+	_c.mutation.SetDescription(v)
 	return _c
 }
 
@@ -137,8 +149,14 @@ func (_c *AlbumPhotoCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "AlbumPhoto.updated_at"`)}
 	}
+	if _, ok := _c.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "AlbumPhoto.name"`)}
+	}
 	if _, ok := _c.mutation.ImageURL(); !ok {
 		return &ValidationError{Name: "image_url", err: errors.New(`ent: missing required field "AlbumPhoto.image_url"`)}
+	}
+	if _, ok := _c.mutation.Description(); !ok {
+		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "AlbumPhoto.description"`)}
 	}
 	if _, ok := _c.mutation.ViewCount(); !ok {
 		return &ValidationError{Name: "view_count", err: errors.New(`ent: missing required field "AlbumPhoto.view_count"`)}
@@ -186,9 +204,17 @@ func (_c *AlbumPhotoCreate) createSpec() (*AlbumPhoto, *sqlgraph.CreateSpec) {
 		_spec.SetField(albumphoto.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := _c.mutation.Name(); ok {
+		_spec.SetField(albumphoto.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
 	if value, ok := _c.mutation.ImageURL(); ok {
 		_spec.SetField(albumphoto.FieldImageURL, field.TypeString, value)
 		_node.ImageURL = value
+	}
+	if value, ok := _c.mutation.Description(); ok {
+		_spec.SetField(albumphoto.FieldDescription, field.TypeString, value)
+		_node.Description = value
 	}
 	if value, ok := _c.mutation.ViewCount(); ok {
 		_spec.SetField(albumphoto.FieldViewCount, field.TypeInt, value)

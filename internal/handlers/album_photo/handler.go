@@ -51,6 +51,8 @@ func CreateAlbumPhoto(c *fiber.Ctx) error {
 	client := database.DB
 	if err := client.AlbumPhoto.Create().
 		SetAlbumID(albumPhoto.AlbumID).
+		SetName(albumPhoto.Name).
+		SetDescription(albumPhoto.Description).
 		SetImageURL(albumPhoto.ImageURL).
 		Exec(c.Context()); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
@@ -70,6 +72,8 @@ func UpdateAlbumPhoto(c *fiber.Ctx) error {
 	client := database.DB
 	if err := client.AlbumPhoto.UpdateOneID(id).
 		SetImageURL(albumPhoto.ImageURL).
+		SetName(albumPhoto.Name).
+		SetDescription(albumPhoto.Description).
 		Exec(c.Context()); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}

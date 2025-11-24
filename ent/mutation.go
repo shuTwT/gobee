@@ -694,7 +694,9 @@ type AlbumPhotoMutation struct {
 	id            *int
 	created_at    *time.Time
 	updated_at    *time.Time
+	name          *string
 	image_url     *string
+	description   *string
 	view_count    *int
 	addview_count *int
 	album_id      *int
@@ -881,6 +883,42 @@ func (m *AlbumPhotoMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
+// SetName sets the "name" field.
+func (m *AlbumPhotoMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *AlbumPhotoMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the AlbumPhoto entity.
+// If the AlbumPhoto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlbumPhotoMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *AlbumPhotoMutation) ResetName() {
+	m.name = nil
+}
+
 // SetImageURL sets the "image_url" field.
 func (m *AlbumPhotoMutation) SetImageURL(s string) {
 	m.image_url = &s
@@ -915,6 +953,42 @@ func (m *AlbumPhotoMutation) OldImageURL(ctx context.Context) (v string, err err
 // ResetImageURL resets all changes to the "image_url" field.
 func (m *AlbumPhotoMutation) ResetImageURL() {
 	m.image_url = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *AlbumPhotoMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *AlbumPhotoMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the AlbumPhoto entity.
+// If the AlbumPhoto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlbumPhotoMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *AlbumPhotoMutation) ResetDescription() {
+	m.description = nil
 }
 
 // SetViewCount sets the "view_count" field.
@@ -1063,15 +1137,21 @@ func (m *AlbumPhotoMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AlbumPhotoMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, albumphoto.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, albumphoto.FieldUpdatedAt)
 	}
+	if m.name != nil {
+		fields = append(fields, albumphoto.FieldName)
+	}
 	if m.image_url != nil {
 		fields = append(fields, albumphoto.FieldImageURL)
+	}
+	if m.description != nil {
+		fields = append(fields, albumphoto.FieldDescription)
 	}
 	if m.view_count != nil {
 		fields = append(fields, albumphoto.FieldViewCount)
@@ -1091,8 +1171,12 @@ func (m *AlbumPhotoMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case albumphoto.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case albumphoto.FieldName:
+		return m.Name()
 	case albumphoto.FieldImageURL:
 		return m.ImageURL()
+	case albumphoto.FieldDescription:
+		return m.Description()
 	case albumphoto.FieldViewCount:
 		return m.ViewCount()
 	case albumphoto.FieldAlbumID:
@@ -1110,8 +1194,12 @@ func (m *AlbumPhotoMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldCreatedAt(ctx)
 	case albumphoto.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case albumphoto.FieldName:
+		return m.OldName(ctx)
 	case albumphoto.FieldImageURL:
 		return m.OldImageURL(ctx)
+	case albumphoto.FieldDescription:
+		return m.OldDescription(ctx)
 	case albumphoto.FieldViewCount:
 		return m.OldViewCount(ctx)
 	case albumphoto.FieldAlbumID:
@@ -1139,12 +1227,26 @@ func (m *AlbumPhotoMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
+	case albumphoto.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
 	case albumphoto.FieldImageURL:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetImageURL(v)
+		return nil
+	case albumphoto.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
 		return nil
 	case albumphoto.FieldViewCount:
 		v, ok := value.(int)
@@ -1242,8 +1344,14 @@ func (m *AlbumPhotoMutation) ResetField(name string) error {
 	case albumphoto.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
+	case albumphoto.FieldName:
+		m.ResetName()
+		return nil
 	case albumphoto.FieldImageURL:
 		m.ResetImageURL()
+		return nil
+	case albumphoto.FieldDescription:
+		m.ResetDescription()
 		return nil
 	case albumphoto.FieldViewCount:
 		m.ResetViewCount()
