@@ -79,11 +79,6 @@ func Content(v string) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldContent, v))
 }
 
-// IsPublished applies equality check predicate on the "is_published" field. It's identical to IsPublishedEQ.
-func IsPublished(v bool) predicate.Post {
-	return predicate.Post(sql.FieldEQ(FieldIsPublished, v))
-}
-
 // IsAutogenSummary applies equality check predicate on the "is_autogen_summary" field. It's identical to IsAutogenSummaryEQ.
 func IsAutogenSummary(v bool) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldIsAutogenSummary, v))
@@ -429,14 +424,24 @@ func ContentContainsFold(v string) predicate.Post {
 	return predicate.Post(sql.FieldContainsFold(FieldContent, v))
 }
 
-// IsPublishedEQ applies the EQ predicate on the "is_published" field.
-func IsPublishedEQ(v bool) predicate.Post {
-	return predicate.Post(sql.FieldEQ(FieldIsPublished, v))
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v Status) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldStatus, v))
 }
 
-// IsPublishedNEQ applies the NEQ predicate on the "is_published" field.
-func IsPublishedNEQ(v bool) predicate.Post {
-	return predicate.Post(sql.FieldNEQ(FieldIsPublished, v))
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v Status) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...Status) predicate.Post {
+	return predicate.Post(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...Status) predicate.Post {
+	return predicate.Post(sql.FieldNotIn(FieldStatus, vs...))
 }
 
 // IsAutogenSummaryEQ applies the EQ predicate on the "is_autogen_summary" field.

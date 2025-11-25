@@ -54,7 +54,7 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// 验证密码
-	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(req.Password)); err != nil {
+	if err = bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(req.Password)); err != nil {
 		return c.JSON(model.NewError(
 			fiber.StatusUnauthorized,
 			"Invalid credentials",
@@ -74,9 +74,9 @@ func Login(c *fiber.Ctx) error {
 	// 使用密钥签名令牌
 	t, err := token.SignedString([]byte("your-secret-key")) // 注意：在生产环境中应该使用环境变量存储密钥
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Could not generate token",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(
+			fiber.StatusBadRequest, "Could not generate token",
+		))
 	}
 
 	// 返回令牌

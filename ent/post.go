@@ -27,8 +27,8 @@ type Post struct {
 	Alias string `json:"alias,omitempty"`
 	// 文章内容
 	Content string `json:"content,omitempty"`
-	// 是否已发布
-	IsPublished bool `json:"is_published,omitempty"`
+	// 状态
+	Status post.Status `json:"status,omitempty"`
 	// 是否自动生成摘要
 	IsAutogenSummary bool `json:"is_autogen_summary,omitempty"`
 	// 是否可见
@@ -38,7 +38,7 @@ type Post struct {
 	// 是否允许评论
 	IsAllowComment bool `json:"is_allow_comment,omitempty"`
 	// 发布时间
-	PublishedAt time.Time `json:"published_at,omitempty"`
+	PublishedAt *time.Time `json:"published_at,omitempty"`
 	// 浏览次数
 	ViewCount int `json:"view_count,omitempty"`
 	// 评论次数
@@ -61,11 +61,11 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case post.FieldIsPublished, post.FieldIsAutogenSummary, post.FieldIsVisible, post.FieldIsTipToTop, post.FieldIsAllowComment:
+		case post.FieldIsAutogenSummary, post.FieldIsVisible, post.FieldIsTipToTop, post.FieldIsAllowComment:
 			values[i] = new(sql.NullBool)
 		case post.FieldID, post.FieldViewCount, post.FieldCommentCount:
 			values[i] = new(sql.NullInt64)
-		case post.FieldTitle, post.FieldAlias, post.FieldContent, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
+		case post.FieldTitle, post.FieldAlias, post.FieldContent, post.FieldStatus, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
 			values[i] = new(sql.NullString)
 		case post.FieldCreatedAt, post.FieldUpdatedAt, post.FieldPublishedAt:
 			values[i] = new(sql.NullTime)
@@ -120,11 +120,11 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Content = value.String
 			}
-		case post.FieldIsPublished:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_published", values[i])
+		case post.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				_m.IsPublished = value.Bool
+				_m.Status = post.Status(value.String)
 			}
 		case post.FieldIsAutogenSummary:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -154,7 +154,8 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field published_at", values[i])
 			} else if value.Valid {
-				_m.PublishedAt = value.Time
+				_m.PublishedAt = new(time.Time)
+				*_m.PublishedAt = value.Time
 			}
 		case post.FieldViewCount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -249,8 +250,8 @@ func (_m *Post) String() string {
 	builder.WriteString("content=")
 	builder.WriteString(_m.Content)
 	builder.WriteString(", ")
-	builder.WriteString("is_published=")
-	builder.WriteString(fmt.Sprintf("%v", _m.IsPublished))
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Status))
 	builder.WriteString(", ")
 	builder.WriteString("is_autogen_summary=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsAutogenSummary))
@@ -264,8 +265,10 @@ func (_m *Post) String() string {
 	builder.WriteString("is_allow_comment=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsAllowComment))
 	builder.WriteString(", ")
-	builder.WriteString("published_at=")
-	builder.WriteString(_m.PublishedAt.Format(time.ANSIC))
+	if v := _m.PublishedAt; v != nil {
+		builder.WriteString("published_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("view_count=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ViewCount))

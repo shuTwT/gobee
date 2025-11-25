@@ -30,6 +30,7 @@ import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 import { useRouter } from 'vue-router'
 import * as postApi from '@/api/post'
 import { usePostHook } from './utils/hook'
+import dayjs from 'dayjs'
 
 const message = useMessage()
 const dialog = useDialog()
@@ -136,13 +137,15 @@ const columns: DataTableColumns<any> = [
   },
   {
     title: '创建时间',
-    key: 'createdAt',
+    key: 'created_at',
     width: 180,
+    render:(row)=>dayjs(row.created_at).format("YYYY-MM-DD HH:mm:ss")
   },
   {
     title: '更新时间',
-    key: 'updatedAt',
+    key: 'updated_at',
     width: 180,
+    render:(row)=>dayjs(row.updated_at).format("YYYY-MM-DD HH:mm:ss")
   },
   {
     title: '操作',
@@ -258,20 +261,22 @@ const columns: DataTableColumns<any> = [
 
 // 创建文章
 const createPost = () => {
-  postApi.createPost({
-    title: '未命名的文章',
-    content: '<p>此处是文章内容</p>',
-  }).then((res) => {
-    if (res.code === 200) {
-      message.success('创建成功')
-      router.push({
-        name: 'PostEditor',
-        query: {
-          id: res.data.id,
-        },
-      })
-    }
-  })
+  postApi
+    .createPost({
+      title: '未命名的文章',
+      content: '<p>此处是文章内容</p>',
+    })
+    .then((res) => {
+      if (res.code === 200) {
+        message.success('创建成功')
+        router.push({
+          name: 'PostEditor',
+          query: {
+            id: res.data.id,
+          },
+        })
+      }
+    })
 }
 
 // 编辑文章
@@ -298,7 +303,7 @@ const publishPost = (row: any) => {
   })
 }
 
-const handleSettingPost = (row:any)=>{
+const handleSettingPost = (row: any) => {
   settingPost(row)
 }
 
@@ -367,17 +372,19 @@ const handleFilterChange = () => {
 const handleRefresh = () => {
   loading.value = true
   // 模拟加载数据
-  setTimeout(() => {
-    loading.value = false
-  }, 1000)
+  onSearch().then(() => {
+    setTimeout(() => {
+      loading.value = false
+    }, 1000)
+  })
 }
 
 const onSearch = async () => {
   const res = await postApi.getPostList({
     page: pagination.page,
     page_size: pagination.pageSize,
-    title: searchKeyword,
-    status: filterStatus,
+    title: searchKeyword.value,
+    status: filterStatus.value,
     start_date: dateRange.value?.[0],
     end_date: dateRange.value?.[1],
   })

@@ -4,9 +4,11 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
 	"gobee/ent"
+	"gobee/ent/personalaccesstoken"
 	"gobee/ent/user"
 	"gobee/internal/database"
 	role_service "gobee/internal/services/role"
@@ -292,6 +294,97 @@ func DeleteUser(c *fiber.Ctx) error {
 			err.Error(),
 		))
 	}
+
+	return c.JSON(model.NewSuccess("success", nil))
+}
+
+func GetPersonalAccessTokenList(c *fiber.Ctx) error {
+	userId := int(c.Locals("userId").(float64))
+	client := database.DB
+	tokens, err := client.PersonalAccessToken.Query().Where(personalaccesstoken.UserID(userId)).All(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(
+			fiber.StatusBadRequest, err.Error(),
+		))
+	}
+	result := []model.PersonalAccessTokenListResp{}
+
+	for _, token := range tokens {
+		result = append(result, model.PersonalAccessTokenListResp{
+			ID:          token.ID,
+			Name:        token.Name,
+			Expires:     model.ParseTime(token.Expires),
+			Description: token.Name,
+		})
+	}
+
+	return c.JSON(model.NewSuccess("success", result))
+}
+
+func GetPersonalAccessToken(c *fiber.Ctx) error {
+	userId := int(c.Locals("userId").(float64))
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(
+			fiber.StatusBadRequest, err.Error(),
+		))
+	}
+	client := database.DB
+	token, err := client.PersonalAccessToken.Query().Where(personalaccesstoken.UserIDEQ(userId), personalaccesstoken.IDEQ(id)).Only(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(
+			fiber.StatusBadRequest, err.Error(),
+		))
+	}
+	result := model.PersonalAccessTokenResp{
+		ID:          token.ID,
+		Name:        token.Name,
+		Expires:     model.ParseTime(token.Expires),
+		Description: token.Description,
+		Token:       token.Token,
+	}
+	return c.JSON(model.NewSuccess("success", result))
+}
+
+// 创建 personalAccessToken 个人令牌
+func CreatePat(c *fiber.Ctx) error {
+	userId := int(c.Locals("userId").(float64))
+	var createReq *model.PersonalAccessTokenCreateReq
+	err := c.BodyParser(&createReq)
+	if err != nil {
+		return c.JSON(model.NewError(
+			fiber.StatusBadRequest, err.Error(),
+		))
+	}
+	client := database.DB
+	// 查找用户
+	u, _ := client.User.Query().
+		Where(user.IDEQ(userId)).
+		Only(c.Context())
+
+		// 生成JWT令牌
+	claims := jwt.MapClaims{
+		"id":    u.ID,
+		"email": u.Email,
+		"name":  u.Name,
+		"exp":   createReq.Expires, // 24小时过期
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// 使用密钥签名令牌
+	t, err := token.SignedString([]byte("your-secret-key")) // 注意：在生产环境中应该使用环境变量存储密钥
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(
+			fiber.StatusBadRequest, "Could not generate token",
+		))
+	}
+
+	client.PersonalAccessToken.Create().
+		SetName(createReq.Name).
+		SetDescription(createReq.Description).
+		SetExpires(createReq.Expires.Time()).
+		SetToken(t).
+		SetUserID(userId).Save(c.Context())
 
 	return c.JSON(model.NewSuccess("success", nil))
 }

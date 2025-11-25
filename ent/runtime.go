@@ -8,12 +8,15 @@ import (
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
 	"gobee/ent/file"
+	"gobee/ent/flink"
+	"gobee/ent/flinkgroup"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
 	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
+	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
 	"gobee/ent/role"
 	"gobee/ent/schema"
@@ -146,6 +149,52 @@ func init() {
 	commentDescPinned := commentFields[8].Descriptor()
 	// comment.DefaultPinned holds the default value on creation for the pinned field.
 	comment.DefaultPinned = commentDescPinned.Default.(bool)
+	flinkMixin := schema.FLink{}.Mixin()
+	flinkMixinFields0 := flinkMixin[0].Fields()
+	_ = flinkMixinFields0
+	flinkFields := schema.FLink{}.Fields()
+	_ = flinkFields
+	// flinkDescCreatedAt is the schema descriptor for created_at field.
+	flinkDescCreatedAt := flinkMixinFields0[1].Descriptor()
+	// flink.DefaultCreatedAt holds the default value on creation for the created_at field.
+	flink.DefaultCreatedAt = flinkDescCreatedAt.Default.(func() time.Time)
+	// flinkDescUpdatedAt is the schema descriptor for updated_at field.
+	flinkDescUpdatedAt := flinkMixinFields0[2].Descriptor()
+	// flink.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	flink.DefaultUpdatedAt = flinkDescUpdatedAt.Default.(func() time.Time)
+	// flink.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	flink.UpdateDefaultUpdatedAt = flinkDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// flinkDescName is the schema descriptor for name field.
+	flinkDescName := flinkFields[0].Descriptor()
+	// flink.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	flink.NameValidator = flinkDescName.Validators[0].(func(string) error)
+	// flinkDescURL is the schema descriptor for url field.
+	flinkDescURL := flinkFields[1].Descriptor()
+	// flink.URLValidator is a validator for the "url" field. It is called by the builders before save.
+	flink.URLValidator = flinkDescURL.Validators[0].(func(string) error)
+	// flinkDescStatus is the schema descriptor for status field.
+	flinkDescStatus := flinkFields[4].Descriptor()
+	// flink.DefaultStatus holds the default value on creation for the status field.
+	flink.DefaultStatus = flinkDescStatus.Default.(int)
+	flinkgroupMixin := schema.FLinkGroup{}.Mixin()
+	flinkgroupMixinFields0 := flinkgroupMixin[0].Fields()
+	_ = flinkgroupMixinFields0
+	flinkgroupFields := schema.FLinkGroup{}.Fields()
+	_ = flinkgroupFields
+	// flinkgroupDescCreatedAt is the schema descriptor for created_at field.
+	flinkgroupDescCreatedAt := flinkgroupMixinFields0[1].Descriptor()
+	// flinkgroup.DefaultCreatedAt holds the default value on creation for the created_at field.
+	flinkgroup.DefaultCreatedAt = flinkgroupDescCreatedAt.Default.(func() time.Time)
+	// flinkgroupDescUpdatedAt is the schema descriptor for updated_at field.
+	flinkgroupDescUpdatedAt := flinkgroupMixinFields0[2].Descriptor()
+	// flinkgroup.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	flinkgroup.DefaultUpdatedAt = flinkgroupDescUpdatedAt.Default.(func() time.Time)
+	// flinkgroup.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	flinkgroup.UpdateDefaultUpdatedAt = flinkgroupDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// flinkgroupDescName is the schema descriptor for name field.
+	flinkgroupDescName := flinkgroupFields[0].Descriptor()
+	// flinkgroup.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	flinkgroup.NameValidator = flinkgroupDescName.Validators[0].(func(string) error)
 	fileMixin := schema.File{}.Mixin()
 	fileMixinFields0 := fileMixin[0].Fields()
 	_ = fileMixinFields0
@@ -571,6 +620,25 @@ func init() {
 	payorderDescState := payorderFields[10].Descriptor()
 	// payorder.DefaultState holds the default value on creation for the state field.
 	payorder.DefaultState = payorderDescState.Default.(string)
+	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
+	personalaccesstokenMixinFields0 := personalaccesstokenMixin[0].Fields()
+	_ = personalaccesstokenMixinFields0
+	personalaccesstokenFields := schema.PersonalAccessToken{}.Fields()
+	_ = personalaccesstokenFields
+	// personalaccesstokenDescCreatedAt is the schema descriptor for created_at field.
+	personalaccesstokenDescCreatedAt := personalaccesstokenMixinFields0[1].Descriptor()
+	// personalaccesstoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	personalaccesstoken.DefaultCreatedAt = personalaccesstokenDescCreatedAt.Default.(func() time.Time)
+	// personalaccesstokenDescUpdatedAt is the schema descriptor for updated_at field.
+	personalaccesstokenDescUpdatedAt := personalaccesstokenMixinFields0[2].Descriptor()
+	// personalaccesstoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	personalaccesstoken.DefaultUpdatedAt = personalaccesstokenDescUpdatedAt.Default.(func() time.Time)
+	// personalaccesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	personalaccesstoken.UpdateDefaultUpdatedAt = personalaccesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// personalaccesstokenDescName is the schema descriptor for name field.
+	personalaccesstokenDescName := personalaccesstokenFields[0].Descriptor()
+	// personalaccesstoken.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	personalaccesstoken.NameValidator = personalaccesstokenDescName.Validators[0].(func(string) error)
 	postMixin := schema.Post{}.Mixin()
 	postMixinFields0 := postMixin[0].Fields()
 	_ = postMixinFields0
@@ -626,10 +694,6 @@ func init() {
 	postDescContent := postFields[2].Descriptor()
 	// post.ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	post.ContentValidator = postDescContent.Validators[0].(func(string) error)
-	// postDescIsPublished is the schema descriptor for is_published field.
-	postDescIsPublished := postFields[3].Descriptor()
-	// post.DefaultIsPublished holds the default value on creation for the is_published field.
-	post.DefaultIsPublished = postDescIsPublished.Default.(bool)
 	// postDescIsAutogenSummary is the schema descriptor for is_autogen_summary field.
 	postDescIsAutogenSummary := postFields[4].Descriptor()
 	// post.DefaultIsAutogenSummary holds the default value on creation for the is_autogen_summary field.

@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { NDescriptions,NDescriptionsItem } from 'naive-ui'
+import { NButton, NDescriptions,NDescriptionsItem, NSpace } from 'naive-ui'
+import * as userApi from "@/api/system/user"
+import personalAccessTokenForm from './personalAccessTokenForm.vue'
+import { addDialog } from '@/components/dialog'
+import type { TableColumn } from 'naive-ui/es/data-table/src/interface'
+import dayjs from 'dayjs'
+import { useClipboard } from '@vueuse/core'
+
+const message = useMessage()
 const colorOptions = ref([
   {
     value: 'light',
@@ -21,20 +29,89 @@ const personalizedSetting = ref({
   notifications: false,
 })
 const personalAccessTokenList = ref([])
-const personalAccessTokenColumns = ref([
+const personalAccessTokenColumns = ref<TableColumn[]>([
   {
     title: '令牌名称',
-    dataIndex: 'name',
     key: 'name',
   },
   {
-    title: '令牌值',
-    dataIndex: 'token',
-    key: 'token',
+    title: '过期时间',
+    key: 'expires',
+    render:(row:any)=>{
+      return dayjs(row.expires).format('YYYY-MM-DD HH:mm:ss')
+    }
   },
+  {
+    title:"操作",
+    key:'actions',
+    render:(row)=>{
+      return h(NSpace,{},{
+        default:()=>[
+          h(NButton,{
+            text:true,
+            type:'primary',
+            onClick:()=>{
+              copyToken(row)
+            }
+          },{
+            default:()=>'复制'
+          })
+        ]
+      })
+    }
+  }
 ])
 
 const activeTab = ref('profile')
+const copyTokenOrigin = ref('')
+
+const {copy,isSupported} = useClipboard({source:copyTokenOrigin})
+
+const onSearchUserPersonalAccessToken = async()=>{
+  const res= await userApi.getPersonalAccessTokenList()
+  personalAccessTokenList.value =  res.data
+}
+const openPatEditDialog = (title='新增')=>{
+  const formRef = ref()
+  addDialog({
+    title:`${title}个人令牌`,
+    props:{},
+    contentRenderer:()=>h(personalAccessTokenForm,{ref:formRef}),
+    beforeSure:async (done)=>{
+      const chores=()=>{
+        message.success('创建成功')
+        done()
+        onSearchUserPersonalAccessToken()
+      }
+      try{
+        const curData =await formRef.value.getData()
+        await userApi.createPat(curData)
+        chores()
+      }catch{
+
+      }
+
+    }
+  })
+}
+const copyToken = async (row:any)=>{
+  try{
+    const res = await userApi.getPersonalAccessToken(row.id)
+    copyTokenOrigin.value = res.data.token
+    if(isSupported.value){
+      copy()
+      message.success('已复制到剪切板')
+    }else{
+      message.error('剪切板不可用')
+    }
+  }catch{
+
+  }
+
+}
+onMounted(()=>{
+  onSearchUserPersonalAccessToken()
+})
 </script>
 <template>
   <div class="p-4 sm:p-6 lg:p-8">
@@ -109,7 +186,7 @@ const activeTab = ref('profile')
             个人令牌用于访问 API。请妥善保管，不要分享给他人。
           </p>
           <div>
-            <n-button type="primary">创建</n-button>
+            <n-button type="primary" @click="openPatEditDialog('新增')">创建</n-button>
           </div>
         </div>
 

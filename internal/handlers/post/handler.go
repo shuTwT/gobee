@@ -16,6 +16,7 @@ func ListPost(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
+
 	return c.JSON(model.NewSuccess("success", posts))
 }
 
@@ -72,7 +73,7 @@ func UpdatePostSetting(c *fiber.Ctx) error {
 		SetKeywords(post.Keywords).
 		SetCopyright(post.Copyright).
 		SetAuthor(post.Author).
-		SetIsPublished(post.IsPublished).
+		SetStatus(post.Status).
 		SetIsAutogenSummary(post.IsAutogenSummary).
 		SetIsVisible(post.IsVisible).
 		SetIsTipToTop(post.IsTipToTop).
@@ -92,7 +93,7 @@ func PublishPost(c *fiber.Ctx) error {
 			"Invalid ID format"))
 	}
 	newPost, err := client.Post.UpdateOneID(id).
-		SetIsPublished(true).
+		SetStatus("published").
 		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
@@ -108,7 +109,7 @@ func UnpublishPost(c *fiber.Ctx) error {
 			"Invalid ID format"))
 	}
 	newPost, err := client.Post.UpdateOneID(id).
-		SetIsPublished(false).
+		SetStatus("draft").
 		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))

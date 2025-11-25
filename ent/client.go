@@ -16,6 +16,8 @@ import (
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
 	"gobee/ent/file"
+	"gobee/ent/flink"
+	"gobee/ent/flinkgroup"
 	"gobee/ent/modelschema"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
@@ -23,6 +25,7 @@ import (
 	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
+	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
 	"gobee/ent/role"
 	"gobee/ent/setting"
@@ -49,6 +52,10 @@ type Client struct {
 	ApiPerms *ApiPermsClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// FLink is the client for interacting with the FLink builders.
+	FLink *FLinkClient
+	// FLinkGroup is the client for interacting with the FLinkGroup builders.
+	FLinkGroup *FLinkGroupClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// ModelSchema is the client for interacting with the ModelSchema builders.
@@ -65,6 +72,8 @@ type Client struct {
 	PayChannel *PayChannelClient
 	// PayOrder is the client for interacting with the PayOrder builders.
 	PayOrder *PayOrderClient
+	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
+	PersonalAccessToken *PersonalAccessTokenClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
 	// Role is the client for interacting with the Role builders.
@@ -92,6 +101,8 @@ func (c *Client) init() {
 	c.AlbumPhoto = NewAlbumPhotoClient(c.config)
 	c.ApiPerms = NewApiPermsClient(c.config)
 	c.Comment = NewCommentClient(c.config)
+	c.FLink = NewFLinkClient(c.config)
+	c.FLinkGroup = NewFLinkGroupClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.ModelSchema = NewModelSchemaClient(c.config)
 	c.Oauth2AccessToken = NewOauth2AccessTokenClient(c.config)
@@ -100,6 +111,7 @@ func (c *Client) init() {
 	c.Page = NewPageClient(c.config)
 	c.PayChannel = NewPayChannelClient(c.config)
 	c.PayOrder = NewPayOrderClient(c.config)
+	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.Post = NewPostClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.Setting = NewSettingClient(c.config)
@@ -196,26 +208,29 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                ctx,
-		config:             cfg,
-		Album:              NewAlbumClient(cfg),
-		AlbumPhoto:         NewAlbumPhotoClient(cfg),
-		ApiPerms:           NewApiPermsClient(cfg),
-		Comment:            NewCommentClient(cfg),
-		File:               NewFileClient(cfg),
-		ModelSchema:        NewModelSchemaClient(cfg),
-		Oauth2AccessToken:  NewOauth2AccessTokenClient(cfg),
-		Oauth2Code:         NewOauth2CodeClient(cfg),
-		Oauth2RefreshToken: NewOauth2RefreshTokenClient(cfg),
-		Page:               NewPageClient(cfg),
-		PayChannel:         NewPayChannelClient(cfg),
-		PayOrder:           NewPayOrderClient(cfg),
-		Post:               NewPostClient(cfg),
-		Role:               NewRoleClient(cfg),
-		Setting:            NewSettingClient(cfg),
-		StorageStrategy:    NewStorageStrategyClient(cfg),
-		User:               NewUserClient(cfg),
-		WebHook:            NewWebHookClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		Album:               NewAlbumClient(cfg),
+		AlbumPhoto:          NewAlbumPhotoClient(cfg),
+		ApiPerms:            NewApiPermsClient(cfg),
+		Comment:             NewCommentClient(cfg),
+		FLink:               NewFLinkClient(cfg),
+		FLinkGroup:          NewFLinkGroupClient(cfg),
+		File:                NewFileClient(cfg),
+		ModelSchema:         NewModelSchemaClient(cfg),
+		Oauth2AccessToken:   NewOauth2AccessTokenClient(cfg),
+		Oauth2Code:          NewOauth2CodeClient(cfg),
+		Oauth2RefreshToken:  NewOauth2RefreshTokenClient(cfg),
+		Page:                NewPageClient(cfg),
+		PayChannel:          NewPayChannelClient(cfg),
+		PayOrder:            NewPayOrderClient(cfg),
+		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
+		Post:                NewPostClient(cfg),
+		Role:                NewRoleClient(cfg),
+		Setting:             NewSettingClient(cfg),
+		StorageStrategy:     NewStorageStrategyClient(cfg),
+		User:                NewUserClient(cfg),
+		WebHook:             NewWebHookClient(cfg),
 	}, nil
 }
 
@@ -233,26 +248,29 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                ctx,
-		config:             cfg,
-		Album:              NewAlbumClient(cfg),
-		AlbumPhoto:         NewAlbumPhotoClient(cfg),
-		ApiPerms:           NewApiPermsClient(cfg),
-		Comment:            NewCommentClient(cfg),
-		File:               NewFileClient(cfg),
-		ModelSchema:        NewModelSchemaClient(cfg),
-		Oauth2AccessToken:  NewOauth2AccessTokenClient(cfg),
-		Oauth2Code:         NewOauth2CodeClient(cfg),
-		Oauth2RefreshToken: NewOauth2RefreshTokenClient(cfg),
-		Page:               NewPageClient(cfg),
-		PayChannel:         NewPayChannelClient(cfg),
-		PayOrder:           NewPayOrderClient(cfg),
-		Post:               NewPostClient(cfg),
-		Role:               NewRoleClient(cfg),
-		Setting:            NewSettingClient(cfg),
-		StorageStrategy:    NewStorageStrategyClient(cfg),
-		User:               NewUserClient(cfg),
-		WebHook:            NewWebHookClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		Album:               NewAlbumClient(cfg),
+		AlbumPhoto:          NewAlbumPhotoClient(cfg),
+		ApiPerms:            NewApiPermsClient(cfg),
+		Comment:             NewCommentClient(cfg),
+		FLink:               NewFLinkClient(cfg),
+		FLinkGroup:          NewFLinkGroupClient(cfg),
+		File:                NewFileClient(cfg),
+		ModelSchema:         NewModelSchemaClient(cfg),
+		Oauth2AccessToken:   NewOauth2AccessTokenClient(cfg),
+		Oauth2Code:          NewOauth2CodeClient(cfg),
+		Oauth2RefreshToken:  NewOauth2RefreshTokenClient(cfg),
+		Page:                NewPageClient(cfg),
+		PayChannel:          NewPayChannelClient(cfg),
+		PayOrder:            NewPayOrderClient(cfg),
+		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
+		Post:                NewPostClient(cfg),
+		Role:                NewRoleClient(cfg),
+		Setting:             NewSettingClient(cfg),
+		StorageStrategy:     NewStorageStrategyClient(cfg),
+		User:                NewUserClient(cfg),
+		WebHook:             NewWebHookClient(cfg),
 	}, nil
 }
 
@@ -282,9 +300,10 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.File, c.ModelSchema,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
-		c.PayOrder, c.Post, c.Role, c.Setting, c.StorageStrategy, c.User, c.WebHook,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.FLink, c.FLinkGroup, c.File,
+		c.ModelSchema, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page,
+		c.PayChannel, c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.Setting,
+		c.StorageStrategy, c.User, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -294,9 +313,10 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.File, c.ModelSchema,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
-		c.PayOrder, c.Post, c.Role, c.Setting, c.StorageStrategy, c.User, c.WebHook,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.FLink, c.FLinkGroup, c.File,
+		c.ModelSchema, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page,
+		c.PayChannel, c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.Setting,
+		c.StorageStrategy, c.User, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -313,6 +333,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ApiPerms.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
+	case *FLinkMutation:
+		return c.FLink.mutate(ctx, m)
+	case *FLinkGroupMutation:
+		return c.FLinkGroup.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
 	case *ModelSchemaMutation:
@@ -329,6 +353,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PayChannel.mutate(ctx, m)
 	case *PayOrderMutation:
 		return c.PayOrder.mutate(ctx, m)
+	case *PersonalAccessTokenMutation:
+		return c.PersonalAccessToken.mutate(ctx, m)
 	case *PostMutation:
 		return c.Post.mutate(ctx, m)
 	case *RoleMutation:
@@ -875,6 +901,304 @@ func (c *CommentClient) mutate(ctx context.Context, m *CommentMutation) (Value, 
 		return (&CommentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Comment mutation op: %q", m.Op())
+	}
+}
+
+// FLinkClient is a client for the FLink schema.
+type FLinkClient struct {
+	config
+}
+
+// NewFLinkClient returns a client for the FLink from the given config.
+func NewFLinkClient(c config) *FLinkClient {
+	return &FLinkClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `flink.Hooks(f(g(h())))`.
+func (c *FLinkClient) Use(hooks ...Hook) {
+	c.hooks.FLink = append(c.hooks.FLink, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `flink.Intercept(f(g(h())))`.
+func (c *FLinkClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FLink = append(c.inters.FLink, interceptors...)
+}
+
+// Create returns a builder for creating a FLink entity.
+func (c *FLinkClient) Create() *FLinkCreate {
+	mutation := newFLinkMutation(c.config, OpCreate)
+	return &FLinkCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FLink entities.
+func (c *FLinkClient) CreateBulk(builders ...*FLinkCreate) *FLinkCreateBulk {
+	return &FLinkCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FLinkClient) MapCreateBulk(slice any, setFunc func(*FLinkCreate, int)) *FLinkCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FLinkCreateBulk{err: fmt.Errorf("calling to FLinkClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FLinkCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FLinkCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FLink.
+func (c *FLinkClient) Update() *FLinkUpdate {
+	mutation := newFLinkMutation(c.config, OpUpdate)
+	return &FLinkUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FLinkClient) UpdateOne(_m *FLink) *FLinkUpdateOne {
+	mutation := newFLinkMutation(c.config, OpUpdateOne, withFLink(_m))
+	return &FLinkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FLinkClient) UpdateOneID(id int) *FLinkUpdateOne {
+	mutation := newFLinkMutation(c.config, OpUpdateOne, withFLinkID(id))
+	return &FLinkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FLink.
+func (c *FLinkClient) Delete() *FLinkDelete {
+	mutation := newFLinkMutation(c.config, OpDelete)
+	return &FLinkDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FLinkClient) DeleteOne(_m *FLink) *FLinkDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FLinkClient) DeleteOneID(id int) *FLinkDeleteOne {
+	builder := c.Delete().Where(flink.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FLinkDeleteOne{builder}
+}
+
+// Query returns a query builder for FLink.
+func (c *FLinkClient) Query() *FLinkQuery {
+	return &FLinkQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFLink},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FLink entity by its id.
+func (c *FLinkClient) Get(ctx context.Context, id int) (*FLink, error) {
+	return c.Query().Where(flink.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FLinkClient) GetX(ctx context.Context, id int) *FLink {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a FLink.
+func (c *FLinkClient) QueryGroup(_m *FLink) *FLinkGroupQuery {
+	query := (&FLinkGroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flink.Table, flink.FieldID, id),
+			sqlgraph.To(flinkgroup.Table, flinkgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, flink.GroupTable, flink.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FLinkClient) Hooks() []Hook {
+	return c.hooks.FLink
+}
+
+// Interceptors returns the client interceptors.
+func (c *FLinkClient) Interceptors() []Interceptor {
+	return c.inters.FLink
+}
+
+func (c *FLinkClient) mutate(ctx context.Context, m *FLinkMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FLinkCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FLinkUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FLinkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FLinkDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FLink mutation op: %q", m.Op())
+	}
+}
+
+// FLinkGroupClient is a client for the FLinkGroup schema.
+type FLinkGroupClient struct {
+	config
+}
+
+// NewFLinkGroupClient returns a client for the FLinkGroup from the given config.
+func NewFLinkGroupClient(c config) *FLinkGroupClient {
+	return &FLinkGroupClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `flinkgroup.Hooks(f(g(h())))`.
+func (c *FLinkGroupClient) Use(hooks ...Hook) {
+	c.hooks.FLinkGroup = append(c.hooks.FLinkGroup, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `flinkgroup.Intercept(f(g(h())))`.
+func (c *FLinkGroupClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FLinkGroup = append(c.inters.FLinkGroup, interceptors...)
+}
+
+// Create returns a builder for creating a FLinkGroup entity.
+func (c *FLinkGroupClient) Create() *FLinkGroupCreate {
+	mutation := newFLinkGroupMutation(c.config, OpCreate)
+	return &FLinkGroupCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FLinkGroup entities.
+func (c *FLinkGroupClient) CreateBulk(builders ...*FLinkGroupCreate) *FLinkGroupCreateBulk {
+	return &FLinkGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FLinkGroupClient) MapCreateBulk(slice any, setFunc func(*FLinkGroupCreate, int)) *FLinkGroupCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FLinkGroupCreateBulk{err: fmt.Errorf("calling to FLinkGroupClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FLinkGroupCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FLinkGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FLinkGroup.
+func (c *FLinkGroupClient) Update() *FLinkGroupUpdate {
+	mutation := newFLinkGroupMutation(c.config, OpUpdate)
+	return &FLinkGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FLinkGroupClient) UpdateOne(_m *FLinkGroup) *FLinkGroupUpdateOne {
+	mutation := newFLinkGroupMutation(c.config, OpUpdateOne, withFLinkGroup(_m))
+	return &FLinkGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FLinkGroupClient) UpdateOneID(id int) *FLinkGroupUpdateOne {
+	mutation := newFLinkGroupMutation(c.config, OpUpdateOne, withFLinkGroupID(id))
+	return &FLinkGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FLinkGroup.
+func (c *FLinkGroupClient) Delete() *FLinkGroupDelete {
+	mutation := newFLinkGroupMutation(c.config, OpDelete)
+	return &FLinkGroupDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FLinkGroupClient) DeleteOne(_m *FLinkGroup) *FLinkGroupDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FLinkGroupClient) DeleteOneID(id int) *FLinkGroupDeleteOne {
+	builder := c.Delete().Where(flinkgroup.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FLinkGroupDeleteOne{builder}
+}
+
+// Query returns a query builder for FLinkGroup.
+func (c *FLinkGroupClient) Query() *FLinkGroupQuery {
+	return &FLinkGroupQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFLinkGroup},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FLinkGroup entity by its id.
+func (c *FLinkGroupClient) Get(ctx context.Context, id int) (*FLinkGroup, error) {
+	return c.Query().Where(flinkgroup.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FLinkGroupClient) GetX(ctx context.Context, id int) *FLinkGroup {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryLinks queries the links edge of a FLinkGroup.
+func (c *FLinkGroupClient) QueryLinks(_m *FLinkGroup) *FLinkQuery {
+	query := (&FLinkClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flinkgroup.Table, flinkgroup.FieldID, id),
+			sqlgraph.To(flink.Table, flink.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flinkgroup.LinksTable, flinkgroup.LinksColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FLinkGroupClient) Hooks() []Hook {
+	return c.hooks.FLinkGroup
+}
+
+// Interceptors returns the client interceptors.
+func (c *FLinkGroupClient) Interceptors() []Interceptor {
+	return c.inters.FLinkGroup
+}
+
+func (c *FLinkGroupClient) mutate(ctx context.Context, m *FLinkGroupMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FLinkGroupCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FLinkGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FLinkGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FLinkGroupDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FLinkGroup mutation op: %q", m.Op())
 	}
 }
 
@@ -1942,6 +2266,139 @@ func (c *PayOrderClient) mutate(ctx context.Context, m *PayOrderMutation) (Value
 	}
 }
 
+// PersonalAccessTokenClient is a client for the PersonalAccessToken schema.
+type PersonalAccessTokenClient struct {
+	config
+}
+
+// NewPersonalAccessTokenClient returns a client for the PersonalAccessToken from the given config.
+func NewPersonalAccessTokenClient(c config) *PersonalAccessTokenClient {
+	return &PersonalAccessTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `personalaccesstoken.Hooks(f(g(h())))`.
+func (c *PersonalAccessTokenClient) Use(hooks ...Hook) {
+	c.hooks.PersonalAccessToken = append(c.hooks.PersonalAccessToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `personalaccesstoken.Intercept(f(g(h())))`.
+func (c *PersonalAccessTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PersonalAccessToken = append(c.inters.PersonalAccessToken, interceptors...)
+}
+
+// Create returns a builder for creating a PersonalAccessToken entity.
+func (c *PersonalAccessTokenClient) Create() *PersonalAccessTokenCreate {
+	mutation := newPersonalAccessTokenMutation(c.config, OpCreate)
+	return &PersonalAccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PersonalAccessToken entities.
+func (c *PersonalAccessTokenClient) CreateBulk(builders ...*PersonalAccessTokenCreate) *PersonalAccessTokenCreateBulk {
+	return &PersonalAccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PersonalAccessTokenClient) MapCreateBulk(slice any, setFunc func(*PersonalAccessTokenCreate, int)) *PersonalAccessTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PersonalAccessTokenCreateBulk{err: fmt.Errorf("calling to PersonalAccessTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PersonalAccessTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PersonalAccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PersonalAccessToken.
+func (c *PersonalAccessTokenClient) Update() *PersonalAccessTokenUpdate {
+	mutation := newPersonalAccessTokenMutation(c.config, OpUpdate)
+	return &PersonalAccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PersonalAccessTokenClient) UpdateOne(_m *PersonalAccessToken) *PersonalAccessTokenUpdateOne {
+	mutation := newPersonalAccessTokenMutation(c.config, OpUpdateOne, withPersonalAccessToken(_m))
+	return &PersonalAccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PersonalAccessTokenClient) UpdateOneID(id int) *PersonalAccessTokenUpdateOne {
+	mutation := newPersonalAccessTokenMutation(c.config, OpUpdateOne, withPersonalAccessTokenID(id))
+	return &PersonalAccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PersonalAccessToken.
+func (c *PersonalAccessTokenClient) Delete() *PersonalAccessTokenDelete {
+	mutation := newPersonalAccessTokenMutation(c.config, OpDelete)
+	return &PersonalAccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PersonalAccessTokenClient) DeleteOne(_m *PersonalAccessToken) *PersonalAccessTokenDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PersonalAccessTokenClient) DeleteOneID(id int) *PersonalAccessTokenDeleteOne {
+	builder := c.Delete().Where(personalaccesstoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PersonalAccessTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for PersonalAccessToken.
+func (c *PersonalAccessTokenClient) Query() *PersonalAccessTokenQuery {
+	return &PersonalAccessTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePersonalAccessToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PersonalAccessToken entity by its id.
+func (c *PersonalAccessTokenClient) Get(ctx context.Context, id int) (*PersonalAccessToken, error) {
+	return c.Query().Where(personalaccesstoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PersonalAccessTokenClient) GetX(ctx context.Context, id int) *PersonalAccessToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PersonalAccessTokenClient) Hooks() []Hook {
+	return c.hooks.PersonalAccessToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *PersonalAccessTokenClient) Interceptors() []Interceptor {
+	return c.inters.PersonalAccessToken
+}
+
+func (c *PersonalAccessTokenClient) mutate(ctx context.Context, m *PersonalAccessTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PersonalAccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PersonalAccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PersonalAccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PersonalAccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PersonalAccessToken mutation op: %q", m.Op())
+	}
+}
+
 // PostClient is a client for the Post schema.
 type PostClient struct {
 	config
@@ -2775,13 +3232,15 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, ApiPerms, Comment, File, ModelSchema, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder, Post, Role,
-		Setting, StorageStrategy, User, WebHook []ent.Hook
+		Album, AlbumPhoto, ApiPerms, Comment, FLink, FLinkGroup, File, ModelSchema,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
+		PersonalAccessToken, Post, Role, Setting, StorageStrategy, User,
+		WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, ApiPerms, Comment, File, ModelSchema, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder, Post, Role,
-		Setting, StorageStrategy, User, WebHook []ent.Interceptor
+		Album, AlbumPhoto, ApiPerms, Comment, FLink, FLinkGroup, File, ModelSchema,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
+		PersonalAccessToken, Post, Role, Setting, StorageStrategy, User,
+		WebHook []ent.Interceptor
 	}
 )

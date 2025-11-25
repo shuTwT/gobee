@@ -12,3 +12,34 @@ type LoginResp struct {
 	Username    string   `json:"username"`
 	Roles       []string `json:"roles"`
 }
+
+type PersonalAccessTokenCreateReq struct {
+	// 令牌名称
+	Name string `json:"name"`
+	// 过期时间
+	Expires LocalTime `json:"expires"`
+	// 描述
+	Description string `json:"description"`
+}
+
+type PersonalAccessTokenListResp struct {
+	ID int `json:"id"`
+	// 令牌名称
+	Name string `json:"name"`
+	// 过期时间
+	Expires *LocalTime `json:"expires"`
+	// 描述
+	Description string `json:"description"`
+}
+
+type PersonalAccessTokenResp struct {
+	ID int `json:"id"`
+	// 令牌名称
+	Name string `json:"name"`
+	// 过期时间
+	Expires *LocalTime `json:"expires"`
+	// 描述
+	Description string `json:"description"`
+	// 令牌
+	Token string `json:"token"`
+}

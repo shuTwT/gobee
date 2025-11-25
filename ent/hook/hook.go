@@ -56,6 +56,30 @@ func (f CommentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommentMutation", m)
 }
 
+// The FLinkFunc type is an adapter to allow the use of ordinary
+// function as FLink mutator.
+type FLinkFunc func(context.Context, *ent.FLinkMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FLinkFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FLinkMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FLinkMutation", m)
+}
+
+// The FLinkGroupFunc type is an adapter to allow the use of ordinary
+// function as FLinkGroup mutator.
+type FLinkGroupFunc func(context.Context, *ent.FLinkGroupMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FLinkGroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FLinkGroupMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FLinkGroupMutation", m)
+}
+
 // The FileFunc type is an adapter to allow the use of ordinary
 // function as File mutator.
 type FileFunc func(context.Context, *ent.FileMutation) (ent.Value, error)
@@ -150,6 +174,18 @@ func (f PayOrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PayOrderMutation", m)
+}
+
+// The PersonalAccessTokenFunc type is an adapter to allow the use of ordinary
+// function as PersonalAccessToken mutator.
+type PersonalAccessTokenFunc func(context.Context, *ent.PersonalAccessTokenMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PersonalAccessTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PersonalAccessTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PersonalAccessTokenMutation", m)
 }
 
 // The PostFunc type is an adapter to allow the use of ordinary

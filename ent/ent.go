@@ -11,6 +11,8 @@ import (
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
 	"gobee/ent/file"
+	"gobee/ent/flink"
+	"gobee/ent/flinkgroup"
 	"gobee/ent/modelschema"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
@@ -18,6 +20,7 @@ import (
 	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
+	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
 	"gobee/ent/role"
 	"gobee/ent/setting"
@@ -90,24 +93,27 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			album.Table:              album.ValidColumn,
-			albumphoto.Table:         albumphoto.ValidColumn,
-			apiperms.Table:           apiperms.ValidColumn,
-			comment.Table:            comment.ValidColumn,
-			file.Table:               file.ValidColumn,
-			modelschema.Table:        modelschema.ValidColumn,
-			oauth2accesstoken.Table:  oauth2accesstoken.ValidColumn,
-			oauth2code.Table:         oauth2code.ValidColumn,
-			oauth2refreshtoken.Table: oauth2refreshtoken.ValidColumn,
-			page.Table:               page.ValidColumn,
-			paychannel.Table:         paychannel.ValidColumn,
-			payorder.Table:           payorder.ValidColumn,
-			post.Table:               post.ValidColumn,
-			role.Table:               role.ValidColumn,
-			setting.Table:            setting.ValidColumn,
-			storagestrategy.Table:    storagestrategy.ValidColumn,
-			user.Table:               user.ValidColumn,
-			webhook.Table:            webhook.ValidColumn,
+			album.Table:               album.ValidColumn,
+			albumphoto.Table:          albumphoto.ValidColumn,
+			apiperms.Table:            apiperms.ValidColumn,
+			comment.Table:             comment.ValidColumn,
+			flink.Table:               flink.ValidColumn,
+			flinkgroup.Table:          flinkgroup.ValidColumn,
+			file.Table:                file.ValidColumn,
+			modelschema.Table:         modelschema.ValidColumn,
+			oauth2accesstoken.Table:   oauth2accesstoken.ValidColumn,
+			oauth2code.Table:          oauth2code.ValidColumn,
+			oauth2refreshtoken.Table:  oauth2refreshtoken.ValidColumn,
+			page.Table:                page.ValidColumn,
+			paychannel.Table:          paychannel.ValidColumn,
+			payorder.Table:            payorder.ValidColumn,
+			personalaccesstoken.Table: personalaccesstoken.ValidColumn,
+			post.Table:                post.ValidColumn,
+			role.Table:                role.ValidColumn,
+			setting.Table:             setting.ValidColumn,
+			storagestrategy.Table:     storagestrategy.ValidColumn,
+			user.Table:                user.ValidColumn,
+			webhook.Table:             webhook.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

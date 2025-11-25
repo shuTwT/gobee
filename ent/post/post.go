@@ -3,6 +3,7 @@
 package post
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -23,8 +24,8 @@ const (
 	FieldAlias = "alias"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
-	// FieldIsPublished holds the string denoting the is_published field in the database.
-	FieldIsPublished = "is_published"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// FieldIsAutogenSummary holds the string denoting the is_autogen_summary field in the database.
 	FieldIsAutogenSummary = "is_autogen_summary"
 	// FieldIsVisible holds the string denoting the is_visible field in the database.
@@ -61,7 +62,7 @@ var Columns = []string{
 	FieldTitle,
 	FieldAlias,
 	FieldContent,
-	FieldIsPublished,
+	FieldStatus,
 	FieldIsAutogenSummary,
 	FieldIsVisible,
 	FieldIsTipToTop,
@@ -99,8 +100,6 @@ var (
 	AliasValidator func(string) error
 	// ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	ContentValidator func(string) error
-	// DefaultIsPublished holds the default value on creation for the "is_published" field.
-	DefaultIsPublished bool
 	// DefaultIsAutogenSummary holds the default value on creation for the "is_autogen_summary" field.
 	DefaultIsAutogenSummary bool
 	// DefaultIsVisible holds the default value on creation for the "is_visible" field.
@@ -128,6 +127,33 @@ var (
 	// SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
 	SummaryValidator func(string) error
 )
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusDraft is the default value of the Status enum.
+const DefaultStatus = StatusDraft
+
+// Status values.
+const (
+	StatusDraft     Status = "draft"
+	StatusPublished Status = "published"
+	StatusArchived  Status = "archived"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusDraft, StatusPublished, StatusArchived:
+		return nil
+	default:
+		return fmt.Errorf("post: invalid enum value for status field: %q", s)
+	}
+}
 
 // OrderOption defines the ordering options for the Post queries.
 type OrderOption func(*sql.Selector)
@@ -162,9 +188,9 @@ func ByContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContent, opts...).ToFunc()
 }
 
-// ByIsPublished orders the results by the is_published field.
-func ByIsPublished(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsPublished, opts...).ToFunc()
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
 // ByIsAutogenSummary orders the results by the is_autogen_summary field.

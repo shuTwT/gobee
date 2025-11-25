@@ -18,6 +18,12 @@ type ApiPerms func(*sql.Selector)
 // Comment is the predicate function for comment builders.
 type Comment func(*sql.Selector)
 
+// FLink is the predicate function for flink builders.
+type FLink func(*sql.Selector)
+
+// FLinkGroup is the predicate function for flinkgroup builders.
+type FLinkGroup func(*sql.Selector)
+
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
@@ -41,6 +47,9 @@ type PayChannel func(*sql.Selector)
 
 // PayOrder is the predicate function for payorder builders.
 type PayOrder func(*sql.Selector)
+
+// PersonalAccessToken is the predicate function for personalaccesstoken builders.
+type PersonalAccessToken func(*sql.Selector)
 
 // Post is the predicate function for post builders.
 type Post func(*sql.Selector)

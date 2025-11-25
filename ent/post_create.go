@@ -74,16 +74,16 @@ func (_c *PostCreate) SetContent(v string) *PostCreate {
 	return _c
 }
 
-// SetIsPublished sets the "is_published" field.
-func (_c *PostCreate) SetIsPublished(v bool) *PostCreate {
-	_c.mutation.SetIsPublished(v)
+// SetStatus sets the "status" field.
+func (_c *PostCreate) SetStatus(v post.Status) *PostCreate {
+	_c.mutation.SetStatus(v)
 	return _c
 }
 
-// SetNillableIsPublished sets the "is_published" field if the given value is not nil.
-func (_c *PostCreate) SetNillableIsPublished(v *bool) *PostCreate {
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_c *PostCreate) SetNillableStatus(v *post.Status) *PostCreate {
 	if v != nil {
-		_c.SetIsPublished(*v)
+		_c.SetStatus(*v)
 	}
 	return _c
 }
@@ -305,9 +305,9 @@ func (_c *PostCreate) defaults() {
 		v := post.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := _c.mutation.IsPublished(); !ok {
-		v := post.DefaultIsPublished
-		_c.mutation.SetIsPublished(v)
+	if _, ok := _c.mutation.Status(); !ok {
+		v := post.DefaultStatus
+		_c.mutation.SetStatus(v)
 	}
 	if _, ok := _c.mutation.IsAutogenSummary(); !ok {
 		v := post.DefaultIsAutogenSummary
@@ -368,8 +368,13 @@ func (_c *PostCreate) check() error {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.IsPublished(); !ok {
-		return &ValidationError{Name: "is_published", err: errors.New(`ent: missing required field "Post.is_published"`)}
+	if _, ok := _c.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Post.status"`)}
+	}
+	if v, ok := _c.mutation.Status(); ok {
+		if err := post.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.IsAutogenSummary(); !ok {
 		return &ValidationError{Name: "is_autogen_summary", err: errors.New(`ent: missing required field "Post.is_autogen_summary"`)}
@@ -474,9 +479,9 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
 		_node.Content = value
 	}
-	if value, ok := _c.mutation.IsPublished(); ok {
-		_spec.SetField(post.FieldIsPublished, field.TypeBool, value)
-		_node.IsPublished = value
+	if value, ok := _c.mutation.Status(); ok {
+		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
 	}
 	if value, ok := _c.mutation.IsAutogenSummary(); ok {
 		_spec.SetField(post.FieldIsAutogenSummary, field.TypeBool, value)
@@ -496,7 +501,7 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)
-		_node.PublishedAt = value
+		_node.PublishedAt = &value
 	}
 	if value, ok := _c.mutation.ViewCount(); ok {
 		_spec.SetField(post.FieldViewCount, field.TypeInt, value)

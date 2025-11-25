@@ -32,6 +32,8 @@ func ListAlbumPhotoPage(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 	albumPhotos, err := client.AlbumPhoto.Query().
+		Offset((pageQuery.Page - 1) * pageQuery.Size).
+		Limit(pageQuery.Size).
 		All(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))

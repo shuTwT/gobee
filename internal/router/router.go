@@ -7,6 +7,8 @@ import (
 	auth_handler "gobee/internal/handlers/auth"
 	comment_handler "gobee/internal/handlers/comment"
 	file_handler "gobee/internal/handlers/file"
+	flink_handler "gobee/internal/handlers/flink"
+	flinkgroup_handler "gobee/internal/handlers/flink_group"
 	initialize_handler "gobee/internal/handlers/initialize"
 	paychannel_handler "gobee/internal/handlers/pay_channel"
 	payorder_handler "gobee/internal/handlers/pay_order"
@@ -54,6 +56,10 @@ func Initialize(router *fiber.App) {
 			apiV1.Get("/settings", setting_handler.GetSettings)
 			// 登录身份验证中间件
 			apiV1.Use(middleware.Protected())
+
+			apiV1.Get("/user/personal-access-token", user_handler.GetPersonalAccessTokenList).Name("patList")
+			apiV1.Get("/user/personal-access-token/:id", user_handler.GetPersonalAccessToken).Name("patInfo")
+			apiV1.Post("/user/personal-access-token", user_handler.CreatePat).Name("patCreate")
 
 			settingsApi := apiV1.Group("/settings")
 			{
@@ -145,6 +151,22 @@ func Initialize(router *fiber.App) {
 				albumPhotoApi.Put("/update/:id", albumphoto_handler.UpdateAlbumPhoto).Name("albumPhotoUpdate")
 				albumPhotoApi.Get("/query/:id", albumphoto_handler.QueryAlbumPhoto).Name("albumPhotoQuery")
 				albumPhotoApi.Delete("/delete/:id", albumphoto_handler.DeleteAlbumPhoto).Name("albumPhotoDelete")
+			}
+			flinkApi := apiV1.Group("/flink")
+			{
+				flinkApi.Get("/list", flink_handler.ListFlink).Name("flinkList")
+				flinkApi.Get("/page", flink_handler.ListFlinkPage).Name("flinkPage")
+				flinkApi.Post("/create", flink_handler.CreateFlink).Name("flinkCreate")
+				flinkApi.Put("/update/:id", flink_handler.UpdateFlink).Name("flinkUpdate")
+				flinkApi.Get("/query/:id", flink_handler.QueryFlink).Name("flinkQuery")
+				flinkApi.Delete("/delete/:id", flink_handler.DeleteFlink).Name("flinkDelete")
+			}
+			flinkGroup := apiV1.Group("/flink-group")
+			{
+				flinkGroup.Get("/list", flinkgroup_handler.ListFLinkGroup).Name("flinkGroupList")
+				flinkGroup.Post("/create", flinkgroup_handler.CreateFlinkGroup).Name("flinkGroupCreate")
+				flinkGroup.Put("/update/:id", flinkgroup_handler.UpdateFlinkGroup).Name("flinkGroupUpdate")
+				flinkGroup.Get("/delete/:id", flinkgroup_handler.DeleteFLinkGroup).Name("flinkGroupList")
 			}
 
 		}

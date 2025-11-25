@@ -11,12 +11,15 @@ import (
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
 	"gobee/ent/file"
+	"gobee/ent/flink"
+	"gobee/ent/flinkgroup"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
 	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
+	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
 	"gobee/ent/predicate"
 	"gobee/ent/role"
@@ -40,24 +43,27 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAlbum              = "Album"
-	TypeAlbumPhoto         = "AlbumPhoto"
-	TypeApiPerms           = "ApiPerms"
-	TypeComment            = "Comment"
-	TypeFile               = "File"
-	TypeModelSchema        = "ModelSchema"
-	TypeOauth2AccessToken  = "Oauth2AccessToken"
-	TypeOauth2Code         = "Oauth2Code"
-	TypeOauth2RefreshToken = "Oauth2RefreshToken"
-	TypePage               = "Page"
-	TypePayChannel         = "PayChannel"
-	TypePayOrder           = "PayOrder"
-	TypePost               = "Post"
-	TypeRole               = "Role"
-	TypeSetting            = "Setting"
-	TypeStorageStrategy    = "StorageStrategy"
-	TypeUser               = "User"
-	TypeWebHook            = "WebHook"
+	TypeAlbum               = "Album"
+	TypeAlbumPhoto          = "AlbumPhoto"
+	TypeApiPerms            = "ApiPerms"
+	TypeComment             = "Comment"
+	TypeFLink               = "FLink"
+	TypeFLinkGroup          = "FLinkGroup"
+	TypeFile                = "File"
+	TypeModelSchema         = "ModelSchema"
+	TypeOauth2AccessToken   = "Oauth2AccessToken"
+	TypeOauth2Code          = "Oauth2Code"
+	TypeOauth2RefreshToken  = "Oauth2RefreshToken"
+	TypePage                = "Page"
+	TypePayChannel          = "PayChannel"
+	TypePayOrder            = "PayOrder"
+	TypePersonalAccessToken = "PersonalAccessToken"
+	TypePost                = "Post"
+	TypeRole                = "Role"
+	TypeSetting             = "Setting"
+	TypeStorageStrategy     = "StorageStrategy"
+	TypeUser                = "User"
+	TypeWebHook             = "WebHook"
 )
 
 // AlbumMutation represents an operation that mutates the Album nodes in the graph.
@@ -3237,6 +3243,1545 @@ func (m *CommentMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *CommentMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Comment edge %s", name)
+}
+
+// FLinkMutation represents an operation that mutates the FLink nodes in the graph.
+type FLinkMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	created_at    *time.Time
+	updated_at    *time.Time
+	name          *string
+	url           *string
+	logo          *string
+	description   *string
+	status        *int
+	addstatus     *int
+	snapshot      *string
+	email         *string
+	clearedFields map[string]struct{}
+	group         *int
+	clearedgroup  bool
+	done          bool
+	oldValue      func(context.Context) (*FLink, error)
+	predicates    []predicate.FLink
+}
+
+var _ ent.Mutation = (*FLinkMutation)(nil)
+
+// flinkOption allows management of the mutation configuration using functional options.
+type flinkOption func(*FLinkMutation)
+
+// newFLinkMutation creates new mutation for the FLink entity.
+func newFLinkMutation(c config, op Op, opts ...flinkOption) *FLinkMutation {
+	m := &FLinkMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFLink,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFLinkID sets the ID field of the mutation.
+func withFLinkID(id int) flinkOption {
+	return func(m *FLinkMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FLink
+		)
+		m.oldValue = func(ctx context.Context) (*FLink, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FLink.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFLink sets the old FLink of the mutation.
+func withFLink(node *FLink) flinkOption {
+	return func(m *FLinkMutation) {
+		m.oldValue = func(context.Context) (*FLink, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FLinkMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FLinkMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of FLink entities.
+func (m *FLinkMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FLinkMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *FLinkMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().FLink.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *FLinkMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *FLinkMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *FLinkMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *FLinkMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *FLinkMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *FLinkMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *FLinkMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *FLinkMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *FLinkMutation) ResetName() {
+	m.name = nil
+}
+
+// SetURL sets the "url" field.
+func (m *FLinkMutation) SetURL(s string) {
+	m.url = &s
+}
+
+// URL returns the value of the "url" field in the mutation.
+func (m *FLinkMutation) URL() (r string, exists bool) {
+	v := m.url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURL returns the old "url" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURL: %w", err)
+	}
+	return oldValue.URL, nil
+}
+
+// ResetURL resets all changes to the "url" field.
+func (m *FLinkMutation) ResetURL() {
+	m.url = nil
+}
+
+// SetLogo sets the "logo" field.
+func (m *FLinkMutation) SetLogo(s string) {
+	m.logo = &s
+}
+
+// Logo returns the value of the "logo" field in the mutation.
+func (m *FLinkMutation) Logo() (r string, exists bool) {
+	v := m.logo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLogo returns the old "logo" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldLogo(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLogo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLogo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLogo: %w", err)
+	}
+	return oldValue.Logo, nil
+}
+
+// ClearLogo clears the value of the "logo" field.
+func (m *FLinkMutation) ClearLogo() {
+	m.logo = nil
+	m.clearedFields[flink.FieldLogo] = struct{}{}
+}
+
+// LogoCleared returns if the "logo" field was cleared in this mutation.
+func (m *FLinkMutation) LogoCleared() bool {
+	_, ok := m.clearedFields[flink.FieldLogo]
+	return ok
+}
+
+// ResetLogo resets all changes to the "logo" field.
+func (m *FLinkMutation) ResetLogo() {
+	m.logo = nil
+	delete(m.clearedFields, flink.FieldLogo)
+}
+
+// SetDescription sets the "description" field.
+func (m *FLinkMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *FLinkMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *FLinkMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[flink.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *FLinkMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[flink.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *FLinkMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, flink.FieldDescription)
+}
+
+// SetStatus sets the "status" field.
+func (m *FLinkMutation) SetStatus(i int) {
+	m.status = &i
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *FLinkMutation) Status() (r int, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldStatus(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds i to the "status" field.
+func (m *FLinkMutation) AddStatus(i int) {
+	if m.addstatus != nil {
+		*m.addstatus += i
+	} else {
+		m.addstatus = &i
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *FLinkMutation) AddedStatus() (r int, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *FLinkMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// SetSnapshot sets the "snapshot" field.
+func (m *FLinkMutation) SetSnapshot(s string) {
+	m.snapshot = &s
+}
+
+// Snapshot returns the value of the "snapshot" field in the mutation.
+func (m *FLinkMutation) Snapshot() (r string, exists bool) {
+	v := m.snapshot
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSnapshot returns the old "snapshot" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldSnapshot(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSnapshot is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSnapshot requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSnapshot: %w", err)
+	}
+	return oldValue.Snapshot, nil
+}
+
+// ClearSnapshot clears the value of the "snapshot" field.
+func (m *FLinkMutation) ClearSnapshot() {
+	m.snapshot = nil
+	m.clearedFields[flink.FieldSnapshot] = struct{}{}
+}
+
+// SnapshotCleared returns if the "snapshot" field was cleared in this mutation.
+func (m *FLinkMutation) SnapshotCleared() bool {
+	_, ok := m.clearedFields[flink.FieldSnapshot]
+	return ok
+}
+
+// ResetSnapshot resets all changes to the "snapshot" field.
+func (m *FLinkMutation) ResetSnapshot() {
+	m.snapshot = nil
+	delete(m.clearedFields, flink.FieldSnapshot)
+}
+
+// SetEmail sets the "email" field.
+func (m *FLinkMutation) SetEmail(s string) {
+	m.email = &s
+}
+
+// Email returns the value of the "email" field in the mutation.
+func (m *FLinkMutation) Email() (r string, exists bool) {
+	v := m.email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmail returns the old "email" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEmail is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmail: %w", err)
+	}
+	return oldValue.Email, nil
+}
+
+// ClearEmail clears the value of the "email" field.
+func (m *FLinkMutation) ClearEmail() {
+	m.email = nil
+	m.clearedFields[flink.FieldEmail] = struct{}{}
+}
+
+// EmailCleared returns if the "email" field was cleared in this mutation.
+func (m *FLinkMutation) EmailCleared() bool {
+	_, ok := m.clearedFields[flink.FieldEmail]
+	return ok
+}
+
+// ResetEmail resets all changes to the "email" field.
+func (m *FLinkMutation) ResetEmail() {
+	m.email = nil
+	delete(m.clearedFields, flink.FieldEmail)
+}
+
+// SetGroupID sets the "group_id" field.
+func (m *FLinkMutation) SetGroupID(i int) {
+	m.group = &i
+}
+
+// GroupID returns the value of the "group_id" field in the mutation.
+func (m *FLinkMutation) GroupID() (r int, exists bool) {
+	v := m.group
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupID returns the old "group_id" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldGroupID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupID: %w", err)
+	}
+	return oldValue.GroupID, nil
+}
+
+// ClearGroupID clears the value of the "group_id" field.
+func (m *FLinkMutation) ClearGroupID() {
+	m.group = nil
+	m.clearedFields[flink.FieldGroupID] = struct{}{}
+}
+
+// GroupIDCleared returns if the "group_id" field was cleared in this mutation.
+func (m *FLinkMutation) GroupIDCleared() bool {
+	_, ok := m.clearedFields[flink.FieldGroupID]
+	return ok
+}
+
+// ResetGroupID resets all changes to the "group_id" field.
+func (m *FLinkMutation) ResetGroupID() {
+	m.group = nil
+	delete(m.clearedFields, flink.FieldGroupID)
+}
+
+// ClearGroup clears the "group" edge to the FLinkGroup entity.
+func (m *FLinkMutation) ClearGroup() {
+	m.clearedgroup = true
+	m.clearedFields[flink.FieldGroupID] = struct{}{}
+}
+
+// GroupCleared reports if the "group" edge to the FLinkGroup entity was cleared.
+func (m *FLinkMutation) GroupCleared() bool {
+	return m.GroupIDCleared() || m.clearedgroup
+}
+
+// GroupIDs returns the "group" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GroupID instead. It exists only for internal usage by the builders.
+func (m *FLinkMutation) GroupIDs() (ids []int) {
+	if id := m.group; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGroup resets all changes to the "group" edge.
+func (m *FLinkMutation) ResetGroup() {
+	m.group = nil
+	m.clearedgroup = false
+}
+
+// Where appends a list predicates to the FLinkMutation builder.
+func (m *FLinkMutation) Where(ps ...predicate.FLink) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the FLinkMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FLinkMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FLink, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *FLinkMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FLinkMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (FLink).
+func (m *FLinkMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FLinkMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_at != nil {
+		fields = append(fields, flink.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, flink.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, flink.FieldName)
+	}
+	if m.url != nil {
+		fields = append(fields, flink.FieldURL)
+	}
+	if m.logo != nil {
+		fields = append(fields, flink.FieldLogo)
+	}
+	if m.description != nil {
+		fields = append(fields, flink.FieldDescription)
+	}
+	if m.status != nil {
+		fields = append(fields, flink.FieldStatus)
+	}
+	if m.snapshot != nil {
+		fields = append(fields, flink.FieldSnapshot)
+	}
+	if m.email != nil {
+		fields = append(fields, flink.FieldEmail)
+	}
+	if m.group != nil {
+		fields = append(fields, flink.FieldGroupID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FLinkMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case flink.FieldCreatedAt:
+		return m.CreatedAt()
+	case flink.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case flink.FieldName:
+		return m.Name()
+	case flink.FieldURL:
+		return m.URL()
+	case flink.FieldLogo:
+		return m.Logo()
+	case flink.FieldDescription:
+		return m.Description()
+	case flink.FieldStatus:
+		return m.Status()
+	case flink.FieldSnapshot:
+		return m.Snapshot()
+	case flink.FieldEmail:
+		return m.Email()
+	case flink.FieldGroupID:
+		return m.GroupID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FLinkMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case flink.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case flink.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case flink.FieldName:
+		return m.OldName(ctx)
+	case flink.FieldURL:
+		return m.OldURL(ctx)
+	case flink.FieldLogo:
+		return m.OldLogo(ctx)
+	case flink.FieldDescription:
+		return m.OldDescription(ctx)
+	case flink.FieldStatus:
+		return m.OldStatus(ctx)
+	case flink.FieldSnapshot:
+		return m.OldSnapshot(ctx)
+	case flink.FieldEmail:
+		return m.OldEmail(ctx)
+	case flink.FieldGroupID:
+		return m.OldGroupID(ctx)
+	}
+	return nil, fmt.Errorf("unknown FLink field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FLinkMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case flink.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case flink.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case flink.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case flink.FieldURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURL(v)
+		return nil
+	case flink.FieldLogo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLogo(v)
+		return nil
+	case flink.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case flink.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case flink.FieldSnapshot:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSnapshot(v)
+		return nil
+	case flink.FieldEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmail(v)
+		return nil
+	case flink.FieldGroupID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FLink field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FLinkMutation) AddedFields() []string {
+	var fields []string
+	if m.addstatus != nil {
+		fields = append(fields, flink.FieldStatus)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FLinkMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case flink.FieldStatus:
+		return m.AddedStatus()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FLinkMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case flink.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FLink numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FLinkMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(flink.FieldLogo) {
+		fields = append(fields, flink.FieldLogo)
+	}
+	if m.FieldCleared(flink.FieldDescription) {
+		fields = append(fields, flink.FieldDescription)
+	}
+	if m.FieldCleared(flink.FieldSnapshot) {
+		fields = append(fields, flink.FieldSnapshot)
+	}
+	if m.FieldCleared(flink.FieldEmail) {
+		fields = append(fields, flink.FieldEmail)
+	}
+	if m.FieldCleared(flink.FieldGroupID) {
+		fields = append(fields, flink.FieldGroupID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FLinkMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FLinkMutation) ClearField(name string) error {
+	switch name {
+	case flink.FieldLogo:
+		m.ClearLogo()
+		return nil
+	case flink.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case flink.FieldSnapshot:
+		m.ClearSnapshot()
+		return nil
+	case flink.FieldEmail:
+		m.ClearEmail()
+		return nil
+	case flink.FieldGroupID:
+		m.ClearGroupID()
+		return nil
+	}
+	return fmt.Errorf("unknown FLink nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FLinkMutation) ResetField(name string) error {
+	switch name {
+	case flink.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case flink.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case flink.FieldName:
+		m.ResetName()
+		return nil
+	case flink.FieldURL:
+		m.ResetURL()
+		return nil
+	case flink.FieldLogo:
+		m.ResetLogo()
+		return nil
+	case flink.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case flink.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case flink.FieldSnapshot:
+		m.ResetSnapshot()
+		return nil
+	case flink.FieldEmail:
+		m.ResetEmail()
+		return nil
+	case flink.FieldGroupID:
+		m.ResetGroupID()
+		return nil
+	}
+	return fmt.Errorf("unknown FLink field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FLinkMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.group != nil {
+		edges = append(edges, flink.EdgeGroup)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FLinkMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case flink.EdgeGroup:
+		if id := m.group; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FLinkMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FLinkMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FLinkMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedgroup {
+		edges = append(edges, flink.EdgeGroup)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FLinkMutation) EdgeCleared(name string) bool {
+	switch name {
+	case flink.EdgeGroup:
+		return m.clearedgroup
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FLinkMutation) ClearEdge(name string) error {
+	switch name {
+	case flink.EdgeGroup:
+		m.ClearGroup()
+		return nil
+	}
+	return fmt.Errorf("unknown FLink unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FLinkMutation) ResetEdge(name string) error {
+	switch name {
+	case flink.EdgeGroup:
+		m.ResetGroup()
+		return nil
+	}
+	return fmt.Errorf("unknown FLink edge %s", name)
+}
+
+// FLinkGroupMutation represents an operation that mutates the FLinkGroup nodes in the graph.
+type FLinkGroupMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	created_at    *time.Time
+	updated_at    *time.Time
+	name          *string
+	clearedFields map[string]struct{}
+	links         map[int]struct{}
+	removedlinks  map[int]struct{}
+	clearedlinks  bool
+	done          bool
+	oldValue      func(context.Context) (*FLinkGroup, error)
+	predicates    []predicate.FLinkGroup
+}
+
+var _ ent.Mutation = (*FLinkGroupMutation)(nil)
+
+// flinkgroupOption allows management of the mutation configuration using functional options.
+type flinkgroupOption func(*FLinkGroupMutation)
+
+// newFLinkGroupMutation creates new mutation for the FLinkGroup entity.
+func newFLinkGroupMutation(c config, op Op, opts ...flinkgroupOption) *FLinkGroupMutation {
+	m := &FLinkGroupMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFLinkGroup,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFLinkGroupID sets the ID field of the mutation.
+func withFLinkGroupID(id int) flinkgroupOption {
+	return func(m *FLinkGroupMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FLinkGroup
+		)
+		m.oldValue = func(ctx context.Context) (*FLinkGroup, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FLinkGroup.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFLinkGroup sets the old FLinkGroup of the mutation.
+func withFLinkGroup(node *FLinkGroup) flinkgroupOption {
+	return func(m *FLinkGroupMutation) {
+		m.oldValue = func(context.Context) (*FLinkGroup, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FLinkGroupMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FLinkGroupMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of FLinkGroup entities.
+func (m *FLinkGroupMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FLinkGroupMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *FLinkGroupMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().FLinkGroup.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *FLinkGroupMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *FLinkGroupMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the FLinkGroup entity.
+// If the FLinkGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkGroupMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *FLinkGroupMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *FLinkGroupMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *FLinkGroupMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the FLinkGroup entity.
+// If the FLinkGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkGroupMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *FLinkGroupMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *FLinkGroupMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *FLinkGroupMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the FLinkGroup entity.
+// If the FLinkGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkGroupMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *FLinkGroupMutation) ResetName() {
+	m.name = nil
+}
+
+// AddLinkIDs adds the "links" edge to the FLink entity by ids.
+func (m *FLinkGroupMutation) AddLinkIDs(ids ...int) {
+	if m.links == nil {
+		m.links = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.links[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLinks clears the "links" edge to the FLink entity.
+func (m *FLinkGroupMutation) ClearLinks() {
+	m.clearedlinks = true
+}
+
+// LinksCleared reports if the "links" edge to the FLink entity was cleared.
+func (m *FLinkGroupMutation) LinksCleared() bool {
+	return m.clearedlinks
+}
+
+// RemoveLinkIDs removes the "links" edge to the FLink entity by IDs.
+func (m *FLinkGroupMutation) RemoveLinkIDs(ids ...int) {
+	if m.removedlinks == nil {
+		m.removedlinks = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.links, ids[i])
+		m.removedlinks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLinks returns the removed IDs of the "links" edge to the FLink entity.
+func (m *FLinkGroupMutation) RemovedLinksIDs() (ids []int) {
+	for id := range m.removedlinks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LinksIDs returns the "links" edge IDs in the mutation.
+func (m *FLinkGroupMutation) LinksIDs() (ids []int) {
+	for id := range m.links {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLinks resets all changes to the "links" edge.
+func (m *FLinkGroupMutation) ResetLinks() {
+	m.links = nil
+	m.clearedlinks = false
+	m.removedlinks = nil
+}
+
+// Where appends a list predicates to the FLinkGroupMutation builder.
+func (m *FLinkGroupMutation) Where(ps ...predicate.FLinkGroup) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the FLinkGroupMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FLinkGroupMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FLinkGroup, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *FLinkGroupMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FLinkGroupMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (FLinkGroup).
+func (m *FLinkGroupMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FLinkGroupMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.created_at != nil {
+		fields = append(fields, flinkgroup.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, flinkgroup.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, flinkgroup.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FLinkGroupMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case flinkgroup.FieldCreatedAt:
+		return m.CreatedAt()
+	case flinkgroup.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case flinkgroup.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FLinkGroupMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case flinkgroup.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case flinkgroup.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case flinkgroup.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown FLinkGroup field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FLinkGroupMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case flinkgroup.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case flinkgroup.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case flinkgroup.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FLinkGroup field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FLinkGroupMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FLinkGroupMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FLinkGroupMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown FLinkGroup numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FLinkGroupMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FLinkGroupMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FLinkGroupMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown FLinkGroup nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FLinkGroupMutation) ResetField(name string) error {
+	switch name {
+	case flinkgroup.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case flinkgroup.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case flinkgroup.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown FLinkGroup field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FLinkGroupMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.links != nil {
+		edges = append(edges, flinkgroup.EdgeLinks)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FLinkGroupMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case flinkgroup.EdgeLinks:
+		ids := make([]ent.Value, 0, len(m.links))
+		for id := range m.links {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FLinkGroupMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedlinks != nil {
+		edges = append(edges, flinkgroup.EdgeLinks)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FLinkGroupMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case flinkgroup.EdgeLinks:
+		ids := make([]ent.Value, 0, len(m.removedlinks))
+		for id := range m.removedlinks {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FLinkGroupMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedlinks {
+		edges = append(edges, flinkgroup.EdgeLinks)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FLinkGroupMutation) EdgeCleared(name string) bool {
+	switch name {
+	case flinkgroup.EdgeLinks:
+		return m.clearedlinks
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FLinkGroupMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown FLinkGroup unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FLinkGroupMutation) ResetEdge(name string) error {
+	switch name {
+	case flinkgroup.EdgeLinks:
+		m.ResetLinks()
+		return nil
+	}
+	return fmt.Errorf("unknown FLinkGroup edge %s", name)
 }
 
 // FileMutation represents an operation that mutates the File nodes in the graph.
@@ -8663,6 +10208,739 @@ func (m *PayOrderMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PayOrder edge %s", name)
 }
 
+// PersonalAccessTokenMutation represents an operation that mutates the PersonalAccessToken nodes in the graph.
+type PersonalAccessTokenMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	created_at    *time.Time
+	updated_at    *time.Time
+	name          *string
+	expires       *time.Time
+	description   *string
+	token         *string
+	user_id       *int
+	adduser_id    *int
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*PersonalAccessToken, error)
+	predicates    []predicate.PersonalAccessToken
+}
+
+var _ ent.Mutation = (*PersonalAccessTokenMutation)(nil)
+
+// personalaccesstokenOption allows management of the mutation configuration using functional options.
+type personalaccesstokenOption func(*PersonalAccessTokenMutation)
+
+// newPersonalAccessTokenMutation creates new mutation for the PersonalAccessToken entity.
+func newPersonalAccessTokenMutation(c config, op Op, opts ...personalaccesstokenOption) *PersonalAccessTokenMutation {
+	m := &PersonalAccessTokenMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePersonalAccessToken,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPersonalAccessTokenID sets the ID field of the mutation.
+func withPersonalAccessTokenID(id int) personalaccesstokenOption {
+	return func(m *PersonalAccessTokenMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PersonalAccessToken
+		)
+		m.oldValue = func(ctx context.Context) (*PersonalAccessToken, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PersonalAccessToken.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPersonalAccessToken sets the old PersonalAccessToken of the mutation.
+func withPersonalAccessToken(node *PersonalAccessToken) personalaccesstokenOption {
+	return func(m *PersonalAccessTokenMutation) {
+		m.oldValue = func(context.Context) (*PersonalAccessToken, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PersonalAccessTokenMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PersonalAccessTokenMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PersonalAccessToken entities.
+func (m *PersonalAccessTokenMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PersonalAccessTokenMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PersonalAccessTokenMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PersonalAccessToken.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PersonalAccessTokenMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PersonalAccessTokenMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PersonalAccessTokenMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PersonalAccessTokenMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PersonalAccessTokenMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PersonalAccessTokenMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *PersonalAccessTokenMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *PersonalAccessTokenMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *PersonalAccessTokenMutation) ResetName() {
+	m.name = nil
+}
+
+// SetExpires sets the "expires" field.
+func (m *PersonalAccessTokenMutation) SetExpires(t time.Time) {
+	m.expires = &t
+}
+
+// Expires returns the value of the "expires" field in the mutation.
+func (m *PersonalAccessTokenMutation) Expires() (r time.Time, exists bool) {
+	v := m.expires
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpires returns the old "expires" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldExpires(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpires is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpires requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpires: %w", err)
+	}
+	return oldValue.Expires, nil
+}
+
+// ClearExpires clears the value of the "expires" field.
+func (m *PersonalAccessTokenMutation) ClearExpires() {
+	m.expires = nil
+	m.clearedFields[personalaccesstoken.FieldExpires] = struct{}{}
+}
+
+// ExpiresCleared returns if the "expires" field was cleared in this mutation.
+func (m *PersonalAccessTokenMutation) ExpiresCleared() bool {
+	_, ok := m.clearedFields[personalaccesstoken.FieldExpires]
+	return ok
+}
+
+// ResetExpires resets all changes to the "expires" field.
+func (m *PersonalAccessTokenMutation) ResetExpires() {
+	m.expires = nil
+	delete(m.clearedFields, personalaccesstoken.FieldExpires)
+}
+
+// SetDescription sets the "description" field.
+func (m *PersonalAccessTokenMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *PersonalAccessTokenMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *PersonalAccessTokenMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[personalaccesstoken.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *PersonalAccessTokenMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[personalaccesstoken.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *PersonalAccessTokenMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, personalaccesstoken.FieldDescription)
+}
+
+// SetToken sets the "token" field.
+func (m *PersonalAccessTokenMutation) SetToken(s string) {
+	m.token = &s
+}
+
+// Token returns the value of the "token" field in the mutation.
+func (m *PersonalAccessTokenMutation) Token() (r string, exists bool) {
+	v := m.token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldToken returns the old "token" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldToken: %w", err)
+	}
+	return oldValue.Token, nil
+}
+
+// ResetToken resets all changes to the "token" field.
+func (m *PersonalAccessTokenMutation) ResetToken() {
+	m.token = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *PersonalAccessTokenMutation) SetUserID(i int) {
+	m.user_id = &i
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PersonalAccessTokenMutation) UserID() (r int, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldUserID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds i to the "user_id" field.
+func (m *PersonalAccessTokenMutation) AddUserID(i int) {
+	if m.adduser_id != nil {
+		*m.adduser_id += i
+	} else {
+		m.adduser_id = &i
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *PersonalAccessTokenMutation) AddedUserID() (r int, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PersonalAccessTokenMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+}
+
+// Where appends a list predicates to the PersonalAccessTokenMutation builder.
+func (m *PersonalAccessTokenMutation) Where(ps ...predicate.PersonalAccessToken) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PersonalAccessTokenMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PersonalAccessTokenMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PersonalAccessToken, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PersonalAccessTokenMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PersonalAccessTokenMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PersonalAccessToken).
+func (m *PersonalAccessTokenMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PersonalAccessTokenMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, personalaccesstoken.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, personalaccesstoken.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, personalaccesstoken.FieldName)
+	}
+	if m.expires != nil {
+		fields = append(fields, personalaccesstoken.FieldExpires)
+	}
+	if m.description != nil {
+		fields = append(fields, personalaccesstoken.FieldDescription)
+	}
+	if m.token != nil {
+		fields = append(fields, personalaccesstoken.FieldToken)
+	}
+	if m.user_id != nil {
+		fields = append(fields, personalaccesstoken.FieldUserID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PersonalAccessTokenMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case personalaccesstoken.FieldCreatedAt:
+		return m.CreatedAt()
+	case personalaccesstoken.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case personalaccesstoken.FieldName:
+		return m.Name()
+	case personalaccesstoken.FieldExpires:
+		return m.Expires()
+	case personalaccesstoken.FieldDescription:
+		return m.Description()
+	case personalaccesstoken.FieldToken:
+		return m.Token()
+	case personalaccesstoken.FieldUserID:
+		return m.UserID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PersonalAccessTokenMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case personalaccesstoken.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case personalaccesstoken.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case personalaccesstoken.FieldName:
+		return m.OldName(ctx)
+	case personalaccesstoken.FieldExpires:
+		return m.OldExpires(ctx)
+	case personalaccesstoken.FieldDescription:
+		return m.OldDescription(ctx)
+	case personalaccesstoken.FieldToken:
+		return m.OldToken(ctx)
+	case personalaccesstoken.FieldUserID:
+		return m.OldUserID(ctx)
+	}
+	return nil, fmt.Errorf("unknown PersonalAccessToken field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PersonalAccessTokenMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case personalaccesstoken.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case personalaccesstoken.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case personalaccesstoken.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case personalaccesstoken.FieldExpires:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpires(v)
+		return nil
+	case personalaccesstoken.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case personalaccesstoken.FieldToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetToken(v)
+		return nil
+	case personalaccesstoken.FieldUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PersonalAccessToken field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PersonalAccessTokenMutation) AddedFields() []string {
+	var fields []string
+	if m.adduser_id != nil {
+		fields = append(fields, personalaccesstoken.FieldUserID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PersonalAccessTokenMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case personalaccesstoken.FieldUserID:
+		return m.AddedUserID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PersonalAccessTokenMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case personalaccesstoken.FieldUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PersonalAccessToken numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PersonalAccessTokenMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(personalaccesstoken.FieldExpires) {
+		fields = append(fields, personalaccesstoken.FieldExpires)
+	}
+	if m.FieldCleared(personalaccesstoken.FieldDescription) {
+		fields = append(fields, personalaccesstoken.FieldDescription)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PersonalAccessTokenMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PersonalAccessTokenMutation) ClearField(name string) error {
+	switch name {
+	case personalaccesstoken.FieldExpires:
+		m.ClearExpires()
+		return nil
+	case personalaccesstoken.FieldDescription:
+		m.ClearDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown PersonalAccessToken nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PersonalAccessTokenMutation) ResetField(name string) error {
+	switch name {
+	case personalaccesstoken.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case personalaccesstoken.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case personalaccesstoken.FieldName:
+		m.ResetName()
+		return nil
+	case personalaccesstoken.FieldExpires:
+		m.ResetExpires()
+		return nil
+	case personalaccesstoken.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case personalaccesstoken.FieldToken:
+		m.ResetToken()
+		return nil
+	case personalaccesstoken.FieldUserID:
+		m.ResetUserID()
+		return nil
+	}
+	return fmt.Errorf("unknown PersonalAccessToken field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PersonalAccessTokenMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PersonalAccessTokenMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PersonalAccessTokenMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PersonalAccessTokenMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PersonalAccessTokenMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PersonalAccessTokenMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PersonalAccessTokenMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown PersonalAccessToken unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PersonalAccessTokenMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown PersonalAccessToken edge %s", name)
+}
+
 // PostMutation represents an operation that mutates the Post nodes in the graph.
 type PostMutation struct {
 	config
@@ -8674,7 +10952,7 @@ type PostMutation struct {
 	title              *string
 	alias              *string
 	content            *string
-	is_published       *bool
+	status             *post.Status
 	is_autogen_summary *bool
 	is_visible         *bool
 	is_tip_to_top      *bool
@@ -8992,40 +11270,40 @@ func (m *PostMutation) ResetContent() {
 	m.content = nil
 }
 
-// SetIsPublished sets the "is_published" field.
-func (m *PostMutation) SetIsPublished(b bool) {
-	m.is_published = &b
+// SetStatus sets the "status" field.
+func (m *PostMutation) SetStatus(po post.Status) {
+	m.status = &po
 }
 
-// IsPublished returns the value of the "is_published" field in the mutation.
-func (m *PostMutation) IsPublished() (r bool, exists bool) {
-	v := m.is_published
+// Status returns the value of the "status" field in the mutation.
+func (m *PostMutation) Status() (r post.Status, exists bool) {
+	v := m.status
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIsPublished returns the old "is_published" field's value of the Post entity.
+// OldStatus returns the old "status" field's value of the Post entity.
 // If the Post object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldIsPublished(ctx context.Context) (v bool, err error) {
+func (m *PostMutation) OldStatus(ctx context.Context) (v post.Status, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsPublished is only allowed on UpdateOne operations")
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsPublished requires an ID field in the mutation")
+		return v, errors.New("OldStatus requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsPublished: %w", err)
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
 	}
-	return oldValue.IsPublished, nil
+	return oldValue.Status, nil
 }
 
-// ResetIsPublished resets all changes to the "is_published" field.
-func (m *PostMutation) ResetIsPublished() {
-	m.is_published = nil
+// ResetStatus resets all changes to the "status" field.
+func (m *PostMutation) ResetStatus() {
+	m.status = nil
 }
 
 // SetIsAutogenSummary sets the "is_autogen_summary" field.
@@ -9189,7 +11467,7 @@ func (m *PostMutation) PublishedAt() (r time.Time, exists bool) {
 // OldPublishedAt returns the old "published_at" field's value of the Post entity.
 // If the Post object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldPublishedAt(ctx context.Context) (v time.Time, err error) {
+func (m *PostMutation) OldPublishedAt(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPublishedAt is only allowed on UpdateOne operations")
 	}
@@ -9615,8 +11893,8 @@ func (m *PostMutation) Fields() []string {
 	if m.content != nil {
 		fields = append(fields, post.FieldContent)
 	}
-	if m.is_published != nil {
-		fields = append(fields, post.FieldIsPublished)
+	if m.status != nil {
+		fields = append(fields, post.FieldStatus)
 	}
 	if m.is_autogen_summary != nil {
 		fields = append(fields, post.FieldIsAutogenSummary)
@@ -9672,8 +11950,8 @@ func (m *PostMutation) Field(name string) (ent.Value, bool) {
 		return m.Alias()
 	case post.FieldContent:
 		return m.Content()
-	case post.FieldIsPublished:
-		return m.IsPublished()
+	case post.FieldStatus:
+		return m.Status()
 	case post.FieldIsAutogenSummary:
 		return m.IsAutogenSummary()
 	case post.FieldIsVisible:
@@ -9717,8 +11995,8 @@ func (m *PostMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAlias(ctx)
 	case post.FieldContent:
 		return m.OldContent(ctx)
-	case post.FieldIsPublished:
-		return m.OldIsPublished(ctx)
+	case post.FieldStatus:
+		return m.OldStatus(ctx)
 	case post.FieldIsAutogenSummary:
 		return m.OldIsAutogenSummary(ctx)
 	case post.FieldIsVisible:
@@ -9787,12 +12065,12 @@ func (m *PostMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetContent(v)
 		return nil
-	case post.FieldIsPublished:
-		v, ok := value.(bool)
+	case post.FieldStatus:
+		v, ok := value.(post.Status)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIsPublished(v)
+		m.SetStatus(v)
 		return nil
 	case post.FieldIsAutogenSummary:
 		v, ok := value.(bool)
@@ -10008,8 +12286,8 @@ func (m *PostMutation) ResetField(name string) error {
 	case post.FieldContent:
 		m.ResetContent()
 		return nil
-	case post.FieldIsPublished:
-		m.ResetIsPublished()
+	case post.FieldStatus:
+		m.ResetStatus()
 		return nil
 	case post.FieldIsAutogenSummary:
 		m.ResetIsAutogenSummary()

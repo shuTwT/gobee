@@ -87,6 +87,47 @@ var (
 		Columns:    CommentsColumns,
 		PrimaryKey: []*schema.Column{CommentsColumns[0]},
 	}
+	// FlinksColumns holds the columns for the "flinks" table.
+	FlinksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "url", Type: field.TypeString},
+		{Name: "logo", Type: field.TypeString, Nullable: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeInt, Default: 1},
+		{Name: "snapshot", Type: field.TypeString, Nullable: true},
+		{Name: "email", Type: field.TypeString, Nullable: true},
+		{Name: "group_id", Type: field.TypeInt, Nullable: true},
+	}
+	// FlinksTable holds the schema information for the "flinks" table.
+	FlinksTable = &schema.Table{
+		Name:       "flinks",
+		Columns:    FlinksColumns,
+		PrimaryKey: []*schema.Column{FlinksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "flinks_flink_groups_links",
+				Columns:    []*schema.Column{FlinksColumns[10]},
+				RefColumns: []*schema.Column{FlinkGroupsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// FlinkGroupsColumns holds the columns for the "flink_groups" table.
+	FlinkGroupsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+	}
+	// FlinkGroupsTable holds the schema information for the "flink_groups" table.
+	FlinkGroupsTable = &schema.Table{
+		Name:       "flink_groups",
+		Columns:    FlinkGroupsColumns,
+		PrimaryKey: []*schema.Column{FlinkGroupsColumns[0]},
+	}
 	// FilesColumns holds the columns for the "files" table.
 	FilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -223,6 +264,23 @@ var (
 		Columns:    PayOrdersColumns,
 		PrimaryKey: []*schema.Column{PayOrdersColumns[0]},
 	}
+	// PersonalAccessTokensColumns holds the columns for the "personal_access_tokens" table.
+	PersonalAccessTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "expires", Type: field.TypeTime, Nullable: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "token", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// PersonalAccessTokensTable holds the schema information for the "personal_access_tokens" table.
+	PersonalAccessTokensTable = &schema.Table{
+		Name:       "personal_access_tokens",
+		Columns:    PersonalAccessTokensColumns,
+		PrimaryKey: []*schema.Column{PersonalAccessTokensColumns[0]},
+	}
 	// PostsColumns holds the columns for the "posts" table.
 	PostsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -231,7 +289,7 @@ var (
 		{Name: "title", Type: field.TypeString, Size: 255},
 		{Name: "alias", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "content", Type: field.TypeString, Size: 2147483647},
-		{Name: "is_published", Type: field.TypeBool, Default: false},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"draft", "published", "archived"}, Default: "draft"},
 		{Name: "is_autogen_summary", Type: field.TypeBool, Default: false},
 		{Name: "is_visible", Type: field.TypeBool, Default: true},
 		{Name: "is_tip_to_top", Type: field.TypeBool, Default: false},
@@ -353,6 +411,8 @@ var (
 		AlbumPhotosTable,
 		APIPermsTable,
 		CommentsTable,
+		FlinksTable,
+		FlinkGroupsTable,
 		FilesTable,
 		ModelSchemasTable,
 		Oauth2accessTokensTable,
@@ -361,6 +421,7 @@ var (
 		PagesTable,
 		PayChannelsTable,
 		PayOrdersTable,
+		PersonalAccessTokensTable,
 		PostsTable,
 		RolesTable,
 		SettingsTable,
@@ -371,5 +432,6 @@ var (
 )
 
 func init() {
+	FlinksTable.ForeignKeys[0].RefTable = FlinkGroupsTable
 	UsersTable.ForeignKeys[0].RefTable = RolesTable
 }

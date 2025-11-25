@@ -24,14 +24,14 @@ const catalogHtml = ref('')
 
 const toolbarConfig:Partial<IToolbarConfig> = {
 }
-const editorConfig:Partial<IEditorConfig> = { 
+const editorConfig:Partial<IEditorConfig> = {
   MENU_CONF:{
     'uploadImage':{
       server:BASE_URL+"/v1/file/upload",
       metaWithUrl:true,
       base64LimitSize:1024*1024*2,
       onSuccess:(file,res)=>{
-        
+
       },
       onError:(res)=>{
         console.log(res)
@@ -44,7 +44,7 @@ const editorConfig:Partial<IEditorConfig> = {
           insertFn(res.data[0].url)
         }
       },
-    }  
+    }
   },
   placeholder: '请输入内容...',
  }
@@ -98,7 +98,11 @@ const getPostData = ()=>{
   if(id){
     postApi.queryPost(id+"").then((res)=>{
       valueHtml.value = res.data.content
-      publishStatus.value = !!res.data.is_published
+      if(res.data.status=='draft'){
+        publishStatus.value= false
+      }else if(res.data.status=='published'){
+        publishStatus.value = true
+      }
     })
   }
 }
@@ -137,7 +141,9 @@ onBeforeUnmount(() => {
           <n-button style="margin-right: 10px"> 历史版本 </n-button>
           <n-button style="margin-right: 10px" @click="handlePreview"> 预览 </n-button>
           <n-button style="margin-right: 10px" @click="openSettingDialog"> 设置 </n-button>
-          <n-button style="margin-right: 10px" @click="handleSave"> 保存 </n-button>
+          <n-button @click="handleSave"> 保存 </n-button>
+        </div>
+        <div class="pt-6 flex justify-end pr-6 items-center">
           <n-button v-if="!publishStatus" type="primary" size="large" @click="handlePublish"> 发布 </n-button>
           <n-button v-else type="primary" size="large" @click="handleUnpublish"> 取消发布 </n-button>
         </div>
@@ -145,7 +151,7 @@ onBeforeUnmount(() => {
         <n-tabs type="segment" animated>
           <n-tab-pane name="chap1" tab="大纲">
             <ul v-html="catalogHtml" class="p-2">
-              
+
             </ul>
           </n-tab-pane>
           <n-tab-pane name="chap2" tab="详情"></n-tab-pane>

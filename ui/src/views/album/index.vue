@@ -136,7 +136,7 @@ onMounted(()=>{
               <n-button type="primary" style="margin-right: 5px;" @click="openAlbumDialog('新增')"> <i class="fas fa-plus mr-2"></i>新增相册 </n-button>
               <n-button @click="onSearchAlbum()">刷新</n-button>
             </template>
-            <ul id="albumList" class="space-y-2">
+            <ul class="space-y-2">
               <!-- 示例相册 -->
               <li
                 v-for="(item,index) in albumList"

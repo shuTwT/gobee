@@ -17,10 +17,11 @@ const permissionStore = usePermissionStore()
 
 const userStore = useUserStore()
 const message = useMessage()
-
-window.$message = useMessage()
-window.$dialog = useDialog()
-window.$notification = useNotification()
+window.$message = message
+const dialog = useDialog()
+window.$dialog = dialog
+const notification = useNotification()
+window.$notification = notification
 
 const levelList = ref<any[]>([])
 
@@ -94,7 +95,7 @@ const footerHeight = ref(50)
 const sidebarCollapsedWidth = ref(58)
 const loading = computed(() => menuData.value.length === 0)
 
-const { layout, verticalLayout,activeKey } = useLayoutMenu({
+const { layout, verticalLayout, activeKey } = useLayoutMenu({
   mode: layoutMode,
   menus: menuOptions,
 })
@@ -109,14 +110,22 @@ const hasHorizontalMenu = computed(() =>
 // }
 
 function logout() {
-  if (confirm('确定要登出吗？')) {
-    // 发送登出请求
-    userStore.logOut().then(() => {
-      router.push('/login').then(() => {
-        message.success('登出成功')
+  dialog.create({
+    type: 'info',
+    title: '提示',
+    content: '确定要登出吗',
+    positiveText:'确定',
+    negativeText:'不确定',
+    onPositiveClick: () => {
+      // 发送登出请求
+      userStore.logOut().then(() => {
+        router.push('/login').then(() => {
+          message.success('登出成功')
+        })
       })
-    })
-  }
+    },
+    onNegativeClick: () => {},
+  })
 }
 
 /** 判断路径是否参与菜单 */
@@ -159,8 +168,8 @@ const getBreadcrumb = () => {
   levelList.value = matched.filter((item) => item?.meta && item?.meta.title !== false)
 }
 
-const gotoUserCenter = ()=>{
-  router.push({name:'UserCenter'})
+const gotoUserCenter = () => {
+  router.push({ name: 'UserCenter' })
 }
 
 watch(
@@ -205,11 +214,7 @@ onMounted(() => {
       logo-class="flex justify-center"
     >
       <template #logo>
-        <n-image
-          src="/console/logo.png"
-          :preview-disabled="true"
-          width="64"
-        />
+        <n-image src="/console/logo.png" :preview-disabled="true" width="64" />
       </template>
       <template #nav-left>
         <template v-if="!isMobile">
@@ -260,7 +265,10 @@ onMounted(() => {
                 M
               </n-avatar>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900 dark:text-white truncate cursor-pointer" @click="gotoUserCenter">
+                <p
+                  class="text-sm font-medium text-gray-900 dark:text-white truncate cursor-pointer"
+                  @click="gotoUserCenter"
+                >
                   {{ userStore.username }}
                 </p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">

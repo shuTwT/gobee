@@ -82,16 +82,16 @@ func (_u *PostUpdate) SetNillableContent(v *string) *PostUpdate {
 	return _u
 }
 
-// SetIsPublished sets the "is_published" field.
-func (_u *PostUpdate) SetIsPublished(v bool) *PostUpdate {
-	_u.mutation.SetIsPublished(v)
+// SetStatus sets the "status" field.
+func (_u *PostUpdate) SetStatus(v post.Status) *PostUpdate {
+	_u.mutation.SetStatus(v)
 	return _u
 }
 
-// SetNillableIsPublished sets the "is_published" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableIsPublished(v *bool) *PostUpdate {
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableStatus(v *post.Status) *PostUpdate {
 	if v != nil {
-		_u.SetIsPublished(*v)
+		_u.SetStatus(*v)
 	}
 	return _u
 }
@@ -366,6 +366,11 @@ func (_u *PostUpdate) check() error {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := post.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.ViewCount(); ok {
 		if err := post.ViewCountValidator(v); err != nil {
 			return &ValidationError{Name: "view_count", err: fmt.Errorf(`ent: validator failed for field "Post.view_count": %w`, err)}
@@ -426,8 +431,8 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.IsPublished(); ok {
-		_spec.SetField(post.FieldIsPublished, field.TypeBool, value)
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.IsAutogenSummary(); ok {
 		_spec.SetField(post.FieldIsAutogenSummary, field.TypeBool, value)
@@ -560,16 +565,16 @@ func (_u *PostUpdateOne) SetNillableContent(v *string) *PostUpdateOne {
 	return _u
 }
 
-// SetIsPublished sets the "is_published" field.
-func (_u *PostUpdateOne) SetIsPublished(v bool) *PostUpdateOne {
-	_u.mutation.SetIsPublished(v)
+// SetStatus sets the "status" field.
+func (_u *PostUpdateOne) SetStatus(v post.Status) *PostUpdateOne {
+	_u.mutation.SetStatus(v)
 	return _u
 }
 
-// SetNillableIsPublished sets the "is_published" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableIsPublished(v *bool) *PostUpdateOne {
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableStatus(v *post.Status) *PostUpdateOne {
 	if v != nil {
-		_u.SetIsPublished(*v)
+		_u.SetStatus(*v)
 	}
 	return _u
 }
@@ -857,6 +862,11 @@ func (_u *PostUpdateOne) check() error {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := post.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.ViewCount(); ok {
 		if err := post.ViewCountValidator(v); err != nil {
 			return &ValidationError{Name: "view_count", err: fmt.Errorf(`ent: validator failed for field "Post.view_count": %w`, err)}
@@ -934,8 +944,8 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.IsPublished(); ok {
-		_spec.SetField(post.FieldIsPublished, field.TypeBool, value)
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.IsAutogenSummary(); ok {
 		_spec.SetField(post.FieldIsAutogenSummary, field.TypeBool, value)

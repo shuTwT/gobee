@@ -20,6 +20,10 @@ type Tx struct {
 	ApiPerms *ApiPermsClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// FLink is the client for interacting with the FLink builders.
+	FLink *FLinkClient
+	// FLinkGroup is the client for interacting with the FLinkGroup builders.
+	FLinkGroup *FLinkGroupClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// ModelSchema is the client for interacting with the ModelSchema builders.
@@ -36,6 +40,8 @@ type Tx struct {
 	PayChannel *PayChannelClient
 	// PayOrder is the client for interacting with the PayOrder builders.
 	PayOrder *PayOrderClient
+	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
+	PersonalAccessToken *PersonalAccessTokenClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
 	// Role is the client for interacting with the Role builders.
@@ -183,6 +189,8 @@ func (tx *Tx) init() {
 	tx.AlbumPhoto = NewAlbumPhotoClient(tx.config)
 	tx.ApiPerms = NewApiPermsClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
+	tx.FLink = NewFLinkClient(tx.config)
+	tx.FLinkGroup = NewFLinkGroupClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.ModelSchema = NewModelSchemaClient(tx.config)
 	tx.Oauth2AccessToken = NewOauth2AccessTokenClient(tx.config)
@@ -191,6 +199,7 @@ func (tx *Tx) init() {
 	tx.Page = NewPageClient(tx.config)
 	tx.PayChannel = NewPayChannelClient(tx.config)
 	tx.PayOrder = NewPayOrderClient(tx.config)
+	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.Setting = NewSettingClient(tx.config)

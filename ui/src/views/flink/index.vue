@@ -1,38 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import {
-  NLayout,
-  NLayoutSider,
-  NLayoutContent,
-  NMenu,
-  NCard,
-  NDataTable,
-  NButton,
-  NModal,
-  NForm,
-  NFormItem,
-  NInput,
-  useMessage,
-  NImage,
-  NIcon,
-} from 'naive-ui'
+import { NCard, NDataTable, NButton, useMessage, NImage, NIcon } from 'naive-ui'
 import type { DataTableColumns } from 'naive-ui'
 import { Pencil } from '@vicons/ionicons5'
+import { addDialog } from '@/components/dialog'
+import type { FlinkFormItemProps, FlinkFormProps, FlinkGroupFormItemProps, FlinkGroupFormPorps } from './utils/types'
+import flinkForm from './flinkForm.vue'
+import * as flinkGroupApi from "@/api/flinkGroup"
+import * as flinkApi from '@/api/flink'
+import FlinkGroupForm from './flinkGroupForm.vue'
 
 const message = useMessage()
 
-// 分组相关
-const selectedGroup = ref('all')
-const groups = ref([
-  {
-    label: '全部',
-    key: 'all',
-  },
-])
-
 // 友链表格数据
 const loading = ref(false)
-const data = ref([])
+const flinkGroups = ref<any[]>([])
+const dataList = ref<any[]>([])
 const columns: DataTableColumns = [
   {
     title: '网站名称',
@@ -56,13 +39,16 @@ const columns: DataTableColumns = [
   {
     title: '操作',
     key: 'actions',
-    render: () => {
+    render: (row: any) => {
       return h(
         NButton,
         {
           size: 'small',
           type: 'primary',
           quaternary: true,
+          onClick: () => {
+            openEditDialog('编辑', row)
+          },
         },
         {
           icon: () => h(NIcon, {}, () => h(Pencil)),
@@ -73,35 +59,75 @@ const columns: DataTableColumns = [
   },
 ]
 
-// 编辑弹窗相关
-const showModal = ref(false)
-const modalTitle = ref('')
-const formRef = ref(null)
-const formValue = ref({
-  name: '',
-  url: '',
-  logo: '',
-  description: '',
-  group: 'all',
-})
+const openGroupEditDialog = (title='新增',row?:FlinkGroupFormItemProps)=>{
+  const formRef = ref()
+  addDialog<FlinkGroupFormPorps>({
+    title:`${title}分组`,
+    props:{
+      formInline:{
+        name:row?.name??""
+      }
+    },
+    contentRenderer:({options})=>h(FlinkGroupForm,{formInline:options.props!.formInline,ref:formRef}),
+    beforeSure:async (done)=>{
+      try{
+        const curData = await formRef.value.getData()
+        const chores = ()=>{
+          message.success("操作成功")
+          done()
+          onSearchCategory()
+        }
+        if(title=='新增'){
+          await flinkGroupApi.createFlinkGroup(curData)
+          chores()
+        }else{
+          await flinkGroupApi.updateFlinkGroup(row?.id as any,curData)
+        }
+      }catch{
 
-const handleAdd = () => {
-  modalTitle.value = '添加友链'
-  formValue.value = {
-    name: '',
-    url: '',
-    logo: '',
-    description: '',
-    group: selectedGroup.value,
-  }
-  showModal.value = true
+      }
+    }
+  })
 }
 
-const handleEdit = (row: any) => {
-  modalTitle.value = '编辑友链'
-  formValue.value = { ...row }
-  showModal.value = true
+const openEditDialog = (title = '新增', row?: FlinkFormItemProps) => {
+  const formRef = ref()
+  addDialog<FlinkFormProps>({
+    title: `${title}友链`,
+    props: {
+      formInline: {
+        id: row?.id ?? undefined,
+        name: row?.name ?? '',
+        url: row?.url ?? '',
+        logo: row?.logo ?? '',
+        description: row?.description ?? '',
+      },
+    },
+    contentRenderer: ({ options }) =>
+      h(flinkForm, { formInline: options.props!.formInline, ref: formRef }),
+    beforeSure: async (done) => {
+      try {
+        const curData = await formRef.value.getData()
+        const chores = () => {
+          message.success('操作成功')
+          done()
+          onSearchFlink()
+        }
+        if (title == '新增') {
+          await flinkApi.createFlink(curData)
+          chores()
+        } else {
+          await flinkApi.updateFlink(row!.id!, curData)
+          chores()
+        }
+      } catch {
+        done()
+      }
+    },
+  })
 }
+
+const handleEdit = (row: any) => {}
 
 const handleDelete = async (row: any) => {
   // TODO: 实现删除逻辑
@@ -110,73 +136,73 @@ const handleDelete = async (row: any) => {
 
 const handleSubmit = async () => {
   // TODO: 实现提交逻辑
-  showModal.value = false
   message.success('保存成功喵~')
 }
+const onSearchCategory = async () => {
+  const res = await flinkGroupApi.getFlinkGroupList()
+  flinkGroups.value = res.data
+}
+const onSearchFlink = async () => {
+  try {
+    const res = await flinkApi.getFlinkPage()
+    dataList.value = res.data.records
+  } catch {}
+}
+
+onMounted(() => {
+  onSearchCategory()
+  onSearchFlink()
+})
 </script>
 
 <template>
   <div class="container-fluid p-6">
-    <n-card title="友链管理">
-      <n-layout has-sider>
-        <n-layout-sider
-          bordered
-          collapse-mode="width"
-          :collapsed-width="64"
-          :width="240"
-          :native-scrollbar="false"
-          style="height: 100%"
-        >
-          <n-menu
-            :value="selectedGroup"
-            :options="groups"
-            @update:value="(key) => (selectedGroup = key)"
-          />
-        </n-layout-sider>
-        <n-layout-content content-style="padding: 24px;">
+    <div class="flink-card">
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">友链管理</h2>
+      <n-grid x-gap="6" cols="3">
+        <n-gi span="1">
+          <n-card title="友链分类">
+            <template #header-extra>
+              <n-button type="primary" style="margin-right: 5px" @click="openGroupEditDialog('新增')">
+                <i class="fas fa-plus mr-2"></i>新增分类
+              </n-button>
+              <n-button @click="onSearchCategory()">刷新</n-button>
+            </template>
+            <ul class="space-y-2">
+              <!-- 示例相册 -->
+              <li
+                v-for="(item,index) in flinkGroups"
+                :key="index"
+                class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 album-item"
+                :data-album-id="item.id"
+              >
+                <span class="text-gray-800 dark:text-gray-200">{{ item.name }}</span>
+                <span class="text-sm text-gray-500 dark:text-gray-400">0 个</span>
+              </li>
+            </ul>
+          </n-card>
+        </n-gi>
+        <n-gi span="2">
           <n-card>
             <template #header>
               <div class="header-section">
                 <div class="title">友链管理</div>
-                <n-button type="primary" @click="handleAdd">添加友链</n-button>
+                <div>
+                  <n-button type="primary" @click="openEditDialog('新增')" style="margin-right: 5px;">添加友链</n-button>
+                  <n-button @click="onSearchFlink()">刷新</n-button>
+                </div>
               </div>
             </template>
             <n-data-table
               :loading="loading"
               :columns="columns"
-              :data="data"
+              :data="dataList"
               :pagination="{ pageSize: 10 }"
             />
           </n-card>
-        </n-layout-content>
-      </n-layout>
-    </n-card>
-    <!-- 编辑弹窗 -->
-    <n-modal
-      v-model:show="showModal"
-      :title="modalTitle"
-      preset="dialog"
-      @positive-click="handleSubmit"
-    >
-      <n-form ref="formRef" :model="formValue" label-placement="left" label-width="80">
-        <n-form-item label="网站名称" path="name">
-          <n-input v-model:value="formValue.name" placeholder="请输入网站名称" />
-        </n-form-item>
-        <n-form-item label="网站地址" path="url">
-          <n-input v-model:value="formValue.url" placeholder="请输入网站地址" />
-        </n-form-item>
-        <n-form-item label="Logo" path="logo">
-          <n-input v-model:value="formValue.logo" placeholder="请输入Logo地址" />
-        </n-form-item>
-        <n-form-item label="描述" path="description">
-          <n-input
-            v-model:value="formValue.description"
-            type="textarea"
-            placeholder="请输入网站描述"
-          />
-        </n-form-item>
-      </n-form>
-    </n-modal>
+        </n-gi>
+      </n-grid>
+    </div>
   </div>
 </template>
 
