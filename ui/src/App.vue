@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { zhCN, dateZhCN } from 'naive-ui'
-import hljs from 'highlight.js'
+import hljs from 'highlight.js/lib/core'
+// import javascriptLang from 'highlight.js/lib/languages/javscript'
+import jsonLang from 'highlight.js/lib/languages/json'
 import DialogManager from '@/components/dialog/DialogManager.vue'
+
+// hljs.registerLanguage('javascript',javascriptLang)
+hljs.registerLanguage('json',jsonLang)
 </script>
 
 <template>

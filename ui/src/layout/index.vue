@@ -9,6 +9,10 @@ import { useUserStore } from '@/stores/modules/user'
 import { remainingPaths } from '@/router'
 import { findRouteByPath, getParentPaths } from '@/router/utils'
 
+defineOptions({
+  name:"AdminLayout"
+})
+
 const route = useRoute()
 const router = useRouter()
 const routes: any = router.options.routes

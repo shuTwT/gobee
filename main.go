@@ -14,6 +14,9 @@ import (
 //go:embed assets/moduleDefs
 var moduleDefs embed.FS
 
+//go:embed ui/dist
+var frontendRes embed.FS
+
 // @title Fiber Example API
 // @version 1.0
 // @description This is a sample swagger for Fiber
@@ -25,7 +28,7 @@ var moduleDefs embed.FS
 // @host localhost:3000
 // @BasePath /
 func main() {
-	app := cmd.InitializeApp(moduleDefs)
+	app := cmd.InitializeApp(moduleDefs, frontendRes)
 	defer database.CloseDB()
 	app.Listen(":13000")
 }

@@ -15,7 +15,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func InitializeApp(moduleDefs embed.FS) *fiber.App {
+func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	godotenv.Load()
 	config.Init()
 	pkg.InitializeServices(moduleDefs)
@@ -24,9 +24,8 @@ func InitializeApp(moduleDefs embed.FS) *fiber.App {
 	engine.Reload(true)
 	app := fiber.New(fiber.Config{
 		AppName: "Fiber HTML Template Demo",
-		// Views:   engine, // 关联模板引擎
+		Views:   engine, // 关联模板引擎
 	})
-	app.Static("/", "./assets")
 
 	app.Get("/swagger/*", swagger.HandlerDefault) // default
 
@@ -44,6 +43,8 @@ func InitializeApp(moduleDefs embed.FS) *fiber.App {
 		OAuth2RedirectUrl: "http://localhost:3000/swagger/oauth2-redirect.html",
 	}))
 	app.Use(logger.New())
+
+	router.InitFrontendRes(app, frontendRes)
 
 	router.Initialize(app)
 

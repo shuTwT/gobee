@@ -8,6 +8,8 @@ import tailwindcss from '@tailwindcss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
+// import { visualizer } from "rollup-plugin-visualizer";
+
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -38,9 +40,28 @@ export default defineConfig({
         names:['RouterLink','RouterView']
       }],
       resolvers: [NaiveUiResolver()]
-    })
+    }),
+    // visualizer({
+    //   open:true
+    // })
   ],
   base:'/console/',
+  build:{
+    minify:true,
+    rollupOptions:{
+      output:{
+        manualChunks:{
+          'highlight.js':['highlight.js'],
+          'wangeditor-next':['@wangeditor-next/editor'],
+          'wangeditor-next-vue':['@wangeditor-next/editor-for-vue'],
+          'pinia':['pinia'],
+          'axios':['axios'],
+          'uppy':['@uppy/core','@uppy/dashboard','@uppy/xhr-upload'],
+          'vendor':['vue','vue-router','@vueuse/core']
+        }
+      }
+    }
+  },
   server:{
     port: 5379,
     proxy:{
