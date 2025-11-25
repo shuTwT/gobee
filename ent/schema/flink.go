@@ -28,6 +28,8 @@ func (FLink) Fields() []ent.Field {
 		field.String("snapshot").Optional().Comment("快照"),
 		field.String("email").Optional().Comment("邮箱"),
 		field.Int("group_id").Optional().Comment("友链组"),
+		field.Bool("enable_friend_circle").Comment("是否开启朋友圈"),
+		field.Int("friend_circle_template").Comment("朋友圈模板"),
 	}
 }
 
