@@ -7,6 +7,7 @@ import (
 
 	"gobee/cmd"
 	"gobee/internal/database"
+	"gobee/internal/schedule"
 
 	_ "gobee/docs"
 )
@@ -30,5 +31,10 @@ var frontendRes embed.FS
 func main() {
 	app := cmd.InitializeApp(moduleDefs, frontendRes)
 	defer database.CloseDB()
+	scheduler, err := schedule.InitializeSchedule()
+	if err != nil {
+		defer scheduler.Shutdown()
+	}
+
 	app.Listen(":13000")
 }

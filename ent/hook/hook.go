@@ -92,6 +92,30 @@ func (f FileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileMutation", m)
 }
 
+// The FriendCircleRecordFunc type is an adapter to allow the use of ordinary
+// function as FriendCircleRecord mutator.
+type FriendCircleRecordFunc func(context.Context, *ent.FriendCircleRecordMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FriendCircleRecordFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FriendCircleRecordMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FriendCircleRecordMutation", m)
+}
+
+// The FriendCircleRuleFunc type is an adapter to allow the use of ordinary
+// function as FriendCircleRule mutator.
+type FriendCircleRuleFunc func(context.Context, *ent.FriendCircleRuleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FriendCircleRuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FriendCircleRuleMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FriendCircleRuleMutation", m)
+}
+
 // The ModelSchemaFunc type is an adapter to allow the use of ordinary
 // function as ModelSchema mutator.
 type ModelSchemaFunc func(context.Context, *ent.ModelSchemaMutation) (ent.Value, error)
@@ -210,6 +234,18 @@ func (f RoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RoleMutation", m)
+}
+
+// The ScheduleJobFunc type is an adapter to allow the use of ordinary
+// function as ScheduleJob mutator.
+type ScheduleJobFunc func(context.Context, *ent.ScheduleJobMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ScheduleJobFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ScheduleJobMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScheduleJobMutation", m)
 }
 
 // The SettingFunc type is an adapter to allow the use of ordinary

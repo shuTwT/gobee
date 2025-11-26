@@ -17,6 +17,6 @@ export const queryFlink = () =>{
   return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/flink/query`)
 }
 
-export const deleteFlink = () =>{
-  return http.request<ApiResponse<any>>('delete',`${BASE_URL}/v1/flink/delete`)
+export const deleteFlink = (id:number) =>{
+  return http.request<ApiResponse<any>>('delete',`${BASE_URL}/v1/flink/delete/${id}`)
 }

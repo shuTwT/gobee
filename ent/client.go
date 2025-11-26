@@ -18,6 +18,8 @@ import (
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
+	"gobee/ent/friendcirclerecord"
+	"gobee/ent/friendcirclerule"
 	"gobee/ent/modelschema"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
@@ -28,6 +30,7 @@ import (
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
 	"gobee/ent/role"
+	"gobee/ent/schedulejob"
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
@@ -58,6 +61,10 @@ type Client struct {
 	FLinkGroup *FLinkGroupClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FriendCircleRecord is the client for interacting with the FriendCircleRecord builders.
+	FriendCircleRecord *FriendCircleRecordClient
+	// FriendCircleRule is the client for interacting with the FriendCircleRule builders.
+	FriendCircleRule *FriendCircleRuleClient
 	// ModelSchema is the client for interacting with the ModelSchema builders.
 	ModelSchema *ModelSchemaClient
 	// Oauth2AccessToken is the client for interacting with the Oauth2AccessToken builders.
@@ -78,6 +85,8 @@ type Client struct {
 	Post *PostClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
+	// ScheduleJob is the client for interacting with the ScheduleJob builders.
+	ScheduleJob *ScheduleJobClient
 	// Setting is the client for interacting with the Setting builders.
 	Setting *SettingClient
 	// StorageStrategy is the client for interacting with the StorageStrategy builders.
@@ -104,6 +113,8 @@ func (c *Client) init() {
 	c.FLink = NewFLinkClient(c.config)
 	c.FLinkGroup = NewFLinkGroupClient(c.config)
 	c.File = NewFileClient(c.config)
+	c.FriendCircleRecord = NewFriendCircleRecordClient(c.config)
+	c.FriendCircleRule = NewFriendCircleRuleClient(c.config)
 	c.ModelSchema = NewModelSchemaClient(c.config)
 	c.Oauth2AccessToken = NewOauth2AccessTokenClient(c.config)
 	c.Oauth2Code = NewOauth2CodeClient(c.config)
@@ -114,6 +125,7 @@ func (c *Client) init() {
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.Post = NewPostClient(c.config)
 	c.Role = NewRoleClient(c.config)
+	c.ScheduleJob = NewScheduleJobClient(c.config)
 	c.Setting = NewSettingClient(c.config)
 	c.StorageStrategy = NewStorageStrategyClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -217,6 +229,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
 		File:                NewFileClient(cfg),
+		FriendCircleRecord:  NewFriendCircleRecordClient(cfg),
+		FriendCircleRule:    NewFriendCircleRuleClient(cfg),
 		ModelSchema:         NewModelSchemaClient(cfg),
 		Oauth2AccessToken:   NewOauth2AccessTokenClient(cfg),
 		Oauth2Code:          NewOauth2CodeClient(cfg),
@@ -227,6 +241,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
 		Post:                NewPostClient(cfg),
 		Role:                NewRoleClient(cfg),
+		ScheduleJob:         NewScheduleJobClient(cfg),
 		Setting:             NewSettingClient(cfg),
 		StorageStrategy:     NewStorageStrategyClient(cfg),
 		User:                NewUserClient(cfg),
@@ -257,6 +272,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
 		File:                NewFileClient(cfg),
+		FriendCircleRecord:  NewFriendCircleRecordClient(cfg),
+		FriendCircleRule:    NewFriendCircleRuleClient(cfg),
 		ModelSchema:         NewModelSchemaClient(cfg),
 		Oauth2AccessToken:   NewOauth2AccessTokenClient(cfg),
 		Oauth2Code:          NewOauth2CodeClient(cfg),
@@ -267,6 +284,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
 		Post:                NewPostClient(cfg),
 		Role:                NewRoleClient(cfg),
+		ScheduleJob:         NewScheduleJobClient(cfg),
 		Setting:             NewSettingClient(cfg),
 		StorageStrategy:     NewStorageStrategyClient(cfg),
 		User:                NewUserClient(cfg),
@@ -301,8 +319,9 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.FLink, c.FLinkGroup, c.File,
-		c.ModelSchema, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page,
-		c.PayChannel, c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.Setting,
+		c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema, c.Oauth2AccessToken,
+		c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel, c.PayOrder,
+		c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
 		c.StorageStrategy, c.User, c.WebHook,
 	} {
 		n.Use(hooks...)
@@ -314,8 +333,9 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.FLink, c.FLinkGroup, c.File,
-		c.ModelSchema, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page,
-		c.PayChannel, c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.Setting,
+		c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema, c.Oauth2AccessToken,
+		c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel, c.PayOrder,
+		c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
 		c.StorageStrategy, c.User, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
@@ -339,6 +359,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.FLinkGroup.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
+	case *FriendCircleRecordMutation:
+		return c.FriendCircleRecord.mutate(ctx, m)
+	case *FriendCircleRuleMutation:
+		return c.FriendCircleRule.mutate(ctx, m)
 	case *ModelSchemaMutation:
 		return c.ModelSchema.mutate(ctx, m)
 	case *Oauth2AccessTokenMutation:
@@ -359,6 +383,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Post.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
+	case *ScheduleJobMutation:
+		return c.ScheduleJob.mutate(ctx, m)
 	case *SettingMutation:
 		return c.Setting.mutate(ctx, m)
 	case *StorageStrategyMutation:
@@ -1332,6 +1358,272 @@ func (c *FileClient) mutate(ctx context.Context, m *FileMutation) (Value, error)
 		return (&FileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown File mutation op: %q", m.Op())
+	}
+}
+
+// FriendCircleRecordClient is a client for the FriendCircleRecord schema.
+type FriendCircleRecordClient struct {
+	config
+}
+
+// NewFriendCircleRecordClient returns a client for the FriendCircleRecord from the given config.
+func NewFriendCircleRecordClient(c config) *FriendCircleRecordClient {
+	return &FriendCircleRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `friendcirclerecord.Hooks(f(g(h())))`.
+func (c *FriendCircleRecordClient) Use(hooks ...Hook) {
+	c.hooks.FriendCircleRecord = append(c.hooks.FriendCircleRecord, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `friendcirclerecord.Intercept(f(g(h())))`.
+func (c *FriendCircleRecordClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FriendCircleRecord = append(c.inters.FriendCircleRecord, interceptors...)
+}
+
+// Create returns a builder for creating a FriendCircleRecord entity.
+func (c *FriendCircleRecordClient) Create() *FriendCircleRecordCreate {
+	mutation := newFriendCircleRecordMutation(c.config, OpCreate)
+	return &FriendCircleRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FriendCircleRecord entities.
+func (c *FriendCircleRecordClient) CreateBulk(builders ...*FriendCircleRecordCreate) *FriendCircleRecordCreateBulk {
+	return &FriendCircleRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FriendCircleRecordClient) MapCreateBulk(slice any, setFunc func(*FriendCircleRecordCreate, int)) *FriendCircleRecordCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FriendCircleRecordCreateBulk{err: fmt.Errorf("calling to FriendCircleRecordClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FriendCircleRecordCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FriendCircleRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FriendCircleRecord.
+func (c *FriendCircleRecordClient) Update() *FriendCircleRecordUpdate {
+	mutation := newFriendCircleRecordMutation(c.config, OpUpdate)
+	return &FriendCircleRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FriendCircleRecordClient) UpdateOne(_m *FriendCircleRecord) *FriendCircleRecordUpdateOne {
+	mutation := newFriendCircleRecordMutation(c.config, OpUpdateOne, withFriendCircleRecord(_m))
+	return &FriendCircleRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FriendCircleRecordClient) UpdateOneID(id int) *FriendCircleRecordUpdateOne {
+	mutation := newFriendCircleRecordMutation(c.config, OpUpdateOne, withFriendCircleRecordID(id))
+	return &FriendCircleRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FriendCircleRecord.
+func (c *FriendCircleRecordClient) Delete() *FriendCircleRecordDelete {
+	mutation := newFriendCircleRecordMutation(c.config, OpDelete)
+	return &FriendCircleRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FriendCircleRecordClient) DeleteOne(_m *FriendCircleRecord) *FriendCircleRecordDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FriendCircleRecordClient) DeleteOneID(id int) *FriendCircleRecordDeleteOne {
+	builder := c.Delete().Where(friendcirclerecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FriendCircleRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for FriendCircleRecord.
+func (c *FriendCircleRecordClient) Query() *FriendCircleRecordQuery {
+	return &FriendCircleRecordQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFriendCircleRecord},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FriendCircleRecord entity by its id.
+func (c *FriendCircleRecordClient) Get(ctx context.Context, id int) (*FriendCircleRecord, error) {
+	return c.Query().Where(friendcirclerecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FriendCircleRecordClient) GetX(ctx context.Context, id int) *FriendCircleRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FriendCircleRecordClient) Hooks() []Hook {
+	return c.hooks.FriendCircleRecord
+}
+
+// Interceptors returns the client interceptors.
+func (c *FriendCircleRecordClient) Interceptors() []Interceptor {
+	return c.inters.FriendCircleRecord
+}
+
+func (c *FriendCircleRecordClient) mutate(ctx context.Context, m *FriendCircleRecordMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FriendCircleRecordCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FriendCircleRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FriendCircleRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FriendCircleRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FriendCircleRecord mutation op: %q", m.Op())
+	}
+}
+
+// FriendCircleRuleClient is a client for the FriendCircleRule schema.
+type FriendCircleRuleClient struct {
+	config
+}
+
+// NewFriendCircleRuleClient returns a client for the FriendCircleRule from the given config.
+func NewFriendCircleRuleClient(c config) *FriendCircleRuleClient {
+	return &FriendCircleRuleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `friendcirclerule.Hooks(f(g(h())))`.
+func (c *FriendCircleRuleClient) Use(hooks ...Hook) {
+	c.hooks.FriendCircleRule = append(c.hooks.FriendCircleRule, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `friendcirclerule.Intercept(f(g(h())))`.
+func (c *FriendCircleRuleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FriendCircleRule = append(c.inters.FriendCircleRule, interceptors...)
+}
+
+// Create returns a builder for creating a FriendCircleRule entity.
+func (c *FriendCircleRuleClient) Create() *FriendCircleRuleCreate {
+	mutation := newFriendCircleRuleMutation(c.config, OpCreate)
+	return &FriendCircleRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FriendCircleRule entities.
+func (c *FriendCircleRuleClient) CreateBulk(builders ...*FriendCircleRuleCreate) *FriendCircleRuleCreateBulk {
+	return &FriendCircleRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FriendCircleRuleClient) MapCreateBulk(slice any, setFunc func(*FriendCircleRuleCreate, int)) *FriendCircleRuleCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FriendCircleRuleCreateBulk{err: fmt.Errorf("calling to FriendCircleRuleClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FriendCircleRuleCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FriendCircleRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FriendCircleRule.
+func (c *FriendCircleRuleClient) Update() *FriendCircleRuleUpdate {
+	mutation := newFriendCircleRuleMutation(c.config, OpUpdate)
+	return &FriendCircleRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FriendCircleRuleClient) UpdateOne(_m *FriendCircleRule) *FriendCircleRuleUpdateOne {
+	mutation := newFriendCircleRuleMutation(c.config, OpUpdateOne, withFriendCircleRule(_m))
+	return &FriendCircleRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FriendCircleRuleClient) UpdateOneID(id int) *FriendCircleRuleUpdateOne {
+	mutation := newFriendCircleRuleMutation(c.config, OpUpdateOne, withFriendCircleRuleID(id))
+	return &FriendCircleRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FriendCircleRule.
+func (c *FriendCircleRuleClient) Delete() *FriendCircleRuleDelete {
+	mutation := newFriendCircleRuleMutation(c.config, OpDelete)
+	return &FriendCircleRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FriendCircleRuleClient) DeleteOne(_m *FriendCircleRule) *FriendCircleRuleDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FriendCircleRuleClient) DeleteOneID(id int) *FriendCircleRuleDeleteOne {
+	builder := c.Delete().Where(friendcirclerule.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FriendCircleRuleDeleteOne{builder}
+}
+
+// Query returns a query builder for FriendCircleRule.
+func (c *FriendCircleRuleClient) Query() *FriendCircleRuleQuery {
+	return &FriendCircleRuleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFriendCircleRule},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FriendCircleRule entity by its id.
+func (c *FriendCircleRuleClient) Get(ctx context.Context, id int) (*FriendCircleRule, error) {
+	return c.Query().Where(friendcirclerule.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FriendCircleRuleClient) GetX(ctx context.Context, id int) *FriendCircleRule {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FriendCircleRuleClient) Hooks() []Hook {
+	return c.hooks.FriendCircleRule
+}
+
+// Interceptors returns the client interceptors.
+func (c *FriendCircleRuleClient) Interceptors() []Interceptor {
+	return c.inters.FriendCircleRule
+}
+
+func (c *FriendCircleRuleClient) mutate(ctx context.Context, m *FriendCircleRuleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FriendCircleRuleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FriendCircleRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FriendCircleRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FriendCircleRuleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FriendCircleRule mutation op: %q", m.Op())
 	}
 }
 
@@ -2681,6 +2973,139 @@ func (c *RoleClient) mutate(ctx context.Context, m *RoleMutation) (Value, error)
 	}
 }
 
+// ScheduleJobClient is a client for the ScheduleJob schema.
+type ScheduleJobClient struct {
+	config
+}
+
+// NewScheduleJobClient returns a client for the ScheduleJob from the given config.
+func NewScheduleJobClient(c config) *ScheduleJobClient {
+	return &ScheduleJobClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `schedulejob.Hooks(f(g(h())))`.
+func (c *ScheduleJobClient) Use(hooks ...Hook) {
+	c.hooks.ScheduleJob = append(c.hooks.ScheduleJob, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `schedulejob.Intercept(f(g(h())))`.
+func (c *ScheduleJobClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ScheduleJob = append(c.inters.ScheduleJob, interceptors...)
+}
+
+// Create returns a builder for creating a ScheduleJob entity.
+func (c *ScheduleJobClient) Create() *ScheduleJobCreate {
+	mutation := newScheduleJobMutation(c.config, OpCreate)
+	return &ScheduleJobCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ScheduleJob entities.
+func (c *ScheduleJobClient) CreateBulk(builders ...*ScheduleJobCreate) *ScheduleJobCreateBulk {
+	return &ScheduleJobCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ScheduleJobClient) MapCreateBulk(slice any, setFunc func(*ScheduleJobCreate, int)) *ScheduleJobCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ScheduleJobCreateBulk{err: fmt.Errorf("calling to ScheduleJobClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ScheduleJobCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ScheduleJobCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ScheduleJob.
+func (c *ScheduleJobClient) Update() *ScheduleJobUpdate {
+	mutation := newScheduleJobMutation(c.config, OpUpdate)
+	return &ScheduleJobUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ScheduleJobClient) UpdateOne(_m *ScheduleJob) *ScheduleJobUpdateOne {
+	mutation := newScheduleJobMutation(c.config, OpUpdateOne, withScheduleJob(_m))
+	return &ScheduleJobUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ScheduleJobClient) UpdateOneID(id int) *ScheduleJobUpdateOne {
+	mutation := newScheduleJobMutation(c.config, OpUpdateOne, withScheduleJobID(id))
+	return &ScheduleJobUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ScheduleJob.
+func (c *ScheduleJobClient) Delete() *ScheduleJobDelete {
+	mutation := newScheduleJobMutation(c.config, OpDelete)
+	return &ScheduleJobDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ScheduleJobClient) DeleteOne(_m *ScheduleJob) *ScheduleJobDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ScheduleJobClient) DeleteOneID(id int) *ScheduleJobDeleteOne {
+	builder := c.Delete().Where(schedulejob.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ScheduleJobDeleteOne{builder}
+}
+
+// Query returns a query builder for ScheduleJob.
+func (c *ScheduleJobClient) Query() *ScheduleJobQuery {
+	return &ScheduleJobQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeScheduleJob},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ScheduleJob entity by its id.
+func (c *ScheduleJobClient) Get(ctx context.Context, id int) (*ScheduleJob, error) {
+	return c.Query().Where(schedulejob.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ScheduleJobClient) GetX(ctx context.Context, id int) *ScheduleJob {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ScheduleJobClient) Hooks() []Hook {
+	return c.hooks.ScheduleJob
+}
+
+// Interceptors returns the client interceptors.
+func (c *ScheduleJobClient) Interceptors() []Interceptor {
+	return c.inters.ScheduleJob
+}
+
+func (c *ScheduleJobClient) mutate(ctx context.Context, m *ScheduleJobMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ScheduleJobCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ScheduleJobUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ScheduleJobUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ScheduleJobDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ScheduleJob mutation op: %q", m.Op())
+	}
+}
+
 // SettingClient is a client for the Setting schema.
 type SettingClient struct {
 	config
@@ -3232,15 +3657,17 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, ApiPerms, Comment, FLink, FLinkGroup, File, ModelSchema,
-		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
-		PersonalAccessToken, Post, Role, Setting, StorageStrategy, User,
+		Album, AlbumPhoto, ApiPerms, Comment, FLink, FLinkGroup, File,
+		FriendCircleRecord, FriendCircleRule, ModelSchema, Oauth2AccessToken,
+		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
+		PersonalAccessToken, Post, Role, ScheduleJob, Setting, StorageStrategy, User,
 		WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, ApiPerms, Comment, FLink, FLinkGroup, File, ModelSchema,
-		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
-		PersonalAccessToken, Post, Role, Setting, StorageStrategy, User,
+		Album, AlbumPhoto, ApiPerms, Comment, FLink, FLinkGroup, File,
+		FriendCircleRecord, FriendCircleRule, ModelSchema, Oauth2AccessToken,
+		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
+		PersonalAccessToken, Post, Role, ScheduleJob, Setting, StorageStrategy, User,
 		WebHook []ent.Interceptor
 	}
 )

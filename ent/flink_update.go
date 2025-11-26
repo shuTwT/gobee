@@ -63,23 +63,23 @@ func (_u *FLinkUpdate) SetNillableURL(v *string) *FLinkUpdate {
 	return _u
 }
 
-// SetLogo sets the "logo" field.
-func (_u *FLinkUpdate) SetLogo(v string) *FLinkUpdate {
-	_u.mutation.SetLogo(v)
+// SetAvatarURL sets the "avatar_url" field.
+func (_u *FLinkUpdate) SetAvatarURL(v string) *FLinkUpdate {
+	_u.mutation.SetAvatarURL(v)
 	return _u
 }
 
-// SetNillableLogo sets the "logo" field if the given value is not nil.
-func (_u *FLinkUpdate) SetNillableLogo(v *string) *FLinkUpdate {
+// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
+func (_u *FLinkUpdate) SetNillableAvatarURL(v *string) *FLinkUpdate {
 	if v != nil {
-		_u.SetLogo(*v)
+		_u.SetAvatarURL(*v)
 	}
 	return _u
 }
 
-// ClearLogo clears the value of the "logo" field.
-func (_u *FLinkUpdate) ClearLogo() *FLinkUpdate {
-	_u.mutation.ClearLogo()
+// ClearAvatarURL clears the value of the "avatar_url" field.
+func (_u *FLinkUpdate) ClearAvatarURL() *FLinkUpdate {
+	_u.mutation.ClearAvatarURL()
 	return _u
 }
 
@@ -124,23 +124,43 @@ func (_u *FLinkUpdate) AddStatus(v int) *FLinkUpdate {
 	return _u
 }
 
-// SetSnapshot sets the "snapshot" field.
-func (_u *FLinkUpdate) SetSnapshot(v string) *FLinkUpdate {
-	_u.mutation.SetSnapshot(v)
+// SetSnapshotURL sets the "snapshot_url" field.
+func (_u *FLinkUpdate) SetSnapshotURL(v string) *FLinkUpdate {
+	_u.mutation.SetSnapshotURL(v)
 	return _u
 }
 
-// SetNillableSnapshot sets the "snapshot" field if the given value is not nil.
-func (_u *FLinkUpdate) SetNillableSnapshot(v *string) *FLinkUpdate {
+// SetNillableSnapshotURL sets the "snapshot_url" field if the given value is not nil.
+func (_u *FLinkUpdate) SetNillableSnapshotURL(v *string) *FLinkUpdate {
 	if v != nil {
-		_u.SetSnapshot(*v)
+		_u.SetSnapshotURL(*v)
 	}
 	return _u
 }
 
-// ClearSnapshot clears the value of the "snapshot" field.
-func (_u *FLinkUpdate) ClearSnapshot() *FLinkUpdate {
-	_u.mutation.ClearSnapshot()
+// ClearSnapshotURL clears the value of the "snapshot_url" field.
+func (_u *FLinkUpdate) ClearSnapshotURL() *FLinkUpdate {
+	_u.mutation.ClearSnapshotURL()
+	return _u
+}
+
+// SetCoverURL sets the "cover_url" field.
+func (_u *FLinkUpdate) SetCoverURL(v string) *FLinkUpdate {
+	_u.mutation.SetCoverURL(v)
+	return _u
+}
+
+// SetNillableCoverURL sets the "cover_url" field if the given value is not nil.
+func (_u *FLinkUpdate) SetNillableCoverURL(v *string) *FLinkUpdate {
+	if v != nil {
+		_u.SetCoverURL(*v)
+	}
+	return _u
+}
+
+// ClearCoverURL clears the value of the "cover_url" field.
+func (_u *FLinkUpdate) ClearCoverURL() *FLinkUpdate {
+	_u.mutation.ClearCoverURL()
 	return _u
 }
 
@@ -181,6 +201,47 @@ func (_u *FLinkUpdate) SetNillableGroupID(v *int) *FLinkUpdate {
 // ClearGroupID clears the value of the "group_id" field.
 func (_u *FLinkUpdate) ClearGroupID() *FLinkUpdate {
 	_u.mutation.ClearGroupID()
+	return _u
+}
+
+// SetEnableFriendCircle sets the "enable_friend_circle" field.
+func (_u *FLinkUpdate) SetEnableFriendCircle(v bool) *FLinkUpdate {
+	_u.mutation.SetEnableFriendCircle(v)
+	return _u
+}
+
+// SetNillableEnableFriendCircle sets the "enable_friend_circle" field if the given value is not nil.
+func (_u *FLinkUpdate) SetNillableEnableFriendCircle(v *bool) *FLinkUpdate {
+	if v != nil {
+		_u.SetEnableFriendCircle(*v)
+	}
+	return _u
+}
+
+// SetFriendCircleRuleID sets the "friend_circle_rule_id" field.
+func (_u *FLinkUpdate) SetFriendCircleRuleID(v int) *FLinkUpdate {
+	_u.mutation.ResetFriendCircleRuleID()
+	_u.mutation.SetFriendCircleRuleID(v)
+	return _u
+}
+
+// SetNillableFriendCircleRuleID sets the "friend_circle_rule_id" field if the given value is not nil.
+func (_u *FLinkUpdate) SetNillableFriendCircleRuleID(v *int) *FLinkUpdate {
+	if v != nil {
+		_u.SetFriendCircleRuleID(*v)
+	}
+	return _u
+}
+
+// AddFriendCircleRuleID adds value to the "friend_circle_rule_id" field.
+func (_u *FLinkUpdate) AddFriendCircleRuleID(v int) *FLinkUpdate {
+	_u.mutation.AddFriendCircleRuleID(v)
+	return _u
+}
+
+// ClearFriendCircleRuleID clears the value of the "friend_circle_rule_id" field.
+func (_u *FLinkUpdate) ClearFriendCircleRuleID() *FLinkUpdate {
+	_u.mutation.ClearFriendCircleRuleID()
 	return _u
 }
 
@@ -272,11 +333,11 @@ func (_u *FLinkUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(flink.FieldURL, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.Logo(); ok {
-		_spec.SetField(flink.FieldLogo, field.TypeString, value)
+	if value, ok := _u.mutation.AvatarURL(); ok {
+		_spec.SetField(flink.FieldAvatarURL, field.TypeString, value)
 	}
-	if _u.mutation.LogoCleared() {
-		_spec.ClearField(flink.FieldLogo, field.TypeString)
+	if _u.mutation.AvatarURLCleared() {
+		_spec.ClearField(flink.FieldAvatarURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(flink.FieldDescription, field.TypeString, value)
@@ -290,17 +351,35 @@ func (_u *FLinkUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedStatus(); ok {
 		_spec.AddField(flink.FieldStatus, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.Snapshot(); ok {
-		_spec.SetField(flink.FieldSnapshot, field.TypeString, value)
+	if value, ok := _u.mutation.SnapshotURL(); ok {
+		_spec.SetField(flink.FieldSnapshotURL, field.TypeString, value)
 	}
-	if _u.mutation.SnapshotCleared() {
-		_spec.ClearField(flink.FieldSnapshot, field.TypeString)
+	if _u.mutation.SnapshotURLCleared() {
+		_spec.ClearField(flink.FieldSnapshotURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.CoverURL(); ok {
+		_spec.SetField(flink.FieldCoverURL, field.TypeString, value)
+	}
+	if _u.mutation.CoverURLCleared() {
+		_spec.ClearField(flink.FieldCoverURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.Email(); ok {
 		_spec.SetField(flink.FieldEmail, field.TypeString, value)
 	}
 	if _u.mutation.EmailCleared() {
 		_spec.ClearField(flink.FieldEmail, field.TypeString)
+	}
+	if value, ok := _u.mutation.EnableFriendCircle(); ok {
+		_spec.SetField(flink.FieldEnableFriendCircle, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.FriendCircleRuleID(); ok {
+		_spec.SetField(flink.FieldFriendCircleRuleID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFriendCircleRuleID(); ok {
+		_spec.AddField(flink.FieldFriendCircleRuleID, field.TypeInt, value)
+	}
+	if _u.mutation.FriendCircleRuleIDCleared() {
+		_spec.ClearField(flink.FieldFriendCircleRuleID, field.TypeInt)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -385,23 +464,23 @@ func (_u *FLinkUpdateOne) SetNillableURL(v *string) *FLinkUpdateOne {
 	return _u
 }
 
-// SetLogo sets the "logo" field.
-func (_u *FLinkUpdateOne) SetLogo(v string) *FLinkUpdateOne {
-	_u.mutation.SetLogo(v)
+// SetAvatarURL sets the "avatar_url" field.
+func (_u *FLinkUpdateOne) SetAvatarURL(v string) *FLinkUpdateOne {
+	_u.mutation.SetAvatarURL(v)
 	return _u
 }
 
-// SetNillableLogo sets the "logo" field if the given value is not nil.
-func (_u *FLinkUpdateOne) SetNillableLogo(v *string) *FLinkUpdateOne {
+// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
+func (_u *FLinkUpdateOne) SetNillableAvatarURL(v *string) *FLinkUpdateOne {
 	if v != nil {
-		_u.SetLogo(*v)
+		_u.SetAvatarURL(*v)
 	}
 	return _u
 }
 
-// ClearLogo clears the value of the "logo" field.
-func (_u *FLinkUpdateOne) ClearLogo() *FLinkUpdateOne {
-	_u.mutation.ClearLogo()
+// ClearAvatarURL clears the value of the "avatar_url" field.
+func (_u *FLinkUpdateOne) ClearAvatarURL() *FLinkUpdateOne {
+	_u.mutation.ClearAvatarURL()
 	return _u
 }
 
@@ -446,23 +525,43 @@ func (_u *FLinkUpdateOne) AddStatus(v int) *FLinkUpdateOne {
 	return _u
 }
 
-// SetSnapshot sets the "snapshot" field.
-func (_u *FLinkUpdateOne) SetSnapshot(v string) *FLinkUpdateOne {
-	_u.mutation.SetSnapshot(v)
+// SetSnapshotURL sets the "snapshot_url" field.
+func (_u *FLinkUpdateOne) SetSnapshotURL(v string) *FLinkUpdateOne {
+	_u.mutation.SetSnapshotURL(v)
 	return _u
 }
 
-// SetNillableSnapshot sets the "snapshot" field if the given value is not nil.
-func (_u *FLinkUpdateOne) SetNillableSnapshot(v *string) *FLinkUpdateOne {
+// SetNillableSnapshotURL sets the "snapshot_url" field if the given value is not nil.
+func (_u *FLinkUpdateOne) SetNillableSnapshotURL(v *string) *FLinkUpdateOne {
 	if v != nil {
-		_u.SetSnapshot(*v)
+		_u.SetSnapshotURL(*v)
 	}
 	return _u
 }
 
-// ClearSnapshot clears the value of the "snapshot" field.
-func (_u *FLinkUpdateOne) ClearSnapshot() *FLinkUpdateOne {
-	_u.mutation.ClearSnapshot()
+// ClearSnapshotURL clears the value of the "snapshot_url" field.
+func (_u *FLinkUpdateOne) ClearSnapshotURL() *FLinkUpdateOne {
+	_u.mutation.ClearSnapshotURL()
+	return _u
+}
+
+// SetCoverURL sets the "cover_url" field.
+func (_u *FLinkUpdateOne) SetCoverURL(v string) *FLinkUpdateOne {
+	_u.mutation.SetCoverURL(v)
+	return _u
+}
+
+// SetNillableCoverURL sets the "cover_url" field if the given value is not nil.
+func (_u *FLinkUpdateOne) SetNillableCoverURL(v *string) *FLinkUpdateOne {
+	if v != nil {
+		_u.SetCoverURL(*v)
+	}
+	return _u
+}
+
+// ClearCoverURL clears the value of the "cover_url" field.
+func (_u *FLinkUpdateOne) ClearCoverURL() *FLinkUpdateOne {
+	_u.mutation.ClearCoverURL()
 	return _u
 }
 
@@ -503,6 +602,47 @@ func (_u *FLinkUpdateOne) SetNillableGroupID(v *int) *FLinkUpdateOne {
 // ClearGroupID clears the value of the "group_id" field.
 func (_u *FLinkUpdateOne) ClearGroupID() *FLinkUpdateOne {
 	_u.mutation.ClearGroupID()
+	return _u
+}
+
+// SetEnableFriendCircle sets the "enable_friend_circle" field.
+func (_u *FLinkUpdateOne) SetEnableFriendCircle(v bool) *FLinkUpdateOne {
+	_u.mutation.SetEnableFriendCircle(v)
+	return _u
+}
+
+// SetNillableEnableFriendCircle sets the "enable_friend_circle" field if the given value is not nil.
+func (_u *FLinkUpdateOne) SetNillableEnableFriendCircle(v *bool) *FLinkUpdateOne {
+	if v != nil {
+		_u.SetEnableFriendCircle(*v)
+	}
+	return _u
+}
+
+// SetFriendCircleRuleID sets the "friend_circle_rule_id" field.
+func (_u *FLinkUpdateOne) SetFriendCircleRuleID(v int) *FLinkUpdateOne {
+	_u.mutation.ResetFriendCircleRuleID()
+	_u.mutation.SetFriendCircleRuleID(v)
+	return _u
+}
+
+// SetNillableFriendCircleRuleID sets the "friend_circle_rule_id" field if the given value is not nil.
+func (_u *FLinkUpdateOne) SetNillableFriendCircleRuleID(v *int) *FLinkUpdateOne {
+	if v != nil {
+		_u.SetFriendCircleRuleID(*v)
+	}
+	return _u
+}
+
+// AddFriendCircleRuleID adds value to the "friend_circle_rule_id" field.
+func (_u *FLinkUpdateOne) AddFriendCircleRuleID(v int) *FLinkUpdateOne {
+	_u.mutation.AddFriendCircleRuleID(v)
+	return _u
+}
+
+// ClearFriendCircleRuleID clears the value of the "friend_circle_rule_id" field.
+func (_u *FLinkUpdateOne) ClearFriendCircleRuleID() *FLinkUpdateOne {
+	_u.mutation.ClearFriendCircleRuleID()
 	return _u
 }
 
@@ -624,11 +764,11 @@ func (_u *FLinkUpdateOne) sqlSave(ctx context.Context) (_node *FLink, err error)
 	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(flink.FieldURL, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.Logo(); ok {
-		_spec.SetField(flink.FieldLogo, field.TypeString, value)
+	if value, ok := _u.mutation.AvatarURL(); ok {
+		_spec.SetField(flink.FieldAvatarURL, field.TypeString, value)
 	}
-	if _u.mutation.LogoCleared() {
-		_spec.ClearField(flink.FieldLogo, field.TypeString)
+	if _u.mutation.AvatarURLCleared() {
+		_spec.ClearField(flink.FieldAvatarURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(flink.FieldDescription, field.TypeString, value)
@@ -642,17 +782,35 @@ func (_u *FLinkUpdateOne) sqlSave(ctx context.Context) (_node *FLink, err error)
 	if value, ok := _u.mutation.AddedStatus(); ok {
 		_spec.AddField(flink.FieldStatus, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.Snapshot(); ok {
-		_spec.SetField(flink.FieldSnapshot, field.TypeString, value)
+	if value, ok := _u.mutation.SnapshotURL(); ok {
+		_spec.SetField(flink.FieldSnapshotURL, field.TypeString, value)
 	}
-	if _u.mutation.SnapshotCleared() {
-		_spec.ClearField(flink.FieldSnapshot, field.TypeString)
+	if _u.mutation.SnapshotURLCleared() {
+		_spec.ClearField(flink.FieldSnapshotURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.CoverURL(); ok {
+		_spec.SetField(flink.FieldCoverURL, field.TypeString, value)
+	}
+	if _u.mutation.CoverURLCleared() {
+		_spec.ClearField(flink.FieldCoverURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.Email(); ok {
 		_spec.SetField(flink.FieldEmail, field.TypeString, value)
 	}
 	if _u.mutation.EmailCleared() {
 		_spec.ClearField(flink.FieldEmail, field.TypeString)
+	}
+	if value, ok := _u.mutation.EnableFriendCircle(); ok {
+		_spec.SetField(flink.FieldEnableFriendCircle, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.FriendCircleRuleID(); ok {
+		_spec.SetField(flink.FieldFriendCircleRuleID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFriendCircleRuleID(); ok {
+		_spec.AddField(flink.FieldFriendCircleRuleID, field.TypeInt, value)
+	}
+	if _u.mutation.FriendCircleRuleIDCleared() {
+		_spec.ClearField(flink.FieldFriendCircleRuleID, field.TypeInt)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

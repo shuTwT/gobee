@@ -94,11 +94,14 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "url", Type: field.TypeString},
-		{Name: "logo", Type: field.TypeString, Nullable: true},
+		{Name: "avatar_url", Type: field.TypeString, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeInt, Default: 1},
-		{Name: "snapshot", Type: field.TypeString, Nullable: true},
+		{Name: "snapshot_url", Type: field.TypeString, Nullable: true},
+		{Name: "cover_url", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString, Nullable: true},
+		{Name: "enable_friend_circle", Type: field.TypeBool, Default: true},
+		{Name: "friend_circle_rule_id", Type: field.TypeInt, Nullable: true},
 		{Name: "group_id", Type: field.TypeInt, Nullable: true},
 	}
 	// FlinksTable holds the schema information for the "flinks" table.
@@ -109,7 +112,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "flinks_flink_groups_links",
-				Columns:    []*schema.Column{FlinksColumns[10]},
+				Columns:    []*schema.Column{FlinksColumns[13]},
 				RefColumns: []*schema.Column{FlinkGroupsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -144,6 +147,40 @@ var (
 		Name:       "files",
 		Columns:    FilesColumns,
 		PrimaryKey: []*schema.Column{FilesColumns[0]},
+	}
+	// FriendCircleRecordsColumns holds the columns for the "friend_circle_records" table.
+	FriendCircleRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "author", Type: field.TypeString},
+		{Name: "title", Type: field.TypeString},
+		{Name: "link_url", Type: field.TypeString},
+		{Name: "avatar_url", Type: field.TypeString},
+		{Name: "published_at", Type: field.TypeString, Nullable: true},
+	}
+	// FriendCircleRecordsTable holds the schema information for the "friend_circle_records" table.
+	FriendCircleRecordsTable = &schema.Table{
+		Name:       "friend_circle_records",
+		Columns:    FriendCircleRecordsColumns,
+		PrimaryKey: []*schema.Column{FriendCircleRecordsColumns[0]},
+	}
+	// FriendCircleRulesColumns holds the columns for the "friend_circle_rules" table.
+	FriendCircleRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "title_selector", Type: field.TypeString, Nullable: true},
+		{Name: "link_selector", Type: field.TypeString, Nullable: true},
+		{Name: "created_selector", Type: field.TypeString, Nullable: true},
+		{Name: "updated_selector", Type: field.TypeString, Nullable: true},
+	}
+	// FriendCircleRulesTable holds the schema information for the "friend_circle_rules" table.
+	FriendCircleRulesTable = &schema.Table{
+		Name:       "friend_circle_rules",
+		Columns:    FriendCircleRulesColumns,
+		PrimaryKey: []*schema.Column{FriendCircleRulesColumns[0]},
 	}
 	// ModelSchemasColumns holds the columns for the "model_schemas" table.
 	ModelSchemasColumns = []*schema.Column{
@@ -325,6 +362,19 @@ var (
 		Columns:    RolesColumns,
 		PrimaryKey: []*schema.Column{RolesColumns[0]},
 	}
+	// ScheduleJobsColumns holds the columns for the "schedule_jobs" table.
+	ScheduleJobsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+	}
+	// ScheduleJobsTable holds the schema information for the "schedule_jobs" table.
+	ScheduleJobsTable = &schema.Table{
+		Name:       "schedule_jobs",
+		Columns:    ScheduleJobsColumns,
+		PrimaryKey: []*schema.Column{ScheduleJobsColumns[0]},
+	}
 	// SettingsColumns holds the columns for the "settings" table.
 	SettingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -414,6 +464,8 @@ var (
 		FlinksTable,
 		FlinkGroupsTable,
 		FilesTable,
+		FriendCircleRecordsTable,
+		FriendCircleRulesTable,
 		ModelSchemasTable,
 		Oauth2accessTokensTable,
 		Oauth2codesTable,
@@ -424,6 +476,7 @@ var (
 		PersonalAccessTokensTable,
 		PostsTable,
 		RolesTable,
+		ScheduleJobsTable,
 		SettingsTable,
 		StorageStrategiesTable,
 		UsersTable,

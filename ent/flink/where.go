@@ -75,9 +75,9 @@ func URL(v string) predicate.FLink {
 	return predicate.FLink(sql.FieldEQ(FieldURL, v))
 }
 
-// Logo applies equality check predicate on the "logo" field. It's identical to LogoEQ.
-func Logo(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldEQ(FieldLogo, v))
+// AvatarURL applies equality check predicate on the "avatar_url" field. It's identical to AvatarURLEQ.
+func AvatarURL(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldAvatarURL, v))
 }
 
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
@@ -90,9 +90,14 @@ func Status(v int) predicate.FLink {
 	return predicate.FLink(sql.FieldEQ(FieldStatus, v))
 }
 
-// Snapshot applies equality check predicate on the "snapshot" field. It's identical to SnapshotEQ.
-func Snapshot(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldEQ(FieldSnapshot, v))
+// SnapshotURL applies equality check predicate on the "snapshot_url" field. It's identical to SnapshotURLEQ.
+func SnapshotURL(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldSnapshotURL, v))
+}
+
+// CoverURL applies equality check predicate on the "cover_url" field. It's identical to CoverURLEQ.
+func CoverURL(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldCoverURL, v))
 }
 
 // Email applies equality check predicate on the "email" field. It's identical to EmailEQ.
@@ -103,6 +108,16 @@ func Email(v string) predicate.FLink {
 // GroupID applies equality check predicate on the "group_id" field. It's identical to GroupIDEQ.
 func GroupID(v int) predicate.FLink {
 	return predicate.FLink(sql.FieldEQ(FieldGroupID, v))
+}
+
+// EnableFriendCircle applies equality check predicate on the "enable_friend_circle" field. It's identical to EnableFriendCircleEQ.
+func EnableFriendCircle(v bool) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldEnableFriendCircle, v))
+}
+
+// FriendCircleRuleID applies equality check predicate on the "friend_circle_rule_id" field. It's identical to FriendCircleRuleIDEQ.
+func FriendCircleRuleID(v int) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldFriendCircleRuleID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -315,79 +330,79 @@ func URLContainsFold(v string) predicate.FLink {
 	return predicate.FLink(sql.FieldContainsFold(FieldURL, v))
 }
 
-// LogoEQ applies the EQ predicate on the "logo" field.
-func LogoEQ(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldEQ(FieldLogo, v))
+// AvatarURLEQ applies the EQ predicate on the "avatar_url" field.
+func AvatarURLEQ(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldAvatarURL, v))
 }
 
-// LogoNEQ applies the NEQ predicate on the "logo" field.
-func LogoNEQ(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldNEQ(FieldLogo, v))
+// AvatarURLNEQ applies the NEQ predicate on the "avatar_url" field.
+func AvatarURLNEQ(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldNEQ(FieldAvatarURL, v))
 }
 
-// LogoIn applies the In predicate on the "logo" field.
-func LogoIn(vs ...string) predicate.FLink {
-	return predicate.FLink(sql.FieldIn(FieldLogo, vs...))
+// AvatarURLIn applies the In predicate on the "avatar_url" field.
+func AvatarURLIn(vs ...string) predicate.FLink {
+	return predicate.FLink(sql.FieldIn(FieldAvatarURL, vs...))
 }
 
-// LogoNotIn applies the NotIn predicate on the "logo" field.
-func LogoNotIn(vs ...string) predicate.FLink {
-	return predicate.FLink(sql.FieldNotIn(FieldLogo, vs...))
+// AvatarURLNotIn applies the NotIn predicate on the "avatar_url" field.
+func AvatarURLNotIn(vs ...string) predicate.FLink {
+	return predicate.FLink(sql.FieldNotIn(FieldAvatarURL, vs...))
 }
 
-// LogoGT applies the GT predicate on the "logo" field.
-func LogoGT(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldGT(FieldLogo, v))
+// AvatarURLGT applies the GT predicate on the "avatar_url" field.
+func AvatarURLGT(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldGT(FieldAvatarURL, v))
 }
 
-// LogoGTE applies the GTE predicate on the "logo" field.
-func LogoGTE(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldGTE(FieldLogo, v))
+// AvatarURLGTE applies the GTE predicate on the "avatar_url" field.
+func AvatarURLGTE(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldGTE(FieldAvatarURL, v))
 }
 
-// LogoLT applies the LT predicate on the "logo" field.
-func LogoLT(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldLT(FieldLogo, v))
+// AvatarURLLT applies the LT predicate on the "avatar_url" field.
+func AvatarURLLT(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldLT(FieldAvatarURL, v))
 }
 
-// LogoLTE applies the LTE predicate on the "logo" field.
-func LogoLTE(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldLTE(FieldLogo, v))
+// AvatarURLLTE applies the LTE predicate on the "avatar_url" field.
+func AvatarURLLTE(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldLTE(FieldAvatarURL, v))
 }
 
-// LogoContains applies the Contains predicate on the "logo" field.
-func LogoContains(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldContains(FieldLogo, v))
+// AvatarURLContains applies the Contains predicate on the "avatar_url" field.
+func AvatarURLContains(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldContains(FieldAvatarURL, v))
 }
 
-// LogoHasPrefix applies the HasPrefix predicate on the "logo" field.
-func LogoHasPrefix(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldHasPrefix(FieldLogo, v))
+// AvatarURLHasPrefix applies the HasPrefix predicate on the "avatar_url" field.
+func AvatarURLHasPrefix(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldHasPrefix(FieldAvatarURL, v))
 }
 
-// LogoHasSuffix applies the HasSuffix predicate on the "logo" field.
-func LogoHasSuffix(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldHasSuffix(FieldLogo, v))
+// AvatarURLHasSuffix applies the HasSuffix predicate on the "avatar_url" field.
+func AvatarURLHasSuffix(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldHasSuffix(FieldAvatarURL, v))
 }
 
-// LogoIsNil applies the IsNil predicate on the "logo" field.
-func LogoIsNil() predicate.FLink {
-	return predicate.FLink(sql.FieldIsNull(FieldLogo))
+// AvatarURLIsNil applies the IsNil predicate on the "avatar_url" field.
+func AvatarURLIsNil() predicate.FLink {
+	return predicate.FLink(sql.FieldIsNull(FieldAvatarURL))
 }
 
-// LogoNotNil applies the NotNil predicate on the "logo" field.
-func LogoNotNil() predicate.FLink {
-	return predicate.FLink(sql.FieldNotNull(FieldLogo))
+// AvatarURLNotNil applies the NotNil predicate on the "avatar_url" field.
+func AvatarURLNotNil() predicate.FLink {
+	return predicate.FLink(sql.FieldNotNull(FieldAvatarURL))
 }
 
-// LogoEqualFold applies the EqualFold predicate on the "logo" field.
-func LogoEqualFold(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldEqualFold(FieldLogo, v))
+// AvatarURLEqualFold applies the EqualFold predicate on the "avatar_url" field.
+func AvatarURLEqualFold(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldEqualFold(FieldAvatarURL, v))
 }
 
-// LogoContainsFold applies the ContainsFold predicate on the "logo" field.
-func LogoContainsFold(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldContainsFold(FieldLogo, v))
+// AvatarURLContainsFold applies the ContainsFold predicate on the "avatar_url" field.
+func AvatarURLContainsFold(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldContainsFold(FieldAvatarURL, v))
 }
 
 // DescriptionEQ applies the EQ predicate on the "description" field.
@@ -505,79 +520,154 @@ func StatusLTE(v int) predicate.FLink {
 	return predicate.FLink(sql.FieldLTE(FieldStatus, v))
 }
 
-// SnapshotEQ applies the EQ predicate on the "snapshot" field.
-func SnapshotEQ(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldEQ(FieldSnapshot, v))
+// SnapshotURLEQ applies the EQ predicate on the "snapshot_url" field.
+func SnapshotURLEQ(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldSnapshotURL, v))
 }
 
-// SnapshotNEQ applies the NEQ predicate on the "snapshot" field.
-func SnapshotNEQ(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldNEQ(FieldSnapshot, v))
+// SnapshotURLNEQ applies the NEQ predicate on the "snapshot_url" field.
+func SnapshotURLNEQ(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldNEQ(FieldSnapshotURL, v))
 }
 
-// SnapshotIn applies the In predicate on the "snapshot" field.
-func SnapshotIn(vs ...string) predicate.FLink {
-	return predicate.FLink(sql.FieldIn(FieldSnapshot, vs...))
+// SnapshotURLIn applies the In predicate on the "snapshot_url" field.
+func SnapshotURLIn(vs ...string) predicate.FLink {
+	return predicate.FLink(sql.FieldIn(FieldSnapshotURL, vs...))
 }
 
-// SnapshotNotIn applies the NotIn predicate on the "snapshot" field.
-func SnapshotNotIn(vs ...string) predicate.FLink {
-	return predicate.FLink(sql.FieldNotIn(FieldSnapshot, vs...))
+// SnapshotURLNotIn applies the NotIn predicate on the "snapshot_url" field.
+func SnapshotURLNotIn(vs ...string) predicate.FLink {
+	return predicate.FLink(sql.FieldNotIn(FieldSnapshotURL, vs...))
 }
 
-// SnapshotGT applies the GT predicate on the "snapshot" field.
-func SnapshotGT(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldGT(FieldSnapshot, v))
+// SnapshotURLGT applies the GT predicate on the "snapshot_url" field.
+func SnapshotURLGT(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldGT(FieldSnapshotURL, v))
 }
 
-// SnapshotGTE applies the GTE predicate on the "snapshot" field.
-func SnapshotGTE(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldGTE(FieldSnapshot, v))
+// SnapshotURLGTE applies the GTE predicate on the "snapshot_url" field.
+func SnapshotURLGTE(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldGTE(FieldSnapshotURL, v))
 }
 
-// SnapshotLT applies the LT predicate on the "snapshot" field.
-func SnapshotLT(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldLT(FieldSnapshot, v))
+// SnapshotURLLT applies the LT predicate on the "snapshot_url" field.
+func SnapshotURLLT(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldLT(FieldSnapshotURL, v))
 }
 
-// SnapshotLTE applies the LTE predicate on the "snapshot" field.
-func SnapshotLTE(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldLTE(FieldSnapshot, v))
+// SnapshotURLLTE applies the LTE predicate on the "snapshot_url" field.
+func SnapshotURLLTE(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldLTE(FieldSnapshotURL, v))
 }
 
-// SnapshotContains applies the Contains predicate on the "snapshot" field.
-func SnapshotContains(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldContains(FieldSnapshot, v))
+// SnapshotURLContains applies the Contains predicate on the "snapshot_url" field.
+func SnapshotURLContains(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldContains(FieldSnapshotURL, v))
 }
 
-// SnapshotHasPrefix applies the HasPrefix predicate on the "snapshot" field.
-func SnapshotHasPrefix(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldHasPrefix(FieldSnapshot, v))
+// SnapshotURLHasPrefix applies the HasPrefix predicate on the "snapshot_url" field.
+func SnapshotURLHasPrefix(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldHasPrefix(FieldSnapshotURL, v))
 }
 
-// SnapshotHasSuffix applies the HasSuffix predicate on the "snapshot" field.
-func SnapshotHasSuffix(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldHasSuffix(FieldSnapshot, v))
+// SnapshotURLHasSuffix applies the HasSuffix predicate on the "snapshot_url" field.
+func SnapshotURLHasSuffix(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldHasSuffix(FieldSnapshotURL, v))
 }
 
-// SnapshotIsNil applies the IsNil predicate on the "snapshot" field.
-func SnapshotIsNil() predicate.FLink {
-	return predicate.FLink(sql.FieldIsNull(FieldSnapshot))
+// SnapshotURLIsNil applies the IsNil predicate on the "snapshot_url" field.
+func SnapshotURLIsNil() predicate.FLink {
+	return predicate.FLink(sql.FieldIsNull(FieldSnapshotURL))
 }
 
-// SnapshotNotNil applies the NotNil predicate on the "snapshot" field.
-func SnapshotNotNil() predicate.FLink {
-	return predicate.FLink(sql.FieldNotNull(FieldSnapshot))
+// SnapshotURLNotNil applies the NotNil predicate on the "snapshot_url" field.
+func SnapshotURLNotNil() predicate.FLink {
+	return predicate.FLink(sql.FieldNotNull(FieldSnapshotURL))
 }
 
-// SnapshotEqualFold applies the EqualFold predicate on the "snapshot" field.
-func SnapshotEqualFold(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldEqualFold(FieldSnapshot, v))
+// SnapshotURLEqualFold applies the EqualFold predicate on the "snapshot_url" field.
+func SnapshotURLEqualFold(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldEqualFold(FieldSnapshotURL, v))
 }
 
-// SnapshotContainsFold applies the ContainsFold predicate on the "snapshot" field.
-func SnapshotContainsFold(v string) predicate.FLink {
-	return predicate.FLink(sql.FieldContainsFold(FieldSnapshot, v))
+// SnapshotURLContainsFold applies the ContainsFold predicate on the "snapshot_url" field.
+func SnapshotURLContainsFold(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldContainsFold(FieldSnapshotURL, v))
+}
+
+// CoverURLEQ applies the EQ predicate on the "cover_url" field.
+func CoverURLEQ(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldCoverURL, v))
+}
+
+// CoverURLNEQ applies the NEQ predicate on the "cover_url" field.
+func CoverURLNEQ(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldNEQ(FieldCoverURL, v))
+}
+
+// CoverURLIn applies the In predicate on the "cover_url" field.
+func CoverURLIn(vs ...string) predicate.FLink {
+	return predicate.FLink(sql.FieldIn(FieldCoverURL, vs...))
+}
+
+// CoverURLNotIn applies the NotIn predicate on the "cover_url" field.
+func CoverURLNotIn(vs ...string) predicate.FLink {
+	return predicate.FLink(sql.FieldNotIn(FieldCoverURL, vs...))
+}
+
+// CoverURLGT applies the GT predicate on the "cover_url" field.
+func CoverURLGT(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldGT(FieldCoverURL, v))
+}
+
+// CoverURLGTE applies the GTE predicate on the "cover_url" field.
+func CoverURLGTE(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldGTE(FieldCoverURL, v))
+}
+
+// CoverURLLT applies the LT predicate on the "cover_url" field.
+func CoverURLLT(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldLT(FieldCoverURL, v))
+}
+
+// CoverURLLTE applies the LTE predicate on the "cover_url" field.
+func CoverURLLTE(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldLTE(FieldCoverURL, v))
+}
+
+// CoverURLContains applies the Contains predicate on the "cover_url" field.
+func CoverURLContains(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldContains(FieldCoverURL, v))
+}
+
+// CoverURLHasPrefix applies the HasPrefix predicate on the "cover_url" field.
+func CoverURLHasPrefix(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldHasPrefix(FieldCoverURL, v))
+}
+
+// CoverURLHasSuffix applies the HasSuffix predicate on the "cover_url" field.
+func CoverURLHasSuffix(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldHasSuffix(FieldCoverURL, v))
+}
+
+// CoverURLIsNil applies the IsNil predicate on the "cover_url" field.
+func CoverURLIsNil() predicate.FLink {
+	return predicate.FLink(sql.FieldIsNull(FieldCoverURL))
+}
+
+// CoverURLNotNil applies the NotNil predicate on the "cover_url" field.
+func CoverURLNotNil() predicate.FLink {
+	return predicate.FLink(sql.FieldNotNull(FieldCoverURL))
+}
+
+// CoverURLEqualFold applies the EqualFold predicate on the "cover_url" field.
+func CoverURLEqualFold(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldEqualFold(FieldCoverURL, v))
+}
+
+// CoverURLContainsFold applies the ContainsFold predicate on the "cover_url" field.
+func CoverURLContainsFold(v string) predicate.FLink {
+	return predicate.FLink(sql.FieldContainsFold(FieldCoverURL, v))
 }
 
 // EmailEQ applies the EQ predicate on the "email" field.
@@ -683,6 +773,66 @@ func GroupIDIsNil() predicate.FLink {
 // GroupIDNotNil applies the NotNil predicate on the "group_id" field.
 func GroupIDNotNil() predicate.FLink {
 	return predicate.FLink(sql.FieldNotNull(FieldGroupID))
+}
+
+// EnableFriendCircleEQ applies the EQ predicate on the "enable_friend_circle" field.
+func EnableFriendCircleEQ(v bool) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldEnableFriendCircle, v))
+}
+
+// EnableFriendCircleNEQ applies the NEQ predicate on the "enable_friend_circle" field.
+func EnableFriendCircleNEQ(v bool) predicate.FLink {
+	return predicate.FLink(sql.FieldNEQ(FieldEnableFriendCircle, v))
+}
+
+// FriendCircleRuleIDEQ applies the EQ predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDEQ(v int) predicate.FLink {
+	return predicate.FLink(sql.FieldEQ(FieldFriendCircleRuleID, v))
+}
+
+// FriendCircleRuleIDNEQ applies the NEQ predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDNEQ(v int) predicate.FLink {
+	return predicate.FLink(sql.FieldNEQ(FieldFriendCircleRuleID, v))
+}
+
+// FriendCircleRuleIDIn applies the In predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDIn(vs ...int) predicate.FLink {
+	return predicate.FLink(sql.FieldIn(FieldFriendCircleRuleID, vs...))
+}
+
+// FriendCircleRuleIDNotIn applies the NotIn predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDNotIn(vs ...int) predicate.FLink {
+	return predicate.FLink(sql.FieldNotIn(FieldFriendCircleRuleID, vs...))
+}
+
+// FriendCircleRuleIDGT applies the GT predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDGT(v int) predicate.FLink {
+	return predicate.FLink(sql.FieldGT(FieldFriendCircleRuleID, v))
+}
+
+// FriendCircleRuleIDGTE applies the GTE predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDGTE(v int) predicate.FLink {
+	return predicate.FLink(sql.FieldGTE(FieldFriendCircleRuleID, v))
+}
+
+// FriendCircleRuleIDLT applies the LT predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDLT(v int) predicate.FLink {
+	return predicate.FLink(sql.FieldLT(FieldFriendCircleRuleID, v))
+}
+
+// FriendCircleRuleIDLTE applies the LTE predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDLTE(v int) predicate.FLink {
+	return predicate.FLink(sql.FieldLTE(FieldFriendCircleRuleID, v))
+}
+
+// FriendCircleRuleIDIsNil applies the IsNil predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDIsNil() predicate.FLink {
+	return predicate.FLink(sql.FieldIsNull(FieldFriendCircleRuleID))
+}
+
+// FriendCircleRuleIDNotNil applies the NotNil predicate on the "friend_circle_rule_id" field.
+func FriendCircleRuleIDNotNil() predicate.FLink {
+	return predicate.FLink(sql.FieldNotNull(FieldFriendCircleRuleID))
 }
 
 // HasGroup applies the HasEdge predicate on the "group" edge.

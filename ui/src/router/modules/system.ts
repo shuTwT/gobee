@@ -111,7 +111,38 @@ export default [
       roles: ['admin', 'common'],
     },
   },
-
+  {
+    path: '/friend-circle',
+    name: 'FriendCircle',
+    redirect: '/friend-circle/record',
+    meta: {
+      title: '朋友圈',
+      showLink: true,
+      roles: ['admin'],
+    },
+    children: [
+      {
+        path: '/system/record',
+        name: 'FriendCircleRecord',
+        component: () => import('@/views/friend-circle/record/index.vue'),
+        meta: {
+          title: '朋友圈',
+          showLink: true,
+          roles: ['admin'],
+        },
+      },
+      {
+        path: '/system/rule',
+        name: 'FriendCircleRule',
+        component: () => import('@/views/friend-circle/rule/index.vue'),
+        meta: {
+          title: '规则',
+          showLink: true,
+          roles: ['admin'],
+        },
+      },
+    ],
+  },
   {
     path: '/system',
     name: 'SystemManagement',

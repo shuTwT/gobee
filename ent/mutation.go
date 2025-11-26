@@ -13,6 +13,8 @@ import (
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
+	"gobee/ent/friendcirclerecord"
+	"gobee/ent/friendcirclerule"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
@@ -23,6 +25,7 @@ import (
 	"gobee/ent/post"
 	"gobee/ent/predicate"
 	"gobee/ent/role"
+	"gobee/ent/schedulejob"
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
@@ -50,6 +53,8 @@ const (
 	TypeFLink               = "FLink"
 	TypeFLinkGroup          = "FLinkGroup"
 	TypeFile                = "File"
+	TypeFriendCircleRecord  = "FriendCircleRecord"
+	TypeFriendCircleRule    = "FriendCircleRule"
 	TypeModelSchema         = "ModelSchema"
 	TypeOauth2AccessToken   = "Oauth2AccessToken"
 	TypeOauth2Code          = "Oauth2Code"
@@ -60,6 +65,7 @@ const (
 	TypePersonalAccessToken = "PersonalAccessToken"
 	TypePost                = "Post"
 	TypeRole                = "Role"
+	TypeScheduleJob         = "ScheduleJob"
 	TypeSetting             = "Setting"
 	TypeStorageStrategy     = "StorageStrategy"
 	TypeUser                = "User"
@@ -3248,25 +3254,29 @@ func (m *CommentMutation) ResetEdge(name string) error {
 // FLinkMutation represents an operation that mutates the FLink nodes in the graph.
 type FLinkMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	created_at    *time.Time
-	updated_at    *time.Time
-	name          *string
-	url           *string
-	logo          *string
-	description   *string
-	status        *int
-	addstatus     *int
-	snapshot      *string
-	email         *string
-	clearedFields map[string]struct{}
-	group         *int
-	clearedgroup  bool
-	done          bool
-	oldValue      func(context.Context) (*FLink, error)
-	predicates    []predicate.FLink
+	op                       Op
+	typ                      string
+	id                       *int
+	created_at               *time.Time
+	updated_at               *time.Time
+	name                     *string
+	url                      *string
+	avatar_url               *string
+	description              *string
+	status                   *int
+	addstatus                *int
+	snapshot_url             *string
+	cover_url                *string
+	email                    *string
+	enable_friend_circle     *bool
+	friend_circle_rule_id    *int
+	addfriend_circle_rule_id *int
+	clearedFields            map[string]struct{}
+	group                    *int
+	clearedgroup             bool
+	done                     bool
+	oldValue                 func(context.Context) (*FLink, error)
+	predicates               []predicate.FLink
 }
 
 var _ ent.Mutation = (*FLinkMutation)(nil)
@@ -3517,53 +3527,53 @@ func (m *FLinkMutation) ResetURL() {
 	m.url = nil
 }
 
-// SetLogo sets the "logo" field.
-func (m *FLinkMutation) SetLogo(s string) {
-	m.logo = &s
+// SetAvatarURL sets the "avatar_url" field.
+func (m *FLinkMutation) SetAvatarURL(s string) {
+	m.avatar_url = &s
 }
 
-// Logo returns the value of the "logo" field in the mutation.
-func (m *FLinkMutation) Logo() (r string, exists bool) {
-	v := m.logo
+// AvatarURL returns the value of the "avatar_url" field in the mutation.
+func (m *FLinkMutation) AvatarURL() (r string, exists bool) {
+	v := m.avatar_url
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLogo returns the old "logo" field's value of the FLink entity.
+// OldAvatarURL returns the old "avatar_url" field's value of the FLink entity.
 // If the FLink object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *FLinkMutation) OldLogo(ctx context.Context) (v string, err error) {
+func (m *FLinkMutation) OldAvatarURL(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLogo is only allowed on UpdateOne operations")
+		return v, errors.New("OldAvatarURL is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLogo requires an ID field in the mutation")
+		return v, errors.New("OldAvatarURL requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLogo: %w", err)
+		return v, fmt.Errorf("querying old value for OldAvatarURL: %w", err)
 	}
-	return oldValue.Logo, nil
+	return oldValue.AvatarURL, nil
 }
 
-// ClearLogo clears the value of the "logo" field.
-func (m *FLinkMutation) ClearLogo() {
-	m.logo = nil
-	m.clearedFields[flink.FieldLogo] = struct{}{}
+// ClearAvatarURL clears the value of the "avatar_url" field.
+func (m *FLinkMutation) ClearAvatarURL() {
+	m.avatar_url = nil
+	m.clearedFields[flink.FieldAvatarURL] = struct{}{}
 }
 
-// LogoCleared returns if the "logo" field was cleared in this mutation.
-func (m *FLinkMutation) LogoCleared() bool {
-	_, ok := m.clearedFields[flink.FieldLogo]
+// AvatarURLCleared returns if the "avatar_url" field was cleared in this mutation.
+func (m *FLinkMutation) AvatarURLCleared() bool {
+	_, ok := m.clearedFields[flink.FieldAvatarURL]
 	return ok
 }
 
-// ResetLogo resets all changes to the "logo" field.
-func (m *FLinkMutation) ResetLogo() {
-	m.logo = nil
-	delete(m.clearedFields, flink.FieldLogo)
+// ResetAvatarURL resets all changes to the "avatar_url" field.
+func (m *FLinkMutation) ResetAvatarURL() {
+	m.avatar_url = nil
+	delete(m.clearedFields, flink.FieldAvatarURL)
 }
 
 // SetDescription sets the "description" field.
@@ -3671,53 +3681,102 @@ func (m *FLinkMutation) ResetStatus() {
 	m.addstatus = nil
 }
 
-// SetSnapshot sets the "snapshot" field.
-func (m *FLinkMutation) SetSnapshot(s string) {
-	m.snapshot = &s
+// SetSnapshotURL sets the "snapshot_url" field.
+func (m *FLinkMutation) SetSnapshotURL(s string) {
+	m.snapshot_url = &s
 }
 
-// Snapshot returns the value of the "snapshot" field in the mutation.
-func (m *FLinkMutation) Snapshot() (r string, exists bool) {
-	v := m.snapshot
+// SnapshotURL returns the value of the "snapshot_url" field in the mutation.
+func (m *FLinkMutation) SnapshotURL() (r string, exists bool) {
+	v := m.snapshot_url
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSnapshot returns the old "snapshot" field's value of the FLink entity.
+// OldSnapshotURL returns the old "snapshot_url" field's value of the FLink entity.
 // If the FLink object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *FLinkMutation) OldSnapshot(ctx context.Context) (v string, err error) {
+func (m *FLinkMutation) OldSnapshotURL(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSnapshot is only allowed on UpdateOne operations")
+		return v, errors.New("OldSnapshotURL is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSnapshot requires an ID field in the mutation")
+		return v, errors.New("OldSnapshotURL requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSnapshot: %w", err)
+		return v, fmt.Errorf("querying old value for OldSnapshotURL: %w", err)
 	}
-	return oldValue.Snapshot, nil
+	return oldValue.SnapshotURL, nil
 }
 
-// ClearSnapshot clears the value of the "snapshot" field.
-func (m *FLinkMutation) ClearSnapshot() {
-	m.snapshot = nil
-	m.clearedFields[flink.FieldSnapshot] = struct{}{}
+// ClearSnapshotURL clears the value of the "snapshot_url" field.
+func (m *FLinkMutation) ClearSnapshotURL() {
+	m.snapshot_url = nil
+	m.clearedFields[flink.FieldSnapshotURL] = struct{}{}
 }
 
-// SnapshotCleared returns if the "snapshot" field was cleared in this mutation.
-func (m *FLinkMutation) SnapshotCleared() bool {
-	_, ok := m.clearedFields[flink.FieldSnapshot]
+// SnapshotURLCleared returns if the "snapshot_url" field was cleared in this mutation.
+func (m *FLinkMutation) SnapshotURLCleared() bool {
+	_, ok := m.clearedFields[flink.FieldSnapshotURL]
 	return ok
 }
 
-// ResetSnapshot resets all changes to the "snapshot" field.
-func (m *FLinkMutation) ResetSnapshot() {
-	m.snapshot = nil
-	delete(m.clearedFields, flink.FieldSnapshot)
+// ResetSnapshotURL resets all changes to the "snapshot_url" field.
+func (m *FLinkMutation) ResetSnapshotURL() {
+	m.snapshot_url = nil
+	delete(m.clearedFields, flink.FieldSnapshotURL)
+}
+
+// SetCoverURL sets the "cover_url" field.
+func (m *FLinkMutation) SetCoverURL(s string) {
+	m.cover_url = &s
+}
+
+// CoverURL returns the value of the "cover_url" field in the mutation.
+func (m *FLinkMutation) CoverURL() (r string, exists bool) {
+	v := m.cover_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCoverURL returns the old "cover_url" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldCoverURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCoverURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCoverURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCoverURL: %w", err)
+	}
+	return oldValue.CoverURL, nil
+}
+
+// ClearCoverURL clears the value of the "cover_url" field.
+func (m *FLinkMutation) ClearCoverURL() {
+	m.cover_url = nil
+	m.clearedFields[flink.FieldCoverURL] = struct{}{}
+}
+
+// CoverURLCleared returns if the "cover_url" field was cleared in this mutation.
+func (m *FLinkMutation) CoverURLCleared() bool {
+	_, ok := m.clearedFields[flink.FieldCoverURL]
+	return ok
+}
+
+// ResetCoverURL resets all changes to the "cover_url" field.
+func (m *FLinkMutation) ResetCoverURL() {
+	m.cover_url = nil
+	delete(m.clearedFields, flink.FieldCoverURL)
 }
 
 // SetEmail sets the "email" field.
@@ -3818,6 +3877,112 @@ func (m *FLinkMutation) ResetGroupID() {
 	delete(m.clearedFields, flink.FieldGroupID)
 }
 
+// SetEnableFriendCircle sets the "enable_friend_circle" field.
+func (m *FLinkMutation) SetEnableFriendCircle(b bool) {
+	m.enable_friend_circle = &b
+}
+
+// EnableFriendCircle returns the value of the "enable_friend_circle" field in the mutation.
+func (m *FLinkMutation) EnableFriendCircle() (r bool, exists bool) {
+	v := m.enable_friend_circle
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnableFriendCircle returns the old "enable_friend_circle" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldEnableFriendCircle(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnableFriendCircle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnableFriendCircle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnableFriendCircle: %w", err)
+	}
+	return oldValue.EnableFriendCircle, nil
+}
+
+// ResetEnableFriendCircle resets all changes to the "enable_friend_circle" field.
+func (m *FLinkMutation) ResetEnableFriendCircle() {
+	m.enable_friend_circle = nil
+}
+
+// SetFriendCircleRuleID sets the "friend_circle_rule_id" field.
+func (m *FLinkMutation) SetFriendCircleRuleID(i int) {
+	m.friend_circle_rule_id = &i
+	m.addfriend_circle_rule_id = nil
+}
+
+// FriendCircleRuleID returns the value of the "friend_circle_rule_id" field in the mutation.
+func (m *FLinkMutation) FriendCircleRuleID() (r int, exists bool) {
+	v := m.friend_circle_rule_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFriendCircleRuleID returns the old "friend_circle_rule_id" field's value of the FLink entity.
+// If the FLink object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkMutation) OldFriendCircleRuleID(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFriendCircleRuleID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFriendCircleRuleID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFriendCircleRuleID: %w", err)
+	}
+	return oldValue.FriendCircleRuleID, nil
+}
+
+// AddFriendCircleRuleID adds i to the "friend_circle_rule_id" field.
+func (m *FLinkMutation) AddFriendCircleRuleID(i int) {
+	if m.addfriend_circle_rule_id != nil {
+		*m.addfriend_circle_rule_id += i
+	} else {
+		m.addfriend_circle_rule_id = &i
+	}
+}
+
+// AddedFriendCircleRuleID returns the value that was added to the "friend_circle_rule_id" field in this mutation.
+func (m *FLinkMutation) AddedFriendCircleRuleID() (r int, exists bool) {
+	v := m.addfriend_circle_rule_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearFriendCircleRuleID clears the value of the "friend_circle_rule_id" field.
+func (m *FLinkMutation) ClearFriendCircleRuleID() {
+	m.friend_circle_rule_id = nil
+	m.addfriend_circle_rule_id = nil
+	m.clearedFields[flink.FieldFriendCircleRuleID] = struct{}{}
+}
+
+// FriendCircleRuleIDCleared returns if the "friend_circle_rule_id" field was cleared in this mutation.
+func (m *FLinkMutation) FriendCircleRuleIDCleared() bool {
+	_, ok := m.clearedFields[flink.FieldFriendCircleRuleID]
+	return ok
+}
+
+// ResetFriendCircleRuleID resets all changes to the "friend_circle_rule_id" field.
+func (m *FLinkMutation) ResetFriendCircleRuleID() {
+	m.friend_circle_rule_id = nil
+	m.addfriend_circle_rule_id = nil
+	delete(m.clearedFields, flink.FieldFriendCircleRuleID)
+}
+
 // ClearGroup clears the "group" edge to the FLinkGroup entity.
 func (m *FLinkMutation) ClearGroup() {
 	m.clearedgroup = true
@@ -3879,7 +4044,7 @@ func (m *FLinkMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FLinkMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, flink.FieldCreatedAt)
 	}
@@ -3892,8 +4057,8 @@ func (m *FLinkMutation) Fields() []string {
 	if m.url != nil {
 		fields = append(fields, flink.FieldURL)
 	}
-	if m.logo != nil {
-		fields = append(fields, flink.FieldLogo)
+	if m.avatar_url != nil {
+		fields = append(fields, flink.FieldAvatarURL)
 	}
 	if m.description != nil {
 		fields = append(fields, flink.FieldDescription)
@@ -3901,14 +4066,23 @@ func (m *FLinkMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, flink.FieldStatus)
 	}
-	if m.snapshot != nil {
-		fields = append(fields, flink.FieldSnapshot)
+	if m.snapshot_url != nil {
+		fields = append(fields, flink.FieldSnapshotURL)
+	}
+	if m.cover_url != nil {
+		fields = append(fields, flink.FieldCoverURL)
 	}
 	if m.email != nil {
 		fields = append(fields, flink.FieldEmail)
 	}
 	if m.group != nil {
 		fields = append(fields, flink.FieldGroupID)
+	}
+	if m.enable_friend_circle != nil {
+		fields = append(fields, flink.FieldEnableFriendCircle)
+	}
+	if m.friend_circle_rule_id != nil {
+		fields = append(fields, flink.FieldFriendCircleRuleID)
 	}
 	return fields
 }
@@ -3926,18 +4100,24 @@ func (m *FLinkMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case flink.FieldURL:
 		return m.URL()
-	case flink.FieldLogo:
-		return m.Logo()
+	case flink.FieldAvatarURL:
+		return m.AvatarURL()
 	case flink.FieldDescription:
 		return m.Description()
 	case flink.FieldStatus:
 		return m.Status()
-	case flink.FieldSnapshot:
-		return m.Snapshot()
+	case flink.FieldSnapshotURL:
+		return m.SnapshotURL()
+	case flink.FieldCoverURL:
+		return m.CoverURL()
 	case flink.FieldEmail:
 		return m.Email()
 	case flink.FieldGroupID:
 		return m.GroupID()
+	case flink.FieldEnableFriendCircle:
+		return m.EnableFriendCircle()
+	case flink.FieldFriendCircleRuleID:
+		return m.FriendCircleRuleID()
 	}
 	return nil, false
 }
@@ -3955,18 +4135,24 @@ func (m *FLinkMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldName(ctx)
 	case flink.FieldURL:
 		return m.OldURL(ctx)
-	case flink.FieldLogo:
-		return m.OldLogo(ctx)
+	case flink.FieldAvatarURL:
+		return m.OldAvatarURL(ctx)
 	case flink.FieldDescription:
 		return m.OldDescription(ctx)
 	case flink.FieldStatus:
 		return m.OldStatus(ctx)
-	case flink.FieldSnapshot:
-		return m.OldSnapshot(ctx)
+	case flink.FieldSnapshotURL:
+		return m.OldSnapshotURL(ctx)
+	case flink.FieldCoverURL:
+		return m.OldCoverURL(ctx)
 	case flink.FieldEmail:
 		return m.OldEmail(ctx)
 	case flink.FieldGroupID:
 		return m.OldGroupID(ctx)
+	case flink.FieldEnableFriendCircle:
+		return m.OldEnableFriendCircle(ctx)
+	case flink.FieldFriendCircleRuleID:
+		return m.OldFriendCircleRuleID(ctx)
 	}
 	return nil, fmt.Errorf("unknown FLink field %s", name)
 }
@@ -4004,12 +4190,12 @@ func (m *FLinkMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetURL(v)
 		return nil
-	case flink.FieldLogo:
+	case flink.FieldAvatarURL:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLogo(v)
+		m.SetAvatarURL(v)
 		return nil
 	case flink.FieldDescription:
 		v, ok := value.(string)
@@ -4025,12 +4211,19 @@ func (m *FLinkMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
-	case flink.FieldSnapshot:
+	case flink.FieldSnapshotURL:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSnapshot(v)
+		m.SetSnapshotURL(v)
+		return nil
+	case flink.FieldCoverURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCoverURL(v)
 		return nil
 	case flink.FieldEmail:
 		v, ok := value.(string)
@@ -4046,6 +4239,20 @@ func (m *FLinkMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetGroupID(v)
 		return nil
+	case flink.FieldEnableFriendCircle:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnableFriendCircle(v)
+		return nil
+	case flink.FieldFriendCircleRuleID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFriendCircleRuleID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FLink field %s", name)
 }
@@ -4057,6 +4264,9 @@ func (m *FLinkMutation) AddedFields() []string {
 	if m.addstatus != nil {
 		fields = append(fields, flink.FieldStatus)
 	}
+	if m.addfriend_circle_rule_id != nil {
+		fields = append(fields, flink.FieldFriendCircleRuleID)
+	}
 	return fields
 }
 
@@ -4067,6 +4277,8 @@ func (m *FLinkMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case flink.FieldStatus:
 		return m.AddedStatus()
+	case flink.FieldFriendCircleRuleID:
+		return m.AddedFriendCircleRuleID()
 	}
 	return nil, false
 }
@@ -4083,6 +4295,13 @@ func (m *FLinkMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddStatus(v)
 		return nil
+	case flink.FieldFriendCircleRuleID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFriendCircleRuleID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FLink numeric field %s", name)
 }
@@ -4091,20 +4310,26 @@ func (m *FLinkMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *FLinkMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(flink.FieldLogo) {
-		fields = append(fields, flink.FieldLogo)
+	if m.FieldCleared(flink.FieldAvatarURL) {
+		fields = append(fields, flink.FieldAvatarURL)
 	}
 	if m.FieldCleared(flink.FieldDescription) {
 		fields = append(fields, flink.FieldDescription)
 	}
-	if m.FieldCleared(flink.FieldSnapshot) {
-		fields = append(fields, flink.FieldSnapshot)
+	if m.FieldCleared(flink.FieldSnapshotURL) {
+		fields = append(fields, flink.FieldSnapshotURL)
+	}
+	if m.FieldCleared(flink.FieldCoverURL) {
+		fields = append(fields, flink.FieldCoverURL)
 	}
 	if m.FieldCleared(flink.FieldEmail) {
 		fields = append(fields, flink.FieldEmail)
 	}
 	if m.FieldCleared(flink.FieldGroupID) {
 		fields = append(fields, flink.FieldGroupID)
+	}
+	if m.FieldCleared(flink.FieldFriendCircleRuleID) {
+		fields = append(fields, flink.FieldFriendCircleRuleID)
 	}
 	return fields
 }
@@ -4120,20 +4345,26 @@ func (m *FLinkMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *FLinkMutation) ClearField(name string) error {
 	switch name {
-	case flink.FieldLogo:
-		m.ClearLogo()
+	case flink.FieldAvatarURL:
+		m.ClearAvatarURL()
 		return nil
 	case flink.FieldDescription:
 		m.ClearDescription()
 		return nil
-	case flink.FieldSnapshot:
-		m.ClearSnapshot()
+	case flink.FieldSnapshotURL:
+		m.ClearSnapshotURL()
+		return nil
+	case flink.FieldCoverURL:
+		m.ClearCoverURL()
 		return nil
 	case flink.FieldEmail:
 		m.ClearEmail()
 		return nil
 	case flink.FieldGroupID:
 		m.ClearGroupID()
+		return nil
+	case flink.FieldFriendCircleRuleID:
+		m.ClearFriendCircleRuleID()
 		return nil
 	}
 	return fmt.Errorf("unknown FLink nullable field %s", name)
@@ -4155,8 +4386,8 @@ func (m *FLinkMutation) ResetField(name string) error {
 	case flink.FieldURL:
 		m.ResetURL()
 		return nil
-	case flink.FieldLogo:
-		m.ResetLogo()
+	case flink.FieldAvatarURL:
+		m.ResetAvatarURL()
 		return nil
 	case flink.FieldDescription:
 		m.ResetDescription()
@@ -4164,14 +4395,23 @@ func (m *FLinkMutation) ResetField(name string) error {
 	case flink.FieldStatus:
 		m.ResetStatus()
 		return nil
-	case flink.FieldSnapshot:
-		m.ResetSnapshot()
+	case flink.FieldSnapshotURL:
+		m.ResetSnapshotURL()
+		return nil
+	case flink.FieldCoverURL:
+		m.ResetCoverURL()
 		return nil
 	case flink.FieldEmail:
 		m.ResetEmail()
 		return nil
 	case flink.FieldGroupID:
 		m.ResetGroupID()
+		return nil
+	case flink.FieldEnableFriendCircle:
+		m.ResetEnableFriendCircle()
+		return nil
+	case flink.FieldFriendCircleRuleID:
+		m.ResetFriendCircleRuleID()
 		return nil
 	}
 	return fmt.Errorf("unknown FLink field %s", name)
@@ -5438,6 +5678,1419 @@ func (m *FileMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *FileMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown File edge %s", name)
+}
+
+// FriendCircleRecordMutation represents an operation that mutates the FriendCircleRecord nodes in the graph.
+type FriendCircleRecordMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	created_at    *time.Time
+	updated_at    *time.Time
+	author        *string
+	title         *string
+	link_url      *string
+	avatar_url    *string
+	published_at  *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*FriendCircleRecord, error)
+	predicates    []predicate.FriendCircleRecord
+}
+
+var _ ent.Mutation = (*FriendCircleRecordMutation)(nil)
+
+// friendcirclerecordOption allows management of the mutation configuration using functional options.
+type friendcirclerecordOption func(*FriendCircleRecordMutation)
+
+// newFriendCircleRecordMutation creates new mutation for the FriendCircleRecord entity.
+func newFriendCircleRecordMutation(c config, op Op, opts ...friendcirclerecordOption) *FriendCircleRecordMutation {
+	m := &FriendCircleRecordMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFriendCircleRecord,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFriendCircleRecordID sets the ID field of the mutation.
+func withFriendCircleRecordID(id int) friendcirclerecordOption {
+	return func(m *FriendCircleRecordMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FriendCircleRecord
+		)
+		m.oldValue = func(ctx context.Context) (*FriendCircleRecord, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FriendCircleRecord.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFriendCircleRecord sets the old FriendCircleRecord of the mutation.
+func withFriendCircleRecord(node *FriendCircleRecord) friendcirclerecordOption {
+	return func(m *FriendCircleRecordMutation) {
+		m.oldValue = func(context.Context) (*FriendCircleRecord, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FriendCircleRecordMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FriendCircleRecordMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of FriendCircleRecord entities.
+func (m *FriendCircleRecordMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FriendCircleRecordMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *FriendCircleRecordMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().FriendCircleRecord.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *FriendCircleRecordMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *FriendCircleRecordMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the FriendCircleRecord entity.
+// If the FriendCircleRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRecordMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *FriendCircleRecordMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *FriendCircleRecordMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *FriendCircleRecordMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the FriendCircleRecord entity.
+// If the FriendCircleRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRecordMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *FriendCircleRecordMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetAuthor sets the "author" field.
+func (m *FriendCircleRecordMutation) SetAuthor(s string) {
+	m.author = &s
+}
+
+// Author returns the value of the "author" field in the mutation.
+func (m *FriendCircleRecordMutation) Author() (r string, exists bool) {
+	v := m.author
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthor returns the old "author" field's value of the FriendCircleRecord entity.
+// If the FriendCircleRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRecordMutation) OldAuthor(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthor is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthor requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthor: %w", err)
+	}
+	return oldValue.Author, nil
+}
+
+// ResetAuthor resets all changes to the "author" field.
+func (m *FriendCircleRecordMutation) ResetAuthor() {
+	m.author = nil
+}
+
+// SetTitle sets the "title" field.
+func (m *FriendCircleRecordMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the value of the "title" field in the mutation.
+func (m *FriendCircleRecordMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitle returns the old "title" field's value of the FriendCircleRecord entity.
+// If the FriendCircleRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRecordMutation) OldTitle(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+	}
+	return oldValue.Title, nil
+}
+
+// ResetTitle resets all changes to the "title" field.
+func (m *FriendCircleRecordMutation) ResetTitle() {
+	m.title = nil
+}
+
+// SetLinkURL sets the "link_url" field.
+func (m *FriendCircleRecordMutation) SetLinkURL(s string) {
+	m.link_url = &s
+}
+
+// LinkURL returns the value of the "link_url" field in the mutation.
+func (m *FriendCircleRecordMutation) LinkURL() (r string, exists bool) {
+	v := m.link_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLinkURL returns the old "link_url" field's value of the FriendCircleRecord entity.
+// If the FriendCircleRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRecordMutation) OldLinkURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLinkURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLinkURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLinkURL: %w", err)
+	}
+	return oldValue.LinkURL, nil
+}
+
+// ResetLinkURL resets all changes to the "link_url" field.
+func (m *FriendCircleRecordMutation) ResetLinkURL() {
+	m.link_url = nil
+}
+
+// SetAvatarURL sets the "avatar_url" field.
+func (m *FriendCircleRecordMutation) SetAvatarURL(s string) {
+	m.avatar_url = &s
+}
+
+// AvatarURL returns the value of the "avatar_url" field in the mutation.
+func (m *FriendCircleRecordMutation) AvatarURL() (r string, exists bool) {
+	v := m.avatar_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvatarURL returns the old "avatar_url" field's value of the FriendCircleRecord entity.
+// If the FriendCircleRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRecordMutation) OldAvatarURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvatarURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvatarURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvatarURL: %w", err)
+	}
+	return oldValue.AvatarURL, nil
+}
+
+// ResetAvatarURL resets all changes to the "avatar_url" field.
+func (m *FriendCircleRecordMutation) ResetAvatarURL() {
+	m.avatar_url = nil
+}
+
+// SetPublishedAt sets the "published_at" field.
+func (m *FriendCircleRecordMutation) SetPublishedAt(s string) {
+	m.published_at = &s
+}
+
+// PublishedAt returns the value of the "published_at" field in the mutation.
+func (m *FriendCircleRecordMutation) PublishedAt() (r string, exists bool) {
+	v := m.published_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPublishedAt returns the old "published_at" field's value of the FriendCircleRecord entity.
+// If the FriendCircleRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRecordMutation) OldPublishedAt(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPublishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPublishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPublishedAt: %w", err)
+	}
+	return oldValue.PublishedAt, nil
+}
+
+// ClearPublishedAt clears the value of the "published_at" field.
+func (m *FriendCircleRecordMutation) ClearPublishedAt() {
+	m.published_at = nil
+	m.clearedFields[friendcirclerecord.FieldPublishedAt] = struct{}{}
+}
+
+// PublishedAtCleared returns if the "published_at" field was cleared in this mutation.
+func (m *FriendCircleRecordMutation) PublishedAtCleared() bool {
+	_, ok := m.clearedFields[friendcirclerecord.FieldPublishedAt]
+	return ok
+}
+
+// ResetPublishedAt resets all changes to the "published_at" field.
+func (m *FriendCircleRecordMutation) ResetPublishedAt() {
+	m.published_at = nil
+	delete(m.clearedFields, friendcirclerecord.FieldPublishedAt)
+}
+
+// Where appends a list predicates to the FriendCircleRecordMutation builder.
+func (m *FriendCircleRecordMutation) Where(ps ...predicate.FriendCircleRecord) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the FriendCircleRecordMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FriendCircleRecordMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FriendCircleRecord, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *FriendCircleRecordMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FriendCircleRecordMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (FriendCircleRecord).
+func (m *FriendCircleRecordMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FriendCircleRecordMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, friendcirclerecord.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, friendcirclerecord.FieldUpdatedAt)
+	}
+	if m.author != nil {
+		fields = append(fields, friendcirclerecord.FieldAuthor)
+	}
+	if m.title != nil {
+		fields = append(fields, friendcirclerecord.FieldTitle)
+	}
+	if m.link_url != nil {
+		fields = append(fields, friendcirclerecord.FieldLinkURL)
+	}
+	if m.avatar_url != nil {
+		fields = append(fields, friendcirclerecord.FieldAvatarURL)
+	}
+	if m.published_at != nil {
+		fields = append(fields, friendcirclerecord.FieldPublishedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FriendCircleRecordMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case friendcirclerecord.FieldCreatedAt:
+		return m.CreatedAt()
+	case friendcirclerecord.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case friendcirclerecord.FieldAuthor:
+		return m.Author()
+	case friendcirclerecord.FieldTitle:
+		return m.Title()
+	case friendcirclerecord.FieldLinkURL:
+		return m.LinkURL()
+	case friendcirclerecord.FieldAvatarURL:
+		return m.AvatarURL()
+	case friendcirclerecord.FieldPublishedAt:
+		return m.PublishedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FriendCircleRecordMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case friendcirclerecord.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case friendcirclerecord.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case friendcirclerecord.FieldAuthor:
+		return m.OldAuthor(ctx)
+	case friendcirclerecord.FieldTitle:
+		return m.OldTitle(ctx)
+	case friendcirclerecord.FieldLinkURL:
+		return m.OldLinkURL(ctx)
+	case friendcirclerecord.FieldAvatarURL:
+		return m.OldAvatarURL(ctx)
+	case friendcirclerecord.FieldPublishedAt:
+		return m.OldPublishedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown FriendCircleRecord field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FriendCircleRecordMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case friendcirclerecord.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case friendcirclerecord.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case friendcirclerecord.FieldAuthor:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthor(v)
+		return nil
+	case friendcirclerecord.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
+		return nil
+	case friendcirclerecord.FieldLinkURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLinkURL(v)
+		return nil
+	case friendcirclerecord.FieldAvatarURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvatarURL(v)
+		return nil
+	case friendcirclerecord.FieldPublishedAt:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPublishedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FriendCircleRecord field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FriendCircleRecordMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FriendCircleRecordMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FriendCircleRecordMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown FriendCircleRecord numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FriendCircleRecordMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(friendcirclerecord.FieldPublishedAt) {
+		fields = append(fields, friendcirclerecord.FieldPublishedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FriendCircleRecordMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FriendCircleRecordMutation) ClearField(name string) error {
+	switch name {
+	case friendcirclerecord.FieldPublishedAt:
+		m.ClearPublishedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown FriendCircleRecord nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FriendCircleRecordMutation) ResetField(name string) error {
+	switch name {
+	case friendcirclerecord.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case friendcirclerecord.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case friendcirclerecord.FieldAuthor:
+		m.ResetAuthor()
+		return nil
+	case friendcirclerecord.FieldTitle:
+		m.ResetTitle()
+		return nil
+	case friendcirclerecord.FieldLinkURL:
+		m.ResetLinkURL()
+		return nil
+	case friendcirclerecord.FieldAvatarURL:
+		m.ResetAvatarURL()
+		return nil
+	case friendcirclerecord.FieldPublishedAt:
+		m.ResetPublishedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown FriendCircleRecord field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FriendCircleRecordMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FriendCircleRecordMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FriendCircleRecordMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FriendCircleRecordMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FriendCircleRecordMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FriendCircleRecordMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FriendCircleRecordMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown FriendCircleRecord unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FriendCircleRecordMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown FriendCircleRecord edge %s", name)
+}
+
+// FriendCircleRuleMutation represents an operation that mutates the FriendCircleRule nodes in the graph.
+type FriendCircleRuleMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int
+	created_at       *time.Time
+	updated_at       *time.Time
+	name             *string
+	title_selector   *string
+	link_selector    *string
+	created_selector *string
+	updated_selector *string
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*FriendCircleRule, error)
+	predicates       []predicate.FriendCircleRule
+}
+
+var _ ent.Mutation = (*FriendCircleRuleMutation)(nil)
+
+// friendcircleruleOption allows management of the mutation configuration using functional options.
+type friendcircleruleOption func(*FriendCircleRuleMutation)
+
+// newFriendCircleRuleMutation creates new mutation for the FriendCircleRule entity.
+func newFriendCircleRuleMutation(c config, op Op, opts ...friendcircleruleOption) *FriendCircleRuleMutation {
+	m := &FriendCircleRuleMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFriendCircleRule,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFriendCircleRuleID sets the ID field of the mutation.
+func withFriendCircleRuleID(id int) friendcircleruleOption {
+	return func(m *FriendCircleRuleMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FriendCircleRule
+		)
+		m.oldValue = func(ctx context.Context) (*FriendCircleRule, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FriendCircleRule.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFriendCircleRule sets the old FriendCircleRule of the mutation.
+func withFriendCircleRule(node *FriendCircleRule) friendcircleruleOption {
+	return func(m *FriendCircleRuleMutation) {
+		m.oldValue = func(context.Context) (*FriendCircleRule, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FriendCircleRuleMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FriendCircleRuleMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of FriendCircleRule entities.
+func (m *FriendCircleRuleMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FriendCircleRuleMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *FriendCircleRuleMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().FriendCircleRule.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *FriendCircleRuleMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *FriendCircleRuleMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the FriendCircleRule entity.
+// If the FriendCircleRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRuleMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *FriendCircleRuleMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *FriendCircleRuleMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *FriendCircleRuleMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the FriendCircleRule entity.
+// If the FriendCircleRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRuleMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *FriendCircleRuleMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *FriendCircleRuleMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *FriendCircleRuleMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the FriendCircleRule entity.
+// If the FriendCircleRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRuleMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *FriendCircleRuleMutation) ResetName() {
+	m.name = nil
+}
+
+// SetTitleSelector sets the "title_selector" field.
+func (m *FriendCircleRuleMutation) SetTitleSelector(s string) {
+	m.title_selector = &s
+}
+
+// TitleSelector returns the value of the "title_selector" field in the mutation.
+func (m *FriendCircleRuleMutation) TitleSelector() (r string, exists bool) {
+	v := m.title_selector
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitleSelector returns the old "title_selector" field's value of the FriendCircleRule entity.
+// If the FriendCircleRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRuleMutation) OldTitleSelector(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTitleSelector is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTitleSelector requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitleSelector: %w", err)
+	}
+	return oldValue.TitleSelector, nil
+}
+
+// ClearTitleSelector clears the value of the "title_selector" field.
+func (m *FriendCircleRuleMutation) ClearTitleSelector() {
+	m.title_selector = nil
+	m.clearedFields[friendcirclerule.FieldTitleSelector] = struct{}{}
+}
+
+// TitleSelectorCleared returns if the "title_selector" field was cleared in this mutation.
+func (m *FriendCircleRuleMutation) TitleSelectorCleared() bool {
+	_, ok := m.clearedFields[friendcirclerule.FieldTitleSelector]
+	return ok
+}
+
+// ResetTitleSelector resets all changes to the "title_selector" field.
+func (m *FriendCircleRuleMutation) ResetTitleSelector() {
+	m.title_selector = nil
+	delete(m.clearedFields, friendcirclerule.FieldTitleSelector)
+}
+
+// SetLinkSelector sets the "link_selector" field.
+func (m *FriendCircleRuleMutation) SetLinkSelector(s string) {
+	m.link_selector = &s
+}
+
+// LinkSelector returns the value of the "link_selector" field in the mutation.
+func (m *FriendCircleRuleMutation) LinkSelector() (r string, exists bool) {
+	v := m.link_selector
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLinkSelector returns the old "link_selector" field's value of the FriendCircleRule entity.
+// If the FriendCircleRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRuleMutation) OldLinkSelector(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLinkSelector is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLinkSelector requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLinkSelector: %w", err)
+	}
+	return oldValue.LinkSelector, nil
+}
+
+// ClearLinkSelector clears the value of the "link_selector" field.
+func (m *FriendCircleRuleMutation) ClearLinkSelector() {
+	m.link_selector = nil
+	m.clearedFields[friendcirclerule.FieldLinkSelector] = struct{}{}
+}
+
+// LinkSelectorCleared returns if the "link_selector" field was cleared in this mutation.
+func (m *FriendCircleRuleMutation) LinkSelectorCleared() bool {
+	_, ok := m.clearedFields[friendcirclerule.FieldLinkSelector]
+	return ok
+}
+
+// ResetLinkSelector resets all changes to the "link_selector" field.
+func (m *FriendCircleRuleMutation) ResetLinkSelector() {
+	m.link_selector = nil
+	delete(m.clearedFields, friendcirclerule.FieldLinkSelector)
+}
+
+// SetCreatedSelector sets the "created_selector" field.
+func (m *FriendCircleRuleMutation) SetCreatedSelector(s string) {
+	m.created_selector = &s
+}
+
+// CreatedSelector returns the value of the "created_selector" field in the mutation.
+func (m *FriendCircleRuleMutation) CreatedSelector() (r string, exists bool) {
+	v := m.created_selector
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedSelector returns the old "created_selector" field's value of the FriendCircleRule entity.
+// If the FriendCircleRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRuleMutation) OldCreatedSelector(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedSelector is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedSelector requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedSelector: %w", err)
+	}
+	return oldValue.CreatedSelector, nil
+}
+
+// ClearCreatedSelector clears the value of the "created_selector" field.
+func (m *FriendCircleRuleMutation) ClearCreatedSelector() {
+	m.created_selector = nil
+	m.clearedFields[friendcirclerule.FieldCreatedSelector] = struct{}{}
+}
+
+// CreatedSelectorCleared returns if the "created_selector" field was cleared in this mutation.
+func (m *FriendCircleRuleMutation) CreatedSelectorCleared() bool {
+	_, ok := m.clearedFields[friendcirclerule.FieldCreatedSelector]
+	return ok
+}
+
+// ResetCreatedSelector resets all changes to the "created_selector" field.
+func (m *FriendCircleRuleMutation) ResetCreatedSelector() {
+	m.created_selector = nil
+	delete(m.clearedFields, friendcirclerule.FieldCreatedSelector)
+}
+
+// SetUpdatedSelector sets the "updated_selector" field.
+func (m *FriendCircleRuleMutation) SetUpdatedSelector(s string) {
+	m.updated_selector = &s
+}
+
+// UpdatedSelector returns the value of the "updated_selector" field in the mutation.
+func (m *FriendCircleRuleMutation) UpdatedSelector() (r string, exists bool) {
+	v := m.updated_selector
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedSelector returns the old "updated_selector" field's value of the FriendCircleRule entity.
+// If the FriendCircleRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRuleMutation) OldUpdatedSelector(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedSelector is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedSelector requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedSelector: %w", err)
+	}
+	return oldValue.UpdatedSelector, nil
+}
+
+// ClearUpdatedSelector clears the value of the "updated_selector" field.
+func (m *FriendCircleRuleMutation) ClearUpdatedSelector() {
+	m.updated_selector = nil
+	m.clearedFields[friendcirclerule.FieldUpdatedSelector] = struct{}{}
+}
+
+// UpdatedSelectorCleared returns if the "updated_selector" field was cleared in this mutation.
+func (m *FriendCircleRuleMutation) UpdatedSelectorCleared() bool {
+	_, ok := m.clearedFields[friendcirclerule.FieldUpdatedSelector]
+	return ok
+}
+
+// ResetUpdatedSelector resets all changes to the "updated_selector" field.
+func (m *FriendCircleRuleMutation) ResetUpdatedSelector() {
+	m.updated_selector = nil
+	delete(m.clearedFields, friendcirclerule.FieldUpdatedSelector)
+}
+
+// Where appends a list predicates to the FriendCircleRuleMutation builder.
+func (m *FriendCircleRuleMutation) Where(ps ...predicate.FriendCircleRule) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the FriendCircleRuleMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FriendCircleRuleMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FriendCircleRule, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *FriendCircleRuleMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FriendCircleRuleMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (FriendCircleRule).
+func (m *FriendCircleRuleMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FriendCircleRuleMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, friendcirclerule.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, friendcirclerule.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, friendcirclerule.FieldName)
+	}
+	if m.title_selector != nil {
+		fields = append(fields, friendcirclerule.FieldTitleSelector)
+	}
+	if m.link_selector != nil {
+		fields = append(fields, friendcirclerule.FieldLinkSelector)
+	}
+	if m.created_selector != nil {
+		fields = append(fields, friendcirclerule.FieldCreatedSelector)
+	}
+	if m.updated_selector != nil {
+		fields = append(fields, friendcirclerule.FieldUpdatedSelector)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FriendCircleRuleMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case friendcirclerule.FieldCreatedAt:
+		return m.CreatedAt()
+	case friendcirclerule.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case friendcirclerule.FieldName:
+		return m.Name()
+	case friendcirclerule.FieldTitleSelector:
+		return m.TitleSelector()
+	case friendcirclerule.FieldLinkSelector:
+		return m.LinkSelector()
+	case friendcirclerule.FieldCreatedSelector:
+		return m.CreatedSelector()
+	case friendcirclerule.FieldUpdatedSelector:
+		return m.UpdatedSelector()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FriendCircleRuleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case friendcirclerule.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case friendcirclerule.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case friendcirclerule.FieldName:
+		return m.OldName(ctx)
+	case friendcirclerule.FieldTitleSelector:
+		return m.OldTitleSelector(ctx)
+	case friendcirclerule.FieldLinkSelector:
+		return m.OldLinkSelector(ctx)
+	case friendcirclerule.FieldCreatedSelector:
+		return m.OldCreatedSelector(ctx)
+	case friendcirclerule.FieldUpdatedSelector:
+		return m.OldUpdatedSelector(ctx)
+	}
+	return nil, fmt.Errorf("unknown FriendCircleRule field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FriendCircleRuleMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case friendcirclerule.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case friendcirclerule.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case friendcirclerule.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case friendcirclerule.FieldTitleSelector:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitleSelector(v)
+		return nil
+	case friendcirclerule.FieldLinkSelector:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLinkSelector(v)
+		return nil
+	case friendcirclerule.FieldCreatedSelector:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedSelector(v)
+		return nil
+	case friendcirclerule.FieldUpdatedSelector:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedSelector(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FriendCircleRule field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FriendCircleRuleMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FriendCircleRuleMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FriendCircleRuleMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown FriendCircleRule numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FriendCircleRuleMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(friendcirclerule.FieldTitleSelector) {
+		fields = append(fields, friendcirclerule.FieldTitleSelector)
+	}
+	if m.FieldCleared(friendcirclerule.FieldLinkSelector) {
+		fields = append(fields, friendcirclerule.FieldLinkSelector)
+	}
+	if m.FieldCleared(friendcirclerule.FieldCreatedSelector) {
+		fields = append(fields, friendcirclerule.FieldCreatedSelector)
+	}
+	if m.FieldCleared(friendcirclerule.FieldUpdatedSelector) {
+		fields = append(fields, friendcirclerule.FieldUpdatedSelector)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FriendCircleRuleMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FriendCircleRuleMutation) ClearField(name string) error {
+	switch name {
+	case friendcirclerule.FieldTitleSelector:
+		m.ClearTitleSelector()
+		return nil
+	case friendcirclerule.FieldLinkSelector:
+		m.ClearLinkSelector()
+		return nil
+	case friendcirclerule.FieldCreatedSelector:
+		m.ClearCreatedSelector()
+		return nil
+	case friendcirclerule.FieldUpdatedSelector:
+		m.ClearUpdatedSelector()
+		return nil
+	}
+	return fmt.Errorf("unknown FriendCircleRule nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FriendCircleRuleMutation) ResetField(name string) error {
+	switch name {
+	case friendcirclerule.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case friendcirclerule.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case friendcirclerule.FieldName:
+		m.ResetName()
+		return nil
+	case friendcirclerule.FieldTitleSelector:
+		m.ResetTitleSelector()
+		return nil
+	case friendcirclerule.FieldLinkSelector:
+		m.ResetLinkSelector()
+		return nil
+	case friendcirclerule.FieldCreatedSelector:
+		m.ResetCreatedSelector()
+		return nil
+	case friendcirclerule.FieldUpdatedSelector:
+		m.ResetUpdatedSelector()
+		return nil
+	}
+	return fmt.Errorf("unknown FriendCircleRule field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FriendCircleRuleMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FriendCircleRuleMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FriendCircleRuleMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FriendCircleRuleMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FriendCircleRuleMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FriendCircleRuleMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FriendCircleRuleMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown FriendCircleRule unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FriendCircleRuleMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown FriendCircleRule edge %s", name)
 }
 
 // ModelSchemaMutation represents an operation that mutates the ModelSchema nodes in the graph.
@@ -13092,6 +14745,446 @@ func (m *RoleMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Role edge %s", name)
+}
+
+// ScheduleJobMutation represents an operation that mutates the ScheduleJob nodes in the graph.
+type ScheduleJobMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	created_at    *time.Time
+	updated_at    *time.Time
+	name          *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ScheduleJob, error)
+	predicates    []predicate.ScheduleJob
+}
+
+var _ ent.Mutation = (*ScheduleJobMutation)(nil)
+
+// schedulejobOption allows management of the mutation configuration using functional options.
+type schedulejobOption func(*ScheduleJobMutation)
+
+// newScheduleJobMutation creates new mutation for the ScheduleJob entity.
+func newScheduleJobMutation(c config, op Op, opts ...schedulejobOption) *ScheduleJobMutation {
+	m := &ScheduleJobMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeScheduleJob,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withScheduleJobID sets the ID field of the mutation.
+func withScheduleJobID(id int) schedulejobOption {
+	return func(m *ScheduleJobMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ScheduleJob
+		)
+		m.oldValue = func(ctx context.Context) (*ScheduleJob, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ScheduleJob.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withScheduleJob sets the old ScheduleJob of the mutation.
+func withScheduleJob(node *ScheduleJob) schedulejobOption {
+	return func(m *ScheduleJobMutation) {
+		m.oldValue = func(context.Context) (*ScheduleJob, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ScheduleJobMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ScheduleJobMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ScheduleJob entities.
+func (m *ScheduleJobMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ScheduleJobMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ScheduleJobMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ScheduleJob.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ScheduleJobMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ScheduleJobMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ScheduleJob entity.
+// If the ScheduleJob object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScheduleJobMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ScheduleJobMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ScheduleJobMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ScheduleJobMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ScheduleJob entity.
+// If the ScheduleJob object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScheduleJobMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ScheduleJobMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *ScheduleJobMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ScheduleJobMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the ScheduleJob entity.
+// If the ScheduleJob object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScheduleJobMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ScheduleJobMutation) ResetName() {
+	m.name = nil
+}
+
+// Where appends a list predicates to the ScheduleJobMutation builder.
+func (m *ScheduleJobMutation) Where(ps ...predicate.ScheduleJob) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ScheduleJobMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ScheduleJobMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ScheduleJob, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ScheduleJobMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ScheduleJobMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ScheduleJob).
+func (m *ScheduleJobMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ScheduleJobMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.created_at != nil {
+		fields = append(fields, schedulejob.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, schedulejob.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, schedulejob.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ScheduleJobMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case schedulejob.FieldCreatedAt:
+		return m.CreatedAt()
+	case schedulejob.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case schedulejob.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ScheduleJobMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case schedulejob.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case schedulejob.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case schedulejob.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown ScheduleJob field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScheduleJobMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case schedulejob.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case schedulejob.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case schedulejob.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScheduleJob field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ScheduleJobMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ScheduleJobMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScheduleJobMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ScheduleJob numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ScheduleJobMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ScheduleJobMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ScheduleJobMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ScheduleJob nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ScheduleJobMutation) ResetField(name string) error {
+	switch name {
+	case schedulejob.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case schedulejob.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case schedulejob.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown ScheduleJob field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ScheduleJobMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ScheduleJobMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ScheduleJobMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ScheduleJobMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ScheduleJobMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ScheduleJobMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ScheduleJobMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ScheduleJob unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ScheduleJobMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ScheduleJob edge %s", name)
 }
 
 // SettingMutation represents an operation that mutates the Setting nodes in the graph.

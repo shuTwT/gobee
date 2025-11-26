@@ -22,18 +22,24 @@ const (
 	FieldName = "name"
 	// FieldURL holds the string denoting the url field in the database.
 	FieldURL = "url"
-	// FieldLogo holds the string denoting the logo field in the database.
-	FieldLogo = "logo"
+	// FieldAvatarURL holds the string denoting the avatar_url field in the database.
+	FieldAvatarURL = "avatar_url"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldSnapshot holds the string denoting the snapshot field in the database.
-	FieldSnapshot = "snapshot"
+	// FieldSnapshotURL holds the string denoting the snapshot_url field in the database.
+	FieldSnapshotURL = "snapshot_url"
+	// FieldCoverURL holds the string denoting the cover_url field in the database.
+	FieldCoverURL = "cover_url"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
 	// FieldGroupID holds the string denoting the group_id field in the database.
 	FieldGroupID = "group_id"
+	// FieldEnableFriendCircle holds the string denoting the enable_friend_circle field in the database.
+	FieldEnableFriendCircle = "enable_friend_circle"
+	// FieldFriendCircleRuleID holds the string denoting the friend_circle_rule_id field in the database.
+	FieldFriendCircleRuleID = "friend_circle_rule_id"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// Table holds the table name of the flink in the database.
@@ -54,12 +60,15 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldName,
 	FieldURL,
-	FieldLogo,
+	FieldAvatarURL,
 	FieldDescription,
 	FieldStatus,
-	FieldSnapshot,
+	FieldSnapshotURL,
+	FieldCoverURL,
 	FieldEmail,
 	FieldGroupID,
+	FieldEnableFriendCircle,
+	FieldFriendCircleRuleID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -85,6 +94,8 @@ var (
 	URLValidator func(string) error
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int
+	// DefaultEnableFriendCircle holds the default value on creation for the "enable_friend_circle" field.
+	DefaultEnableFriendCircle bool
 )
 
 // OrderOption defines the ordering options for the FLink queries.
@@ -115,9 +126,9 @@ func ByURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldURL, opts...).ToFunc()
 }
 
-// ByLogo orders the results by the logo field.
-func ByLogo(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLogo, opts...).ToFunc()
+// ByAvatarURL orders the results by the avatar_url field.
+func ByAvatarURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAvatarURL, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.
@@ -130,9 +141,14 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
-// BySnapshot orders the results by the snapshot field.
-func BySnapshot(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSnapshot, opts...).ToFunc()
+// BySnapshotURL orders the results by the snapshot_url field.
+func BySnapshotURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSnapshotURL, opts...).ToFunc()
+}
+
+// ByCoverURL orders the results by the cover_url field.
+func ByCoverURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCoverURL, opts...).ToFunc()
 }
 
 // ByEmail orders the results by the email field.
@@ -143,6 +159,16 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 // ByGroupID orders the results by the group_id field.
 func ByGroupID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGroupID, opts...).ToFunc()
+}
+
+// ByEnableFriendCircle orders the results by the enable_friend_circle field.
+func ByEnableFriendCircle(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEnableFriendCircle, opts...).ToFunc()
+}
+
+// ByFriendCircleRuleID orders the results by the friend_circle_rule_id field.
+func ByFriendCircleRuleID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFriendCircleRuleID, opts...).ToFunc()
 }
 
 // ByGroupField orders the results by group field.

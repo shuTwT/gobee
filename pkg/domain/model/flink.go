@@ -8,13 +8,18 @@ type FlinkCreateReq struct {
 	// 链接
 	URL string `json:"url"`
 	// logo
-	Logo string `json:"logo"`
+	AvatarURL string `json:"avatar_url"`
 	// 简介
 	Description string `json:"description"`
+	CoverURL    string `json:"cover_url"`
 	// 快照
-	Snapshot string `json:"snapshot"`
+	SnapshotURL string `json:"snapshot_url"`
 	// 邮箱
 	Email string `json:"email"`
+	// 是否开启朋友圈
+	EnableFriendCircle bool `json:"enable_friend_circle"`
+	// 朋友圈解析规则
+	FriendCircleRuleID *int `json:"friend_circle_rule_id"`
 }
 
 type FlinkUpdateReq struct {
@@ -25,13 +30,18 @@ type FlinkUpdateReq struct {
 	// 链接
 	URL string `json:"url"`
 	// logo
-	Logo string `json:"logo"`
+	AvatarURL string `json:"avatar_url"`
+	CoverURL  string `json:"cover_url"`
 	// 简介
 	Description string `json:"description"`
 	// 快照
-	Snapshot string `json:"snapshot"`
+	SnapshotURL string `json:"snapshot_url"`
 	// 邮箱
 	Email string `json:"email"`
+	// 是否开启朋友圈
+	EnableFriendCircle bool `json:"enable_friend_circle"`
+	// 朋友圈解析规则
+	FriendCircleRuleID int `json:"friend_circle_rule_id"`
 }
 
 type FlinkResp struct {
@@ -46,13 +56,18 @@ type FlinkResp struct {
 	// 链接
 	URL string `json:"url"`
 	// logo
-	Logo string `json:"logo"`
+	AvatarURL string `json:"avatar_url"`
 	// 简介
 	Description string `json:"description"`
 	// 状态
-	Status int `json:"status"`
+	Status   int    `json:"status"`
+	CoverURL string `json:"cover_url"`
 	// 快照
-	Snapshot string `json:"snapshot"`
+	SnapshotUrl string `json:"snapshot_url"`
 	// 邮箱
 	Email string `json:"email"`
+	// 是否开启朋友圈
+	EnableFriendCircle bool `json:"enable_friend_circle"`
+	// 朋友圈解析规则
+	FriendCircleRuleID *int `json:"friend_circle_rule_id"`
 }

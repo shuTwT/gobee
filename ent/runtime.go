@@ -10,6 +10,8 @@ import (
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
+	"gobee/ent/friendcirclerecord"
+	"gobee/ent/friendcirclerule"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
@@ -19,6 +21,7 @@ import (
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
 	"gobee/ent/role"
+	"gobee/ent/schedulejob"
 	"gobee/ent/schema"
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
@@ -176,6 +179,10 @@ func init() {
 	flinkDescStatus := flinkFields[4].Descriptor()
 	// flink.DefaultStatus holds the default value on creation for the status field.
 	flink.DefaultStatus = flinkDescStatus.Default.(int)
+	// flinkDescEnableFriendCircle is the schema descriptor for enable_friend_circle field.
+	flinkDescEnableFriendCircle := flinkFields[9].Descriptor()
+	// flink.DefaultEnableFriendCircle holds the default value on creation for the enable_friend_circle field.
+	flink.DefaultEnableFriendCircle = flinkDescEnableFriendCircle.Default.(bool)
 	flinkgroupMixin := schema.FLinkGroup{}.Mixin()
 	flinkgroupMixinFields0 := flinkgroupMixin[0].Fields()
 	_ = flinkgroupMixinFields0
@@ -252,6 +259,36 @@ func init() {
 			return nil
 		}
 	}()
+	friendcirclerecordMixin := schema.FriendCircleRecord{}.Mixin()
+	friendcirclerecordMixinFields0 := friendcirclerecordMixin[0].Fields()
+	_ = friendcirclerecordMixinFields0
+	friendcirclerecordFields := schema.FriendCircleRecord{}.Fields()
+	_ = friendcirclerecordFields
+	// friendcirclerecordDescCreatedAt is the schema descriptor for created_at field.
+	friendcirclerecordDescCreatedAt := friendcirclerecordMixinFields0[1].Descriptor()
+	// friendcirclerecord.DefaultCreatedAt holds the default value on creation for the created_at field.
+	friendcirclerecord.DefaultCreatedAt = friendcirclerecordDescCreatedAt.Default.(func() time.Time)
+	// friendcirclerecordDescUpdatedAt is the schema descriptor for updated_at field.
+	friendcirclerecordDescUpdatedAt := friendcirclerecordMixinFields0[2].Descriptor()
+	// friendcirclerecord.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	friendcirclerecord.DefaultUpdatedAt = friendcirclerecordDescUpdatedAt.Default.(func() time.Time)
+	// friendcirclerecord.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	friendcirclerecord.UpdateDefaultUpdatedAt = friendcirclerecordDescUpdatedAt.UpdateDefault.(func() time.Time)
+	friendcircleruleMixin := schema.FriendCircleRule{}.Mixin()
+	friendcircleruleMixinFields0 := friendcircleruleMixin[0].Fields()
+	_ = friendcircleruleMixinFields0
+	friendcircleruleFields := schema.FriendCircleRule{}.Fields()
+	_ = friendcircleruleFields
+	// friendcircleruleDescCreatedAt is the schema descriptor for created_at field.
+	friendcircleruleDescCreatedAt := friendcircleruleMixinFields0[1].Descriptor()
+	// friendcirclerule.DefaultCreatedAt holds the default value on creation for the created_at field.
+	friendcirclerule.DefaultCreatedAt = friendcircleruleDescCreatedAt.Default.(func() time.Time)
+	// friendcircleruleDescUpdatedAt is the schema descriptor for updated_at field.
+	friendcircleruleDescUpdatedAt := friendcircleruleMixinFields0[2].Descriptor()
+	// friendcirclerule.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	friendcirclerule.DefaultUpdatedAt = friendcircleruleDescUpdatedAt.Default.(func() time.Time)
+	// friendcirclerule.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	friendcirclerule.UpdateDefaultUpdatedAt = friendcircleruleDescUpdatedAt.UpdateDefault.(func() time.Time)
 	oauth2accesstokenMixin := schema.Oauth2AccessToken{}.Mixin()
 	oauth2accesstokenMixinFields0 := oauth2accesstokenMixin[0].Fields()
 	_ = oauth2accesstokenMixinFields0
@@ -801,6 +838,21 @@ func init() {
 	roleDescIsDefault := roleFields[3].Descriptor()
 	// role.DefaultIsDefault holds the default value on creation for the is_default field.
 	role.DefaultIsDefault = roleDescIsDefault.Default.(bool)
+	schedulejobMixin := schema.ScheduleJob{}.Mixin()
+	schedulejobMixinFields0 := schedulejobMixin[0].Fields()
+	_ = schedulejobMixinFields0
+	schedulejobFields := schema.ScheduleJob{}.Fields()
+	_ = schedulejobFields
+	// schedulejobDescCreatedAt is the schema descriptor for created_at field.
+	schedulejobDescCreatedAt := schedulejobMixinFields0[1].Descriptor()
+	// schedulejob.DefaultCreatedAt holds the default value on creation for the created_at field.
+	schedulejob.DefaultCreatedAt = schedulejobDescCreatedAt.Default.(func() time.Time)
+	// schedulejobDescUpdatedAt is the schema descriptor for updated_at field.
+	schedulejobDescUpdatedAt := schedulejobMixinFields0[2].Descriptor()
+	// schedulejob.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	schedulejob.DefaultUpdatedAt = schedulejobDescUpdatedAt.Default.(func() time.Time)
+	// schedulejob.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	schedulejob.UpdateDefaultUpdatedAt = schedulejobDescUpdatedAt.UpdateDefault.(func() time.Time)
 	settingMixin := schema.Setting{}.Mixin()
 	settingMixinFields0 := settingMixin[0].Fields()
 	_ = settingMixinFields0

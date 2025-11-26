@@ -9,6 +9,7 @@ import (
 	file_handler "gobee/internal/handlers/file"
 	flink_handler "gobee/internal/handlers/flink"
 	flinkgroup_handler "gobee/internal/handlers/flink_group"
+	friend_circle_rule_handler "gobee/internal/handlers/friend_circle_rule"
 	initialize_handler "gobee/internal/handlers/initialize"
 	paychannel_handler "gobee/internal/handlers/pay_channel"
 	payorder_handler "gobee/internal/handlers/pay_order"
@@ -161,12 +162,20 @@ func Initialize(router *fiber.App) {
 				flinkApi.Get("/query/:id", flink_handler.QueryFlink).Name("flinkQuery")
 				flinkApi.Delete("/delete/:id", flink_handler.DeleteFlink).Name("flinkDelete")
 			}
-			flinkGroup := apiV1.Group("/flink-group")
+			flinkGroupApi := apiV1.Group("/flink-group")
 			{
-				flinkGroup.Get("/list", flinkgroup_handler.ListFLinkGroup).Name("flinkGroupList")
-				flinkGroup.Post("/create", flinkgroup_handler.CreateFlinkGroup).Name("flinkGroupCreate")
-				flinkGroup.Put("/update/:id", flinkgroup_handler.UpdateFlinkGroup).Name("flinkGroupUpdate")
-				flinkGroup.Get("/delete/:id", flinkgroup_handler.DeleteFLinkGroup).Name("flinkGroupList")
+				flinkGroupApi.Get("/list", flinkgroup_handler.ListFLinkGroup).Name("flinkGroupList")
+				flinkGroupApi.Post("/create", flinkgroup_handler.CreateFlinkGroup).Name("flinkGroupCreate")
+				flinkGroupApi.Put("/update/:id", flinkgroup_handler.UpdateFlinkGroup).Name("flinkGroupUpdate")
+				flinkGroupApi.Delete("/delete/:id", flinkgroup_handler.DeleteFLinkGroup).Name("flinkGroupList")
+			}
+			friendCircleRuleApi := apiV1.Group("/friend-circle-rule")
+			{
+				friendCircleRuleApi.Get("/list", friend_circle_rule_handler.ListFriendCircleRule).Name("friendCiecleRuleList")
+				friendCircleRuleApi.Get("/page", friend_circle_rule_handler.ListFriendCircleRulePage).Name("friendCiecleRulePage")
+				friendCircleRuleApi.Post("/create", friend_circle_rule_handler.CreateFriendCircleRule).Name("friendCiecleRuleCreate")
+				friendCircleRuleApi.Put("/update/:id", friend_circle_rule_handler.UpdateFriendCircleRule).Name("friendCiecleRuleUpdate")
+				friendCircleRuleApi.Delete("/delete/:id", friend_circle_rule_handler.DeleteFriendCircleRule).Name("friendCiecleRuleDelete")
 			}
 
 		}

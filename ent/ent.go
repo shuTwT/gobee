@@ -13,6 +13,8 @@ import (
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
+	"gobee/ent/friendcirclerecord"
+	"gobee/ent/friendcirclerule"
 	"gobee/ent/modelschema"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
@@ -23,6 +25,7 @@ import (
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
 	"gobee/ent/role"
+	"gobee/ent/schedulejob"
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
@@ -100,6 +103,8 @@ func checkColumn(t, c string) error {
 			flink.Table:               flink.ValidColumn,
 			flinkgroup.Table:          flinkgroup.ValidColumn,
 			file.Table:                file.ValidColumn,
+			friendcirclerecord.Table:  friendcirclerecord.ValidColumn,
+			friendcirclerule.Table:    friendcirclerule.ValidColumn,
 			modelschema.Table:         modelschema.ValidColumn,
 			oauth2accesstoken.Table:   oauth2accesstoken.ValidColumn,
 			oauth2code.Table:          oauth2code.ValidColumn,
@@ -110,6 +115,7 @@ func checkColumn(t, c string) error {
 			personalaccesstoken.Table: personalaccesstoken.ValidColumn,
 			post.Table:                post.ValidColumn,
 			role.Table:                role.ValidColumn,
+			schedulejob.Table:         schedulejob.ValidColumn,
 			setting.Table:             setting.ValidColumn,
 			storagestrategy.Table:     storagestrategy.ValidColumn,
 			user.Table:                user.ValidColumn,

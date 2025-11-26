@@ -26,18 +26,24 @@ type FLink struct {
 	Name string `json:"name,omitempty"`
 	// 链接
 	URL string `json:"url,omitempty"`
-	// logo
-	Logo string `json:"logo,omitempty"`
+	// 头像
+	AvatarURL string `json:"avatar_url,omitempty"`
 	// 简介
 	Description string `json:"description,omitempty"`
 	// 状态
 	Status int `json:"status,omitempty"`
-	// 快照
-	Snapshot string `json:"snapshot,omitempty"`
+	// 网站截图
+	SnapshotURL string `json:"snapshot_url,omitempty"`
+	// 网站封面
+	CoverURL string `json:"cover_url,omitempty"`
 	// 邮箱
 	Email string `json:"email,omitempty"`
 	// 友链组
 	GroupID int `json:"group_id,omitempty"`
+	// 是否开启朋友圈
+	EnableFriendCircle bool `json:"enable_friend_circle,omitempty"`
+	// 朋友圈解析规则
+	FriendCircleRuleID *int `json:"friend_circle_rule_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FLinkQuery when eager-loading is set.
 	Edges        FLinkEdges `json:"edges"`
@@ -69,9 +75,11 @@ func (*FLink) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case flink.FieldID, flink.FieldStatus, flink.FieldGroupID:
+		case flink.FieldEnableFriendCircle:
+			values[i] = new(sql.NullBool)
+		case flink.FieldID, flink.FieldStatus, flink.FieldGroupID, flink.FieldFriendCircleRuleID:
 			values[i] = new(sql.NullInt64)
-		case flink.FieldName, flink.FieldURL, flink.FieldLogo, flink.FieldDescription, flink.FieldSnapshot, flink.FieldEmail:
+		case flink.FieldName, flink.FieldURL, flink.FieldAvatarURL, flink.FieldDescription, flink.FieldSnapshotURL, flink.FieldCoverURL, flink.FieldEmail:
 			values[i] = new(sql.NullString)
 		case flink.FieldCreatedAt, flink.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -120,11 +128,11 @@ func (_m *FLink) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.URL = value.String
 			}
-		case flink.FieldLogo:
+		case flink.FieldAvatarURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field logo", values[i])
+				return fmt.Errorf("unexpected type %T for field avatar_url", values[i])
 			} else if value.Valid {
-				_m.Logo = value.String
+				_m.AvatarURL = value.String
 			}
 		case flink.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -138,11 +146,17 @@ func (_m *FLink) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Status = int(value.Int64)
 			}
-		case flink.FieldSnapshot:
+		case flink.FieldSnapshotURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field snapshot", values[i])
+				return fmt.Errorf("unexpected type %T for field snapshot_url", values[i])
 			} else if value.Valid {
-				_m.Snapshot = value.String
+				_m.SnapshotURL = value.String
+			}
+		case flink.FieldCoverURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field cover_url", values[i])
+			} else if value.Valid {
+				_m.CoverURL = value.String
 			}
 		case flink.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -155,6 +169,19 @@ func (_m *FLink) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field group_id", values[i])
 			} else if value.Valid {
 				_m.GroupID = int(value.Int64)
+			}
+		case flink.FieldEnableFriendCircle:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field enable_friend_circle", values[i])
+			} else if value.Valid {
+				_m.EnableFriendCircle = value.Bool
+			}
+		case flink.FieldFriendCircleRuleID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field friend_circle_rule_id", values[i])
+			} else if value.Valid {
+				_m.FriendCircleRuleID = new(int)
+				*_m.FriendCircleRuleID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -209,8 +236,8 @@ func (_m *FLink) String() string {
 	builder.WriteString("url=")
 	builder.WriteString(_m.URL)
 	builder.WriteString(", ")
-	builder.WriteString("logo=")
-	builder.WriteString(_m.Logo)
+	builder.WriteString("avatar_url=")
+	builder.WriteString(_m.AvatarURL)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(_m.Description)
@@ -218,14 +245,25 @@ func (_m *FLink) String() string {
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status))
 	builder.WriteString(", ")
-	builder.WriteString("snapshot=")
-	builder.WriteString(_m.Snapshot)
+	builder.WriteString("snapshot_url=")
+	builder.WriteString(_m.SnapshotURL)
+	builder.WriteString(", ")
+	builder.WriteString("cover_url=")
+	builder.WriteString(_m.CoverURL)
 	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(_m.Email)
 	builder.WriteString(", ")
 	builder.WriteString("group_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.GroupID))
+	builder.WriteString(", ")
+	builder.WriteString("enable_friend_circle=")
+	builder.WriteString(fmt.Sprintf("%v", _m.EnableFriendCircle))
+	builder.WriteString(", ")
+	if v := _m.FriendCircleRuleID; v != nil {
+		builder.WriteString("friend_circle_rule_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

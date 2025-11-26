@@ -1,12 +1,26 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { NCard, NDataTable, NButton, useMessage, NImage, NIcon } from 'naive-ui'
+import {
+  NCard,
+  NDataTable,
+  NButton,
+  useMessage,
+  NImage,
+  NIcon,
+  NSpace,
+  NPopconfirm,
+} from 'naive-ui'
 import type { DataTableColumns } from 'naive-ui'
-import { Pencil } from '@vicons/ionicons5'
+import { Pencil, Trash } from '@vicons/ionicons5'
 import { addDialog } from '@/components/dialog'
-import type { FlinkFormItemProps, FlinkFormProps, FlinkGroupFormItemProps, FlinkGroupFormPorps } from './utils/types'
+import type {
+  FlinkFormItemProps,
+  FlinkFormProps,
+  FlinkGroupFormItemProps,
+  FlinkGroupFormPorps,
+} from './utils/types'
 import flinkForm from './flinkForm.vue'
-import * as flinkGroupApi from "@/api/flinkGroup"
+import * as flinkGroupApi from '@/api/flinkGroup'
 import * as flinkApi from '@/api/flink'
 import FlinkGroupForm from './flinkGroupForm.vue'
 
@@ -41,52 +55,81 @@ const columns: DataTableColumns = [
     key: 'actions',
     render: (row: any) => {
       return h(
-        NButton,
+        NSpace,
+        {},
         {
-          size: 'small',
-          type: 'primary',
-          quaternary: true,
-          onClick: () => {
-            openEditDialog('编辑', row)
-          },
-        },
-        {
-          icon: () => h(NIcon, {}, () => h(Pencil)),
-          default: () => '编辑',
+          default: () => [
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'primary',
+                quaternary: true,
+                onClick: () => {
+                  openEditDialog('编辑', row)
+                },
+              },
+              {
+                icon: () => h(NIcon, {}, () => h(Pencil)),
+                default: () => '编辑',
+              },
+            ),
+            h(
+              NPopconfirm,
+              {
+                onPositiveClick:()=>handleDelete(row)
+              },
+              {
+                default:()=>"确认删除吗",
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: 'error',
+                      quaternary: true,
+                    },
+                    {
+                      icon: () => h(NIcon, {}, () => h(Trash)),
+                      default: () => '删除',
+                    },
+                  ),
+              },
+            ),
+          ],
         },
       )
     },
   },
 ]
 
-const openGroupEditDialog = (title='新增',row?:FlinkGroupFormItemProps)=>{
+const openGroupEditDialog = (title = '新增', row?: FlinkGroupFormItemProps) => {
   const formRef = ref()
   addDialog<FlinkGroupFormPorps>({
-    title:`${title}分组`,
-    props:{
-      formInline:{
-        name:row?.name??""
-      }
+    title: `${title}分组`,
+    props: {
+      formInline: {
+        name: row?.name ?? '',
+      },
     },
-    contentRenderer:({options})=>h(FlinkGroupForm,{formInline:options.props!.formInline,ref:formRef}),
-    beforeSure:async (done)=>{
-      try{
+    contentRenderer: ({ options }) =>
+      h(FlinkGroupForm, { formInline: options.props!.formInline, ref: formRef }),
+    beforeSure: async (done) => {
+      try {
         const curData = await formRef.value.getData()
-        const chores = ()=>{
-          message.success("操作成功")
+        const chores = () => {
+          message.success('操作成功')
           done()
           onSearchCategory()
         }
-        if(title=='新增'){
+        if (title == '新增') {
           await flinkGroupApi.createFlinkGroup(curData)
           chores()
-        }else{
-          await flinkGroupApi.updateFlinkGroup(row?.id as any,curData)
+        } else {
+          await flinkGroupApi.updateFlinkGroup(row?.id as any, curData)
         }
-      }catch{
-
-      }
-    }
+      } catch {}
+    },
   })
 }
 
@@ -99,8 +142,13 @@ const openEditDialog = (title = '新增', row?: FlinkFormItemProps) => {
         id: row?.id ?? undefined,
         name: row?.name ?? '',
         url: row?.url ?? '',
-        logo: row?.logo ?? '',
+        avatar_url: row?.avatar_url ?? '',
         description: row?.description ?? '',
+        cover_url:row?.cover_url??'',
+        snapshot_url:row?.snapshot_url??'',
+        email:row?.email??'',
+        enable_friend_circle:row?.enable_friend_circle??true,
+        friend_circle_rule_id:row?.friend_circle_rule_id??undefined
       },
     },
     contentRenderer: ({ options }) =>
@@ -131,7 +179,14 @@ const handleEdit = (row: any) => {}
 
 const handleDelete = async (row: any) => {
   // TODO: 实现删除逻辑
-  message.success('删除成功喵~')
+  try{
+    await flinkApi.deleteFlink(row.id)
+    message.success('删除成功喵~')
+    await onSearchFlink()
+  }catch{
+
+  }
+
 }
 
 const handleSubmit = async () => {
@@ -163,7 +218,11 @@ onMounted(() => {
         <n-gi span="1">
           <n-card title="友链分类">
             <template #header-extra>
-              <n-button type="primary" style="margin-right: 5px" @click="openGroupEditDialog('新增')">
+              <n-button
+                type="primary"
+                style="margin-right: 5px"
+                @click="openGroupEditDialog('新增')"
+              >
                 <i class="fas fa-plus mr-2"></i>新增分类
               </n-button>
               <n-button @click="onSearchCategory()">刷新</n-button>
@@ -171,7 +230,7 @@ onMounted(() => {
             <ul class="space-y-2">
               <!-- 示例相册 -->
               <li
-                v-for="(item,index) in flinkGroups"
+                v-for="(item, index) in flinkGroups"
                 :key="index"
                 class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 album-item"
                 :data-album-id="item.id"
@@ -188,7 +247,9 @@ onMounted(() => {
               <div class="header-section">
                 <div class="title">友链管理</div>
                 <div>
-                  <n-button type="primary" @click="openEditDialog('新增')" style="margin-right: 5px;">添加友链</n-button>
+                  <n-button type="primary" @click="openEditDialog('新增')" style="margin-right: 5px"
+                    >添加友链</n-button
+                  >
                   <n-button @click="onSearchFlink()">刷新</n-button>
                 </div>
               </div>

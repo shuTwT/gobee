@@ -1,104 +1,85 @@
-# 基础配置（保留原有逻辑 + 新增跨平台配置）
+# 基础配置（简化+修复引号问题）
+DYLD_FALLBACK_LIBRARY_PATH=/usr/lib
 BINARY_NAME=main
-DIST_DIR := dist                  # 多平台产物根目录
+DIST_DIR := dist
 VERSION := $(shell git describe --tags --always --dirty || echo "v1.0.0")
 BUILD_TIME := $(shell date +%Y%m%d_%H%M%S)
 
-# 编译参数：静态编译 + 注入版本信息（不影响原有功能）
-LDFLAGS := -ldflags "\
-	-s -w \
-	-X main.Version=$(VERSION) \
-	-X main.BuildTime=$(BUILD_TIME) \
-"
-CGO_FLAG := CGO_ENABLED=0  # 关闭CGO，生成无依赖静态二进制
+# 启用CGO + 调整链接参数（兼容CGO静态链接）
+LDFLAGS := -ldflags '-s -w -extldflags "-lpthread" -X "main.Version=$(VERSION)" -X "main.BuildTime=$(BUILD_TIME)"'
+CGO_FLAG := CGO_ENABLED=1  # 核心：启用CGO
 
-# 定义需要编译的目标平台+架构（按需增删）
-TARGETS := \
-	linux_amd64 \
-	linux_arm64 \
-	darwin_amd64  \
-	darwin_arm64  \
-	windows_amd64
+# 目标平台（格式：GOOS/GOARCH，清晰不易错）
+TARGET_PLATFORMS := \
+	linux/amd64/x86_64-linux-gnu-gcc \
+	linux/arm64/aarch64-linux-gnu-gcc \
+	darwin/amd64/clang \
+	darwin/arm64/clang \
+	windows/amd64/x86_64-w64-mingw32-gcc
 
 # ===================== 原有功能（完全保留） =====================
-# 构建前端
 build-frontend:
 	@echo "Building frontend..."
-	cd ui && npm install && npm run build
+	cd ui && pnpm install && pnpm run build-only
 	@echo "Copying frontend build to assets..."
 
-# 构建后端（本地平台）
 build-backend:
 	@echo "Building backend (local platform)..."
-	go build -o ${BINARY_NAME} ${LDFLAGS} main.go
+	CC=$(shell which gcc || which clang) $(CGO_FLAG) go build -o ${BINARY_NAME} ${LDFLAGS} main.go
 
-# 完整构建（前端 + 本地后端）
 build: build-frontend build-backend
 	@echo "Build completed successfully!"
 
-# 运行项目
 run: build
 	./${BINARY_NAME}
 
-# 清理构建产物（含多平台产物 + 原有清理逻辑）
 clean:
 	@echo "Cleaning all build artifacts..."
 	go clean
 	rm -f ${BINARY_NAME}
-	rm -rf ui/dist
-	cd ui && rm -rf node_modules
-	rm -rf $(DIST_DIR)  # 清理多平台产物目录
 	@echo "Clean completed!"
 
-# 开发模式（仅后端，用于开发）
 dev:
-	go build -o ${BINARY_NAME} main.go
-	./${BINARY_NAME}
+	CC=$(shell which gcc || which clang) $(CGO_FLAG) go build -o ${BINARY_NAME} main.go && ./${BINARY_NAME}
 
-# 仅构建前端
 frontend: build-frontend
 
-# ===================== 新增：多平台打包功能 =====================
-# 默认多平台构建目标（先编译前端，再编译所有平台后端）
-.PHONY: build-all-platforms $(TARGETS)
-build-all-platforms: build-frontend $(TARGETS)
-	@echo "✅ All platforms build completed! Artifacts in $(DIST_DIR)/"
+# ===================== 修复后的多平台构建（核心） =====================
+# 关键：所有Shell命令用单一行内循环，避免换行解析错误
+.PHONY: build-all-platforms package
+build-all-platforms: build-frontend
+	@echo "=== Start building all platforms (CGO enabled) ==="
+	@for platform in $(TARGET_PLATFORMS); do \
+		GOOS=$$(echo $$platform | cut -d '/' -f1); \
+		GOARCH=$$(echo $$platform | cut -d '/' -f2); \
+		CC=$$(echo $$platform | cut -d '/' -f3); \
+		\
+		if [ "$$GOOS" = "windows" ]; then EXT=".exe"; else EXT=""; fi; \
+		OUTPUT_DIR=$(DIST_DIR)/$$GOOS"_"$$GOARCH; \
+		OUTPUT_FILE=$$OUTPUT_DIR/$(BINARY_NAME)$$EXT; \
+		mkdir -p $$OUTPUT_DIR; \
+		echo "--- Building $$GOOS/$$GOARCH (CC=$$CC) ---"; \
+		\
+		CC=$$CC $(CGO_FLAG) GOOS=$$GOOS GOARCH=$$GOARCH go build $(LDFLAGS) -o $$OUTPUT_FILE main.go; \
+		echo "✅ $$GOOS/$$GOARCH built to $$OUTPUT_FILE"; \
+	done
+	@echo "=== All platforms build completed! ==="
 
-# 模式规则：编译单个平台-架构的后端产物
-$(DIST_DIR)/$(BINARY_NAME)-%:
-	# 解析平台和架构（如 linux_amd64 → GOOS=linux, GOARCH=amd64）
-	$(eval GOOS := $(firstword $(subst _, ,$*)))
-	$(eval GOARCH := $(lastword $(subst _, ,$*)))
-	# 处理Windows后缀
-	$(eval EXT := $(if $(filter windows,$(GOOS)),.exe,))
-	# 创建产物目录
-	mkdir -p $(DIST_DIR)/$(GOOS)_$(GOARCH)
-	# 交叉编译后端（依赖已构建的前端assets）
-	@echo "=== Building backend for $(GOOS)/$(GOARCH) ==="
-	$(CGO_FLAG) GOOS=$(GOOS) GOARCH=$(GOARCH) go build \
-		${LDFLAGS} \
-		-o $(DIST_DIR)/$(GOOS)_$(GOARCH)/$(BINARY_NAME)$(EXT) \
-		main.go
-	# 复制前端静态资源到对应平台目录（可选：如果后端需要携带assets）
-	@cp -r assets $(DIST_DIR)/$(GOOS)_$(GOARCH)/
-	@echo "✅ $(GOOS)/$(GOARCH) build done: $(DIST_DIR)/$(GOOS)_$(GOARCH)/$(BINARY_NAME)$(EXT)"
-
-# 为每个目标创建快捷规则（如 make linux_amd64）
-$(TARGETS): $(DIST_DIR)/$(BINARY_NAME)-%
-	@true
-
-# 打包多平台产物（压缩为zip/tar.gz，方便分发）
+# 打包产物（同样用行内循环，避免语法错误）
 package: build-all-platforms
 	@echo "=== Packaging all artifacts ==="
-	@for target in $(TARGETS); do \
-		GOOS=$${target%_*}; \
-		GOARCH=$${target#*_}; \
-		EXT=$$(if [ "$$GOOS" = "windows" ]; then echo ".exe"; else echo ""; fi); \
-		cd $(DIST_DIR)/$$target && \
+	@for platform in $(TARGET_PLATFORMS); do \
+		GOOS=$$(echo $$platform | cut -d '/' -f1); \
+		GOARCH=$$(echo $$platform | cut -d '/' -f2); \
+		PLATFORM_DIR=$$GOOS"_"$$GOARCH; \
+		ARCHIVE_NAME=$(BINARY_NAME)-$(VERSION)-$$PLATFORM_DIR; \
+		mkdir -p $(DIST_DIR); \
+		cd $(DIST_DIR); \
 		if [ "$$GOOS" = "windows" ]; then \
-			zip -q ../$(BINARY_NAME)-$(VERSION)-$$target.zip $(BINARY_NAME)$$EXT assets/; \
+			zip -q -r $$ARCHIVE_NAME.zip $$PLATFORM_DIR/* 2>/dev/null; \
 		else \
-			tar -zcf ../$(BINARY_NAME)-$(VERSION)-$$target.tar.gz $(BINARY_NAME)$$EXT assets/; \
+			tar -zcf $$ARCHIVE_NAME.tar.gz $$PLATFORM_DIR/* 2>/dev/null; \
 		fi; \
+		echo "✅ Packaged $(DIST_DIR)/$$ARCHIVE_NAME.$$( [ "$$GOOS" = "windows" ] && echo "zip" || echo "tar.gz" )"; \
 	done
-	@echo "✅ Packaging completed! Compressed files in $(DIST_DIR)/"
+	@echo "=== Packaging completed! ==="

@@ -22,14 +22,15 @@ func (FLink) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Comment("名称"),
 		field.String("url").NotEmpty().Comment("链接"),
-		field.String("logo").Optional().Comment("logo"),
+		field.String("avatar_url").Optional().Comment("头像"),
 		field.String("description").Optional().Comment("简介"),
 		field.Int("status").Default(1).Comment("状态"),
-		field.String("snapshot").Optional().Comment("快照"),
+		field.String("snapshot_url").Optional().Comment("网站截图"),
+		field.String("cover_url").Optional().Comment("网站封面"),
 		field.String("email").Optional().Comment("邮箱"),
 		field.Int("group_id").Optional().Comment("友链组"),
-		field.Bool("enable_friend_circle").Comment("是否开启朋友圈"),
-		field.Int("friend_circle_template").Comment("朋友圈模板"),
+		field.Bool("enable_friend_circle").Default(true).Comment("是否开启朋友圈"),
+		field.Int("friend_circle_rule_id").Optional().Nillable().Comment("朋友圈解析规则"),
 	}
 }
 

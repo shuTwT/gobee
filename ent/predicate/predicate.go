@@ -27,6 +27,12 @@ type FLinkGroup func(*sql.Selector)
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
+// FriendCircleRecord is the predicate function for friendcirclerecord builders.
+type FriendCircleRecord func(*sql.Selector)
+
+// FriendCircleRule is the predicate function for friendcirclerule builders.
+type FriendCircleRule func(*sql.Selector)
+
 // ModelSchema is the predicate function for modelschema builders.
 type ModelSchema func(*sql.Selector)
 
@@ -56,6 +62,9 @@ type Post func(*sql.Selector)
 
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
+
+// ScheduleJob is the predicate function for schedulejob builders.
+type ScheduleJob func(*sql.Selector)
 
 // Setting is the predicate function for setting builders.
 type Setting func(*sql.Selector)

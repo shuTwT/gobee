@@ -18,16 +18,19 @@ func ListFlink(c *fiber.Ctx) error {
 	result := []model.FlinkResp{}
 	for _, flink := range flinks {
 		result = append(result, model.FlinkResp{
-			ID:          flink.ID,
-			CreatedAt:   &flink.CreatedAt,
-			UpdatedAt:   &flink.UpdatedAt,
-			Name:        flink.Name,
-			URL:         flink.URL,
-			Logo:        flink.Logo,
-			Description: flink.Description,
-			Status:      flink.Status,
-			Snapshot:    flink.Snapshot,
-			Email:       flink.Email,
+			ID:                 flink.ID,
+			CreatedAt:          &flink.CreatedAt,
+			UpdatedAt:          &flink.UpdatedAt,
+			Name:               flink.Name,
+			URL:                flink.URL,
+			AvatarURL:          flink.AvatarURL,
+			Description:        flink.Description,
+			CoverURL:           flink.CoverURL,
+			Status:             flink.Status,
+			SnapshotUrl:        flink.SnapshotURL,
+			Email:              flink.Email,
+			EnableFriendCircle: flink.EnableFriendCircle,
+			FriendCircleRuleID: flink.FriendCircleRuleID,
 		})
 	}
 	return c.JSON(model.NewSuccess("success", result))
@@ -52,16 +55,19 @@ func ListFlinkPage(c *fiber.Ctx) error {
 	records := []model.FlinkResp{}
 	for _, flink := range flinks {
 		records = append(records, model.FlinkResp{
-			ID:          flink.ID,
-			CreatedAt:   &flink.CreatedAt,
-			UpdatedAt:   &flink.UpdatedAt,
-			Name:        flink.Name,
-			URL:         flink.URL,
-			Logo:        flink.Logo,
-			Description: flink.Description,
-			Status:      flink.Status,
-			Snapshot:    flink.Snapshot,
-			Email:       flink.Email,
+			ID:                 flink.ID,
+			CreatedAt:          &flink.CreatedAt,
+			UpdatedAt:          &flink.UpdatedAt,
+			Name:               flink.Name,
+			URL:                flink.URL,
+			AvatarURL:          flink.AvatarURL,
+			Description:        flink.Description,
+			CoverURL:           flink.CoverURL,
+			Status:             flink.Status,
+			SnapshotUrl:        flink.SnapshotURL,
+			Email:              flink.Email,
+			EnableFriendCircle: flink.EnableFriendCircle,
+			FriendCircleRuleID: flink.FriendCircleRuleID,
 		})
 	}
 	pageResult := model.PageResult[model.FlinkResp]{
@@ -80,10 +86,13 @@ func CreateFlink(c *fiber.Ctx) error {
 	flink, err := client.FLink.Create().
 		SetName(createReq.Name).
 		SetURL(createReq.URL).
-		SetLogo(createReq.Logo).
+		SetAvatarURL(createReq.AvatarURL).
 		SetDescription(createReq.Description).
-		SetSnapshot(createReq.Snapshot).
+		SetCoverURL(createReq.CoverURL).
+		SetSnapshotURL(createReq.SnapshotURL).
 		SetEmail(createReq.Email).
+		SetEnableFriendCircle(createReq.EnableFriendCircle).
+		SetNillableFriendCircleRuleID(createReq.FriendCircleRuleID).
 		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
@@ -104,10 +113,13 @@ func UpdateFlink(c *fiber.Ctx) error {
 	flink, err := client.FLink.UpdateOneID(id).
 		SetName(updateReq.Name).
 		SetURL(updateReq.URL).
-		SetLogo(updateReq.Logo).
+		SetAvatarURL(updateReq.AvatarURL).
 		SetDescription(updateReq.Description).
-		SetSnapshot(updateReq.Snapshot).
+		SetCoverURL(updateReq.CoverURL).
+		SetSnapshotURL(updateReq.SnapshotURL).
 		SetEmail(updateReq.Email).
+		SetEnableFriendCircle(updateReq.EnableFriendCircle).
+		SetFriendCircleRuleID(updateReq.FriendCircleRuleID).
 		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))

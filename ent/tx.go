@@ -26,6 +26,10 @@ type Tx struct {
 	FLinkGroup *FLinkGroupClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FriendCircleRecord is the client for interacting with the FriendCircleRecord builders.
+	FriendCircleRecord *FriendCircleRecordClient
+	// FriendCircleRule is the client for interacting with the FriendCircleRule builders.
+	FriendCircleRule *FriendCircleRuleClient
 	// ModelSchema is the client for interacting with the ModelSchema builders.
 	ModelSchema *ModelSchemaClient
 	// Oauth2AccessToken is the client for interacting with the Oauth2AccessToken builders.
@@ -46,6 +50,8 @@ type Tx struct {
 	Post *PostClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
+	// ScheduleJob is the client for interacting with the ScheduleJob builders.
+	ScheduleJob *ScheduleJobClient
 	// Setting is the client for interacting with the Setting builders.
 	Setting *SettingClient
 	// StorageStrategy is the client for interacting with the StorageStrategy builders.
@@ -192,6 +198,8 @@ func (tx *Tx) init() {
 	tx.FLink = NewFLinkClient(tx.config)
 	tx.FLinkGroup = NewFLinkGroupClient(tx.config)
 	tx.File = NewFileClient(tx.config)
+	tx.FriendCircleRecord = NewFriendCircleRecordClient(tx.config)
+	tx.FriendCircleRule = NewFriendCircleRuleClient(tx.config)
 	tx.ModelSchema = NewModelSchemaClient(tx.config)
 	tx.Oauth2AccessToken = NewOauth2AccessTokenClient(tx.config)
 	tx.Oauth2Code = NewOauth2CodeClient(tx.config)
@@ -202,6 +210,7 @@ func (tx *Tx) init() {
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
+	tx.ScheduleJob = NewScheduleJobClient(tx.config)
 	tx.Setting = NewSettingClient(tx.config)
 	tx.StorageStrategy = NewStorageStrategyClient(tx.config)
 	tx.User = NewUserClient(tx.config)
