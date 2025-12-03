@@ -35,7 +35,8 @@ type FriendCircleRecordResp struct {
 	// 链接
 	LinkURL string `json:"link_url,omitempty"`
 	// 头像地址
-	AvatarURL string `json:"avatar_url,omitempty"`
+	AvatarURL   string `json:"avatar_url,omitempty"`
+	PublishedAt string `json:"published_at,omitempty"`
 }
 
 type FriendCircleRuleSaveReq struct {

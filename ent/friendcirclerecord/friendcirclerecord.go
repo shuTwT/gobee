@@ -25,6 +25,8 @@ const (
 	FieldLinkURL = "link_url"
 	// FieldAvatarURL holds the string denoting the avatar_url field in the database.
 	FieldAvatarURL = "avatar_url"
+	// FieldSiteURL holds the string denoting the site_url field in the database.
+	FieldSiteURL = "site_url"
 	// FieldPublishedAt holds the string denoting the published_at field in the database.
 	FieldPublishedAt = "published_at"
 	// Table holds the table name of the friendcirclerecord in the database.
@@ -40,6 +42,7 @@ var Columns = []string{
 	FieldTitle,
 	FieldLinkURL,
 	FieldAvatarURL,
+	FieldSiteURL,
 	FieldPublishedAt,
 }
 
@@ -98,6 +101,11 @@ func ByLinkURL(opts ...sql.OrderTermOption) OrderOption {
 // ByAvatarURL orders the results by the avatar_url field.
 func ByAvatarURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAvatarURL, opts...).ToFunc()
+}
+
+// BySiteURL orders the results by the site_url field.
+func BySiteURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSiteURL, opts...).ToFunc()
 }
 
 // ByPublishedAt orders the results by the published_at field.

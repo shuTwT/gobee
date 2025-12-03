@@ -23,6 +23,7 @@ func (FriendCircleRecord) Fields() []ent.Field {
 		field.String("title").Comment("标题"),
 		field.String("link_url").Comment("链接"),
 		field.String("avatar_url").Comment("头像地址"),
+		field.String("site_url").Optional().Comment("站点地址"),
 		field.String("published_at").Optional().Comment("发布时间"),
 	}
 }

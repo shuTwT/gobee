@@ -1,4 +1,4 @@
-import axios, { type AxiosRequestConfig, type Method } from 'axios'
+import axios, { AxiosError, type AxiosRequestConfig, type Method } from 'axios'
 import { formatToken, getToken } from './auth'
 import { useUserStoreHook } from '@/stores/modules/user'
 import type { ApiResponse } from '@/api/utils'
@@ -108,8 +108,10 @@ class HttpService {
         }
         return response.data
       },
-      (error)=>{
+      (error:AxiosError)=>{
         const $error = error
+        console.log(error)
+        if(window.$message) window.$message.error(error.response?.data+"")
         return Promise.reject($error)
       }
     )

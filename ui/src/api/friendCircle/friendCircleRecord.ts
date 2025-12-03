@@ -1,10 +1,6 @@
 import { http } from "@/utils/http";
 import { BASE_URL, type ApiResponse, type TableResponse } from "../utils";
 
-export const getFriendCircleRecordList = ()=>{
-  return http.request<TableResponse<any>>('get',`${BASE_URL}/v1/friend-circle-record/page`);
-}
-
 export const getFriendCircleRecordPage = ()=>{
   return http.request<TableResponse<any>>('get',`${BASE_URL}/v1/friend-circle-record/page`);
 }

@@ -90,6 +90,26 @@ func (_u *FriendCircleRecordUpdate) SetNillableAvatarURL(v *string) *FriendCircl
 	return _u
 }
 
+// SetSiteURL sets the "site_url" field.
+func (_u *FriendCircleRecordUpdate) SetSiteURL(v string) *FriendCircleRecordUpdate {
+	_u.mutation.SetSiteURL(v)
+	return _u
+}
+
+// SetNillableSiteURL sets the "site_url" field if the given value is not nil.
+func (_u *FriendCircleRecordUpdate) SetNillableSiteURL(v *string) *FriendCircleRecordUpdate {
+	if v != nil {
+		_u.SetSiteURL(*v)
+	}
+	return _u
+}
+
+// ClearSiteURL clears the value of the "site_url" field.
+func (_u *FriendCircleRecordUpdate) ClearSiteURL() *FriendCircleRecordUpdate {
+	_u.mutation.ClearSiteURL()
+	return _u
+}
+
 // SetPublishedAt sets the "published_at" field.
 func (_u *FriendCircleRecordUpdate) SetPublishedAt(v string) *FriendCircleRecordUpdate {
 	_u.mutation.SetPublishedAt(v)
@@ -174,6 +194,12 @@ func (_u *FriendCircleRecordUpdate) sqlSave(ctx context.Context) (_node int, err
 	}
 	if value, ok := _u.mutation.AvatarURL(); ok {
 		_spec.SetField(friendcirclerecord.FieldAvatarURL, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.SiteURL(); ok {
+		_spec.SetField(friendcirclerecord.FieldSiteURL, field.TypeString, value)
+	}
+	if _u.mutation.SiteURLCleared() {
+		_spec.ClearField(friendcirclerecord.FieldSiteURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(friendcirclerecord.FieldPublishedAt, field.TypeString, value)
@@ -260,6 +286,26 @@ func (_u *FriendCircleRecordUpdateOne) SetNillableAvatarURL(v *string) *FriendCi
 	if v != nil {
 		_u.SetAvatarURL(*v)
 	}
+	return _u
+}
+
+// SetSiteURL sets the "site_url" field.
+func (_u *FriendCircleRecordUpdateOne) SetSiteURL(v string) *FriendCircleRecordUpdateOne {
+	_u.mutation.SetSiteURL(v)
+	return _u
+}
+
+// SetNillableSiteURL sets the "site_url" field if the given value is not nil.
+func (_u *FriendCircleRecordUpdateOne) SetNillableSiteURL(v *string) *FriendCircleRecordUpdateOne {
+	if v != nil {
+		_u.SetSiteURL(*v)
+	}
+	return _u
+}
+
+// ClearSiteURL clears the value of the "site_url" field.
+func (_u *FriendCircleRecordUpdateOne) ClearSiteURL() *FriendCircleRecordUpdateOne {
+	_u.mutation.ClearSiteURL()
 	return _u
 }
 
@@ -377,6 +423,12 @@ func (_u *FriendCircleRecordUpdateOne) sqlSave(ctx context.Context) (_node *Frie
 	}
 	if value, ok := _u.mutation.AvatarURL(); ok {
 		_spec.SetField(friendcirclerecord.FieldAvatarURL, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.SiteURL(); ok {
+		_spec.SetField(friendcirclerecord.FieldSiteURL, field.TypeString, value)
+	}
+	if _u.mutation.SiteURLCleared() {
+		_spec.ClearField(friendcirclerecord.FieldSiteURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(friendcirclerecord.FieldPublishedAt, field.TypeString, value)

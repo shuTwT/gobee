@@ -55,3 +55,14 @@ type UserResp struct {
 	RoleID              *int       `json:"role_id,omitempty"`
 	Role                *ent.Role  `json:"role,omitempty"`
 }
+
+type UserProfileResp struct {
+	UserID              int       `json:"user_id"`
+	Email               string    `json:"email"`
+	EmailVerified       bool      `json:"email_verified"`
+	Name                string    `json:"name"`
+	PhoneNumber         *string   `json:"phone_number"`
+	PhoneNumberVerified bool      `json:"phone_number_verified"`
+	RoleID              *int      `json:"role_id,omitempty"`
+	Role                *ent.Role `json:"role,omitempty"`
+}

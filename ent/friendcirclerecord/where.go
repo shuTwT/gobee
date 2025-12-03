@@ -84,6 +84,11 @@ func AvatarURL(v string) predicate.FriendCircleRecord {
 	return predicate.FriendCircleRecord(sql.FieldEQ(FieldAvatarURL, v))
 }
 
+// SiteURL applies equality check predicate on the "site_url" field. It's identical to SiteURLEQ.
+func SiteURL(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldEQ(FieldSiteURL, v))
+}
+
 // PublishedAt applies equality check predicate on the "published_at" field. It's identical to PublishedAtEQ.
 func PublishedAt(v string) predicate.FriendCircleRecord {
 	return predicate.FriendCircleRecord(sql.FieldEQ(FieldPublishedAt, v))
@@ -427,6 +432,81 @@ func AvatarURLEqualFold(v string) predicate.FriendCircleRecord {
 // AvatarURLContainsFold applies the ContainsFold predicate on the "avatar_url" field.
 func AvatarURLContainsFold(v string) predicate.FriendCircleRecord {
 	return predicate.FriendCircleRecord(sql.FieldContainsFold(FieldAvatarURL, v))
+}
+
+// SiteURLEQ applies the EQ predicate on the "site_url" field.
+func SiteURLEQ(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldEQ(FieldSiteURL, v))
+}
+
+// SiteURLNEQ applies the NEQ predicate on the "site_url" field.
+func SiteURLNEQ(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldNEQ(FieldSiteURL, v))
+}
+
+// SiteURLIn applies the In predicate on the "site_url" field.
+func SiteURLIn(vs ...string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldIn(FieldSiteURL, vs...))
+}
+
+// SiteURLNotIn applies the NotIn predicate on the "site_url" field.
+func SiteURLNotIn(vs ...string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldNotIn(FieldSiteURL, vs...))
+}
+
+// SiteURLGT applies the GT predicate on the "site_url" field.
+func SiteURLGT(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldGT(FieldSiteURL, v))
+}
+
+// SiteURLGTE applies the GTE predicate on the "site_url" field.
+func SiteURLGTE(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldGTE(FieldSiteURL, v))
+}
+
+// SiteURLLT applies the LT predicate on the "site_url" field.
+func SiteURLLT(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldLT(FieldSiteURL, v))
+}
+
+// SiteURLLTE applies the LTE predicate on the "site_url" field.
+func SiteURLLTE(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldLTE(FieldSiteURL, v))
+}
+
+// SiteURLContains applies the Contains predicate on the "site_url" field.
+func SiteURLContains(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldContains(FieldSiteURL, v))
+}
+
+// SiteURLHasPrefix applies the HasPrefix predicate on the "site_url" field.
+func SiteURLHasPrefix(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldHasPrefix(FieldSiteURL, v))
+}
+
+// SiteURLHasSuffix applies the HasSuffix predicate on the "site_url" field.
+func SiteURLHasSuffix(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldHasSuffix(FieldSiteURL, v))
+}
+
+// SiteURLIsNil applies the IsNil predicate on the "site_url" field.
+func SiteURLIsNil() predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldIsNull(FieldSiteURL))
+}
+
+// SiteURLNotNil applies the NotNil predicate on the "site_url" field.
+func SiteURLNotNil() predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldNotNull(FieldSiteURL))
+}
+
+// SiteURLEqualFold applies the EqualFold predicate on the "site_url" field.
+func SiteURLEqualFold(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldEqualFold(FieldSiteURL, v))
+}
+
+// SiteURLContainsFold applies the ContainsFold predicate on the "site_url" field.
+func SiteURLContainsFold(v string) predicate.FriendCircleRecord {
+	return predicate.FriendCircleRecord(sql.FieldContainsFold(FieldSiteURL, v))
 }
 
 // PublishedAtEQ applies the EQ predicate on the "published_at" field.

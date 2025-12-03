@@ -36,3 +36,7 @@ export const getPersonalAccessToken = (id:number)=>{
 export const createPat = (data:any)=>{
   return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/user/personal-access-token`,{data})
 }
+
+export const getUserProfile = ()=>{
+  return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/user/profile`)
+}

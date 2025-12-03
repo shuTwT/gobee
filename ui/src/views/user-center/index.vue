@@ -18,7 +18,7 @@ const colorOptions = ref([
     label: '暗色',
   },
 ])
-const personalInfomation = ref({
+const personalInfomation = ref<Record<string,any>>({
   username: '',
   email: '',
   nickname: '',
@@ -109,8 +109,15 @@ const copyToken = async (row:any)=>{
   }
 
 }
-onMounted(()=>{
-  onSearchUserPersonalAccessToken()
+onMounted(async ()=>{
+  try{
+    await onSearchUserPersonalAccessToken()
+    const res = await userApi.getUserProfile()
+    personalInfomation.value = res.data
+  }catch{
+
+  }
+
 })
 </script>
 <template>
@@ -133,7 +140,7 @@ onMounted(()=>{
             <template #label>
               用户名
             </template>
-            {{ personalInfomation.username }}
+            {{ personalInfomation.name }}
           </n-descriptions-item>
           <n-descriptions-item>
             <template #label>

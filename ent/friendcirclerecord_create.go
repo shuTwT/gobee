@@ -72,6 +72,20 @@ func (_c *FriendCircleRecordCreate) SetAvatarURL(v string) *FriendCircleRecordCr
 	return _c
 }
 
+// SetSiteURL sets the "site_url" field.
+func (_c *FriendCircleRecordCreate) SetSiteURL(v string) *FriendCircleRecordCreate {
+	_c.mutation.SetSiteURL(v)
+	return _c
+}
+
+// SetNillableSiteURL sets the "site_url" field if the given value is not nil.
+func (_c *FriendCircleRecordCreate) SetNillableSiteURL(v *string) *FriendCircleRecordCreate {
+	if v != nil {
+		_c.SetSiteURL(*v)
+	}
+	return _c
+}
+
 // SetPublishedAt sets the "published_at" field.
 func (_c *FriendCircleRecordCreate) SetPublishedAt(v string) *FriendCircleRecordCreate {
 	_c.mutation.SetPublishedAt(v)
@@ -212,6 +226,10 @@ func (_c *FriendCircleRecordCreate) createSpec() (*FriendCircleRecord, *sqlgraph
 	if value, ok := _c.mutation.AvatarURL(); ok {
 		_spec.SetField(friendcirclerecord.FieldAvatarURL, field.TypeString, value)
 		_node.AvatarURL = value
+	}
+	if value, ok := _c.mutation.SiteURL(); ok {
+		_spec.SetField(friendcirclerecord.FieldSiteURL, field.TypeString, value)
+		_node.SiteURL = value
 	}
 	if value, ok := _c.mutation.PublishedAt(); ok {
 		_spec.SetField(friendcirclerecord.FieldPublishedAt, field.TypeString, value)

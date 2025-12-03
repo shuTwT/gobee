@@ -29,6 +29,8 @@ type FriendCircleRecord struct {
 	LinkURL string `json:"link_url,omitempty"`
 	// 头像地址
 	AvatarURL string `json:"avatar_url,omitempty"`
+	// 站点地址
+	SiteURL string `json:"site_url,omitempty"`
 	// 发布时间
 	PublishedAt  string `json:"published_at,omitempty"`
 	selectValues sql.SelectValues
@@ -41,7 +43,7 @@ func (*FriendCircleRecord) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case friendcirclerecord.FieldID:
 			values[i] = new(sql.NullInt64)
-		case friendcirclerecord.FieldAuthor, friendcirclerecord.FieldTitle, friendcirclerecord.FieldLinkURL, friendcirclerecord.FieldAvatarURL, friendcirclerecord.FieldPublishedAt:
+		case friendcirclerecord.FieldAuthor, friendcirclerecord.FieldTitle, friendcirclerecord.FieldLinkURL, friendcirclerecord.FieldAvatarURL, friendcirclerecord.FieldSiteURL, friendcirclerecord.FieldPublishedAt:
 			values[i] = new(sql.NullString)
 		case friendcirclerecord.FieldCreatedAt, friendcirclerecord.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -102,6 +104,12 @@ func (_m *FriendCircleRecord) assignValues(columns []string, values []any) error
 			} else if value.Valid {
 				_m.AvatarURL = value.String
 			}
+		case friendcirclerecord.FieldSiteURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field site_url", values[i])
+			} else if value.Valid {
+				_m.SiteURL = value.String
+			}
 		case friendcirclerecord.FieldPublishedAt:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field published_at", values[i])
@@ -161,6 +169,9 @@ func (_m *FriendCircleRecord) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("avatar_url=")
 	builder.WriteString(_m.AvatarURL)
+	builder.WriteString(", ")
+	builder.WriteString("site_url=")
+	builder.WriteString(_m.SiteURL)
 	builder.WriteString(", ")
 	builder.WriteString("published_at=")
 	builder.WriteString(_m.PublishedAt)

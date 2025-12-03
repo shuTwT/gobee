@@ -157,6 +157,7 @@ var (
 		{Name: "title", Type: field.TypeString},
 		{Name: "link_url", Type: field.TypeString},
 		{Name: "avatar_url", Type: field.TypeString},
+		{Name: "site_url", Type: field.TypeString, Nullable: true},
 		{Name: "published_at", Type: field.TypeString, Nullable: true},
 	}
 	// FriendCircleRecordsTable holds the schema information for the "friend_circle_records" table.

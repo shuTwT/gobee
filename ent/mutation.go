@@ -5692,6 +5692,7 @@ type FriendCircleRecordMutation struct {
 	title         *string
 	link_url      *string
 	avatar_url    *string
+	site_url      *string
 	published_at  *string
 	clearedFields map[string]struct{}
 	done          bool
@@ -6019,6 +6020,55 @@ func (m *FriendCircleRecordMutation) ResetAvatarURL() {
 	m.avatar_url = nil
 }
 
+// SetSiteURL sets the "site_url" field.
+func (m *FriendCircleRecordMutation) SetSiteURL(s string) {
+	m.site_url = &s
+}
+
+// SiteURL returns the value of the "site_url" field in the mutation.
+func (m *FriendCircleRecordMutation) SiteURL() (r string, exists bool) {
+	v := m.site_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSiteURL returns the old "site_url" field's value of the FriendCircleRecord entity.
+// If the FriendCircleRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FriendCircleRecordMutation) OldSiteURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSiteURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSiteURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSiteURL: %w", err)
+	}
+	return oldValue.SiteURL, nil
+}
+
+// ClearSiteURL clears the value of the "site_url" field.
+func (m *FriendCircleRecordMutation) ClearSiteURL() {
+	m.site_url = nil
+	m.clearedFields[friendcirclerecord.FieldSiteURL] = struct{}{}
+}
+
+// SiteURLCleared returns if the "site_url" field was cleared in this mutation.
+func (m *FriendCircleRecordMutation) SiteURLCleared() bool {
+	_, ok := m.clearedFields[friendcirclerecord.FieldSiteURL]
+	return ok
+}
+
+// ResetSiteURL resets all changes to the "site_url" field.
+func (m *FriendCircleRecordMutation) ResetSiteURL() {
+	m.site_url = nil
+	delete(m.clearedFields, friendcirclerecord.FieldSiteURL)
+}
+
 // SetPublishedAt sets the "published_at" field.
 func (m *FriendCircleRecordMutation) SetPublishedAt(s string) {
 	m.published_at = &s
@@ -6102,7 +6152,7 @@ func (m *FriendCircleRecordMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FriendCircleRecordMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, friendcirclerecord.FieldCreatedAt)
 	}
@@ -6120,6 +6170,9 @@ func (m *FriendCircleRecordMutation) Fields() []string {
 	}
 	if m.avatar_url != nil {
 		fields = append(fields, friendcirclerecord.FieldAvatarURL)
+	}
+	if m.site_url != nil {
+		fields = append(fields, friendcirclerecord.FieldSiteURL)
 	}
 	if m.published_at != nil {
 		fields = append(fields, friendcirclerecord.FieldPublishedAt)
@@ -6144,6 +6197,8 @@ func (m *FriendCircleRecordMutation) Field(name string) (ent.Value, bool) {
 		return m.LinkURL()
 	case friendcirclerecord.FieldAvatarURL:
 		return m.AvatarURL()
+	case friendcirclerecord.FieldSiteURL:
+		return m.SiteURL()
 	case friendcirclerecord.FieldPublishedAt:
 		return m.PublishedAt()
 	}
@@ -6167,6 +6222,8 @@ func (m *FriendCircleRecordMutation) OldField(ctx context.Context, name string) 
 		return m.OldLinkURL(ctx)
 	case friendcirclerecord.FieldAvatarURL:
 		return m.OldAvatarURL(ctx)
+	case friendcirclerecord.FieldSiteURL:
+		return m.OldSiteURL(ctx)
 	case friendcirclerecord.FieldPublishedAt:
 		return m.OldPublishedAt(ctx)
 	}
@@ -6220,6 +6277,13 @@ func (m *FriendCircleRecordMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetAvatarURL(v)
 		return nil
+	case friendcirclerecord.FieldSiteURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSiteURL(v)
+		return nil
 	case friendcirclerecord.FieldPublishedAt:
 		v, ok := value.(string)
 		if !ok {
@@ -6257,6 +6321,9 @@ func (m *FriendCircleRecordMutation) AddField(name string, value ent.Value) erro
 // mutation.
 func (m *FriendCircleRecordMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(friendcirclerecord.FieldSiteURL) {
+		fields = append(fields, friendcirclerecord.FieldSiteURL)
+	}
 	if m.FieldCleared(friendcirclerecord.FieldPublishedAt) {
 		fields = append(fields, friendcirclerecord.FieldPublishedAt)
 	}
@@ -6274,6 +6341,9 @@ func (m *FriendCircleRecordMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *FriendCircleRecordMutation) ClearField(name string) error {
 	switch name {
+	case friendcirclerecord.FieldSiteURL:
+		m.ClearSiteURL()
+		return nil
 	case friendcirclerecord.FieldPublishedAt:
 		m.ClearPublishedAt()
 		return nil
@@ -6302,6 +6372,9 @@ func (m *FriendCircleRecordMutation) ResetField(name string) error {
 		return nil
 	case friendcirclerecord.FieldAvatarURL:
 		m.ResetAvatarURL()
+		return nil
+	case friendcirclerecord.FieldSiteURL:
+		m.ResetSiteURL()
 		return nil
 	case friendcirclerecord.FieldPublishedAt:
 		m.ResetPublishedAt()

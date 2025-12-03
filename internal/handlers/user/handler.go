@@ -388,3 +388,40 @@ func CreatePat(c *fiber.Ctx) error {
 
 	return c.JSON(model.NewSuccess("success", nil))
 }
+
+func GetUserProfile(c *fiber.Ctx) error {
+	userId := int(c.Locals("userId").(float64))
+	client := database.DB
+
+	user, err := client.User.Query().
+		Where(user.ID(userId)).
+		Only(c.Context())
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return c.JSON(model.NewError(fiber.StatusNotFound,
+				"User not found",
+			))
+		}
+		return c.JSON(model.NewError(fiber.StatusInternalServerError,
+			err.Error(),
+		))
+	}
+	role, err := client.User.QueryRole(user).Only(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError,
+			err.Error(),
+		))
+	}
+
+	result := model.UserProfileResp{
+		UserID:              userId,
+		Email:               user.Email,
+		EmailVerified:       user.EmailVerified,
+		Name:                user.Name,
+		PhoneNumber:         &user.PhoneNumber,
+		PhoneNumberVerified: user.PhoneNumberVerified,
+		Role:                role,
+	}
+
+	return c.JSON(model.NewSuccess("success", result))
+}

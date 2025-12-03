@@ -9,6 +9,7 @@ import (
 	file_handler "gobee/internal/handlers/file"
 	flink_handler "gobee/internal/handlers/flink"
 	flinkgroup_handler "gobee/internal/handlers/flink_group"
+	friend_circle_record_handler "gobee/internal/handlers/friend_circle_record"
 	friend_circle_rule_handler "gobee/internal/handlers/friend_circle_rule"
 	initialize_handler "gobee/internal/handlers/initialize"
 	paychannel_handler "gobee/internal/handlers/pay_channel"
@@ -103,6 +104,7 @@ func Initialize(router *fiber.App) {
 			}
 			userApi := apiV1.Group("/user")
 			{
+				userApi.Get("/profile", user_handler.GetUserProfile).Name("userProfile")
 				userApi.Get("/list", user_handler.ListUser).Name("userList")
 				userApi.Get("/page", user_handler.ListUserPage).Name("userPage")
 				userApi.Post("/create", user_handler.CreateUser).Name("userCreate")
@@ -176,6 +178,10 @@ func Initialize(router *fiber.App) {
 				friendCircleRuleApi.Post("/create", friend_circle_rule_handler.CreateFriendCircleRule).Name("friendCiecleRuleCreate")
 				friendCircleRuleApi.Put("/update/:id", friend_circle_rule_handler.UpdateFriendCircleRule).Name("friendCiecleRuleUpdate")
 				friendCircleRuleApi.Delete("/delete/:id", friend_circle_rule_handler.DeleteFriendCircleRule).Name("friendCiecleRuleDelete")
+			}
+			friendCircleRecordApi := apiV1.Group("/friend-circle-record")
+			{
+				friendCircleRecordApi.Get("/page", friend_circle_record_handler.ListFriendCircleRecordPage).Name("friendCircleRecordPage")
 			}
 
 		}

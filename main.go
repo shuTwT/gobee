@@ -12,6 +12,7 @@ import (
 	_ "gobee/docs"
 )
 
+//go:embed views
 //go:embed assets/moduleDefs
 var moduleDefs embed.FS
 

@@ -49,6 +49,7 @@ const editorConfig:Partial<IEditorConfig> = {
   placeholder: '请输入内容...',
  }
 
+
 const handleEditorChange = (editor: IDomEditor) => {
   const headers = editor.getElemsByTypePrefix('header')
     catalogHtml.value = headers.map(header => {
@@ -170,7 +171,7 @@ onBeforeUnmount(() => {
   --editor-wrapper-height: calc(
     100vh - var(--pro-layout-footer-height) - var(--pro-layout-nav-height) - 48px
   );
-  --editor-height: calc(var(--editor-wrapper-height) - 42px);
+  --editor-height: calc(var(--editor-wrapper-height) - 83px);
   height: var(--editor-wrapper-height);
 }
 </style>
