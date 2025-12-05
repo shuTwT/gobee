@@ -123,7 +123,7 @@ func init() {
 	// comment.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	comment.UpdateDefaultUpdatedAt = commentDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// commentDescContent is the schema descriptor for content field.
-	commentDescContent := commentFields[2].Descriptor()
+	commentDescContent := commentFields[4].Descriptor()
 	// comment.ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	comment.ContentValidator = func() func(string) error {
 		validators := commentDescContent.Validators
@@ -140,16 +140,20 @@ func init() {
 			return nil
 		}
 	}()
+	// commentDescStatus is the schema descriptor for status field.
+	commentDescStatus := commentFields[6].Descriptor()
+	// comment.DefaultStatus holds the default value on creation for the status field.
+	comment.DefaultStatus = commentDescStatus.Default.(int)
 	// commentDescIPAddress is the schema descriptor for ip_address field.
-	commentDescIPAddress := commentFields[6].Descriptor()
+	commentDescIPAddress := commentFields[8].Descriptor()
 	// comment.IPAddressValidator is a validator for the "ip_address" field. It is called by the builders before save.
 	comment.IPAddressValidator = commentDescIPAddress.Validators[0].(func(string) error)
 	// commentDescIPLocation is the schema descriptor for ip_location field.
-	commentDescIPLocation := commentFields[7].Descriptor()
+	commentDescIPLocation := commentFields[9].Descriptor()
 	// comment.IPLocationValidator is a validator for the "ip_location" field. It is called by the builders before save.
 	comment.IPLocationValidator = commentDescIPLocation.Validators[0].(func(string) error)
 	// commentDescPinned is the schema descriptor for pinned field.
-	commentDescPinned := commentFields[8].Descriptor()
+	commentDescPinned := commentFields[10].Descriptor()
 	// comment.DefaultPinned holds the default value on creation for the pinned field.
 	comment.DefaultPinned = commentDescPinned.Default.(bool)
 	flinkMixin := schema.FLink{}.Mixin()

@@ -56,6 +56,8 @@ func Initialize(router *fiber.App) {
 
 			// 系统设置接口
 			apiV1.Get("/settings", setting_handler.GetSettings)
+			apiV1.All("/twikoo", comment_handler.HandleTwikoo).Name("twikoo")
+			apiV1.Get("/comment/recent", comment_handler.RecentComment).Name("recentComment")
 			// 登录身份验证中间件
 			apiV1.Use(middleware.Protected())
 

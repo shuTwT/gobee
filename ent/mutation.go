@@ -2215,6 +2215,9 @@ type CommentMutation struct {
 	addpost_id    *int
 	page_id       *int
 	addpage_id    *int
+	url           *string
+	parent_id     *int
+	addparent_id  *int
 	content       *string
 	user_id       *int
 	adduser_id    *int
@@ -2424,7 +2427,7 @@ func (m *CommentMutation) PostID() (r int, exists bool) {
 // OldPostID returns the old "post_id" field's value of the Comment entity.
 // If the Comment object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommentMutation) OldPostID(ctx context.Context) (v int, err error) {
+func (m *CommentMutation) OldPostID(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPostID is only allowed on UpdateOne operations")
 	}
@@ -2456,10 +2459,24 @@ func (m *CommentMutation) AddedPostID() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearPostID clears the value of the "post_id" field.
+func (m *CommentMutation) ClearPostID() {
+	m.post_id = nil
+	m.addpost_id = nil
+	m.clearedFields[comment.FieldPostID] = struct{}{}
+}
+
+// PostIDCleared returns if the "post_id" field was cleared in this mutation.
+func (m *CommentMutation) PostIDCleared() bool {
+	_, ok := m.clearedFields[comment.FieldPostID]
+	return ok
+}
+
 // ResetPostID resets all changes to the "post_id" field.
 func (m *CommentMutation) ResetPostID() {
 	m.post_id = nil
 	m.addpost_id = nil
+	delete(m.clearedFields, comment.FieldPostID)
 }
 
 // SetPageID sets the "page_id" field.
@@ -2480,7 +2497,7 @@ func (m *CommentMutation) PageID() (r int, exists bool) {
 // OldPageID returns the old "page_id" field's value of the Comment entity.
 // If the Comment object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommentMutation) OldPageID(ctx context.Context) (v int, err error) {
+func (m *CommentMutation) OldPageID(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPageID is only allowed on UpdateOne operations")
 	}
@@ -2512,10 +2529,143 @@ func (m *CommentMutation) AddedPageID() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearPageID clears the value of the "page_id" field.
+func (m *CommentMutation) ClearPageID() {
+	m.page_id = nil
+	m.addpage_id = nil
+	m.clearedFields[comment.FieldPageID] = struct{}{}
+}
+
+// PageIDCleared returns if the "page_id" field was cleared in this mutation.
+func (m *CommentMutation) PageIDCleared() bool {
+	_, ok := m.clearedFields[comment.FieldPageID]
+	return ok
+}
+
 // ResetPageID resets all changes to the "page_id" field.
 func (m *CommentMutation) ResetPageID() {
 	m.page_id = nil
 	m.addpage_id = nil
+	delete(m.clearedFields, comment.FieldPageID)
+}
+
+// SetURL sets the "url" field.
+func (m *CommentMutation) SetURL(s string) {
+	m.url = &s
+}
+
+// URL returns the value of the "url" field in the mutation.
+func (m *CommentMutation) URL() (r string, exists bool) {
+	v := m.url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURL returns the old "url" field's value of the Comment entity.
+// If the Comment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentMutation) OldURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURL: %w", err)
+	}
+	return oldValue.URL, nil
+}
+
+// ClearURL clears the value of the "url" field.
+func (m *CommentMutation) ClearURL() {
+	m.url = nil
+	m.clearedFields[comment.FieldURL] = struct{}{}
+}
+
+// URLCleared returns if the "url" field was cleared in this mutation.
+func (m *CommentMutation) URLCleared() bool {
+	_, ok := m.clearedFields[comment.FieldURL]
+	return ok
+}
+
+// ResetURL resets all changes to the "url" field.
+func (m *CommentMutation) ResetURL() {
+	m.url = nil
+	delete(m.clearedFields, comment.FieldURL)
+}
+
+// SetParentID sets the "parent_id" field.
+func (m *CommentMutation) SetParentID(i int) {
+	m.parent_id = &i
+	m.addparent_id = nil
+}
+
+// ParentID returns the value of the "parent_id" field in the mutation.
+func (m *CommentMutation) ParentID() (r int, exists bool) {
+	v := m.parent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldParentID returns the old "parent_id" field's value of the Comment entity.
+// If the Comment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentMutation) OldParentID(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldParentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldParentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldParentID: %w", err)
+	}
+	return oldValue.ParentID, nil
+}
+
+// AddParentID adds i to the "parent_id" field.
+func (m *CommentMutation) AddParentID(i int) {
+	if m.addparent_id != nil {
+		*m.addparent_id += i
+	} else {
+		m.addparent_id = &i
+	}
+}
+
+// AddedParentID returns the value that was added to the "parent_id" field in this mutation.
+func (m *CommentMutation) AddedParentID() (r int, exists bool) {
+	v := m.addparent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (m *CommentMutation) ClearParentID() {
+	m.parent_id = nil
+	m.addparent_id = nil
+	m.clearedFields[comment.FieldParentID] = struct{}{}
+}
+
+// ParentIDCleared returns if the "parent_id" field was cleared in this mutation.
+func (m *CommentMutation) ParentIDCleared() bool {
+	_, ok := m.clearedFields[comment.FieldParentID]
+	return ok
+}
+
+// ResetParentID resets all changes to the "parent_id" field.
+func (m *CommentMutation) ResetParentID() {
+	m.parent_id = nil
+	m.addparent_id = nil
+	delete(m.clearedFields, comment.FieldParentID)
 }
 
 // SetContent sets the "content" field.
@@ -2572,7 +2722,7 @@ func (m *CommentMutation) UserID() (r int, exists bool) {
 // OldUserID returns the old "user_id" field's value of the Comment entity.
 // If the Comment object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommentMutation) OldUserID(ctx context.Context) (v int, err error) {
+func (m *CommentMutation) OldUserID(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -2604,10 +2754,24 @@ func (m *CommentMutation) AddedUserID() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearUserID clears the value of the "user_id" field.
+func (m *CommentMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[comment.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *CommentMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[comment.FieldUserID]
+	return ok
+}
+
 // ResetUserID resets all changes to the "user_id" field.
 func (m *CommentMutation) ResetUserID() {
 	m.user_id = nil
 	m.adduser_id = nil
+	delete(m.clearedFields, comment.FieldUserID)
 }
 
 // SetStatus sets the "status" field.
@@ -2870,7 +3034,7 @@ func (m *CommentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CommentMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, comment.FieldCreatedAt)
 	}
@@ -2882,6 +3046,12 @@ func (m *CommentMutation) Fields() []string {
 	}
 	if m.page_id != nil {
 		fields = append(fields, comment.FieldPageID)
+	}
+	if m.url != nil {
+		fields = append(fields, comment.FieldURL)
+	}
+	if m.parent_id != nil {
+		fields = append(fields, comment.FieldParentID)
 	}
 	if m.content != nil {
 		fields = append(fields, comment.FieldContent)
@@ -2920,6 +3090,10 @@ func (m *CommentMutation) Field(name string) (ent.Value, bool) {
 		return m.PostID()
 	case comment.FieldPageID:
 		return m.PageID()
+	case comment.FieldURL:
+		return m.URL()
+	case comment.FieldParentID:
+		return m.ParentID()
 	case comment.FieldContent:
 		return m.Content()
 	case comment.FieldUserID:
@@ -2951,6 +3125,10 @@ func (m *CommentMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldPostID(ctx)
 	case comment.FieldPageID:
 		return m.OldPageID(ctx)
+	case comment.FieldURL:
+		return m.OldURL(ctx)
+	case comment.FieldParentID:
+		return m.OldParentID(ctx)
 	case comment.FieldContent:
 		return m.OldContent(ctx)
 	case comment.FieldUserID:
@@ -3001,6 +3179,20 @@ func (m *CommentMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPageID(v)
+		return nil
+	case comment.FieldURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURL(v)
+		return nil
+	case comment.FieldParentID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetParentID(v)
 		return nil
 	case comment.FieldContent:
 		v, ok := value.(string)
@@ -3065,6 +3257,9 @@ func (m *CommentMutation) AddedFields() []string {
 	if m.addpage_id != nil {
 		fields = append(fields, comment.FieldPageID)
 	}
+	if m.addparent_id != nil {
+		fields = append(fields, comment.FieldParentID)
+	}
 	if m.adduser_id != nil {
 		fields = append(fields, comment.FieldUserID)
 	}
@@ -3083,6 +3278,8 @@ func (m *CommentMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedPostID()
 	case comment.FieldPageID:
 		return m.AddedPageID()
+	case comment.FieldParentID:
+		return m.AddedParentID()
 	case comment.FieldUserID:
 		return m.AddedUserID()
 	case comment.FieldStatus:
@@ -3110,6 +3307,13 @@ func (m *CommentMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddPageID(v)
 		return nil
+	case comment.FieldParentID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddParentID(v)
+		return nil
 	case comment.FieldUserID:
 		v, ok := value.(int)
 		if !ok {
@@ -3132,6 +3336,21 @@ func (m *CommentMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *CommentMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(comment.FieldPostID) {
+		fields = append(fields, comment.FieldPostID)
+	}
+	if m.FieldCleared(comment.FieldPageID) {
+		fields = append(fields, comment.FieldPageID)
+	}
+	if m.FieldCleared(comment.FieldURL) {
+		fields = append(fields, comment.FieldURL)
+	}
+	if m.FieldCleared(comment.FieldParentID) {
+		fields = append(fields, comment.FieldParentID)
+	}
+	if m.FieldCleared(comment.FieldUserID) {
+		fields = append(fields, comment.FieldUserID)
+	}
 	if m.FieldCleared(comment.FieldUserAgent) {
 		fields = append(fields, comment.FieldUserAgent)
 	}
@@ -3152,6 +3371,21 @@ func (m *CommentMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *CommentMutation) ClearField(name string) error {
 	switch name {
+	case comment.FieldPostID:
+		m.ClearPostID()
+		return nil
+	case comment.FieldPageID:
+		m.ClearPageID()
+		return nil
+	case comment.FieldURL:
+		m.ClearURL()
+		return nil
+	case comment.FieldParentID:
+		m.ClearParentID()
+		return nil
+	case comment.FieldUserID:
+		m.ClearUserID()
+		return nil
 	case comment.FieldUserAgent:
 		m.ClearUserAgent()
 		return nil
@@ -3177,6 +3411,12 @@ func (m *CommentMutation) ResetField(name string) error {
 		return nil
 	case comment.FieldPageID:
 		m.ResetPageID()
+		return nil
+	case comment.FieldURL:
+		m.ResetURL()
+		return nil
+	case comment.FieldParentID:
+		m.ResetParentID()
 		return nil
 	case comment.FieldContent:
 		m.ResetContent()

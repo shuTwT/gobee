@@ -55,6 +55,12 @@ func (_u *CommentUpdate) AddPostID(v int) *CommentUpdate {
 	return _u
 }
 
+// ClearPostID clears the value of the "post_id" field.
+func (_u *CommentUpdate) ClearPostID() *CommentUpdate {
+	_u.mutation.ClearPostID()
+	return _u
+}
+
 // SetPageID sets the "page_id" field.
 func (_u *CommentUpdate) SetPageID(v int) *CommentUpdate {
 	_u.mutation.ResetPageID()
@@ -73,6 +79,59 @@ func (_u *CommentUpdate) SetNillablePageID(v *int) *CommentUpdate {
 // AddPageID adds value to the "page_id" field.
 func (_u *CommentUpdate) AddPageID(v int) *CommentUpdate {
 	_u.mutation.AddPageID(v)
+	return _u
+}
+
+// ClearPageID clears the value of the "page_id" field.
+func (_u *CommentUpdate) ClearPageID() *CommentUpdate {
+	_u.mutation.ClearPageID()
+	return _u
+}
+
+// SetURL sets the "url" field.
+func (_u *CommentUpdate) SetURL(v string) *CommentUpdate {
+	_u.mutation.SetURL(v)
+	return _u
+}
+
+// SetNillableURL sets the "url" field if the given value is not nil.
+func (_u *CommentUpdate) SetNillableURL(v *string) *CommentUpdate {
+	if v != nil {
+		_u.SetURL(*v)
+	}
+	return _u
+}
+
+// ClearURL clears the value of the "url" field.
+func (_u *CommentUpdate) ClearURL() *CommentUpdate {
+	_u.mutation.ClearURL()
+	return _u
+}
+
+// SetParentID sets the "parent_id" field.
+func (_u *CommentUpdate) SetParentID(v int) *CommentUpdate {
+	_u.mutation.ResetParentID()
+	_u.mutation.SetParentID(v)
+	return _u
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (_u *CommentUpdate) SetNillableParentID(v *int) *CommentUpdate {
+	if v != nil {
+		_u.SetParentID(*v)
+	}
+	return _u
+}
+
+// AddParentID adds value to the "parent_id" field.
+func (_u *CommentUpdate) AddParentID(v int) *CommentUpdate {
+	_u.mutation.AddParentID(v)
+	return _u
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (_u *CommentUpdate) ClearParentID() *CommentUpdate {
+	_u.mutation.ClearParentID()
 	return _u
 }
 
@@ -108,6 +167,12 @@ func (_u *CommentUpdate) SetNillableUserID(v *int) *CommentUpdate {
 // AddUserID adds value to the "user_id" field.
 func (_u *CommentUpdate) AddUserID(v int) *CommentUpdate {
 	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *CommentUpdate) ClearUserID() *CommentUpdate {
+	_u.mutation.ClearUserID()
 	return _u
 }
 
@@ -282,11 +347,32 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedPostID(); ok {
 		_spec.AddField(comment.FieldPostID, field.TypeInt, value)
 	}
+	if _u.mutation.PostIDCleared() {
+		_spec.ClearField(comment.FieldPostID, field.TypeInt)
+	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(comment.FieldPageID, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
 		_spec.AddField(comment.FieldPageID, field.TypeInt, value)
+	}
+	if _u.mutation.PageIDCleared() {
+		_spec.ClearField(comment.FieldPageID, field.TypeInt)
+	}
+	if value, ok := _u.mutation.URL(); ok {
+		_spec.SetField(comment.FieldURL, field.TypeString, value)
+	}
+	if _u.mutation.URLCleared() {
+		_spec.ClearField(comment.FieldURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.ParentID(); ok {
+		_spec.SetField(comment.FieldParentID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedParentID(); ok {
+		_spec.AddField(comment.FieldParentID, field.TypeInt, value)
+	}
+	if _u.mutation.ParentIDCleared() {
+		_spec.ClearField(comment.FieldParentID, field.TypeInt)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(comment.FieldContent, field.TypeString, value)
@@ -296,6 +382,9 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
 		_spec.AddField(comment.FieldUserID, field.TypeInt, value)
+	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(comment.FieldUserID, field.TypeInt)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(comment.FieldStatus, field.TypeInt, value)
@@ -368,6 +457,12 @@ func (_u *CommentUpdateOne) AddPostID(v int) *CommentUpdateOne {
 	return _u
 }
 
+// ClearPostID clears the value of the "post_id" field.
+func (_u *CommentUpdateOne) ClearPostID() *CommentUpdateOne {
+	_u.mutation.ClearPostID()
+	return _u
+}
+
 // SetPageID sets the "page_id" field.
 func (_u *CommentUpdateOne) SetPageID(v int) *CommentUpdateOne {
 	_u.mutation.ResetPageID()
@@ -386,6 +481,59 @@ func (_u *CommentUpdateOne) SetNillablePageID(v *int) *CommentUpdateOne {
 // AddPageID adds value to the "page_id" field.
 func (_u *CommentUpdateOne) AddPageID(v int) *CommentUpdateOne {
 	_u.mutation.AddPageID(v)
+	return _u
+}
+
+// ClearPageID clears the value of the "page_id" field.
+func (_u *CommentUpdateOne) ClearPageID() *CommentUpdateOne {
+	_u.mutation.ClearPageID()
+	return _u
+}
+
+// SetURL sets the "url" field.
+func (_u *CommentUpdateOne) SetURL(v string) *CommentUpdateOne {
+	_u.mutation.SetURL(v)
+	return _u
+}
+
+// SetNillableURL sets the "url" field if the given value is not nil.
+func (_u *CommentUpdateOne) SetNillableURL(v *string) *CommentUpdateOne {
+	if v != nil {
+		_u.SetURL(*v)
+	}
+	return _u
+}
+
+// ClearURL clears the value of the "url" field.
+func (_u *CommentUpdateOne) ClearURL() *CommentUpdateOne {
+	_u.mutation.ClearURL()
+	return _u
+}
+
+// SetParentID sets the "parent_id" field.
+func (_u *CommentUpdateOne) SetParentID(v int) *CommentUpdateOne {
+	_u.mutation.ResetParentID()
+	_u.mutation.SetParentID(v)
+	return _u
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (_u *CommentUpdateOne) SetNillableParentID(v *int) *CommentUpdateOne {
+	if v != nil {
+		_u.SetParentID(*v)
+	}
+	return _u
+}
+
+// AddParentID adds value to the "parent_id" field.
+func (_u *CommentUpdateOne) AddParentID(v int) *CommentUpdateOne {
+	_u.mutation.AddParentID(v)
+	return _u
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (_u *CommentUpdateOne) ClearParentID() *CommentUpdateOne {
+	_u.mutation.ClearParentID()
 	return _u
 }
 
@@ -421,6 +569,12 @@ func (_u *CommentUpdateOne) SetNillableUserID(v *int) *CommentUpdateOne {
 // AddUserID adds value to the "user_id" field.
 func (_u *CommentUpdateOne) AddUserID(v int) *CommentUpdateOne {
 	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *CommentUpdateOne) ClearUserID() *CommentUpdateOne {
+	_u.mutation.ClearUserID()
 	return _u
 }
 
@@ -625,11 +779,32 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 	if value, ok := _u.mutation.AddedPostID(); ok {
 		_spec.AddField(comment.FieldPostID, field.TypeInt, value)
 	}
+	if _u.mutation.PostIDCleared() {
+		_spec.ClearField(comment.FieldPostID, field.TypeInt)
+	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(comment.FieldPageID, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
 		_spec.AddField(comment.FieldPageID, field.TypeInt, value)
+	}
+	if _u.mutation.PageIDCleared() {
+		_spec.ClearField(comment.FieldPageID, field.TypeInt)
+	}
+	if value, ok := _u.mutation.URL(); ok {
+		_spec.SetField(comment.FieldURL, field.TypeString, value)
+	}
+	if _u.mutation.URLCleared() {
+		_spec.ClearField(comment.FieldURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.ParentID(); ok {
+		_spec.SetField(comment.FieldParentID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedParentID(); ok {
+		_spec.AddField(comment.FieldParentID, field.TypeInt, value)
+	}
+	if _u.mutation.ParentIDCleared() {
+		_spec.ClearField(comment.FieldParentID, field.TypeInt)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(comment.FieldContent, field.TypeString, value)
@@ -639,6 +814,9 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
 		_spec.AddField(comment.FieldUserID, field.TypeInt, value)
+	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(comment.FieldUserID, field.TypeInt)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(comment.FieldStatus, field.TypeInt, value)

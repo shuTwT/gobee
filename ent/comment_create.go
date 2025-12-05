@@ -54,9 +54,53 @@ func (_c *CommentCreate) SetPostID(v int) *CommentCreate {
 	return _c
 }
 
+// SetNillablePostID sets the "post_id" field if the given value is not nil.
+func (_c *CommentCreate) SetNillablePostID(v *int) *CommentCreate {
+	if v != nil {
+		_c.SetPostID(*v)
+	}
+	return _c
+}
+
 // SetPageID sets the "page_id" field.
 func (_c *CommentCreate) SetPageID(v int) *CommentCreate {
 	_c.mutation.SetPageID(v)
+	return _c
+}
+
+// SetNillablePageID sets the "page_id" field if the given value is not nil.
+func (_c *CommentCreate) SetNillablePageID(v *int) *CommentCreate {
+	if v != nil {
+		_c.SetPageID(*v)
+	}
+	return _c
+}
+
+// SetURL sets the "url" field.
+func (_c *CommentCreate) SetURL(v string) *CommentCreate {
+	_c.mutation.SetURL(v)
+	return _c
+}
+
+// SetNillableURL sets the "url" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableURL(v *string) *CommentCreate {
+	if v != nil {
+		_c.SetURL(*v)
+	}
+	return _c
+}
+
+// SetParentID sets the "parent_id" field.
+func (_c *CommentCreate) SetParentID(v int) *CommentCreate {
+	_c.mutation.SetParentID(v)
+	return _c
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableParentID(v *int) *CommentCreate {
+	if v != nil {
+		_c.SetParentID(*v)
+	}
 	return _c
 }
 
@@ -72,9 +116,25 @@ func (_c *CommentCreate) SetUserID(v int) *CommentCreate {
 	return _c
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableUserID(v *int) *CommentCreate {
+	if v != nil {
+		_c.SetUserID(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *CommentCreate) SetStatus(v int) *CommentCreate {
 	_c.mutation.SetStatus(v)
+	return _c
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableStatus(v *int) *CommentCreate {
+	if v != nil {
+		_c.SetStatus(*v)
+	}
 	return _c
 }
 
@@ -175,6 +235,10 @@ func (_c *CommentCreate) defaults() {
 		v := comment.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := _c.mutation.Status(); !ok {
+		v := comment.DefaultStatus
+		_c.mutation.SetStatus(v)
+	}
 	if _, ok := _c.mutation.Pinned(); !ok {
 		v := comment.DefaultPinned
 		_c.mutation.SetPinned(v)
@@ -189,12 +253,6 @@ func (_c *CommentCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Comment.updated_at"`)}
 	}
-	if _, ok := _c.mutation.PostID(); !ok {
-		return &ValidationError{Name: "post_id", err: errors.New(`ent: missing required field "Comment.post_id"`)}
-	}
-	if _, ok := _c.mutation.PageID(); !ok {
-		return &ValidationError{Name: "page_id", err: errors.New(`ent: missing required field "Comment.page_id"`)}
-	}
 	if _, ok := _c.mutation.Content(); !ok {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Comment.content"`)}
 	}
@@ -202,9 +260,6 @@ func (_c *CommentCreate) check() error {
 		if err := comment.ContentValidator(v); err != nil {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Comment.content": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Comment.user_id"`)}
 	}
 	if _, ok := _c.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Comment.status"`)}
@@ -267,11 +322,19 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.PostID(); ok {
 		_spec.SetField(comment.FieldPostID, field.TypeInt, value)
-		_node.PostID = value
+		_node.PostID = &value
 	}
 	if value, ok := _c.mutation.PageID(); ok {
 		_spec.SetField(comment.FieldPageID, field.TypeInt, value)
-		_node.PageID = value
+		_node.PageID = &value
+	}
+	if value, ok := _c.mutation.URL(); ok {
+		_spec.SetField(comment.FieldURL, field.TypeString, value)
+		_node.URL = value
+	}
+	if value, ok := _c.mutation.ParentID(); ok {
+		_spec.SetField(comment.FieldParentID, field.TypeInt, value)
+		_node.ParentID = &value
 	}
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(comment.FieldContent, field.TypeString, value)
@@ -279,7 +342,7 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.UserID(); ok {
 		_spec.SetField(comment.FieldUserID, field.TypeInt, value)
-		_node.UserID = value
+		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(comment.FieldStatus, field.TypeInt, value)

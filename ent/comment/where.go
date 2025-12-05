@@ -74,6 +74,16 @@ func PageID(v int) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldPageID, v))
 }
 
+// URL applies equality check predicate on the "url" field. It's identical to URLEQ.
+func URL(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldURL, v))
+}
+
+// ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
+func ParentID(v int) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldParentID, v))
+}
+
 // Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
 func Content(v string) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldContent, v))
@@ -229,6 +239,16 @@ func PostIDLTE(v int) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldPostID, v))
 }
 
+// PostIDIsNil applies the IsNil predicate on the "post_id" field.
+func PostIDIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldPostID))
+}
+
+// PostIDNotNil applies the NotNil predicate on the "post_id" field.
+func PostIDNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldPostID))
+}
+
 // PageIDEQ applies the EQ predicate on the "page_id" field.
 func PageIDEQ(v int) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldPageID, v))
@@ -267,6 +287,141 @@ func PageIDLT(v int) predicate.Comment {
 // PageIDLTE applies the LTE predicate on the "page_id" field.
 func PageIDLTE(v int) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldPageID, v))
+}
+
+// PageIDIsNil applies the IsNil predicate on the "page_id" field.
+func PageIDIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldPageID))
+}
+
+// PageIDNotNil applies the NotNil predicate on the "page_id" field.
+func PageIDNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldPageID))
+}
+
+// URLEQ applies the EQ predicate on the "url" field.
+func URLEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldURL, v))
+}
+
+// URLNEQ applies the NEQ predicate on the "url" field.
+func URLNEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldURL, v))
+}
+
+// URLIn applies the In predicate on the "url" field.
+func URLIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldURL, vs...))
+}
+
+// URLNotIn applies the NotIn predicate on the "url" field.
+func URLNotIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldURL, vs...))
+}
+
+// URLGT applies the GT predicate on the "url" field.
+func URLGT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldURL, v))
+}
+
+// URLGTE applies the GTE predicate on the "url" field.
+func URLGTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldURL, v))
+}
+
+// URLLT applies the LT predicate on the "url" field.
+func URLLT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldURL, v))
+}
+
+// URLLTE applies the LTE predicate on the "url" field.
+func URLLTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldURL, v))
+}
+
+// URLContains applies the Contains predicate on the "url" field.
+func URLContains(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContains(FieldURL, v))
+}
+
+// URLHasPrefix applies the HasPrefix predicate on the "url" field.
+func URLHasPrefix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasPrefix(FieldURL, v))
+}
+
+// URLHasSuffix applies the HasSuffix predicate on the "url" field.
+func URLHasSuffix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasSuffix(FieldURL, v))
+}
+
+// URLIsNil applies the IsNil predicate on the "url" field.
+func URLIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldURL))
+}
+
+// URLNotNil applies the NotNil predicate on the "url" field.
+func URLNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldURL))
+}
+
+// URLEqualFold applies the EqualFold predicate on the "url" field.
+func URLEqualFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEqualFold(FieldURL, v))
+}
+
+// URLContainsFold applies the ContainsFold predicate on the "url" field.
+func URLContainsFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContainsFold(FieldURL, v))
+}
+
+// ParentIDEQ applies the EQ predicate on the "parent_id" field.
+func ParentIDEQ(v int) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldParentID, v))
+}
+
+// ParentIDNEQ applies the NEQ predicate on the "parent_id" field.
+func ParentIDNEQ(v int) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldParentID, v))
+}
+
+// ParentIDIn applies the In predicate on the "parent_id" field.
+func ParentIDIn(vs ...int) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldParentID, vs...))
+}
+
+// ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
+func ParentIDNotIn(vs ...int) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldParentID, vs...))
+}
+
+// ParentIDGT applies the GT predicate on the "parent_id" field.
+func ParentIDGT(v int) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldParentID, v))
+}
+
+// ParentIDGTE applies the GTE predicate on the "parent_id" field.
+func ParentIDGTE(v int) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldParentID, v))
+}
+
+// ParentIDLT applies the LT predicate on the "parent_id" field.
+func ParentIDLT(v int) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldParentID, v))
+}
+
+// ParentIDLTE applies the LTE predicate on the "parent_id" field.
+func ParentIDLTE(v int) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldParentID, v))
+}
+
+// ParentIDIsNil applies the IsNil predicate on the "parent_id" field.
+func ParentIDIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldParentID))
+}
+
+// ParentIDNotNil applies the NotNil predicate on the "parent_id" field.
+func ParentIDNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldParentID))
 }
 
 // ContentEQ applies the EQ predicate on the "content" field.
@@ -372,6 +527,16 @@ func UserIDLT(v int) predicate.Comment {
 // UserIDLTE applies the LTE predicate on the "user_id" field.
 func UserIDLTE(v int) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldUserID, v))
+}
+
+// UserIDIsNil applies the IsNil predicate on the "user_id" field.
+func UserIDIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldUserID))
+}
+
+// UserIDNotNil applies the NotNil predicate on the "user_id" field.
+func UserIDNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldUserID))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.

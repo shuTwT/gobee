@@ -21,6 +21,10 @@ const (
 	FieldPostID = "post_id"
 	// FieldPageID holds the string denoting the page_id field in the database.
 	FieldPageID = "page_id"
+	// FieldURL holds the string denoting the url field in the database.
+	FieldURL = "url"
+	// FieldParentID holds the string denoting the parent_id field in the database.
+	FieldParentID = "parent_id"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
 	// FieldUserID holds the string denoting the user_id field in the database.
@@ -46,6 +50,8 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldPostID,
 	FieldPageID,
+	FieldURL,
+	FieldParentID,
 	FieldContent,
 	FieldUserID,
 	FieldStatus,
@@ -74,6 +80,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	ContentValidator func(string) error
+	// DefaultStatus holds the default value on creation for the "status" field.
+	DefaultStatus int
 	// IPAddressValidator is a validator for the "ip_address" field. It is called by the builders before save.
 	IPAddressValidator func(string) error
 	// IPLocationValidator is a validator for the "ip_location" field. It is called by the builders before save.
@@ -108,6 +116,16 @@ func ByPostID(opts ...sql.OrderTermOption) OrderOption {
 // ByPageID orders the results by the page_id field.
 func ByPageID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPageID, opts...).ToFunc()
+}
+
+// ByURL orders the results by the url field.
+func ByURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldURL, opts...).ToFunc()
+}
+
+// ByParentID orders the results by the parent_id field.
+func ByParentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldParentID, opts...).ToFunc()
 }
 
 // ByContent orders the results by the content field.

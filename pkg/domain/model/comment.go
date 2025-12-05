@@ -9,6 +9,7 @@ type Comment struct {
 	UpdatedAt  time.Time `json:"updated_at"`
 	PostID     int       `json:"post_id"`
 	PageID     int       `json:"page_id"`
+	URL        string    `json:"url"`
 	Content    string    `json:"content"`
 	UserID     int       `json:"user_id"`
 	Status     int       `json:"status"`
@@ -23,6 +24,7 @@ type Comment struct {
 type CommentCreateReq struct {
 	PostID  int    `json:"post_id" validate:"required_without=PageID"`
 	PageID  int    `json:"page_id" validate:"required_without=PostID"`
+	URL     string `json:"url"`
 	Content string `json:"content" validate:"required,max=1024"`
 	UserID  int    `json:"user_id" validate:"required"`
 }

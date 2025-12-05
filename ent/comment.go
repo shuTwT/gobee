@@ -22,13 +22,17 @@ type Comment struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// 评论的帖子ID
-	PostID int `json:"post_id,omitempty"`
+	PostID *int `json:"post_id,omitempty"`
 	// 评论的页面ID
-	PageID int `json:"page_id,omitempty"`
+	PageID *int `json:"page_id,omitempty"`
+	// 评论的页面URL
+	URL string `json:"url,omitempty"`
+	// 父评论ID
+	ParentID *int `json:"parent_id,omitempty"`
 	// 评论内容
 	Content string `json:"content,omitempty"`
 	// 评论者用户ID
-	UserID int `json:"user_id,omitempty"`
+	UserID *int `json:"user_id,omitempty"`
 	// 状态(1未审核,2已审核)
 	Status int `json:"status,omitempty"`
 	// 评论者用户代理
@@ -49,9 +53,9 @@ func (*Comment) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case comment.FieldPinned:
 			values[i] = new(sql.NullBool)
-		case comment.FieldID, comment.FieldPostID, comment.FieldPageID, comment.FieldUserID, comment.FieldStatus:
+		case comment.FieldID, comment.FieldPostID, comment.FieldPageID, comment.FieldParentID, comment.FieldUserID, comment.FieldStatus:
 			values[i] = new(sql.NullInt64)
-		case comment.FieldContent, comment.FieldUserAgent, comment.FieldIPAddress, comment.FieldIPLocation:
+		case comment.FieldURL, comment.FieldContent, comment.FieldUserAgent, comment.FieldIPAddress, comment.FieldIPLocation:
 			values[i] = new(sql.NullString)
 		case comment.FieldCreatedAt, comment.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -92,13 +96,28 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field post_id", values[i])
 			} else if value.Valid {
-				_m.PostID = int(value.Int64)
+				_m.PostID = new(int)
+				*_m.PostID = int(value.Int64)
 			}
 		case comment.FieldPageID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field page_id", values[i])
 			} else if value.Valid {
-				_m.PageID = int(value.Int64)
+				_m.PageID = new(int)
+				*_m.PageID = int(value.Int64)
+			}
+		case comment.FieldURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field url", values[i])
+			} else if value.Valid {
+				_m.URL = value.String
+			}
+		case comment.FieldParentID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
+			} else if value.Valid {
+				_m.ParentID = new(int)
+				*_m.ParentID = int(value.Int64)
 			}
 		case comment.FieldContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -110,7 +129,8 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				_m.UserID = int(value.Int64)
+				_m.UserID = new(int)
+				*_m.UserID = int(value.Int64)
 			}
 		case comment.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -186,17 +206,31 @@ func (_m *Comment) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("post_id=")
-	builder.WriteString(fmt.Sprintf("%v", _m.PostID))
+	if v := _m.PostID; v != nil {
+		builder.WriteString("post_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
-	builder.WriteString("page_id=")
-	builder.WriteString(fmt.Sprintf("%v", _m.PageID))
+	if v := _m.PageID; v != nil {
+		builder.WriteString("page_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	builder.WriteString("url=")
+	builder.WriteString(_m.URL)
+	builder.WriteString(", ")
+	if v := _m.ParentID; v != nil {
+		builder.WriteString("parent_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("content=")
 	builder.WriteString(_m.Content)
 	builder.WriteString(", ")
-	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
+	if v := _m.UserID; v != nil {
+		builder.WriteString("user_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status))
