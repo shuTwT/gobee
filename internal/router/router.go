@@ -6,6 +6,7 @@ import (
 	api_interface_handler "gobee/internal/handlers/api_interface"
 	auth_handler "gobee/internal/handlers/auth"
 	comment_handler "gobee/internal/handlers/comment"
+	common_handler "gobee/internal/handlers/common"
 	file_handler "gobee/internal/handlers/file"
 	flink_handler "gobee/internal/handlers/flink"
 	flinkgroup_handler "gobee/internal/handlers/flink_group"
@@ -60,6 +61,9 @@ func Initialize(router *fiber.App) {
 			apiV1.Get("/comment/recent", comment_handler.RecentComment).Name("recentComment")
 			// 登录身份验证中间件
 			apiV1.Use(middleware.Protected())
+
+			// 首页统计信息接口
+			apiV1.Get("/statistic", common_handler.GetHomeStatistics).Name("homeStatistic")
 
 			apiV1.Get("/user/personal-access-token", user_handler.GetPersonalAccessTokenList).Name("patList")
 			apiV1.Get("/user/personal-access-token/:id", user_handler.GetPersonalAccessToken).Name("patInfo")

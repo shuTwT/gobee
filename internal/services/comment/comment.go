@@ -96,3 +96,12 @@ func GetRecentComment(c context.Context, pageSize int) ([]*ent.Comment, error) {
 	}
 	return comments, nil
 }
+
+func GetCommentCount(c context.Context) (int, error) {
+	client := database.DB
+	count, err := client.Comment.Query().Count(c)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}

@@ -70,3 +70,12 @@ func CreateUser(req CreateUserRequest) (*ent.User, error) {
 
 	return createdUser, nil
 }
+
+func GetUserCount(c context.Context) (int, error) {
+	client := database.DB
+	count, err := client.User.Query().Count(c)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}

@@ -7,6 +7,8 @@ import (
 	"gobee/pkg/domain/model"
 	"strconv"
 
+	post_service "gobee/internal/services/post"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -57,7 +59,6 @@ func UpdatePostContent(c *fiber.Ctx) error {
 }
 
 func UpdatePostSetting(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -67,18 +68,7 @@ func UpdatePostSetting(c *fiber.Ctx) error {
 	if err = c.BodyParser(&post); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	newPost, err := client.Post.UpdateOneID(id).
-		SetTitle(post.Title).
-		SetCover(post.Cover).
-		SetKeywords(post.Keywords).
-		SetCopyright(post.Copyright).
-		SetAuthor(post.Author).
-		SetStatus(post.Status).
-		SetIsAutogenSummary(post.IsAutogenSummary).
-		SetIsVisible(post.IsVisible).
-		SetIsTipToTop(post.IsTipToTop).
-		SetIsAllowComment(post.IsAllowComment).
-		Save(c.Context())
+	newPost, err := post_service.UpdatePostSetting(c.Context(), id, post)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
