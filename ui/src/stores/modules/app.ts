@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { store } from '..'
 import type { ProLayoutMode } from 'pro-naive-ui'
+import { Locales } from '@/plugins/i18n'
 
 export const useAppStore = defineStore('app', () => {
   const layoutMode = ref<ProLayoutMode>('vertical')
@@ -46,6 +47,8 @@ export const useAppStore = defineStore('app', () => {
    */
   const footerFixed = ref(true)
 
+  const language =ref(Locales.zh)
+
   return {
     isMobile,
     collapsed,
@@ -58,6 +61,7 @@ export const useAppStore = defineStore('app', () => {
     navFixed,
     footerFixed,
     layoutMode,
+    language
   }
 })
 

@@ -41,7 +41,7 @@ const router = createRouter({
   routes: constantRoutes.concat(...(remainingRouter as any)),
 })
 
-const whiteList = ['/login', '/initialize']
+const whiteList = ['/login','/social-login','/redirect','/register', '/initialize']
 
 router.beforeEach((to, _from, next) => {
   const userInfo = useStorageLocal().getItem<DataInfo<number>>(userKey)

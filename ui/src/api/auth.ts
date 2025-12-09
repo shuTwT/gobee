@@ -9,3 +9,7 @@ type LoginRequest = {
 export const passwordLogin = (data: LoginRequest) => {
   return http.request<ApiResponse<any>>('post',`${BASE_URL}/auth/login/password`, {data});
 };
+
+export const socialLogin = (code:string)=>{
+  return http.request<ApiResponse<any>>('post',`${BASE_URL}/auth/login/social`,{data:{code}})
+}

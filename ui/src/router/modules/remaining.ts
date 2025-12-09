@@ -7,7 +7,12 @@ export default [
     component: () => import('@/views/login/index.vue'),
     meta: {},
   },
-
+  {
+    path: '/social-login',
+    name: 'SocialLogin',
+    component: () => import('@/views/login/socialLogin.vue'),
+    meta: {},
+  },
   {
     path: '/error',
     meta: {},

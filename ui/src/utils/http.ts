@@ -1,7 +1,6 @@
 import axios, { AxiosError, type AxiosRequestConfig, type Method } from 'axios'
 import { formatToken, getToken } from './auth'
 import { useUserStoreHook } from '@/stores/modules/user'
-import type { ApiResponse } from '@/api/utils'
 
 
 export type RequestMethods = Extract<
