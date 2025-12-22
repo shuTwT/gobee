@@ -346,6 +346,17 @@ func (h *UserHandlerImpl) GetPersonalAccessTokenList(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", result))
 }
 
+// @Summary 查询个人令牌
+// @Description 查询指定个人令牌的详细信息
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "个人令牌ID"
+// @Success 200 {object} model.PersonalAccessTokenResp
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/users/personal-access-tokens/{id} [get]
 func (h *UserHandlerImpl) GetPersonalAccessToken(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	id, err := strconv.Atoi(c.Params("id"))
@@ -371,7 +382,16 @@ func (h *UserHandlerImpl) GetPersonalAccessToken(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", result))
 }
 
-// 创建 personalAccessToken 个人令牌
+// @Summary 创建 personalAccessToken 个人令牌
+// @Description 创建一个新的个人令牌
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param createReq body model.PersonalAccessTokenCreateReq true "个人令牌创建请求"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/users/personal-access-tokens [post]
 func (h *UserHandlerImpl) CreatePat(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	var createReq *model.PersonalAccessTokenCreateReq
@@ -414,6 +434,17 @@ func (h *UserHandlerImpl) CreatePat(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
+// @Summary 查询用户个人信息
+// @Description 查询指定用户的个人信息
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "用户ID"
+// @Success 200 {object} model.UserProfileResp
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/users/{id}/profile [get]
 func (h *UserHandlerImpl) GetUserProfile(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	client := database.DB

@@ -28,6 +28,15 @@ func NewAlbumPhotoHandlerImpl(client *ent.Client) *AlbumPhotoHandlerImpl {
 	}
 }
 
+// @Summary 查询相册照片列表
+// @Description 查询所有相册照片
+// @Tags album_photos
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=[]ent.AlbumPhoto}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/album_photos [get]
 func (h *AlbumPhotoHandlerImpl) ListAlbumPhoto(c *fiber.Ctx) error {
 	albumPhotos, err := h.client.AlbumPhoto.Query().
 		All(c.Context())
@@ -37,6 +46,17 @@ func (h *AlbumPhotoHandlerImpl) ListAlbumPhoto(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", albumPhotos))
 }
 
+// @Summary 查询相册照片分页列表
+// @Description 查询所有相册照片分页列表
+// @Tags album_photos
+// @Accept json
+// @Produce json
+// @Param page query int false "页码" default(1)
+// @Param size query int false "每页数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.AlbumPhoto]}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/album_photos/page [get]
 func (h *AlbumPhotoHandlerImpl) ListAlbumPhotoPage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
@@ -61,6 +81,16 @@ func (h *AlbumPhotoHandlerImpl) ListAlbumPhotoPage(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
+// @Summary 创建相册照片
+// @Description 创建一个新的相册照片
+// @Tags album_photos
+// @Accept json
+// @Produce json
+// @Param album_photo body model.AlbumPhotoCreateReq true "相册照片信息"
+// @Success 200 {object} model.HttpSuccess{data=model.AlbumPhotoCreateReq}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/album_photos [post]
 func (h *AlbumPhotoHandlerImpl) CreateAlbumPhoto(c *fiber.Ctx) error {
 	var albumPhoto *model.AlbumPhotoCreateReq
 	if err := c.BodyParser(&albumPhoto); err != nil {
@@ -76,6 +106,18 @@ func (h *AlbumPhotoHandlerImpl) CreateAlbumPhoto(c *fiber.Ctx) error {
 	}
 	return c.JSON(model.NewSuccess("success", albumPhoto))
 }
+
+// @Summary 更新相册照片
+// @Description 更新指定相册照片的信息
+// @Tags album_photos
+// @Accept json
+// @Produce json
+// @Param id path string true "相册照片ID"
+// @Param album_photo body model.AlbumPhotoUpdateReq true "相册照片信息"
+// @Success 200 {object} model.HttpSuccess{data=model.AlbumPhotoUpdateReq}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/album_photos/{id} [put]
 func (h *AlbumPhotoHandlerImpl) UpdateAlbumPhoto(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -95,6 +137,17 @@ func (h *AlbumPhotoHandlerImpl) UpdateAlbumPhoto(c *fiber.Ctx) error {
 	}
 	return c.JSON(model.NewSuccess("success", albumPhoto))
 }
+
+// @Summary 查询相册照片
+// @Description 查询指定相册照片的信息
+// @Tags album_photos
+// @Accept json
+// @Produce json
+// @Param id path string true "相册照片ID"
+// @Success 200 {object} model.HttpSuccess{data=ent.AlbumPhoto}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/album_photos/{id} [get]
 func (h *AlbumPhotoHandlerImpl) QueryAlbumPhoto(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -110,6 +163,16 @@ func (h *AlbumPhotoHandlerImpl) QueryAlbumPhoto(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", albumPhoto))
 }
 
+// @Summary 删除相册照片
+// @Description 删除指定相册照片
+// @Tags album_photos
+// @Accept json
+// @Produce json
+// @Param id path string true "相册照片ID"
+// @Success 200 {object} model.HttpSuccess{data=nil}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/album_photos/{id} [delete]
 func (h *AlbumPhotoHandlerImpl) DeleteAlbumPhoto(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

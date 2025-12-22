@@ -29,18 +29,15 @@ func NewAlbumHandlerImpl(client *ent.Client) *AlbumHandlerImpl {
 	}
 }
 
-/**
- * @api {get} /album/list ListAlbum
- * @apiName ListAlbum
- * @apiGroup Album
- *
- * @apiSuccess {Object} data 相册列表
- * @apiSuccess {String} message 成功消息
- * @apiSuccess {Number} status 状态码
- *
- * @apiError {String} message 错误消息
- * @apiError {Number} status 状态码
- */
+// @Summary 查询相册列表
+// @Description 查询所有相册
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=[]ent.Album}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/albums [get]
 func (h *AlbumHandlerImpl) ListAlbum(c *fiber.Ctx) error {
 	client := h.client
 
@@ -52,6 +49,17 @@ func (h *AlbumHandlerImpl) ListAlbum(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", albums))
 }
 
+// @Summary 查询相册列表分页
+// @Description 查询相册列表分页
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param page query int false "页码" default(1)
+// @Param size query int false "每页数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.Album]}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/albums/page [get]
 func (h *AlbumHandlerImpl) ListAlbumPage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
@@ -77,6 +85,16 @@ func (h *AlbumHandlerImpl) ListAlbumPage(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
+// @Summary 创建相册
+// @Description 创建一个新相册
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param req body model.AlbumCreateReq true "相册创建请求"
+// @Success 200 {object} model.HttpSuccess{data=model.AlbumCreateReq}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/albums [post]
 func (h *AlbumHandlerImpl) CreateAlbum(c *fiber.Ctx) error {
 	var album *model.AlbumCreateReq
 	if err := c.BodyParser(&album); err != nil {
@@ -93,6 +111,17 @@ func (h *AlbumHandlerImpl) CreateAlbum(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", album))
 }
 
+// @Summary 更新相册
+// @Description 更新指定相册的信息
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param id path string true "相册ID"
+// @Param req body model.AlbumUpdateReq true "相册更新请求"
+// @Success 200 {object} model.HttpSuccess{data=model.AlbumUpdateReq}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/albums/{id} [put]
 func (h *AlbumHandlerImpl) UpdateAlbum(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -114,6 +143,16 @@ func (h *AlbumHandlerImpl) UpdateAlbum(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", album))
 }
 
+// @Summary 查询相册
+// @Description 查询指定相册的信息
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param id path string true "相册ID"
+// @Success 200 {object} model.HttpSuccess{data=ent.Album}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/albums/{id} [get]
 func (h *AlbumHandlerImpl) QueryAlbum(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -130,6 +169,16 @@ func (h *AlbumHandlerImpl) QueryAlbum(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", album))
 }
 
+// @Summary 删除相册
+// @Description 删除指定相册
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param id path string true "相册ID"
+// @Success 200 {object} model.HttpSuccess{data=nil}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/albums/{id} [delete]
 func (h *AlbumHandlerImpl) DeleteAlbum(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

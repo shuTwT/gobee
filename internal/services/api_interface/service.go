@@ -15,7 +15,7 @@ import (
 type ApiInterfaceService interface {
 	GetAppRoutes(app *fiber.App) []model.ApiRoute
 	SyncRoutes(app *fiber.App)
-	ListApiRoutesPage(ctx *fiber.Ctx) error
+	ListApiRoutesPage(page int, limit int) (int, []*ent.ApiPerms, error)
 }
 
 type ApiInterfaceServiceImpl struct {
@@ -83,30 +83,23 @@ func (s *ApiInterfaceServiceImpl) SyncRoutes(app *fiber.App) {
 	}
 }
 
-func (s *ApiInterfaceServiceImpl) ListApiRoutesPage(ctx *fiber.Ctx) error {
-	client := database.DB
-	page := ctx.QueryInt("page", 1)
-	limit := ctx.QueryInt("limit", 10)
+func (s *ApiInterfaceServiceImpl) ListApiRoutesPage(page int, limit int) (int, []*ent.ApiPerms, error) {
+
 	offset := (page - 1) * limit
 
 	// 统计总数
-	count, err := client.ApiPerms.Query().Count(context.Background())
+	count, err := s.client.ApiPerms.Query().Count(context.Background())
 	if err != nil {
-		return ctx.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+		return 0, nil, err
 	}
 
-	apiRoutes, err := client.ApiPerms.Query().
+	apiRoutes, err := s.client.ApiPerms.Query().
 		Offset(offset).
 		Limit(limit).
 		All(context.Background())
 	if err != nil {
-		return ctx.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+		return 0, nil, err
 	}
 
-	pageResult := model.PageResult[*ent.ApiPerms]{
-		Total:   int64(count),
-		Records: apiRoutes,
-	}
-
-	return ctx.JSON(model.NewSuccess("获取路由列表成功", pageResult))
+	return count, apiRoutes, nil
 }

@@ -31,11 +31,11 @@ func NewInitializeHandlerImpl(userService services.UserService, settingService s
 // @Tags Initialize
 // @Accept json
 // @Produce json
-// @Param request body InitializeRequest true "初始化请求"
+// @Param request body model.InitializeRequest true "初始化请求"
 // @Success 200 {object} map[string]string "初始化成功"
-// @Failure 400 {object} model.ErrorResponse "请求参数错误"
-// @Failure 409 {object} model.ErrorResponse "系统已初始化"
-// @Failure 500 {object} model.ErrorResponse "服务器内部错误"
+// @Failure 400 {object} model.HttpError "请求参数错误"
+// @Failure 409 {object} model.HttpError "系统已初始化"
+// @Failure 500 {object} model.HttpError "服务器内部错误"
 // @Router /initialize [post]
 func (h *InitializeHandlerImpl) Initialize(c *fiber.Ctx) error {
 	var req *model.InitializeRequest

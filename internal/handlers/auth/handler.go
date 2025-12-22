@@ -29,7 +29,7 @@ func NewAuthHandlerImpl(client *ent.Client) *AuthHandlerImpl {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param login body LoginRequest true "登录请求"
+// @Param login body model.LoginRequest true "登录请求"
 // @Success 200 {object} model.HttpSuccess
 // @Failure 400 {object} model.HttpError
 // @Failure 401 {object} model.HttpError

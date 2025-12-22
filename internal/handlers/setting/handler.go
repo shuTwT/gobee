@@ -31,8 +31,8 @@ func NewSettingHandlerImpl(settingService setting_service.SettingService) *Setti
 // @Tags settings
 // @Accept json
 // @Produce json
-// @Success 200 {object} fiber.Map
-// @Failure 500 {object} fiber.Map
+// @Success 200 {object} model.HttpSuccess{data=map[string]string}
+// @Failure 500 {object} model.HttpError
 // @Router /api/v1/settings [get]
 func (h *SettingHandlerImpl) GetSettings(c *fiber.Ctx) error {
 	client := database.DB
@@ -61,6 +61,16 @@ func (h *SettingHandlerImpl) GetSettings(c *fiber.Ctx) error {
 	}))
 }
 
+// @Summary 获取系统设置JSON值
+// @Description 获取指定键的系统设置JSON值
+// @Tags settings
+// @Accept json
+// @Produce json
+// @Param key path string true "设置键"
+// @Success 200 {object} model.HttpSuccess{data=map[string]interface{}}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/settings/json/{key} [get]
 func (h *SettingHandlerImpl) GetJsonSettingsMap(c *fiber.Ctx) error {
 	client := database.DB
 	ctx := c.Context()
@@ -92,6 +102,17 @@ func (h *SettingHandlerImpl) GetJsonSettingsMap(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", value))
 }
 
+// @Summary 保存系统设置
+// @Description 保存系统设置
+// @Tags settings
+// @Accept json
+// @Produce json
+// @Param key path string true "设置键"
+// @Param req body map[string]interface{} true "设置值"
+// @Success 200 {object} model.HttpSuccess{data=nil}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/settings/{key} [post]
 func (h *SettingHandlerImpl) SaveSettings(c *fiber.Ctx) error {
 	client := database.DB
 	ctx := c.Context()
