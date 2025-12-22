@@ -23,6 +23,17 @@ func NewFriendCircleRecordHandlerImpl(client *ent.Client) *FriendCircleRecordHan
 	return &FriendCircleRecordHandlerImpl{client: client}
 }
 
+// @Summary 获取朋友圈记录分页列表
+// @Description 获取朋友圈记录分页列表
+// @Tags friend_circle_records
+// @Accept json
+// @Produce json
+// @Param page query int false "页码" default(1)
+// @Param size query int false "每页数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.FriendCircleRecordResp]}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/friend_circle_records [get]
 func (h *FriendCircleRecordHandlerImpl) ListFriendCircleRecordPage(c *fiber.Ctx) error {
 	client := database.DB
 	pageQuery := model.PageQuery{}
@@ -57,14 +68,43 @@ func (h *FriendCircleRecordHandlerImpl) ListFriendCircleRecordPage(c *fiber.Ctx)
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
+// @Summary 创建朋友圈记录
+// @Description 创建朋友圈记录
+// @Tags friend_circle_records
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=ent.FriendCircleRecord}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/friend_circle_records [post]
 func (h *FriendCircleRecordHandlerImpl) CreateFriendCircleRecord(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
+// @Summary 更新朋友圈记录
+// @Description 更新朋友圈记录
+// @Tags friend_circle_records
+// @Accept json
+// @Produce json
+// @Param id path int true "朋友圈记录 ID"
+// @Success 200 {object} model.HttpSuccess{data=ent.FriendCircleRecord}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/friend_circle_records/{id} [put]
 func (h *FriendCircleRecordHandlerImpl) UpdateFriendCircleRecord(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
+// @Summary 删除朋友圈记录
+// @Description 删除朋友圈记录
+// @Tags friend_circle_records
+// @Accept json
+// @Produce json
+// @Param id path int true "朋友圈记录 ID"
+// @Success 200 {object} model.HttpSuccess{data=nil}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/friend_circle_records/{id} [delete]
 func (h *FriendCircleRecordHandlerImpl) DeleteFriendCircleRecord(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }

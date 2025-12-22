@@ -25,6 +25,15 @@ func NewFriendCircleRuleHandlerImpl(client *ent.Client) *FriendCircleRuleHandler
 	return &FriendCircleRuleHandlerImpl{client: client}
 }
 
+// @Summary 获取朋友圈规则列表
+// @Description 获取所有朋友圈规则
+// @Tags friend_circle_rules
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=[]model.FriendCircleRuleResp}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/friend_circle_rules [get]
 func (h *FriendCircleRuleHandlerImpl) ListFriendCircleRule(c *fiber.Ctx) error {
 	client := database.DB
 	rules, err := client.FriendCircleRule.Query().All(c.Context())
@@ -45,6 +54,17 @@ func (h *FriendCircleRuleHandlerImpl) ListFriendCircleRule(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", records))
 }
 
+// @Summary 获取朋友圈规则分页列表
+// @Description 获取朋友圈规则分页列表
+// @Tags friend_circle_rules
+// @Accept json
+// @Produce json
+// @Param page query int false "页码" default(1)
+// @Param size query int false "每页数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.FriendCircleRuleResp]}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/friend_circle_rules/page [get]
 func (h *FriendCircleRuleHandlerImpl) ListFriendCircleRulePage(c *fiber.Ctx) error {
 	client := database.DB
 	pageQuery := model.PageQuery{}
@@ -79,6 +99,16 @@ func (h *FriendCircleRuleHandlerImpl) ListFriendCircleRulePage(c *fiber.Ctx) err
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
+// @Summary 创建朋友圈规则
+// @Description 创建新的朋友圈规则
+// @Tags friend_circle_rules
+// @Accept json
+// @Produce json
+// @Param friend_circle_rule_save_req body model.FriendCircleRuleSaveReq true "朋友圈规则保存请求体"
+// @Success 200 {object} model.HttpSuccess{data=ent.FriendCircleRule}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/friend_circle_rules [post]
 func (h *FriendCircleRuleHandlerImpl) CreateFriendCircleRule(c *fiber.Ctx) error {
 	var createReq *model.FriendCircleRuleSaveReq
 	if err := c.BodyParser(&createReq); err != nil {
@@ -98,6 +128,17 @@ func (h *FriendCircleRuleHandlerImpl) CreateFriendCircleRule(c *fiber.Ctx) error
 	return c.JSON(model.NewSuccess("success", rule))
 }
 
+// @Summary 更新朋友圈规则
+// @Description 更新指定 ID 的朋友圈规则
+// @Tags friend_circle_rules
+// @Accept json
+// @Produce json
+// @Param id path int true "朋友圈规则 ID"
+// @Param friend_circle_rule_save_req body model.FriendCircleRuleSaveReq true "朋友圈规则保存请求体"
+// @Success 200 {object} model.HttpSuccess{data=ent.FriendCircleRule}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/friend_circle_rules/{id} [put]
 func (h *FriendCircleRuleHandlerImpl) UpdateFriendCircleRule(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -121,6 +162,16 @@ func (h *FriendCircleRuleHandlerImpl) UpdateFriendCircleRule(c *fiber.Ctx) error
 	return c.JSON(model.NewSuccess("success", rule))
 }
 
+// @Summary 删除朋友圈规则
+// @Description 删除指定 ID 的朋友圈规则
+// @Tags friend_circle_rules
+// @Accept json
+// @Produce json
+// @Param id path int true "朋友圈规则 ID"
+// @Success 200 {object} model.HttpSuccess{data=nil}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/friend_circle_rules/{id} [delete]
 func (h *FriendCircleRuleHandlerImpl) DeleteFriendCircleRule(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

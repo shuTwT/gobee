@@ -1,5 +1,36 @@
 basePath: /
 definitions:
+  comment.TwikooReqBody:
+    properties:
+      accessToken:
+        type: string
+      comment:
+        type: string
+      envId:
+        type: string
+      event:
+        type: string
+      href:
+        type: string
+      includeReply:
+        type: boolean
+      link:
+        type: string
+      mail:
+        type: string
+      nick:
+        type: string
+      region:
+        type: string
+      ua:
+        type: string
+      url:
+        type: string
+      urls:
+        items:
+          type: string
+        type: array
+    type: object
   ent.Album:
     properties:
       created_at:
@@ -47,6 +78,195 @@ definitions:
       view_count:
         description: 查看次数
         type: integer
+    type: object
+  ent.Comment:
+    properties:
+      content:
+        description: 评论内容
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: integer
+      ip_address:
+        description: 评论者IP地址
+        type: string
+      ip_location:
+        description: 评论者IP位置
+        type: string
+      page_id:
+        description: 评论的页面ID
+        type: integer
+      parent_id:
+        description: 父评论ID
+        type: integer
+      pinned:
+        description: 是否置顶
+        type: boolean
+      post_id:
+        description: 评论的帖子ID
+        type: integer
+      status:
+        description: 状态(1未审核,2已审核)
+        type: integer
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      url:
+        description: 评论的页面URL
+        type: string
+      user_agent:
+        description: 评论者用户代理
+        type: string
+      user_id:
+        description: 评论者用户ID
+        type: integer
+    type: object
+  ent.FLink:
+    properties:
+      avatar_url:
+        description: 头像
+        type: string
+      cover_url:
+        description: 网站封面
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: 简介
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.FLinkEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the FLinkQuery when eager-loading is set.
+      email:
+        description: 邮箱
+        type: string
+      enable_friend_circle:
+        description: 是否开启朋友圈
+        type: boolean
+      friend_circle_rule_id:
+        description: 朋友圈解析规则
+        type: integer
+      group_id:
+        description: 友链组
+        type: integer
+      id:
+        description: ID of the ent.
+        type: integer
+      name:
+        description: 名称
+        type: string
+      snapshot_url:
+        description: 网站截图
+        type: string
+      status:
+        description: 状态
+        type: integer
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      url:
+        description: 链接
+        type: string
+    type: object
+  ent.FLinkEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.FLinkGroup'
+        description: Group holds the value of the group edge.
+    type: object
+  ent.FLinkGroup:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.FLinkGroupEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the FLinkGroupQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: integer
+      name:
+        description: 名称
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.FLinkGroupEdges:
+    properties:
+      links:
+        description: Links holds the value of the links edge.
+        items:
+          $ref: '#/definitions/ent.FLink'
+        type: array
+    type: object
+  ent.FriendCircleRecord:
+    properties:
+      author:
+        description: 作者
+        type: string
+      avatar_url:
+        description: 头像地址
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: integer
+      link_url:
+        description: 链接
+        type: string
+      published_at:
+        description: 发布时间
+        type: string
+      site_url:
+        description: 站点地址
+        type: string
+      title:
+        description: 标题
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.FriendCircleRule:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      created_selector:
+        description: 创建时间选择器
+        type: string
+      id:
+        description: ID of the ent.
+        type: integer
+      link_selector:
+        description: 链接选择器
+        type: string
+      name:
+        description: 规则名称
+        type: string
+      title_selector:
+        description: 标题选择器
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      updated_selector:
+        description: 更新时间选择器
+        type: string
     type: object
   ent.PayChannel:
     properties:
@@ -341,6 +561,193 @@ definitions:
         description: 状态
         type: string
     type: object
+  model.FlinkCreateReq:
+    properties:
+      avatar_url:
+        description: logo
+        type: string
+      cover_url:
+        type: string
+      description:
+        description: 简介
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      enable_friend_circle:
+        description: 是否开启朋友圈
+        type: boolean
+      friend_circle_rule_id:
+        description: 朋友圈解析规则
+        type: integer
+      name:
+        description: 名称
+        type: string
+      snapshot_url:
+        description: 快照
+        type: string
+      url:
+        description: 链接
+        type: string
+    type: object
+  model.FlinkResp:
+    properties:
+      avatar_url:
+        description: logo
+        type: string
+      cover_url:
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: 简介
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      enable_friend_circle:
+        description: 是否开启朋友圈
+        type: boolean
+      friend_circle_rule_id:
+        description: 朋友圈解析规则
+        type: integer
+      id:
+        description: ID of the ent.
+        type: integer
+      name:
+        description: 名称
+        type: string
+      snapshot_url:
+        description: 快照
+        type: string
+      status:
+        description: 状态
+        type: integer
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      url:
+        description: 链接
+        type: string
+    type: object
+  model.FlinkUpdateReq:
+    properties:
+      avatar_url:
+        description: logo
+        type: string
+      cover_url:
+        type: string
+      description:
+        description: 简介
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      enable_friend_circle:
+        description: 是否开启朋友圈
+        type: boolean
+      friend_circle_rule_id:
+        description: 朋友圈解析规则
+        type: integer
+      id:
+        description: ID of the ent.
+        type: integer
+      name:
+        description: 名称
+        type: string
+      snapshot_url:
+        description: 快照
+        type: string
+      url:
+        description: 链接
+        type: string
+    type: object
+  model.FriendCircleRecordResp:
+    properties:
+      author:
+        description: 作者
+        type: string
+      avatar_url:
+        description: 头像地址
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: integer
+      link_url:
+        description: 链接
+        type: string
+      published_at:
+        type: string
+      title:
+        description: 标题
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  model.FriendCircleRuleResp:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      created_selector:
+        description: 创建时间选择器
+        type: string
+      id:
+        description: ID of the ent.
+        type: integer
+      link_selector:
+        description: 链接选择器
+        type: string
+      name:
+        description: 规则名称
+        type: string
+      title_selector:
+        description: 标题选择器
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      updated_selector:
+        description: 更新时间选择器
+        type: string
+    type: object
+  model.FriendCircleRuleSaveReq:
+    properties:
+      created_selector:
+        description: 创建时间选择器
+        type: string
+      id:
+        description: ID of the ent.
+        type: integer
+      link_selector:
+        description: 链接选择器
+        type: string
+      name:
+        description: 规则名称
+        type: string
+      title_selector:
+        description: 标题选择器
+        type: string
+      updated_selector:
+        description: 更新时间选择器
+        type: string
+    type: object
+  model.HomeStatistic:
+    properties:
+      commentCount:
+        type: integer
+      postCount:
+        type: integer
+      userCount:
+        type: integer
+      visitCount:
+        type: integer
+    type: object
   model.HttpError:
     properties:
       code:
@@ -419,6 +826,15 @@ definitions:
       total:
         type: integer
     type: object
+  model.PageResult-ent_Comment:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/ent.Comment'
+        type: array
+      total:
+        type: integer
+    type: object
   model.PageResult-ent_Role:
     properties:
       records:
@@ -433,6 +849,33 @@ definitions:
       records:
         items:
           $ref: '#/definitions/model.ApiRoute'
+        type: array
+      total:
+        type: integer
+    type: object
+  model.PageResult-model_FlinkResp:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/model.FlinkResp'
+        type: array
+      total:
+        type: integer
+    type: object
+  model.PageResult-model_FriendCircleRecordResp:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/model.FriendCircleRecordResp'
+        type: array
+      total:
+        type: integer
+    type: object
+  model.PageResult-model_FriendCircleRuleResp:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/model.FriendCircleRuleResp'
         type: array
       total:
         type: integer
@@ -1054,6 +1497,791 @@ paths:
       summary: 查询API路由分页列表
       tags:
       - api_interfaces
+  /api/v1/comments:
+    get:
+      consumes:
+      - application/json
+      description: 获取评论列表
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-ent_Comment'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取评论列表
+      tags:
+      - comments
+  /api/v1/comments/recent:
+    get:
+      consumes:
+      - application/json
+      description: 获取最近评论
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items: {}
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取最近评论
+      tags:
+      - comments
+  /api/v1/comments/twikoo:
+    post:
+      consumes:
+      - application/json
+      description: 处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论
+      parameters:
+      - description: Twikoo请求体
+        in: body
+        name: twikoo_req_body
+        required: true
+        schema:
+          $ref: '#/definitions/comment.TwikooReqBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 处理Twikoo评论事件
+      tags:
+      - comments
+  /api/v1/common/statistics:
+    get:
+      consumes:
+      - application/json
+      description: 获取首页统计信息，包括文章数量、评论数量、相册数量、照片数量
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.HomeStatistic'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取首页统计信息
+      tags:
+      - common
+  /api/v1/flink_groups:
+    get:
+      consumes:
+      - application/json
+      description: 查询FlinkGroup
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/ent.FLinkGroup'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询FlinkGroup
+      tags:
+      - flink_groups
+    post:
+      consumes:
+      - application/json
+      description: 创建FlinkGroup
+      parameters:
+      - description: FlinkGroup创建请求体
+        in: body
+        name: flink_group_create_req
+        required: true
+        schema:
+          $ref: '#/definitions/ent.FLinkGroup'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FLinkGroup'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建FlinkGroup
+      tags:
+      - flink_groups
+  /api/v1/flink_groups/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除FlinkGroup
+      parameters:
+      - description: FlinkGroup ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除FlinkGroup
+      tags:
+      - flink_groups
+    put:
+      consumes:
+      - application/json
+      description: 更新FlinkGroup
+      parameters:
+      - description: FlinkGroup ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: FlinkGroup更新请求体
+        in: body
+        name: flink_group_update_req
+        required: true
+        schema:
+          $ref: '#/definitions/ent.FLinkGroup'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FLinkGroup'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新FlinkGroup
+      tags:
+      - flink_groups
+  /api/v1/flinks:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有Flink
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.FlinkResp'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取所有Flink
+      tags:
+      - flinks
+    post:
+      consumes:
+      - application/json
+      description: 创建Flink
+      parameters:
+      - description: Flink创建请求体
+        in: body
+        name: flink_create_req
+        required: true
+        schema:
+          $ref: '#/definitions/model.FlinkCreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FLink'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建Flink
+      tags:
+      - flinks
+  /api/v1/flinks/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除Flink
+      parameters:
+      - description: Flink ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除Flink
+      tags:
+      - flinks
+    get:
+      consumes:
+      - application/json
+      description: 查询Flink
+      parameters:
+      - description: Flink ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FLink'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询Flink
+      tags:
+      - flinks
+    put:
+      consumes:
+      - application/json
+      description: 更新Flink
+      parameters:
+      - description: Flink ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Flink更新请求体
+        in: body
+        name: flink_update_req
+        required: true
+        schema:
+          $ref: '#/definitions/model.FlinkUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FLink'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新Flink
+      tags:
+      - flinks
+  /api/v1/flinks/page:
+    get:
+      consumes:
+      - application/json
+      description: 获取Flink分页列表
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-model_FlinkResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取Flink分页列表
+      tags:
+      - flinks
+  /api/v1/friend_circle_records:
+    get:
+      consumes:
+      - application/json
+      description: 获取朋友圈记录分页列表
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-model_FriendCircleRecordResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取朋友圈记录分页列表
+      tags:
+      - friend_circle_records
+    post:
+      consumes:
+      - application/json
+      description: 创建朋友圈记录
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FriendCircleRecord'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建朋友圈记录
+      tags:
+      - friend_circle_records
+  /api/v1/friend_circle_records/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除朋友圈记录
+      parameters:
+      - description: 朋友圈记录 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除朋友圈记录
+      tags:
+      - friend_circle_records
+    put:
+      consumes:
+      - application/json
+      description: 更新朋友圈记录
+      parameters:
+      - description: 朋友圈记录 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FriendCircleRecord'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新朋友圈记录
+      tags:
+      - friend_circle_records
+  /api/v1/friend_circle_rules:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有朋友圈规则
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.FriendCircleRuleResp'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取朋友圈规则列表
+      tags:
+      - friend_circle_rules
+    post:
+      consumes:
+      - application/json
+      description: 创建新的朋友圈规则
+      parameters:
+      - description: 朋友圈规则保存请求体
+        in: body
+        name: friend_circle_rule_save_req
+        required: true
+        schema:
+          $ref: '#/definitions/model.FriendCircleRuleSaveReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FriendCircleRule'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建朋友圈规则
+      tags:
+      - friend_circle_rules
+  /api/v1/friend_circle_rules/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定 ID 的朋友圈规则
+      parameters:
+      - description: 朋友圈规则 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除朋友圈规则
+      tags:
+      - friend_circle_rules
+    put:
+      consumes:
+      - application/json
+      description: 更新指定 ID 的朋友圈规则
+      parameters:
+      - description: 朋友圈规则 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 朋友圈规则保存请求体
+        in: body
+        name: friend_circle_rule_save_req
+        required: true
+        schema:
+          $ref: '#/definitions/model.FriendCircleRuleSaveReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FriendCircleRule'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新朋友圈规则
+      tags:
+      - friend_circle_rules
+  /api/v1/friend_circle_rules/page:
+    get:
+      consumes:
+      - application/json
+      description: 获取朋友圈规则分页列表
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-model_FriendCircleRuleResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取朋友圈规则分页列表
+      tags:
+      - friend_circle_rules
   /api/v1/paychannels:
     get:
       consumes:

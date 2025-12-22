@@ -36,6 +36,17 @@ func NewCommentHandlerImpl(client *ent.Client, commentService comment_service.Co
 	return &CommentHandlerImpl{client: client, commentService: commentService}
 }
 
+// @Summary 获取评论列表
+// @Description 获取评论列表
+// @Tags comments
+// @Accept json
+// @Produce json
+// @Param page query int false "页码" default(1)
+// @Param size query int false "每页数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.Comment]}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/comments [get]
 func (h *CommentHandlerImpl) ListCommentPage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
@@ -66,6 +77,16 @@ type TwikooReqBody struct {
 	UA           *string   `json:"ua"`
 }
 
+// @Summary 处理Twikoo评论事件
+// @Description 处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论
+// @Tags comments
+// @Accept json
+// @Produce json
+// @Param twikoo_req_body body TwikooReqBody true "Twikoo请求体"
+// @Success 200 {object} model.HttpSuccess{data=interface{}}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/comments/twikoo [post]
 func (h *CommentHandlerImpl) HandleTwikoo(c *fiber.Ctx) error {
 
 	var reqBody TwikooReqBody
@@ -139,6 +160,15 @@ func (h *CommentHandlerImpl) HandleTwikoo(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{})
 }
 
+// @Summary 获取最近评论
+// @Description 获取最近评论
+// @Tags comments
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=[]interface{}}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/comments/recent [get]
 func (h *CommentHandlerImpl) RecentComment(c *fiber.Ctx) error {
 	comments, err := h.commentService.GetRecentComment(c.Context(), 10)
 	if err != nil {

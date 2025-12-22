@@ -28,6 +28,15 @@ func NewFlinkHandlerImpl(client *ent.Client) *FlinkHandlerImpl {
 	}
 }
 
+// @Summary 获取所有Flink
+// @Description 获取所有Flink
+// @Tags flinks
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=[]model.FlinkResp}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/flinks [get]
 func (h *FlinkHandlerImpl) ListFlink(c *fiber.Ctx) error {
 	flinks, err := h.client.FLink.Query().All(c.Context())
 	if err != nil {
@@ -54,6 +63,17 @@ func (h *FlinkHandlerImpl) ListFlink(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", result))
 }
 
+// @Summary 获取Flink分页列表
+// @Description 获取Flink分页列表
+// @Tags flinks
+// @Accept json
+// @Produce json
+// @Param page query int false "页码" default(1)
+// @Param size query int false "每页数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.FlinkResp]}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/flinks/page [get]
 func (h *FlinkHandlerImpl) ListFlinkPage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
@@ -94,6 +114,16 @@ func (h *FlinkHandlerImpl) ListFlinkPage(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
+// @Summary 创建Flink
+// @Description 创建Flink
+// @Tags flinks
+// @Accept json
+// @Produce json
+// @Param flink_create_req body model.FlinkCreateReq true "Flink创建请求体"
+// @Success 200 {object} model.HttpSuccess{data=ent.FLink}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/flinks [post]
 func (h *FlinkHandlerImpl) CreateFlink(c *fiber.Ctx) error {
 	var createReq *model.FlinkCreateReq
 	if err := c.BodyParser(&createReq); err != nil {
@@ -116,6 +146,17 @@ func (h *FlinkHandlerImpl) CreateFlink(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", flink))
 }
 
+// @Summary 更新Flink
+// @Description 更新Flink
+// @Tags flinks
+// @Accept json
+// @Produce json
+// @Param id path int true "Flink ID"
+// @Param flink_update_req body model.FlinkUpdateReq true "Flink更新请求体"
+// @Success 200 {object} model.HttpSuccess{data=ent.FLink}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/flinks/{id} [put]
 func (h *FlinkHandlerImpl) UpdateFlink(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -142,6 +183,16 @@ func (h *FlinkHandlerImpl) UpdateFlink(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", flink))
 }
 
+// @Summary 查询Flink
+// @Description 查询Flink
+// @Tags flinks
+// @Accept json
+// @Produce json
+// @Param id path int true "Flink ID"
+// @Success 200 {object} model.HttpSuccess{data=ent.FLink}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/flinks/{id} [get]
 func (h *FlinkHandlerImpl) QueryFlink(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -157,6 +208,16 @@ func (h *FlinkHandlerImpl) QueryFlink(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", flink))
 }
 
+// @Summary 删除Flink
+// @Description 删除Flink
+// @Tags flinks
+// @Accept json
+// @Produce json
+// @Param id path int true "Flink ID"
+// @Success 200 {object} model.HttpSuccess{data=nil}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/flinks/{id} [delete]
 func (h *FlinkHandlerImpl) DeleteFlink(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
