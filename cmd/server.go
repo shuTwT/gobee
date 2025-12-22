@@ -3,8 +3,8 @@ package cmd
 import (
 	"embed"
 	"gobee/config"
+	"gobee/internal/handlers"
 	"gobee/internal/router"
-	apiinterface "gobee/internal/services/api_interface"
 	"gobee/pkg"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,7 +18,7 @@ import (
 func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	godotenv.Load()
 	config.Init()
-	pkg.InitializeServices(moduleDefs)
+	serviceMap := pkg.InitializeServices(moduleDefs)
 	engine := html.New("./views", ".tmpl")
 	engine.Debug(true)
 	engine.Reload(true)
@@ -46,9 +46,9 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 
 	router.InitFrontendRes(app, frontendRes)
 
-	router.Initialize(app)
+	handlerMap := handlers.InitHandler(serviceMap)
 
-	apiinterface.SyncRoutes(app)
+	router.Initialize(app, handlerMap)
 
 	return app
 }

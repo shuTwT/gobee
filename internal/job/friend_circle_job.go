@@ -17,9 +17,11 @@ import (
 	"net/http"
 )
 
-type FriendCircleJob struct{}
+type FriendCircleJob struct {
+	friendCircleService friend_circle_service.FriendCircleService
+}
 
-func (FriendCircleJob) Execute(c context.Context) error {
+func (job FriendCircleJob) Execute(c context.Context) error {
 	dbClient := database.DB
 	// 朋友圈规则
 	// rules, err := dbClient.FriendCircleRule.Query().All(c)
@@ -60,7 +62,7 @@ func (FriendCircleJob) Execute(c context.Context) error {
 
 		// 状态码为 200，表示可以访问
 		// 接下来先访问/rss.xml
-		err = VisitRss(httpClient, flink.URL, flink)
+		err = job.VisitRss(httpClient, flink.URL, flink)
 		if err != nil {
 			log.Println("%w", err)
 			continue
@@ -71,7 +73,7 @@ func (FriendCircleJob) Execute(c context.Context) error {
 	return nil
 }
 
-func VisitRss(httpClient *http.Client, baseUrl string, flink *ent.FLink) error {
+func (job FriendCircleJob) VisitRss(httpClient *http.Client, baseUrl string, flink *ent.FLink) error {
 	rssReq, err := http.NewRequest("GET", baseUrl+"/rss.xml", nil)
 	if err == nil {
 		rssReq.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
@@ -96,7 +98,7 @@ func VisitRss(httpClient *http.Client, baseUrl string, flink *ent.FLink) error {
 				}
 
 				log.Println("响应体不为空")
-				rssRes, err := parseRss(body)
+				rssRes, err := job.parseRss(body)
 				if err == nil {
 					switch v := rssRes.(type) {
 					case rss.RSS2:
@@ -107,9 +109,9 @@ func VisitRss(httpClient *http.Client, baseUrl string, flink *ent.FLink) error {
 						fmt.Printf("文章总数：%d\n", len(v.Channel.Items))
 						for _, item := range v.Channel.Items[:5] { // 仅打印前5篇，避免输出过长
 							var exist bool
-							exist, err = friend_circle_service.ExistsRecord(context.TODO(), item.Link)
+							exist, err = job.friendCircleService.ExistsRecord(context.TODO(), item.Link)
 							if err == nil && !exist {
-								friend_circle_service.InsertRecord(context.TODO(), flink.Name, flink.AvatarURL, item.Title, item.Link, item.PubDate)
+								job.friendCircleService.InsertRecord(context.TODO(), flink.Name, flink.AvatarURL, item.Title, item.Link, item.PubDate)
 							}
 						}
 					case rss.AtomFeed:
@@ -135,9 +137,9 @@ func VisitRss(httpClient *http.Client, baseUrl string, flink *ent.FLink) error {
 								}
 							}
 							var exist bool
-							exist, err = friend_circle_service.ExistsRecord(context.TODO(), entryLink)
+							exist, err = job.friendCircleService.ExistsRecord(context.TODO(), entryLink)
 							if err == nil && !exist {
-								friend_circle_service.InsertRecord(context.TODO(), flink.Name, flink.AvatarURL, entry.Title, entryLink, entry.Updated)
+								job.friendCircleService.InsertRecord(context.TODO(), flink.Name, flink.AvatarURL, entry.Title, entryLink, entry.Updated)
 							}
 						}
 
@@ -154,7 +156,7 @@ func VisitRss(httpClient *http.Client, baseUrl string, flink *ent.FLink) error {
 	return nil
 }
 
-func parseRss(body []byte) (interface{}, error) {
+func (job FriendCircleJob) parseRss(body []byte) (interface{}, error) {
 	// 先尝试解析 RSS 2.0
 
 	var rss2 rss.RSS2

@@ -1,6 +1,7 @@
 package friendcirclerule
 
 import (
+	"gobee/ent"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 	"strconv"
@@ -8,7 +9,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ListFriendCircleRule(c *fiber.Ctx) error {
+type FriendCircleRuleHandler interface {
+	ListFriendCircleRule(c *fiber.Ctx) error
+	ListFriendCircleRulePage(c *fiber.Ctx) error
+	CreateFriendCircleRule(c *fiber.Ctx) error
+	UpdateFriendCircleRule(c *fiber.Ctx) error
+	DeleteFriendCircleRule(c *fiber.Ctx) error
+}
+
+type FriendCircleRuleHandlerImpl struct {
+	client *ent.Client
+}
+
+func NewFriendCircleRuleHandlerImpl(client *ent.Client) *FriendCircleRuleHandlerImpl {
+	return &FriendCircleRuleHandlerImpl{client: client}
+}
+
+func (h *FriendCircleRuleHandlerImpl) ListFriendCircleRule(c *fiber.Ctx) error {
 	client := database.DB
 	rules, err := client.FriendCircleRule.Query().All(c.Context())
 	if err != nil {
@@ -28,7 +45,7 @@ func ListFriendCircleRule(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", records))
 }
 
-func ListFriendCircleRulePage(c *fiber.Ctx) error {
+func (h *FriendCircleRuleHandlerImpl) ListFriendCircleRulePage(c *fiber.Ctx) error {
 	client := database.DB
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
@@ -62,7 +79,7 @@ func ListFriendCircleRulePage(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
-func CreateFriendCircleRule(c *fiber.Ctx) error {
+func (h *FriendCircleRuleHandlerImpl) CreateFriendCircleRule(c *fiber.Ctx) error {
 	var createReq *model.FriendCircleRuleSaveReq
 	if err := c.BodyParser(&createReq); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
@@ -81,7 +98,7 @@ func CreateFriendCircleRule(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", rule))
 }
 
-func UpdateFriendCircleRule(c *fiber.Ctx) error {
+func (h *FriendCircleRuleHandlerImpl) UpdateFriendCircleRule(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
@@ -104,7 +121,7 @@ func UpdateFriendCircleRule(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", rule))
 }
 
-func DeleteFriendCircleRule(c *fiber.Ctx) error {
+func (h *FriendCircleRuleHandlerImpl) DeleteFriendCircleRule(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,

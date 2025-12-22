@@ -1,7 +1,8 @@
 package comment
 
 import (
-	commentService "gobee/internal/services/comment"
+	"gobee/ent"
+	comment_service "gobee/internal/services/comment"
 	"gobee/pkg/domain/model"
 	"time"
 
@@ -20,13 +21,28 @@ var TWIKOO_EVENT = struct {
 	CommentSubmit:    "COMMENT_SUBMIT",
 }
 
-func ListCommentPage(c *fiber.Ctx) error {
+type CommentHandler interface {
+	ListCommentPage(c *fiber.Ctx) error
+	HandleTwikoo(c *fiber.Ctx) error
+	RecentComment(c *fiber.Ctx) error
+}
+
+type CommentHandlerImpl struct {
+	client         *ent.Client
+	commentService comment_service.CommentService
+}
+
+func NewCommentHandlerImpl(client *ent.Client, commentService comment_service.CommentService) *CommentHandlerImpl {
+	return &CommentHandlerImpl{client: client, commentService: commentService}
+}
+
+func (h *CommentHandlerImpl) ListCommentPage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	resp, err := commentService.ListCommentPage(c.Context(), pageQuery)
+	resp, err := h.commentService.ListCommentPage(c.Context(), pageQuery)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -50,7 +66,7 @@ type TwikooReqBody struct {
 	UA           *string   `json:"ua"`
 }
 
-func HandleTwikoo(c *fiber.Ctx) error {
+func (h *CommentHandlerImpl) HandleTwikoo(c *fiber.Ctx) error {
 
 	var reqBody TwikooReqBody
 	if err := c.BodyParser(&reqBody); err != nil {
@@ -66,12 +82,12 @@ func HandleTwikoo(c *fiber.Ctx) error {
 	// 获取评论
 	if reqBody.Event == TWIKOO_EVENT.CommentGET {
 		commmentList := []fiber.Map{}
-		comments, err := commentService.ListComment(c.Context(), *reqBody.Url)
+		comments, err := h.commentService.ListComment(c.Context(), *reqBody.Url)
 		if err != nil {
 			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 		}
 		for _, comment := range comments {
-			browser, os := commentService.ParseUserAgent(*comment.UserAgent)
+			browser, os := h.commentService.ParseUserAgent(*comment.UserAgent)
 			commmentList = append(commmentList, fiber.Map{
 				"id":        comment.ID,
 				"parentId":  comment.ParentID,
@@ -94,7 +110,7 @@ func HandleTwikoo(c *fiber.Ctx) error {
 	// 获取评论数量
 	if reqBody.Event == TWIKOO_EVENT.GetCommentsCount {
 		data := []fiber.Map{}
-		count, err := commentService.CountComment(c.Context(), *reqBody.IncludeReply, *reqBody.Urls)
+		count, err := h.commentService.CountComment(c.Context(), *reqBody.IncludeReply, *reqBody.Urls)
 		if err != nil {
 			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 		}
@@ -112,7 +128,7 @@ func HandleTwikoo(c *fiber.Ctx) error {
 	// 提交评论
 	if reqBody.Event == TWIKOO_EVENT.CommentSubmit {
 		ipAddress := c.IP()
-		id, err := commentService.CreateComment(c.Context(), *reqBody.Comment, *reqBody.Href, *reqBody.Link, *reqBody.Mail, *reqBody.Nick, *reqBody.UA, *reqBody.Url, ipAddress)
+		id, err := h.commentService.CreateComment(c.Context(), *reqBody.Comment, *reqBody.Href, *reqBody.Link, *reqBody.Mail, *reqBody.Nick, *reqBody.UA, *reqBody.Url, ipAddress)
 		if err != nil {
 			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 		}
@@ -123,8 +139,8 @@ func HandleTwikoo(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{})
 }
 
-func RecentComment(c *fiber.Ctx) error {
-	comments, err := commentService.GetRecentComment(c.Context(), 10)
+func (h *CommentHandlerImpl) RecentComment(c *fiber.Ctx) error {
+	comments, err := h.commentService.GetRecentComment(c.Context(), 10)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}

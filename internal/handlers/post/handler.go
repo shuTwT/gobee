@@ -12,7 +12,28 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ListPost(c *fiber.Ctx) error {
+type PostHandler interface {
+	ListPost(c *fiber.Ctx) error
+	CreatePost(c *fiber.Ctx) error
+	UpdatePostContent(c *fiber.Ctx) error
+	UpdatePostSetting(c *fiber.Ctx) error
+	PublishPost(c *fiber.Ctx) error
+	UnpublishPost(c *fiber.Ctx) error
+	QueryPost(c *fiber.Ctx) error
+	DeletePost(c *fiber.Ctx) error
+}
+
+type PostHandlerImpl struct {
+	postService post_service.PostService
+}
+
+func NewPostHandlerImpl(postService post_service.PostService) *PostHandlerImpl {
+	return &PostHandlerImpl{
+		postService: postService,
+	}
+}
+
+func (h *PostHandlerImpl) ListPost(c *fiber.Ctx) error {
 	client := database.DB
 	posts, err := client.Post.Query().All(c.Context())
 	if err != nil {
@@ -22,7 +43,7 @@ func ListPost(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", posts))
 }
 
-func CreatePost(c *fiber.Ctx) error {
+func (h *PostHandlerImpl) CreatePost(c *fiber.Ctx) error {
 	client := database.DB
 	var post *ent.Post
 	if err := c.BodyParser(&post); err != nil {
@@ -38,7 +59,7 @@ func CreatePost(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", newPost))
 }
 
-func UpdatePostContent(c *fiber.Ctx) error {
+func (h *PostHandlerImpl) UpdatePostContent(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -58,7 +79,7 @@ func UpdatePostContent(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", newPost))
 }
 
-func UpdatePostSetting(c *fiber.Ctx) error {
+func (h *PostHandlerImpl) UpdatePostSetting(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -68,14 +89,14 @@ func UpdatePostSetting(c *fiber.Ctx) error {
 	if err = c.BodyParser(&post); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	newPost, err := post_service.UpdatePostSetting(c.Context(), id, post)
+	newPost, err := h.postService.UpdatePostSetting(c.Context(), id, post)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("success", newPost))
 }
 
-func PublishPost(c *fiber.Ctx) error {
+func (h *PostHandlerImpl) PublishPost(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -91,7 +112,7 @@ func PublishPost(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", newPost))
 }
 
-func UnpublishPost(c *fiber.Ctx) error {
+func (h *PostHandlerImpl) UnpublishPost(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -107,7 +128,7 @@ func UnpublishPost(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", newPost))
 }
 
-func QueryPost(c *fiber.Ctx) error {
+func (h *PostHandlerImpl) QueryPost(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -123,7 +144,7 @@ func QueryPost(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", post))
 }
 
-func DeletePost(c *fiber.Ctx) error {
+func (h *PostHandlerImpl) DeletePost(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

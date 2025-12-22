@@ -11,26 +11,40 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ListFile(c *fiber.Ctx) error {
-	client := database.DB
-	files, err := client.File.Query().All(c.Context())
+type FileHandler interface {
+	ListFile(c *fiber.Ctx) error
+	ListFilePage(c *fiber.Ctx) error
+	QueryFile(c *fiber.Ctx) error
+	DeleteFile(c *fiber.Ctx) error
+	Upload(c *fiber.Ctx) error
+}
+
+type FileHandlerImpl struct {
+	client *ent.Client
+}
+
+func NewFileHandlerImpl(client *ent.Client) *FileHandlerImpl {
+	return &FileHandlerImpl{client: client}
+}
+
+func (h *FileHandlerImpl) ListFile(c *fiber.Ctx) error {
+	files, err := h.client.File.Query().All(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("文件列表获取成功", files))
 }
 
-func ListFilePage(c *fiber.Ctx) error {
-	client := database.DB
+func (h *FileHandlerImpl) ListFilePage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	count, err := client.File.Query().Count(c.Context())
+	count, err := h.client.File.Query().Count(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	files, err := client.File.Query().
+	files, err := h.client.File.Query().
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
 		All(c.Context())
@@ -45,33 +59,31 @@ func ListFilePage(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("文件列表获取成功", pageResult))
 }
 
-func QueryFile(c *fiber.Ctx) error {
-	client := database.DB
+func (h *FileHandlerImpl) QueryFile(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	file, err := client.File.Query().Where(file.ID(id)).First(c.Context())
+	file, err := h.client.File.Query().Where(file.ID(id)).First(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("文件查询成功", file))
 }
 
-func DeleteFile(c *fiber.Ctx) error {
-	client := database.DB
+func (h *FileHandlerImpl) DeleteFile(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	err = client.File.DeleteOneID(id).Exec(c.Context())
+	err = h.client.File.DeleteOneID(id).Exec(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("文件删除成功", nil))
 }
 
-func Upload(c *fiber.Ctx) error {
+func (h *FileHandlerImpl) Upload(c *fiber.Ctx) error {
 	form, err := c.MultipartForm()
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))

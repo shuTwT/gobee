@@ -6,6 +6,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetRoutes(c *fiber.Ctx) error {
+type RouteHandler interface {
+	GetRoutes(c *fiber.Ctx) error
+}
+
+type RouteHandlerImpl struct {
+}
+
+func NewRouteHandlerImpl() *RouteHandlerImpl {
+	return &RouteHandlerImpl{}
+}
+
+func (h *RouteHandlerImpl) GetRoutes(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", []string{}))
 }

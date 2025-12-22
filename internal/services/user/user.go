@@ -17,8 +17,23 @@ type CreateUserRequest struct {
 	RoleId   int
 }
 
-func ListUser(c *fiber.Ctx) ([]*ent.User, error) {
-	client := database.DB
+type UserService interface {
+	ListUser(c *fiber.Ctx) ([]*ent.User, error)
+	ListUserPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.User, error)
+	CreateUser(req CreateUserRequest) (*ent.User, error)
+	GetUserCount(c context.Context) (int, error)
+}
+
+type UserServiceImpl struct {
+	client *ent.Client
+}
+
+func NewUserServiceImpl(client *ent.Client) *UserServiceImpl {
+	return &UserServiceImpl{client: client}
+}
+
+func (s *UserServiceImpl) ListUser(c *fiber.Ctx) ([]*ent.User, error) {
+	client := s.client
 	users, err := client.User.Query().All(c.Context())
 	if err != nil {
 		return nil, err
@@ -26,7 +41,7 @@ func ListUser(c *fiber.Ctx) ([]*ent.User, error) {
 	return users, nil
 }
 
-func ListUserPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.User, error) {
+func (s *UserServiceImpl) ListUserPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.User, error) {
 	client := database.DB
 	count, err := client.User.Query().Count(c.UserContext())
 
@@ -51,7 +66,7 @@ func ListUserPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.User, er
 	return count, users, err
 }
 
-func CreateUser(req CreateUserRequest) (*ent.User, error) {
+func (s *UserServiceImpl) CreateUser(req CreateUserRequest) (*ent.User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -71,7 +86,7 @@ func CreateUser(req CreateUserRequest) (*ent.User, error) {
 	return createdUser, nil
 }
 
-func GetUserCount(c context.Context) (int, error) {
+func (s *UserServiceImpl) GetUserCount(c context.Context) (int, error) {
 	client := database.DB
 	count, err := client.User.Query().Count(c)
 	if err != nil {

@@ -11,6 +11,22 @@ import (
 	"gobee/pkg/domain/model"
 )
 
+type PayOrderHandler interface {
+	ListPayOrder(c *fiber.Ctx) error
+	CreatePayOrder(c *fiber.Ctx) error
+	UpdatePayOrder(c *fiber.Ctx) error
+	QueryPayOrder(c *fiber.Ctx) error
+	DeletePayOrder(c *fiber.Ctx) error
+}
+
+type PayOrderHandlerImpl struct {
+	client *ent.Client
+}
+
+func NewPayOrderHandlerImpl(client *ent.Client) *PayOrderHandlerImpl {
+	return &PayOrderHandlerImpl{client: client}
+}
+
 // @Summary 获取支付订单列表
 // @Description 获取所有支付订单的列表
 // @Tags payorders
@@ -19,9 +35,8 @@ import (
 // @Success 200 {object} model.HttpSuccess{data=[]ent.PayOrder}
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders [get]
-func ListPayOrder(c *fiber.Ctx) error {
-	client := database.DB
-	orders, err := client.PayOrder.Query().All(c.Context())
+func (h *PayOrderHandlerImpl) ListPayOrder(c *fiber.Ctx) error {
+	orders, err := h.client.PayOrder.Query().All(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -38,7 +53,7 @@ func ListPayOrder(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders [post]
-func CreatePayOrder(c *fiber.Ctx) error {
+func (h *PayOrderHandlerImpl) CreatePayOrder(c *fiber.Ctx) error {
 	client := database.DB
 	var order *model.PayOrderCreateReq
 	if err := c.BodyParser(&order); err != nil {
@@ -77,8 +92,7 @@ func CreatePayOrder(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders/{id} [put]
-func UpdatePayOrder(c *fiber.Ctx) error {
-	client := database.DB
+func (h *PayOrderHandlerImpl) UpdatePayOrder(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -90,7 +104,7 @@ func UpdatePayOrder(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	updatedOrder, err := client.PayOrder.UpdateOneID(id).
+	updatedOrder, err := h.client.PayOrder.UpdateOneID(id).
 		SetChannelID(order.ChannelID).
 		SetOrderID(order.OrderID).
 		SetOutTradeNo(order.OutTradeNo).
@@ -122,8 +136,7 @@ func UpdatePayOrder(c *fiber.Ctx) error {
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders/{id} [get]
-func QueryPayOrder(c *fiber.Ctx) error {
-	client := database.DB
+func (h *PayOrderHandlerImpl) QueryPayOrder(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -131,7 +144,7 @@ func QueryPayOrder(c *fiber.Ctx) error {
 		))
 	}
 
-	order, err := client.PayOrder.Query().
+	order, err := h.client.PayOrder.Query().
 		Where(payorder.ID(id)).
 		Only(c.Context())
 	if err != nil {
@@ -155,8 +168,7 @@ func QueryPayOrder(c *fiber.Ctx) error {
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/payorders/{id} [delete]
-func DeletePayOrder(c *fiber.Ctx) error {
-	client := database.DB
+func (h *PayOrderHandlerImpl) DeletePayOrder(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -164,7 +176,7 @@ func DeletePayOrder(c *fiber.Ctx) error {
 		))
 	}
 
-	err = client.PayOrder.DeleteOneID(id).Exec(c.Context())
+	err = h.client.PayOrder.DeleteOneID(id).Exec(c.Context())
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return c.JSON(model.NewError(fiber.StatusBadRequest,

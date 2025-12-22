@@ -3,6 +3,7 @@ package permission
 import (
 	"embed"
 	"fmt"
+	"gobee/ent"
 	"gobee/pkg/domain/model"
 	"io/fs"
 	"log"
@@ -12,7 +13,19 @@ import (
 
 var permissions []string
 
-func LoadPermissionsFromDef(fileFs embed.FS) {
+type PermissionService interface {
+	LoadPermissionsFromDef(fileFs embed.FS)
+}
+
+type PermissionServiceImpl struct {
+	client *ent.Client
+}
+
+func NewPermissionServiceImpl(client *ent.Client) *PermissionServiceImpl {
+	return &PermissionServiceImpl{client: client}
+}
+
+func (s *PermissionServiceImpl) LoadPermissionsFromDef(fileFs embed.FS) {
 	dir, _ := fs.ReadDir(fileFs, "assets/moduleDefs")
 	for _, entry := range dir {
 		if entry.IsDir() {

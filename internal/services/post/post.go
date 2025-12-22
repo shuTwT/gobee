@@ -6,8 +6,21 @@ import (
 	"gobee/internal/database"
 )
 
-func UpdatePostSetting(c context.Context, id int, post *ent.Post) (*ent.Post, error) {
-	client := database.DB
+type PostService interface {
+	UpdatePostSetting(c context.Context, id int, post *ent.Post) (*ent.Post, error)
+	GetPostCount(c context.Context) (int, error)
+}
+
+type PostServiceImpl struct {
+	client *ent.Client
+}
+
+func NewPostServiceImpl(client *ent.Client) *PostServiceImpl {
+	return &PostServiceImpl{client: client}
+}
+
+func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post *ent.Post) (*ent.Post, error) {
+	client := s.client
 	newPost, err := client.Post.UpdateOneID(id).
 		SetTitle(post.Title).
 		SetCover(post.Cover).
@@ -23,7 +36,7 @@ func UpdatePostSetting(c context.Context, id int, post *ent.Post) (*ent.Post, er
 	return newPost, err
 }
 
-func GetPostCount(c context.Context) (int, error) {
+func (s *PostServiceImpl) GetPostCount(c context.Context) (int, error) {
 	client := database.DB
 	count, err := client.Post.Query().Count(c)
 	if err != nil {

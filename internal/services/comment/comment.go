@@ -10,8 +10,26 @@ import (
 	"github.com/medama-io/go-useragent"
 )
 
-func ListCommentPage(c context.Context, pageQuery model.PageQuery) (*model.PageResult[*ent.Comment], error) {
-	client := database.DB
+type CommentService interface {
+	GetCommentCount(c context.Context) (int, error)
+	ListCommentPage(c context.Context, pageQuery model.PageQuery) (*model.PageResult[*ent.Comment], error)
+	ListComment(c context.Context, url string) ([]*ent.Comment, error)
+	CountComment(c context.Context, includeReply bool, urls []string) (int64, error)
+	CreateComment(c context.Context, comment string, href string, link string, mail string, nick string, ua string, url string, ipAddress string) (*int, error)
+	GetRecentComment(c context.Context, pageSize int) ([]*ent.Comment, error)
+	ParseUserAgent(ua string) (browser string, os string)
+}
+
+type CommentServiceImpl struct {
+	client *ent.Client
+}
+
+func NewCommentServiceImpl(client *ent.Client) *CommentServiceImpl {
+	return &CommentServiceImpl{client: client}
+}
+
+func (s *CommentServiceImpl) ListCommentPage(c context.Context, pageQuery model.PageQuery) (*model.PageResult[*ent.Comment], error) {
+	client := s.client
 
 	count, err := client.Comment.Query().Count(c)
 	if err != nil {
@@ -31,7 +49,7 @@ func ListCommentPage(c context.Context, pageQuery model.PageQuery) (*model.PageR
 	return pageResult, nil
 }
 
-func ListComment(c context.Context, url string) ([]*ent.Comment, error) {
+func (s *CommentServiceImpl) ListComment(c context.Context, url string) ([]*ent.Comment, error) {
 	client := database.DB
 	comments, err := client.Comment.Query().
 		Where(comment.URLEQ(url)).
@@ -42,7 +60,7 @@ func ListComment(c context.Context, url string) ([]*ent.Comment, error) {
 	return comments, nil
 }
 
-func CountComment(c context.Context, includeReply bool, urls []string) (int64, error) {
+func (s *CommentServiceImpl) CountComment(c context.Context, includeReply bool, urls []string) (int64, error) {
 	client := database.DB
 	if includeReply {
 		count, err := client.Comment.Query().
@@ -64,7 +82,7 @@ func CountComment(c context.Context, includeReply bool, urls []string) (int64, e
 	return int64(count), nil
 }
 
-func CreateComment(c context.Context, comment string, href string, link string, mail string, nick string, ua string, url string, ipAddress string) (*int, error) {
+func (s *CommentServiceImpl) CreateComment(c context.Context, comment string, href string, link string, mail string, nick string, ua string, url string, ipAddress string) (*int, error) {
 	client := database.DB
 	entity, err := client.Comment.Create().
 		SetContent(comment).
@@ -78,14 +96,14 @@ func CreateComment(c context.Context, comment string, href string, link string, 
 	return &entity.ID, nil
 }
 
-func ParseUserAgent(ua string) (browser string, os string) {
+func (s *CommentServiceImpl) ParseUserAgent(ua string) (browser string, os string) {
 	// Create a new parser. Initialize only once during application startup.
 	parser := useragent.NewParser()
 	agent := parser.Parse(ua)
 	return agent.BrowserVersion(), agent.OS().String()
 }
 
-func GetRecentComment(c context.Context, pageSize int) ([]*ent.Comment, error) {
+func (s *CommentServiceImpl) GetRecentComment(c context.Context, pageSize int) ([]*ent.Comment, error) {
 	client := database.DB
 	comments, err := client.Comment.Query().
 		Order(ent.Desc(comment.FieldCreatedAt)).
@@ -97,7 +115,7 @@ func GetRecentComment(c context.Context, pageSize int) ([]*ent.Comment, error) {
 	return comments, nil
 }
 
-func GetCommentCount(c context.Context) (int, error) {
+func (s *CommentServiceImpl) GetCommentCount(c context.Context) (int, error) {
 	client := database.DB
 	count, err := client.Comment.Query().Count(c)
 	if err != nil {

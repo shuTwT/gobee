@@ -1,13 +1,29 @@
 package friendcirclerecord
 
 import (
+	"gobee/ent"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func ListFriendCircleRecordPage(c *fiber.Ctx) error {
+type FriendCircleRecordHandler interface {
+	ListFriendCircleRecordPage(c *fiber.Ctx) error
+	CreateFriendCircleRecord(c *fiber.Ctx) error
+	UpdateFriendCircleRecord(c *fiber.Ctx) error
+	DeleteFriendCircleRecord(c *fiber.Ctx) error
+}
+
+type FriendCircleRecordHandlerImpl struct {
+	client *ent.Client
+}
+
+func NewFriendCircleRecordHandlerImpl(client *ent.Client) *FriendCircleRecordHandlerImpl {
+	return &FriendCircleRecordHandlerImpl{client: client}
+}
+
+func (h *FriendCircleRecordHandlerImpl) ListFriendCircleRecordPage(c *fiber.Ctx) error {
 	client := database.DB
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
@@ -41,14 +57,14 @@ func ListFriendCircleRecordPage(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
-func CreateFriendCircleRecord(c *fiber.Ctx) error {
+func (h *FriendCircleRecordHandlerImpl) CreateFriendCircleRecord(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
-func UpdateFriendCircleRecord(c *fiber.Ctx) error {
+func (h *FriendCircleRecordHandlerImpl) UpdateFriendCircleRecord(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
-func DeleteFriendCircleRecord(c *fiber.Ctx) error {
+func (h *FriendCircleRecordHandlerImpl) DeleteFriendCircleRecord(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }

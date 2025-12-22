@@ -11,7 +11,26 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ListRole(c *fiber.Ctx) error {
+type RoleHandler interface {
+	ListRole(c *fiber.Ctx) error
+	ListRolePage(c *fiber.Ctx) error
+	CreateRole(c *fiber.Ctx) error
+	UpdateRole(c *fiber.Ctx) error
+	QueryRole(c *fiber.Ctx) error
+	DeleteRole(c *fiber.Ctx) error
+}
+
+type RoleHandlerImpl struct {
+	roleService role_service.RoleService
+}
+
+func NewRoleHandlerImpl(roleService role_service.RoleService) *RoleHandlerImpl {
+	return &RoleHandlerImpl{
+		roleService: roleService,
+	}
+}
+
+func (h *RoleHandlerImpl) ListRole(c *fiber.Ctx) error {
 	client := database.DB
 	roles, err := client.Role.Query().All(c.Context())
 	if err != nil {
@@ -23,7 +42,7 @@ func ListRole(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", roles))
 }
 
-func ListRolePage(c *fiber.Ctx) error {
+func (h *RoleHandlerImpl) ListRolePage(c *fiber.Ctx) error {
 	client := database.DB
 	pageQuery := model.PageQuery{}
 	err := c.QueryParser(&pageQuery)
@@ -57,7 +76,7 @@ func ListRolePage(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
-func CreateRole(c *fiber.Ctx) error {
+func (h *RoleHandlerImpl) CreateRole(c *fiber.Ctx) error {
 	client := database.DB
 	var roleData *model.RoleCreateReq
 	if err := c.BodyParser(&roleData); err != nil {
@@ -91,7 +110,7 @@ func CreateRole(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", role))
 }
 
-func UpdateRole(c *fiber.Ctx) error {
+func (h *RoleHandlerImpl) UpdateRole(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -144,14 +163,14 @@ func UpdateRole(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", role))
 }
 
-func QueryRole(c *fiber.Ctx) error {
+func (h *RoleHandlerImpl) QueryRole(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format",
 		))
 	}
-	role, err := role_service.QueryRole(c, id)
+	role, err := h.roleService.QueryRole(c, id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -160,7 +179,7 @@ func QueryRole(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", role))
 }
 
-func DeleteRole(c *fiber.Ctx) error {
+func (h *RoleHandlerImpl) DeleteRole(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

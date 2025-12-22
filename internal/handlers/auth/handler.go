@@ -9,9 +9,20 @@ import (
 
 	"gobee/ent"
 	"gobee/ent/user"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 )
+
+type AuthHandler interface {
+	Login(c *fiber.Ctx) error
+}
+
+type AuthHandlerImpl struct {
+	client *ent.Client
+}
+
+func NewAuthHandlerImpl(client *ent.Client) *AuthHandlerImpl {
+	return &AuthHandlerImpl{client: client}
+}
 
 // @Summary 用户登录
 // @Description 验证用户凭据并返回JWT令牌
@@ -24,7 +35,7 @@ import (
 // @Failure 401 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /auth/login/password [post]
-func Login(c *fiber.Ctx) error {
+func (h *AuthHandlerImpl) Login(c *fiber.Ctx) error {
 	var req *model.LoginRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(
@@ -34,7 +45,7 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// 获取数据库客户端
-	client := database.DB
+	client := h.client
 
 	// 查找用户
 	u, err := client.User.Query().

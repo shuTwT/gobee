@@ -12,7 +12,21 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetAppRoutes(app *fiber.App) []model.ApiRoute {
+type ApiInterfaceService interface {
+	GetAppRoutes(app *fiber.App) []model.ApiRoute
+	SyncRoutes(app *fiber.App)
+	ListApiRoutesPage(ctx *fiber.Ctx) error
+}
+
+type ApiInterfaceServiceImpl struct {
+	client *ent.Client
+}
+
+func NewApiInterfaceServiceImpl(client *ent.Client) *ApiInterfaceServiceImpl {
+	return &ApiInterfaceServiceImpl{client: client}
+}
+
+func (s *ApiInterfaceServiceImpl) GetAppRoutes(app *fiber.App) []model.ApiRoute {
 	routes := app.GetRoutes()
 	// 筛选出 get,post,put,delete 方法的路由
 	routeList := []model.ApiRoute{}
@@ -41,9 +55,9 @@ func GetAppRoutes(app *fiber.App) []model.ApiRoute {
  * 启动时同步
  * @Description: 同步路由
  */
-func SyncRoutes(app *fiber.App) {
+func (s *ApiInterfaceServiceImpl) SyncRoutes(app *fiber.App) {
 	client := database.DB
-	routeList := GetAppRoutes(app)
+	routeList := s.GetAppRoutes(app)
 	for _, route := range routeList {
 		// 检查路由是否已存在
 		exists, err := client.ApiPerms.Query().Where(apiperms.Path(route.Path), apiperms.Method(route.Method)).Exist(context.Background())
@@ -69,7 +83,7 @@ func SyncRoutes(app *fiber.App) {
 	}
 }
 
-func ListApiRoutesPage(ctx *fiber.Ctx) error {
+func (s *ApiInterfaceServiceImpl) ListApiRoutesPage(ctx *fiber.Ctx) error {
 	client := database.DB
 	page := ctx.QueryInt("page", 1)
 	limit := ctx.QueryInt("limit", 10)

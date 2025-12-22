@@ -10,6 +10,25 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type AlbumHandler interface {
+	ListAlbum(c *fiber.Ctx) error
+	ListAlbumPage(c *fiber.Ctx) error
+	CreateAlbum(c *fiber.Ctx) error
+	UpdateAlbum(c *fiber.Ctx) error
+	QueryAlbum(c *fiber.Ctx) error
+	DeleteAlbum(c *fiber.Ctx) error
+}
+
+type AlbumHandlerImpl struct {
+	client *ent.Client
+}
+
+func NewAlbumHandlerImpl(client *ent.Client) *AlbumHandlerImpl {
+	return &AlbumHandlerImpl{
+		client: client,
+	}
+}
+
 /**
  * @api {get} /album/list ListAlbum
  * @apiName ListAlbum
@@ -22,8 +41,8 @@ import (
  * @apiError {String} message 错误消息
  * @apiError {Number} status 状态码
  */
-func ListAlbum(c *fiber.Ctx) error {
-	client := database.DB
+func (h *AlbumHandlerImpl) ListAlbum(c *fiber.Ctx) error {
+	client := h.client
 
 	albums, err := client.Album.Query().
 		All(c.Context())
@@ -33,7 +52,7 @@ func ListAlbum(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", albums))
 }
 
-func ListAlbumPage(c *fiber.Ctx) error {
+func (h *AlbumHandlerImpl) ListAlbumPage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
@@ -58,12 +77,12 @@ func ListAlbumPage(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
-func CreateAlbum(c *fiber.Ctx) error {
+func (h *AlbumHandlerImpl) CreateAlbum(c *fiber.Ctx) error {
 	var album *model.AlbumCreateReq
 	if err := c.BodyParser(&album); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	client := database.DB
+	client := h.client
 	if err := client.Album.Create().
 		SetName(album.Name).
 		SetDescription(album.Description).
@@ -74,7 +93,7 @@ func CreateAlbum(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", album))
 }
 
-func UpdateAlbum(c *fiber.Ctx) error {
+func (h *AlbumHandlerImpl) UpdateAlbum(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -84,7 +103,7 @@ func UpdateAlbum(c *fiber.Ctx) error {
 	if err := c.BodyParser(&album); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	client := database.DB
+	client := h.client
 	if err := client.Album.UpdateOneID(id).
 		SetName(album.Name).
 		SetDescription(album.Description).
@@ -95,13 +114,13 @@ func UpdateAlbum(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", album))
 }
 
-func QueryAlbum(c *fiber.Ctx) error {
+func (h *AlbumHandlerImpl) QueryAlbum(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	client := database.DB
+	client := h.client
 	album, err := client.Album.Query().
 		Where(album.ID(id)).
 		First(c.Context())
@@ -111,13 +130,13 @@ func QueryAlbum(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", album))
 }
 
-func DeleteAlbum(c *fiber.Ctx) error {
+func (h *AlbumHandlerImpl) DeleteAlbum(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	client := database.DB
+	client := h.client
 	if err := client.Album.DeleteOneID(id).Exec(c.Context()); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}

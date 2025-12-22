@@ -7,9 +7,24 @@ import (
 
 	"gobee/ent"
 	"gobee/ent/paychannel"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 )
+
+type PayChannelHandler interface {
+	ListPayChannel(c *fiber.Ctx) error
+	CreatePayChannel(c *fiber.Ctx) error
+	UpdatePayChannel(c *fiber.Ctx) error
+	QueryPayChannel(c *fiber.Ctx) error
+	DeletePayChannel(c *fiber.Ctx) error
+}
+
+type PayChannelHandlerImpl struct {
+	client *ent.Client
+}
+
+func NewPayChannelHandlerImpl(client *ent.Client) *PayChannelHandlerImpl {
+	return &PayChannelHandlerImpl{client: client}
+}
 
 // @Summary 获取支付渠道列表
 // @Description 获取所有支付渠道的列表
@@ -19,9 +34,8 @@ import (
 // @Success 200 {object} []ent.PayChannel
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels [get]
-func ListPayChannel(c *fiber.Ctx) error {
-	client := database.DB
-	channels, err := client.PayChannel.Query().All(c.Context())
+func (h *PayChannelHandlerImpl) ListPayChannel(c *fiber.Ctx) error {
+	channels, err := h.client.PayChannel.Query().All(c.Context())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -38,14 +52,13 @@ func ListPayChannel(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels [post]
-func CreatePayChannel(c *fiber.Ctx) error {
-	client := database.DB
+func (h *PayChannelHandlerImpl) CreatePayChannel(c *fiber.Ctx) error {
 	var channel *model.PayChannelCreateReq
 	if err := c.BodyParser(&channel); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	newChannel, err := client.PayChannel.Create().
+	newChannel, err := h.client.PayChannel.Create().
 		SetName(channel.Name).
 		SetCode(channel.Code).
 		SetType(channel.Type).
@@ -69,8 +82,7 @@ func CreatePayChannel(c *fiber.Ctx) error {
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels/{id} [put]
-func UpdatePayChannel(c *fiber.Ctx) error {
-	client := database.DB
+func (h *PayChannelHandlerImpl) UpdatePayChannel(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
@@ -81,7 +93,7 @@ func UpdatePayChannel(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	updatedChannel, err := client.PayChannel.UpdateOneID(id).
+	updatedChannel, err := h.client.PayChannel.UpdateOneID(id).
 		SetName(channel.Name).
 		SetCode(channel.Code).
 		SetType(channel.Type).
@@ -104,8 +116,7 @@ func UpdatePayChannel(c *fiber.Ctx) error {
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels/{id} [get]
-func QueryPayChannel(c *fiber.Ctx) error {
-	client := database.DB
+func (h *PayChannelHandlerImpl) QueryPayChannel(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -113,7 +124,7 @@ func QueryPayChannel(c *fiber.Ctx) error {
 		))
 	}
 
-	channel, err := client.PayChannel.Query().
+	channel, err := h.client.PayChannel.Query().
 		Where(paychannel.ID(id)).
 		Only(c.Context())
 	if err != nil {
@@ -136,8 +147,7 @@ func QueryPayChannel(c *fiber.Ctx) error {
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/paychannels/{id} [delete]
-func DeletePayChannel(c *fiber.Ctx) error {
-	client := database.DB
+func (h *PayChannelHandlerImpl) DeletePayChannel(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -145,7 +155,7 @@ func DeletePayChannel(c *fiber.Ctx) error {
 		))
 	}
 
-	err = client.PayChannel.DeleteOneID(id).Exec(c.Context())
+	err = h.client.PayChannel.DeleteOneID(id).Exec(c.Context())
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return c.JSON(model.NewError(fiber.StatusNotFound,

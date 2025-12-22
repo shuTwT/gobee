@@ -12,6 +12,19 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 )
 
+type InitializeHandler interface {
+	Initialize(c *fiber.Ctx) error
+}
+
+type InitializeHandlerImpl struct {
+	userService    services.UserService
+	settingService setting.SettingService
+}
+
+func NewInitializeHandlerImpl(userService services.UserService, settingService setting.SettingService) *InitializeHandlerImpl {
+	return &InitializeHandlerImpl{userService: userService, settingService: settingService}
+}
+
 // Initialize 处理系统初始化请求
 // @Summary 系统初始化
 // @Description 首次运行系统时进行初始化设置，包括数据库配置和创建管理员账户
@@ -24,7 +37,7 @@ import (
 // @Failure 409 {object} model.ErrorResponse "系统已初始化"
 // @Failure 500 {object} model.ErrorResponse "服务器内部错误"
 // @Router /initialize [post]
-func Initialize(c *fiber.Ctx) error {
+func (h *InitializeHandlerImpl) Initialize(c *fiber.Ctx) error {
 	var req *model.InitializeRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
@@ -35,7 +48,7 @@ func Initialize(c *fiber.Ctx) error {
 	}
 
 	// 检查系统是否已初始化
-	isInitialized, err := setting.IsSystemInitialized(c.UserContext(), database.DB)
+	isInitialized, err := h.settingService.IsSystemInitialized(c.UserContext(), database.DB)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("检查系统初始化状态失败: %v", err)))
 	}
@@ -86,7 +99,7 @@ func Initialize(c *fiber.Ctx) error {
 	// 创建角色e
 	initRole(c)
 	// 创建超级管理员账户
-	adminUser, err := services.CreateUser(services.CreateUserRequest{
+	adminUser, err := h.userService.CreateUser(services.CreateUserRequest{
 		Username: req.AdminUsername,
 		Password: req.AdminPassword,
 		Email:    req.AdminEmail,
@@ -98,7 +111,7 @@ func Initialize(c *fiber.Ctx) error {
 	fmt.Printf("超级管理员账户创建成功: %s\n", adminUser.Name)
 
 	// 标记系统已初始化
-	if err := setting.SetSystemInitialized(c.UserContext(), database.DB); err != nil {
+	if err := h.settingService.SetSystemInitialized(c.UserContext(), database.DB); err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("标记系统初始化状态失败: %v", err)))
 	}
 

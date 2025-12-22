@@ -16,6 +16,31 @@ import (
 	"gobee/pkg/domain/model"
 )
 
+type UserHandler interface {
+	ListUser(c *fiber.Ctx) error
+	ListUserPage(c *fiber.Ctx) error
+	CreateUser(c *fiber.Ctx) error
+	UpdateUser(c *fiber.Ctx) error
+	QueryUser(c *fiber.Ctx) error
+	DeleteUser(c *fiber.Ctx) error
+	GetPersonalAccessTokenList(c *fiber.Ctx) error
+	GetPersonalAccessToken(c *fiber.Ctx) error
+	CreatePat(c *fiber.Ctx) error
+	GetUserProfile(c *fiber.Ctx) error
+}
+
+type UserHandlerImpl struct {
+	userService user_service.UserService
+	roleService role_service.RoleService
+}
+
+func NewUserHandlerImpl(userService user_service.UserService, roleService role_service.RoleService) *UserHandlerImpl {
+	return &UserHandlerImpl{
+		userService: userService,
+		roleService: roleService,
+	}
+}
+
 // @Summary 获取用户列表
 // @Description 获取所有用户的列表
 // @Tags users
@@ -24,8 +49,8 @@ import (
 // @Success 200 {array} ent.User
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/users [get]
-func ListUser(c *fiber.Ctx) error {
-	users, err := user_service.ListUser(c)
+func (h *UserHandlerImpl) ListUser(c *fiber.Ctx) error {
+	users, err := h.userService.ListUser(c)
 	if err != nil {
 		return c.JSON(model.NewError(-1, err.Error()))
 	}
@@ -41,7 +66,7 @@ func ListUser(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", userRespList))
 }
 
-func ListUserPage(c *fiber.Ctx) error {
+func (h *UserHandlerImpl) ListUserPage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	err := c.QueryParser(&pageQuery)
 	if err != nil {
@@ -50,7 +75,7 @@ func ListUserPage(c *fiber.Ctx) error {
 		))
 	}
 
-	count, users, err := user_service.ListUserPage(c, pageQuery)
+	count, users, err := h.userService.ListUserPage(c, pageQuery)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -64,7 +89,7 @@ func ListUserPage(c *fiber.Ctx) error {
 			Email:  user.Email,
 			RoleID: &user.RoleID,
 		}
-		role, _ := role_service.QueryRole(c, user.RoleID)
+		role, _ := h.roleService.QueryRole(c, user.RoleID)
 		userResp.Role = role
 		userRespList = append(userRespList, userResp)
 	}
@@ -85,7 +110,7 @@ func ListUserPage(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/users [post]
-func CreateUser(c *fiber.Ctx) error {
+func (h *UserHandlerImpl) CreateUser(c *fiber.Ctx) error {
 	client := database.DB
 	var userData *model.UserCreateReq
 	if err := c.BodyParser(&userData); err != nil {
@@ -155,7 +180,7 @@ func CreateUser(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/users/{id} [put]
-func UpdateUser(c *fiber.Ctx) error {
+func (h *UserHandlerImpl) UpdateUser(c *fiber.Ctx) error {
 	client := database.DB
 	var err error
 	id, err := strconv.Atoi(c.Params("id"))
@@ -237,7 +262,7 @@ func UpdateUser(c *fiber.Ctx) error {
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/users/{id} [get]
-func QueryUser(c *fiber.Ctx) error {
+func (h *UserHandlerImpl) QueryUser(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -274,7 +299,7 @@ func QueryUser(c *fiber.Ctx) error {
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/users/{id} [delete]
-func DeleteUser(c *fiber.Ctx) error {
+func (h *UserHandlerImpl) DeleteUser(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -298,7 +323,7 @@ func DeleteUser(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
-func GetPersonalAccessTokenList(c *fiber.Ctx) error {
+func (h *UserHandlerImpl) GetPersonalAccessTokenList(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	client := database.DB
 	tokens, err := client.PersonalAccessToken.Query().Where(personalaccesstoken.UserID(userId)).All(c.Context())
@@ -321,7 +346,7 @@ func GetPersonalAccessTokenList(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", result))
 }
 
-func GetPersonalAccessToken(c *fiber.Ctx) error {
+func (h *UserHandlerImpl) GetPersonalAccessToken(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -347,7 +372,7 @@ func GetPersonalAccessToken(c *fiber.Ctx) error {
 }
 
 // 创建 personalAccessToken 个人令牌
-func CreatePat(c *fiber.Ctx) error {
+func (h *UserHandlerImpl) CreatePat(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	var createReq *model.PersonalAccessTokenCreateReq
 	err := c.BodyParser(&createReq)
@@ -389,7 +414,7 @@ func CreatePat(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
-func GetUserProfile(c *fiber.Ctx) error {
+func (h *UserHandlerImpl) GetUserProfile(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	client := database.DB
 
