@@ -4,6 +4,7 @@ import (
 	"gobee/ent"
 	comment_service "gobee/internal/services/comment"
 	"gobee/pkg/domain/model"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -25,6 +26,7 @@ type CommentHandler interface {
 	ListCommentPage(c *fiber.Ctx) error
 	HandleTwikoo(c *fiber.Ctx) error
 	RecentComment(c *fiber.Ctx) error
+	GetComment(c *fiber.Ctx) error
 }
 
 type CommentHandlerImpl struct {
@@ -54,6 +56,19 @@ func (h *CommentHandlerImpl) ListCommentPage(c *fiber.Ctx) error {
 	}
 
 	resp, err := h.commentService.ListCommentPage(c.Context(), pageQuery)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	return c.JSON(model.NewSuccess("评论列表获取成功", resp))
+}
+
+func (h *CommentHandlerImpl) GetComment(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	resp, err := h.commentService.GetComment(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}

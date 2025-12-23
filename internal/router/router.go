@@ -41,7 +41,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			apiV1.All("/twikoo", handlerMap.CommentHandler.HandleTwikoo).Name("twikoo")
 			apiV1.Get("/comment/recent", handlerMap.CommentHandler.RecentComment).Name("recentComment")
 			// 登录身份验证中间件
-			apiV1.Use(middleware.Protected())
+			// apiV1.Use(middleware.Protected())
 
 			// 首页统计信息接口
 			apiV1.Get("/statistic", handlerMap.CommonHandler.GetHomeStatistics).Name("homeStatistic")
@@ -109,10 +109,12 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 				postApi.Put("/unpublish/:id", handlerMap.PostHandler.UnpublishPost).Name("postUnpublish")
 				postApi.Get("/query/:id", handlerMap.PostHandler.QueryPost).Name("postQuery")
 				postApi.Delete("/delete/:id", handlerMap.PostHandler.DeletePost).Name("postDelete")
+				postApi.Get("/summary/stream/:id", handlerMap.PostHandler.GetSummaryForStream).Name("postSummaryStream")
 			}
 			commentApi := apiV1.Group("/comment")
 			{
 				commentApi.Get("/page", handlerMap.CommentHandler.ListCommentPage).Name("commentPage")
+				commentApi.Get("/query/:id", handlerMap.CommentHandler.GetComment).Name("commentQuery")
 			}
 			storageStrategyApi := apiV1.Group("/storage-strategy")
 			{

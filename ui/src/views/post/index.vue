@@ -304,7 +304,9 @@ const publishPost = (row: any) => {
 }
 
 const handleSettingPost = (row: any) => {
-  settingPost(row)
+  settingPost(row).then(()=>{
+    onSearch()
+  })
 }
 
 // 分享文章

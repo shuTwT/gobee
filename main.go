@@ -27,7 +27,7 @@ var frontendRes embed.FS
 // @contact.email fiber@swagger.io
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host localhost:3000
+// @host localhost:13000
 // @BasePath /
 func main() {
 	app := cmd.InitializeApp(moduleDefs, frontendRes)

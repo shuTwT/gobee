@@ -1,15 +1,20 @@
 package post
 
 import (
+	"bufio"
+	"encoding/json"
+	"fmt"
 	"gobee/ent"
 	"gobee/ent/post"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 	"strconv"
+	"time"
 
 	post_service "gobee/internal/services/post"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/valyala/fasthttp"
 )
 
 type PostHandler interface {
@@ -21,6 +26,7 @@ type PostHandler interface {
 	UnpublishPost(c *fiber.Ctx) error
 	QueryPost(c *fiber.Ctx) error
 	DeletePost(c *fiber.Ctx) error
+	GetSummaryForStream(c *fiber.Ctx) error
 }
 
 type PostHandlerImpl struct {
@@ -125,7 +131,7 @@ func (h *PostHandlerImpl) UpdatePostSetting(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	var post *ent.Post
+	var post *model.PostUpdateReq
 	if err = c.BodyParser(&post); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -235,4 +241,61 @@ func (h *PostHandlerImpl) DeletePost(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("success", nil))
+}
+
+// simulateAIProcessing 模拟AI处理过程
+func simulateAIProcessing(targetText string, ch chan model.AIResponse) {
+	defer close(ch)
+
+	for i, text := range targetText {
+		ch <- model.AIResponse{
+			Content: string(text),
+			Done:    i == len(targetText)-1,
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+}
+
+// @Summary 获取文章摘要流
+// @Description 获取指定文章的摘要流
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Param id path int true "文章ID"
+// @Success 200 {object} model.HttpSuccess{data=model.AIResponse}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/posts/{id}/summary [get]
+func (h *PostHandlerImpl) GetSummaryForStream(c *fiber.Ctx) error {
+	c.Set("Content-Type", "text/event-stream")
+	c.Set("Cache-Control", "no-cache")
+	c.Set("Connection", "keep-alive")
+	c.Set("Transfer-Encoding", "chunked")
+
+	responseChan := make(chan model.AIResponse)
+
+	go simulateAIProcessing("你好!我是AI助手,我正在处理你的请求,这是一个流式响应示例,马上就要完成了,处理完成!", responseChan)
+	c.Context().SetBodyStreamWriter(fasthttp.StreamWriter(func(w *bufio.Writer) {
+		for response := range responseChan {
+			data, err := json.Marshal(response.Content)
+			if err != nil {
+				continue
+			}
+
+			fmt.Fprintf(w, "%s", string(data))
+
+			err = w.Flush()
+
+			if err != nil {
+				break
+			}
+
+			if response.Done {
+				break
+			}
+		}
+
+	}))
+
+	return nil
 }

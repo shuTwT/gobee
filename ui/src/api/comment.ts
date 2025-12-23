@@ -53,20 +53,20 @@ export const getCommentPage = (params: {
 
 // 获取评论详情
 export const getCommentDetail = (id: number) => {
-  return http.request<ApiResponse<Comment>>('get',`${BASE_URL}/v1/comment/${id}`);
+  return http.request<ApiResponse<Comment>>('get',`${BASE_URL}/v1/comment/query/${id}`);
 };
 
 // 审核评论
 export const approveComment = (id: number) => {
-  return http.request<ApiResponse<Comment>>('put',`${BASE_URL}/v1/comment/${id}/approve`);
+  return http.request<ApiResponse<Comment>>('put',`${BASE_URL}/v1/comment/approve/${id}`);
 };
 
 // 拒绝评论
 export const rejectComment = (id: number) => {
-  return http.request<ApiResponse<Comment>>('put',`${BASE_URL}/v1/comment/${id}/reject`);
+  return http.request<ApiResponse<Comment>>('put',`${BASE_URL}/v1/comment/reject/${id}`);
 };
 
 // 删除评论
 export const deleteComment = (id: number) => {
-  return http.request<ApiResponse<null>>('delete',`${BASE_URL}/v1/comment/${id}`);
+  return http.request<ApiResponse<null>>('delete',`${BASE_URL}/v1/comment/delete/${id}`);
 };

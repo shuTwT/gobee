@@ -1,0 +1,25 @@
+{
+  "name": "@gobee/api-client",
+  "version": "0.0.1",
+  "description": "",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "generate": "node index.js"
+  },
+  "files": [
+    "dist/index.js",
+    "dist/index.d.ts",
+    "README.md"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "swagger-typescript-api": "^13.2.16"
+  },
+  "peerDependencies": {
+    "axios": "^1.6.2"
+  }
+}

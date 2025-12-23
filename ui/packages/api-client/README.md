@@ -1,0 +1,1 @@
+使用`swagger-typescript-api`生成API客户端

@@ -1027,7 +1027,7 @@ definitions:
     - StatusDraft
     - StatusPublished
     - StatusArchived
-host: localhost:3000
+host: localhost:13000
 info:
   contact:
     email: fiber@swagger.io

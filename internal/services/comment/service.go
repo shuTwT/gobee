@@ -14,6 +14,7 @@ type CommentService interface {
 	GetCommentCount(c context.Context) (int, error)
 	ListCommentPage(c context.Context, pageQuery model.PageQuery) (*model.PageResult[*ent.Comment], error)
 	ListComment(c context.Context, url string) ([]*ent.Comment, error)
+	GetComment(c context.Context, id int) (*ent.Comment, error)
 	CountComment(c context.Context, includeReply bool, urls []string) (int64, error)
 	CreateComment(c context.Context, comment string, href string, link string, mail string, nick string, ua string, url string, ipAddress string) (*int, error)
 	GetRecentComment(c context.Context, pageSize int) ([]*ent.Comment, error)
@@ -58,6 +59,17 @@ func (s *CommentServiceImpl) ListComment(c context.Context, url string) ([]*ent.
 		return nil, err
 	}
 	return comments, nil
+}
+
+func (s *CommentServiceImpl) GetComment(c context.Context, id int) (*ent.Comment, error) {
+	client := database.DB
+	comment, err := client.Comment.Query().
+		Where(comment.IDEQ(id)).
+		First(c)
+	if err != nil {
+		return nil, err
+	}
+	return comment, nil
 }
 
 func (s *CommentServiceImpl) CountComment(c context.Context, includeReply bool, urls []string) (int64, error) {

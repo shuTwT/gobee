@@ -4,10 +4,11 @@ import (
 	"context"
 	"gobee/ent"
 	"gobee/internal/database"
+	"gobee/pkg/domain/model"
 )
 
 type PostService interface {
-	UpdatePostSetting(c context.Context, id int, post *ent.Post) (*ent.Post, error)
+	UpdatePostSetting(c context.Context, id int, post *model.PostUpdateReq) (*ent.Post, error)
 	GetPostCount(c context.Context) (int, error)
 }
 
@@ -19,19 +20,25 @@ func NewPostServiceImpl(client *ent.Client) *PostServiceImpl {
 	return &PostServiceImpl{client: client}
 }
 
-func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post *ent.Post) (*ent.Post, error) {
+func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post *model.PostUpdateReq) (*ent.Post, error) {
 	client := s.client
+	summary := ""
+	if post.IsAutogenSummary {
+		summary = "生成失败"
+	} else {
+		summary = post.Summary
+	}
 	newPost, err := client.Post.UpdateOneID(id).
 		SetTitle(post.Title).
 		SetCover(post.Cover).
 		SetKeywords(post.Keywords).
 		SetCopyright(post.Copyright).
 		SetAuthor(post.Author).
-		SetStatus(post.Status).
 		SetIsAutogenSummary(post.IsAutogenSummary).
 		SetIsVisible(post.IsVisible).
 		SetIsTipToTop(post.IsTipToTop).
 		SetIsAllowComment(post.IsAllowComment).
+		SetSummary(summary).
 		Save(c)
 	return newPost, err
 }

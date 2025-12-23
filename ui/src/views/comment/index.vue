@@ -48,7 +48,7 @@ const fetchComments = async () => {
     })
     data.value = res.data.records
     pagination.value.itemCount = res.data.total
-  } catch (err) {
+  } catch {
     message.error('获取评论列表失败')
   } finally {
     loading.value = false
@@ -61,7 +61,7 @@ const handleView = async (row: Comment) => {
     const res = await getCommentDetail(row.id)
     currentComment.value = res.data
     showModal.value = true
-  } catch (err) {
+  } catch {
     message.error('获取评论详情失败')
   }
 }
@@ -72,7 +72,7 @@ const handleApprove = async (row: Comment) => {
     await approveComment(row.id)
     message.success('审核通过成功')
     fetchComments()
-  } catch (err) {
+  } catch  {
     message.error('审核失败')
   }
 }
@@ -83,7 +83,7 @@ const handleReject = async (row: Comment) => {
     await rejectComment(row.id)
     message.success('拒绝评论成功')
     fetchComments()
-  } catch (err) {
+  } catch {
     message.error('操作失败')
   }
 }
@@ -94,7 +94,7 @@ const handleDelete = async (row: Comment) => {
     await deleteComment(row.id)
     message.success('删除成功')
     fetchComments()
-  } catch (err) {
+  } catch {
     message.error('删除失败')
   }
 }
@@ -232,7 +232,7 @@ onMounted(() => {
 
     <!-- 评论详情弹窗 -->
     <n-modal v-model:show="showModal" preset="card" title="评论详情" style="width: 600px">
-      <n-descriptions v-if="currentComment" bordered>
+      <n-descriptions v-if="currentComment" bordered tabindex="1">
         <n-descriptions-item label="评论者">
           {{ currentComment.user?.name || '未知用户' }}
         </n-descriptions-item>
