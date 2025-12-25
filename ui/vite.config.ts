@@ -52,8 +52,6 @@ export default defineConfig({
       output:{
         manualChunks:{
           'highlight.js':['highlight.js'],
-          'wangeditor-next':['@wangeditor-next/editor'],
-          'wangeditor-next-vue':['@wangeditor-next/editor-for-vue'],
           'pinia':['pinia'],
           'axios':['axios'],
           'uppy':['@uppy/core','@uppy/dashboard','@uppy/xhr-upload'],

@@ -26,7 +26,7 @@ import { useRoute } from 'vue-router'
 import * as postApi from '@/api/post'
 import { usePostHook } from '../utils/hook'
 
-const { settingPost, savePost, publishPost, unpublishPost } = usePostHook()
+const { settingPost, savePost, publishPost, unpublishPost, importPost } = usePostHook()
 
 const route = useRoute()
 const editorRef = shallowRef()
@@ -100,6 +100,14 @@ const handleUnpublish = () => {
   })
 }
 
+const handleImport = () =>{
+  importPost({
+    id:route.query.id
+  }).then((res)=>{
+    valueHtml.value = res.importContent
+  })
+}
+
 const getPostData = () => {
   const id = route.query.id
   if (id) {
@@ -138,10 +146,11 @@ onBeforeUnmount(() => {
           <n-button @click="handleSave"> 保存 </n-button>
         </div>
         <div class="pt-6 flex justify-end pr-6 items-center">
-          <n-button v-if="!publishStatus" type="primary" size="large" @click="handlePublish">
+          <n-button style="margin-right: 10px;" @click="handleImport">导入</n-button>
+          <n-button v-if="!publishStatus" type="primary" @click="handlePublish">
             发布
           </n-button>
-          <n-button v-else type="primary" size="large" @click="handleUnpublish">
+          <n-button v-else type="primary" @click="handleUnpublish">
             取消发布
           </n-button>
         </div>

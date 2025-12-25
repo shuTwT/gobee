@@ -1,8 +1,9 @@
-import type { MessageReactive } from 'naive-ui'
+import { NButton, NPopconfirm, type MessageReactive } from 'naive-ui'
 import * as postApi from '@/api/post'
 import { addDialog } from '@/components/dialog'
 import type { FormProps } from './types'
 import SettingForm from '../settingForm.vue'
+import ImportForm from '../importForm.vue'
 
 export function usePostHook() {
   const message = useMessage()
@@ -11,16 +12,18 @@ export function usePostHook() {
   // 保存文章
   const savePost = (row: any) => {
     return new Promise((resolve, reject) => {
-      postApi.updatePostContent(row.id, {
-        content: row.content
-      }).then((res) => {
-        message.success('保存成功')
-        resolve(true)
-      }).catch((err) => {
-        reject(err)
-      })
+      postApi
+        .updatePostContent(row.id, {
+          content: row.content,
+        })
+        .then((res) => {
+          message.success('保存成功')
+          resolve(true)
+        })
+        .catch((err) => {
+          reject(err)
+        })
     })
-
   }
 
   // 文章设置
@@ -65,17 +68,15 @@ export function usePostHook() {
                 postApi.updatePostSetting(row.id, curData).then(() => {
                   chores()
                 })
-
-              } catch { }
+              } catch {}
             },
           })
         })
-        .catch((err) => { })
+        .catch((err) => {})
         .finally(() => {
           messsageReactive.destroy()
         })
     })
-
   }
 
   // 发布文章
@@ -87,18 +88,19 @@ export function usePostHook() {
         positiveText: '确定',
         negativeText: '取消',
         onPositiveClick: () => {
-          postApi.publishPost(row.id).then(() => {
-            message.success('发布成功')
-            resolve(true)
-          }).catch(() => {
-            message.error('发布失败')
-            reject(false)
-          })
-
+          postApi
+            .publishPost(row.id)
+            .then(() => {
+              message.success('发布成功')
+              resolve(true)
+            })
+            .catch(() => {
+              message.error('发布失败')
+              reject(false)
+            })
         },
       })
     })
-
   }
 
   // 取消发布文章
@@ -110,18 +112,19 @@ export function usePostHook() {
         positiveText: '确定',
         negativeText: '取消',
         onPositiveClick: () => {
-          postApi.unpublishPost(row.id).then(() => {
-            message.success('取消发布成功')
-            resolve(true)
-          }).catch(() => {
-            message.error('取消发布失败')
-            reject(false)
-          })
-
+          postApi
+            .unpublishPost(row.id)
+            .then(() => {
+              message.success('取消发布成功')
+              resolve(true)
+            })
+            .catch(() => {
+              message.error('取消发布失败')
+              reject(false)
+            })
         },
       })
     })
-
   }
 
   // 分享文章
@@ -142,6 +145,27 @@ export function usePostHook() {
     message.info('复制内容功能开发中')
   }
 
+  /**
+   * 导入文章
+   * @param row
+   */
+  const importPost = (row: any) => {
+    const formRef = ref()
+    return new Promise((resolve, reject) => {
+      addDialog({
+        title: '导入文章',
+        contentRenderer: () => h(ImportForm,{ref:formRef}),
+        beforeSure: async (done) => {
+          try {
+            const curData = await formRef.value?.getData()
+            resolve(curData)
+            done()
+          } catch {}
+        },
+      })
+    })
+  }
+
   return {
     savePost,
     settingPost,
@@ -150,5 +174,6 @@ export function usePostHook() {
     sharePost,
     exportPost,
     copyPostContent,
+    importPost,
   }
 }

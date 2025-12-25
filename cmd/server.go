@@ -6,6 +6,8 @@ import (
 	"gobee/internal/handlers"
 	"gobee/internal/router"
 	"gobee/pkg"
+	"io/fs"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -20,7 +22,8 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	config.Init()
 	serviceMap := pkg.InitializeServices(moduleDefs)
 
-	engine := html.New("./views", ".tmpl")
+	viewsPkg, _ := fs.Sub(moduleDefs, "views")
+	engine := html.NewFileSystem(http.FS(viewsPkg), ".tmpl")
 	engine.Debug(true)
 	engine.Reload(true)
 	app := fiber.New(fiber.Config{
