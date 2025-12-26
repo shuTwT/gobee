@@ -79,6 +79,16 @@ func Content(v string) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldContent, v))
 }
 
+// MdContent applies equality check predicate on the "md_content" field. It's identical to MdContentEQ.
+func MdContent(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldMdContent, v))
+}
+
+// HTMLContent applies equality check predicate on the "html_content" field. It's identical to HTMLContentEQ.
+func HTMLContent(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldHTMLContent, v))
+}
+
 // IsAutogenSummary applies equality check predicate on the "is_autogen_summary" field. It's identical to IsAutogenSummaryEQ.
 func IsAutogenSummary(v bool) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldIsAutogenSummary, v))
@@ -422,6 +432,176 @@ func ContentEqualFold(v string) predicate.Post {
 // ContentContainsFold applies the ContainsFold predicate on the "content" field.
 func ContentContainsFold(v string) predicate.Post {
 	return predicate.Post(sql.FieldContainsFold(FieldContent, v))
+}
+
+// MdContentEQ applies the EQ predicate on the "md_content" field.
+func MdContentEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldMdContent, v))
+}
+
+// MdContentNEQ applies the NEQ predicate on the "md_content" field.
+func MdContentNEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldMdContent, v))
+}
+
+// MdContentIn applies the In predicate on the "md_content" field.
+func MdContentIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldIn(FieldMdContent, vs...))
+}
+
+// MdContentNotIn applies the NotIn predicate on the "md_content" field.
+func MdContentNotIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldNotIn(FieldMdContent, vs...))
+}
+
+// MdContentGT applies the GT predicate on the "md_content" field.
+func MdContentGT(v string) predicate.Post {
+	return predicate.Post(sql.FieldGT(FieldMdContent, v))
+}
+
+// MdContentGTE applies the GTE predicate on the "md_content" field.
+func MdContentGTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldGTE(FieldMdContent, v))
+}
+
+// MdContentLT applies the LT predicate on the "md_content" field.
+func MdContentLT(v string) predicate.Post {
+	return predicate.Post(sql.FieldLT(FieldMdContent, v))
+}
+
+// MdContentLTE applies the LTE predicate on the "md_content" field.
+func MdContentLTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldLTE(FieldMdContent, v))
+}
+
+// MdContentContains applies the Contains predicate on the "md_content" field.
+func MdContentContains(v string) predicate.Post {
+	return predicate.Post(sql.FieldContains(FieldMdContent, v))
+}
+
+// MdContentHasPrefix applies the HasPrefix predicate on the "md_content" field.
+func MdContentHasPrefix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasPrefix(FieldMdContent, v))
+}
+
+// MdContentHasSuffix applies the HasSuffix predicate on the "md_content" field.
+func MdContentHasSuffix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasSuffix(FieldMdContent, v))
+}
+
+// MdContentIsNil applies the IsNil predicate on the "md_content" field.
+func MdContentIsNil() predicate.Post {
+	return predicate.Post(sql.FieldIsNull(FieldMdContent))
+}
+
+// MdContentNotNil applies the NotNil predicate on the "md_content" field.
+func MdContentNotNil() predicate.Post {
+	return predicate.Post(sql.FieldNotNull(FieldMdContent))
+}
+
+// MdContentEqualFold applies the EqualFold predicate on the "md_content" field.
+func MdContentEqualFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldEqualFold(FieldMdContent, v))
+}
+
+// MdContentContainsFold applies the ContainsFold predicate on the "md_content" field.
+func MdContentContainsFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldContainsFold(FieldMdContent, v))
+}
+
+// HTMLContentEQ applies the EQ predicate on the "html_content" field.
+func HTMLContentEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldHTMLContent, v))
+}
+
+// HTMLContentNEQ applies the NEQ predicate on the "html_content" field.
+func HTMLContentNEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldHTMLContent, v))
+}
+
+// HTMLContentIn applies the In predicate on the "html_content" field.
+func HTMLContentIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldIn(FieldHTMLContent, vs...))
+}
+
+// HTMLContentNotIn applies the NotIn predicate on the "html_content" field.
+func HTMLContentNotIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldNotIn(FieldHTMLContent, vs...))
+}
+
+// HTMLContentGT applies the GT predicate on the "html_content" field.
+func HTMLContentGT(v string) predicate.Post {
+	return predicate.Post(sql.FieldGT(FieldHTMLContent, v))
+}
+
+// HTMLContentGTE applies the GTE predicate on the "html_content" field.
+func HTMLContentGTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldGTE(FieldHTMLContent, v))
+}
+
+// HTMLContentLT applies the LT predicate on the "html_content" field.
+func HTMLContentLT(v string) predicate.Post {
+	return predicate.Post(sql.FieldLT(FieldHTMLContent, v))
+}
+
+// HTMLContentLTE applies the LTE predicate on the "html_content" field.
+func HTMLContentLTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldLTE(FieldHTMLContent, v))
+}
+
+// HTMLContentContains applies the Contains predicate on the "html_content" field.
+func HTMLContentContains(v string) predicate.Post {
+	return predicate.Post(sql.FieldContains(FieldHTMLContent, v))
+}
+
+// HTMLContentHasPrefix applies the HasPrefix predicate on the "html_content" field.
+func HTMLContentHasPrefix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasPrefix(FieldHTMLContent, v))
+}
+
+// HTMLContentHasSuffix applies the HasSuffix predicate on the "html_content" field.
+func HTMLContentHasSuffix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasSuffix(FieldHTMLContent, v))
+}
+
+// HTMLContentIsNil applies the IsNil predicate on the "html_content" field.
+func HTMLContentIsNil() predicate.Post {
+	return predicate.Post(sql.FieldIsNull(FieldHTMLContent))
+}
+
+// HTMLContentNotNil applies the NotNil predicate on the "html_content" field.
+func HTMLContentNotNil() predicate.Post {
+	return predicate.Post(sql.FieldNotNull(FieldHTMLContent))
+}
+
+// HTMLContentEqualFold applies the EqualFold predicate on the "html_content" field.
+func HTMLContentEqualFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldEqualFold(FieldHTMLContent, v))
+}
+
+// HTMLContentContainsFold applies the ContainsFold predicate on the "html_content" field.
+func HTMLContentContainsFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldContainsFold(FieldHTMLContent, v))
+}
+
+// ContentTypeEQ applies the EQ predicate on the "content_type" field.
+func ContentTypeEQ(v ContentType) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldContentType, v))
+}
+
+// ContentTypeNEQ applies the NEQ predicate on the "content_type" field.
+func ContentTypeNEQ(v ContentType) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldContentType, v))
+}
+
+// ContentTypeIn applies the In predicate on the "content_type" field.
+func ContentTypeIn(vs ...ContentType) predicate.Post {
+	return predicate.Post(sql.FieldIn(FieldContentType, vs...))
+}
+
+// ContentTypeNotIn applies the NotIn predicate on the "content_type" field.
+func ContentTypeNotIn(vs ...ContentType) predicate.Post {
+	return predicate.Post(sql.FieldNotIn(FieldContentType, vs...))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.

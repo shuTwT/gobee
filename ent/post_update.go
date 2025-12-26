@@ -82,6 +82,60 @@ func (_u *PostUpdate) SetNillableContent(v *string) *PostUpdate {
 	return _u
 }
 
+// SetMdContent sets the "md_content" field.
+func (_u *PostUpdate) SetMdContent(v string) *PostUpdate {
+	_u.mutation.SetMdContent(v)
+	return _u
+}
+
+// SetNillableMdContent sets the "md_content" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableMdContent(v *string) *PostUpdate {
+	if v != nil {
+		_u.SetMdContent(*v)
+	}
+	return _u
+}
+
+// ClearMdContent clears the value of the "md_content" field.
+func (_u *PostUpdate) ClearMdContent() *PostUpdate {
+	_u.mutation.ClearMdContent()
+	return _u
+}
+
+// SetHTMLContent sets the "html_content" field.
+func (_u *PostUpdate) SetHTMLContent(v string) *PostUpdate {
+	_u.mutation.SetHTMLContent(v)
+	return _u
+}
+
+// SetNillableHTMLContent sets the "html_content" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableHTMLContent(v *string) *PostUpdate {
+	if v != nil {
+		_u.SetHTMLContent(*v)
+	}
+	return _u
+}
+
+// ClearHTMLContent clears the value of the "html_content" field.
+func (_u *PostUpdate) ClearHTMLContent() *PostUpdate {
+	_u.mutation.ClearHTMLContent()
+	return _u
+}
+
+// SetContentType sets the "content_type" field.
+func (_u *PostUpdate) SetContentType(v post.ContentType) *PostUpdate {
+	_u.mutation.SetContentType(v)
+	return _u
+}
+
+// SetNillableContentType sets the "content_type" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableContentType(v *post.ContentType) *PostUpdate {
+	if v != nil {
+		_u.SetContentType(*v)
+	}
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *PostUpdate) SetStatus(v post.Status) *PostUpdate {
 	_u.mutation.SetStatus(v)
@@ -366,6 +420,11 @@ func (_u *PostUpdate) check() error {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ContentType(); ok {
+		if err := post.ContentTypeValidator(v); err != nil {
+			return &ValidationError{Name: "content_type", err: fmt.Errorf(`ent: validator failed for field "Post.content_type": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Status(); ok {
 		if err := post.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
@@ -430,6 +489,21 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.MdContent(); ok {
+		_spec.SetField(post.FieldMdContent, field.TypeString, value)
+	}
+	if _u.mutation.MdContentCleared() {
+		_spec.ClearField(post.FieldMdContent, field.TypeString)
+	}
+	if value, ok := _u.mutation.HTMLContent(); ok {
+		_spec.SetField(post.FieldHTMLContent, field.TypeString, value)
+	}
+	if _u.mutation.HTMLContentCleared() {
+		_spec.ClearField(post.FieldHTMLContent, field.TypeString)
+	}
+	if value, ok := _u.mutation.ContentType(); ok {
+		_spec.SetField(post.FieldContentType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
@@ -561,6 +635,60 @@ func (_u *PostUpdateOne) SetContent(v string) *PostUpdateOne {
 func (_u *PostUpdateOne) SetNillableContent(v *string) *PostUpdateOne {
 	if v != nil {
 		_u.SetContent(*v)
+	}
+	return _u
+}
+
+// SetMdContent sets the "md_content" field.
+func (_u *PostUpdateOne) SetMdContent(v string) *PostUpdateOne {
+	_u.mutation.SetMdContent(v)
+	return _u
+}
+
+// SetNillableMdContent sets the "md_content" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableMdContent(v *string) *PostUpdateOne {
+	if v != nil {
+		_u.SetMdContent(*v)
+	}
+	return _u
+}
+
+// ClearMdContent clears the value of the "md_content" field.
+func (_u *PostUpdateOne) ClearMdContent() *PostUpdateOne {
+	_u.mutation.ClearMdContent()
+	return _u
+}
+
+// SetHTMLContent sets the "html_content" field.
+func (_u *PostUpdateOne) SetHTMLContent(v string) *PostUpdateOne {
+	_u.mutation.SetHTMLContent(v)
+	return _u
+}
+
+// SetNillableHTMLContent sets the "html_content" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableHTMLContent(v *string) *PostUpdateOne {
+	if v != nil {
+		_u.SetHTMLContent(*v)
+	}
+	return _u
+}
+
+// ClearHTMLContent clears the value of the "html_content" field.
+func (_u *PostUpdateOne) ClearHTMLContent() *PostUpdateOne {
+	_u.mutation.ClearHTMLContent()
+	return _u
+}
+
+// SetContentType sets the "content_type" field.
+func (_u *PostUpdateOne) SetContentType(v post.ContentType) *PostUpdateOne {
+	_u.mutation.SetContentType(v)
+	return _u
+}
+
+// SetNillableContentType sets the "content_type" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableContentType(v *post.ContentType) *PostUpdateOne {
+	if v != nil {
+		_u.SetContentType(*v)
 	}
 	return _u
 }
@@ -862,6 +990,11 @@ func (_u *PostUpdateOne) check() error {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ContentType(); ok {
+		if err := post.ContentTypeValidator(v); err != nil {
+			return &ValidationError{Name: "content_type", err: fmt.Errorf(`ent: validator failed for field "Post.content_type": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Status(); ok {
 		if err := post.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
@@ -943,6 +1076,21 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.MdContent(); ok {
+		_spec.SetField(post.FieldMdContent, field.TypeString, value)
+	}
+	if _u.mutation.MdContentCleared() {
+		_spec.ClearField(post.FieldMdContent, field.TypeString)
+	}
+	if value, ok := _u.mutation.HTMLContent(); ok {
+		_spec.SetField(post.FieldHTMLContent, field.TypeString, value)
+	}
+	if _u.mutation.HTMLContentCleared() {
+		_spec.ClearField(post.FieldHTMLContent, field.TypeString)
+	}
+	if value, ok := _u.mutation.ContentType(); ok {
+		_spec.SetField(post.FieldContentType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(post.FieldStatus, field.TypeEnum, value)

@@ -10,6 +10,7 @@ import (
 	"gobee/ent/albumphoto"
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
+	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
@@ -100,6 +101,7 @@ func checkColumn(t, c string) error {
 			albumphoto.Table:          albumphoto.ValidColumn,
 			apiperms.Table:            apiperms.ValidColumn,
 			comment.Table:             comment.ValidColumn,
+			essay.Table:               essay.ValidColumn,
 			flink.Table:               flink.ValidColumn,
 			flinkgroup.Table:          flinkgroup.ValidColumn,
 			file.Table:                file.ValidColumn,

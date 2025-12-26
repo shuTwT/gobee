@@ -442,6 +442,52 @@ definitions:
           $ref: '#/definitions/ent.User'
         type: array
     type: object
+  ent.StorageStrategy:
+    properties:
+      access_key:
+        description: accessKey
+        type: string
+      base_path:
+        description: local 基础路径
+        type: string
+      bucket:
+        description: 存储桶名称
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      domain:
+        description: 访问域名
+        type: string
+      endpoint:
+        description: 端点
+        type: string
+      id:
+        description: ID of the ent.
+        type: integer
+      master:
+        description: 是否为默认策略
+        type: boolean
+      name:
+        description: 策略名称
+        type: string
+      node_id:
+        description: 节点 ID
+        type: string
+      region:
+        description: region
+        type: string
+      secret_key:
+        description: secret_key
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/storagestrategy.Type'
+        description: 策略类型
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
   ent.User:
     properties:
       created_at:
@@ -485,6 +531,13 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Role'
         description: Role holds the value of the role edge.
+    type: object
+  model.AIResponse:
+    properties:
+      content:
+        type: string
+      done:
+        type: boolean
     type: object
   model.AlbumCreateReq:
     properties:
@@ -560,6 +613,45 @@ definitions:
       status:
         description: 状态
         type: string
+    type: object
+  model.EssayCreateReq:
+    properties:
+      content:
+        type: string
+      draft:
+        type: boolean
+      images:
+        items:
+          type: string
+        type: array
+    type: object
+  model.EssayResp:
+    properties:
+      content:
+        type: string
+      create_at:
+        type: string
+      draft:
+        type: boolean
+      id:
+        type: integer
+      images:
+        items:
+          type: string
+        type: array
+    type: object
+  model.EssayUpdateReq:
+    properties:
+      content:
+        type: string
+      draft:
+        type: boolean
+      id:
+        type: integer
+      images:
+        items:
+          type: string
+        type: array
     type: object
   model.FlinkCreateReq:
     properties:
@@ -853,6 +945,15 @@ definitions:
       total:
         type: integer
     type: object
+  model.PageResult-model_EssayResp:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/model.EssayResp'
+        type: array
+      total:
+        type: integer
+    type: object
   model.PageResult-model_FlinkResp:
     properties:
       records:
@@ -880,6 +981,15 @@ definitions:
       total:
         type: integer
     type: object
+  model.PageResult-model_UserResp:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/model.UserResp'
+        type: array
+      total:
+        type: integer
+    type: object
   model.PersonalAccessTokenCreateReq:
     properties:
       description:
@@ -888,6 +998,20 @@ definitions:
       expires:
         description: 过期时间
         type: string
+      name:
+        description: 令牌名称
+        type: string
+    type: object
+  model.PersonalAccessTokenListResp:
+    properties:
+      description:
+        description: 描述
+        type: string
+      expires:
+        description: 过期时间
+        type: string
+      id:
+        type: integer
       name:
         description: 令牌名称
         type: string
@@ -996,6 +1120,78 @@ definitions:
       name:
         type: string
     type: object
+  model.StorageStrategyCreateReq:
+    properties:
+      access_key:
+        type: string
+      base_path:
+        type: string
+      bucket:
+        type: string
+      domain:
+        type: string
+      endpoint:
+        type: string
+      master:
+        type: boolean
+      name:
+        type: string
+      region:
+        type: string
+      secret_key:
+        type: string
+      type:
+        enum:
+        - local
+        - s3
+        type: string
+    required:
+    - domain
+    - name
+    - type
+    type: object
+  model.StorageStrategyListResp:
+    properties:
+      id:
+        type: integer
+      master:
+        type: boolean
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  model.StorageStrategyUpdateReq:
+    properties:
+      access_key:
+        type: string
+      base_path:
+        type: string
+      bucket:
+        type: string
+      domain:
+        type: string
+      endpoint:
+        type: string
+      master:
+        type: boolean
+      name:
+        type: string
+      node_id:
+        type: string
+      region:
+        type: string
+      secret_key:
+        type: string
+      type:
+        enum:
+        - local
+        - s3
+        type: string
+    required:
+    - domain
+    - type
+    type: object
   model.UserProfileResp:
     properties:
       email:
@@ -1015,6 +1211,27 @@ definitions:
       user_id:
         type: integer
     type: object
+  model.UserResp:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      id:
+        type: integer
+      name:
+        type: string
+      phone_number:
+        type: string
+      phone_number_verified:
+        type: boolean
+      role:
+        $ref: '#/definitions/ent.Role'
+      role_id:
+        type: integer
+    type: object
   post.Status:
     enum:
     - draft
@@ -1027,6 +1244,16 @@ definitions:
     - StatusDraft
     - StatusPublished
     - StatusArchived
+  storagestrategy.Type:
+    enum:
+    - local
+    - local
+    - s3
+    type: string
+    x-enum-varnames:
+    - DefaultType
+    - TypeLocal
+    - TypeS3
 host: localhost:13000
 info:
   contact:
@@ -1040,36 +1267,77 @@ info:
   title: Fiber Example API
   version: "1.0"
 paths:
-  /api/v1/album_photos:
-    get:
+  /api/auth/login/password:
+    post:
       consumes:
       - application/json
-      description: 查询所有相册照片
+      description: 验证用户凭据并返回JWT令牌
+      parameters:
+      - description: 登录请求
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpSuccess'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/ent.AlbumPhoto'
-                  type: array
-              type: object
+            $ref: '#/definitions/model.HttpSuccess'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/model.HttpError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 查询相册照片列表
+      summary: 用户登录
       tags:
-      - album_photos
+      - auth
+  /api/initialize:
+    post:
+      consumes:
+      - application/json
+      description: 首次运行系统时进行初始化设置，包括数据库配置和创建管理员账户
+      parameters:
+      - description: 初始化请求
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.InitializeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 初始化成功
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "409":
+          description: 系统已初始化
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 系统初始化
+      tags:
+      - Initialize
+  /api/v1/album-photo/create:
     post:
       consumes:
       - application/json
@@ -1103,8 +1371,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 创建相册照片
       tags:
-      - album_photos
-  /api/v1/album_photos/{id}:
+      - albumPhotos
+  /api/v1/album-photo/delete/{id}:
     delete:
       consumes:
       - application/json
@@ -1137,7 +1405,77 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 删除相册照片
       tags:
-      - album_photos
+      - albumPhotos
+  /api/v1/album-photo/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询所有相册照片
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/ent.AlbumPhoto'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询相册照片列表
+      tags:
+      - albumPhotos
+  /api/v1/album-photo/page:
+    get:
+      consumes:
+      - application/json
+      description: 查询所有相册照片分页列表
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-ent_AlbumPhoto'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询相册照片分页列表
+      tags:
+      - albumPhotos
+  /api/v1/album-photo/query/{id}:
     get:
       consumes:
       - application/json
@@ -1170,7 +1508,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 查询相册照片
       tags:
-      - album_photos
+      - albumPhotos
+  /api/v1/album-photo/update/{id}:
     put:
       consumes:
       - application/json
@@ -1209,76 +1548,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 更新相册照片
       tags:
-      - album_photos
-  /api/v1/album_photos/page:
-    get:
-      consumes:
-      - application/json
-      description: 查询所有相册照片分页列表
-      parameters:
-      - default: 1
-        description: 页码
-        in: query
-        name: page
-        type: integer
-      - default: 10
-        description: 每页数量
-        in: query
-        name: size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpSuccess'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.PageResult-ent_AlbumPhoto'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 查询相册照片分页列表
-      tags:
-      - album_photos
-  /api/v1/albums:
-    get:
-      consumes:
-      - application/json
-      description: 查询所有相册
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpSuccess'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/ent.Album'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 查询相册列表
-      tags:
-      - albums
+      - albumPhotos
+  /api/v1/album/create:
     post:
       consumes:
       - application/json
@@ -1312,8 +1583,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 创建相册
       tags:
-      - albums
-  /api/v1/albums/{id}:
+      - album
+  /api/v1/album/delete/{id}:
     delete:
       consumes:
       - application/json
@@ -1346,7 +1617,77 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 删除相册
       tags:
-      - albums
+      - album
+  /api/v1/album/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询所有相册
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/ent.Album'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询相册列表
+      tags:
+      - album
+  /api/v1/album/page:
+    get:
+      consumes:
+      - application/json
+      description: 查询相册列表分页
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-ent_Album'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询相册列表分页
+      tags:
+      - album
+  /api/v1/album/query/{id}:
     get:
       consumes:
       - application/json
@@ -1379,7 +1720,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 查询相册
       tags:
-      - albums
+      - album
+  /api/v1/album/update/{id}:
     put:
       consumes:
       - application/json
@@ -1418,47 +1760,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 更新相册
       tags:
-      - albums
-  /api/v1/albums/page:
-    get:
-      consumes:
-      - application/json
-      description: 查询相册列表分页
-      parameters:
-      - default: 1
-        description: 页码
-        in: query
-        name: page
-        type: integer
-      - default: 10
-        description: 每页数量
-        in: query
-        name: size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpSuccess'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.PageResult-ent_Album'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 查询相册列表分页
-      tags:
-      - albums
-  /api/v1/api_interfaces/routes:
+      - album
+  /api/v1/api-interface/page:
     get:
       consumes:
       - application/json
@@ -1496,8 +1799,42 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 查询API路由分页列表
       tags:
-      - api_interfaces
-  /api/v1/comments:
+      - apiInterface
+  /api/v1/comment/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定评论
+      parameters:
+      - description: 评论ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.Comment'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取评论
+      tags:
+      - comment
+  /api/v1/comment/page:
     get:
       consumes:
       - application/json
@@ -1535,8 +1872,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 获取评论列表
       tags:
-      - comments
-  /api/v1/comments/recent:
+      - comment
+  /api/v1/comment/recent:
     get:
       consumes:
       - application/json
@@ -1564,42 +1901,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 获取最近评论
       tags:
-      - comments
-  /api/v1/comments/twikoo:
-    post:
-      consumes:
-      - application/json
-      description: 处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论
-      parameters:
-      - description: Twikoo请求体
-        in: body
-        name: twikoo_req_body
-        required: true
-        schema:
-          $ref: '#/definitions/comment.TwikooReqBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpSuccess'
-            - properties:
-                data: {}
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 处理Twikoo评论事件
-      tags:
-      - comments
-  /api/v1/common/statistics:
+      - comment
+  /api/v1/common/statistic:
     get:
       consumes:
       - application/json
@@ -1627,11 +1930,18 @@ paths:
       summary: 获取首页统计信息
       tags:
       - common
-  /api/v1/flink_groups:
-    get:
+  /api/v1/essay/create:
+    post:
       consumes:
       - application/json
-      description: 查询FlinkGroup
+      description: 创建一个新说说
+      parameters:
+      - description: 说创建请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.EssayCreateReq'
       produces:
       - application/json
       responses:
@@ -1642,9 +1952,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/ent.FLinkGroup'
-                  type: array
+                  $ref: '#/definitions/model.EssayCreateReq'
               type: object
         "400":
           description: Bad Request
@@ -1654,9 +1962,123 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 查询FlinkGroup
+      summary: 创建说说
       tags:
-      - flink_groups
+      - essay
+  /api/v1/essay/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定说说
+      parameters:
+      - description: 说说ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.EssayResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除说说
+      tags:
+      - essay
+  /api/v1/essay/page:
+    get:
+      consumes:
+      - application/json
+      description: 获取说说分页列表
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-model_EssayResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取说说分页列表
+      tags:
+      - essay
+  /api/v1/essay/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 更新指定说说的信息
+      parameters:
+      - description: 说说ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 说说更新请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.EssayUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.EssayUpdateReq'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新说说
+      tags:
+      - essay
+  /api/v1/flink-group/create:
     post:
       consumes:
       - application/json
@@ -1690,8 +2112,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 创建FlinkGroup
       tags:
-      - flink_groups
-  /api/v1/flink_groups/{id}:
+      - flinkGroup
+  /api/v1/flink-group/delete/{id}:
     delete:
       consumes:
       - application/json
@@ -1724,7 +2146,38 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 删除FlinkGroup
       tags:
-      - flink_groups
+      - flinkGroup
+  /api/v1/flink-group/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询FlinkGroup
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/ent.FLinkGroup'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询FlinkGroup
+      tags:
+      - flinkGroup
+  /api/v1/flink-group/update/{id}:
     put:
       consumes:
       - application/json
@@ -1763,12 +2216,18 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 更新FlinkGroup
       tags:
-      - flink_groups
-  /api/v1/flinks:
-    get:
+      - flinkGroup
+  /api/v1/flink/{id}:
+    delete:
       consumes:
       - application/json
-      description: 获取所有Flink
+      description: 删除Flink
+      parameters:
+      - description: Flink ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -1779,9 +2238,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/model.FlinkResp'
-                  type: array
+                  type: object
               type: object
         "400":
           description: Bad Request
@@ -1791,9 +2248,10 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 获取所有Flink
+      summary: 删除Flink
       tags:
-      - flinks
+      - flink
+  /api/v1/flink/create:
     post:
       consumes:
       - application/json
@@ -1827,17 +2285,52 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 创建Flink
       tags:
-      - flinks
-  /api/v1/flinks/{id}:
-    delete:
+      - flink
+  /api/v1/flink/list:
+    get:
       consumes:
       - application/json
-      description: 删除Flink
+      description: 获取所有Flink
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.FlinkResp'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取所有Flink
+      tags:
+      - flink
+  /api/v1/flink/page:
+    get:
+      consumes:
+      - application/json
+      description: 获取Flink分页列表
       parameters:
-      - description: Flink ID
-        in: path
-        name: id
-        required: true
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: size
         type: integer
       produces:
       - application/json
@@ -1849,7 +2342,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  type: object
+                  $ref: '#/definitions/model.PageResult-model_FlinkResp'
               type: object
         "400":
           description: Bad Request
@@ -1859,9 +2352,10 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 删除Flink
+      summary: 获取Flink分页列表
       tags:
-      - flinks
+      - flink
+  /api/v1/flink/query/{id}:
     get:
       consumes:
       - application/json
@@ -1894,7 +2388,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 查询Flink
       tags:
-      - flinks
+      - flink
+  /api/v1/flink/update/{id}:
     put:
       consumes:
       - application/json
@@ -1933,46 +2428,7 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 更新Flink
       tags:
-      - flinks
-  /api/v1/flinks/page:
-    get:
-      consumes:
-      - application/json
-      description: 获取Flink分页列表
-      parameters:
-      - default: 1
-        description: 页码
-        in: query
-        name: page
-        type: integer
-      - default: 10
-        description: 每页数量
-        in: query
-        name: size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpSuccess'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.PageResult-model_FlinkResp'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 获取Flink分页列表
-      tags:
-      - flinks
+      - flink
   /api/v1/friend_circle_records:
     get:
       consumes:
@@ -2829,6 +3285,40 @@ paths:
       summary: 更新文章设置
       tags:
       - posts
+  /api/v1/posts/{id}/summary:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定文章的摘要流
+      parameters:
+      - description: 文章ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.AIResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取文章摘要流
+      tags:
+      - posts
   /api/v1/posts/{id}/unpublish:
     put:
       consumes:
@@ -3170,27 +3660,369 @@ paths:
       summary: 获取系统设置JSON值
       tags:
       - settings
-  /api/v1/users:
-    get:
+  /api/v1/storage-strategy/create:
+    post:
       consumes:
       - application/json
-      description: 获取所有用户的列表
+      description: 创建一个新的存储策略
+      parameters:
+      - description: Storage Strategy Create Request
+        in: body
+        name: strategy
+        required: true
+        schema:
+          $ref: '#/definitions/model.StorageStrategyCreateReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/ent.User'
-            type: array
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.StorageStrategy'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 获取用户列表
+      summary: 创建存储策略
       tags:
-      - users
+      - storageStrategy
+  /api/v1/storage-strategy/default/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 设置指定ID的存储策略为默认策略
+      parameters:
+      - description: Storage Strategy ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 设置默认存储策略
+      tags:
+      - storageStrategy
+  /api/v1/storage-strategy/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定ID的存储策略
+      parameters:
+      - description: Storage Strategy ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除存储策略
+      tags:
+      - storageStrategy
+  /api/v1/storage-strategy/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有存储策略的列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/ent.StorageStrategy'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取存储策略列表
+      tags:
+      - storageStrategy
+  /api/v1/storage-strategy/list-all:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有存储策略的列表，包括默认策略
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.StorageStrategyListResp'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取所有存储策略列表
+      tags:
+      - storageStrategy
+  /api/v1/storage-strategy/query/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 查询指定ID的存储策略
+      parameters:
+      - description: Storage Strategy ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.StorageStrategy'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询存储策略
+      tags:
+      - storageStrategy
+  /api/v1/storage-strategy/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 更新指定ID的存储策略
+      parameters:
+      - description: Storage Strategy ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Storage Strategy Update Request
+        in: body
+        name: strategy
+        required: true
+        schema:
+          $ref: '#/definitions/model.StorageStrategyUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.StorageStrategy'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新存储策略
+      tags:
+      - storageStrategy
+  /api/v1/twikoo:
+    delete:
+      consumes:
+      - application/json
+      description: 处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论
+      parameters:
+      - description: Twikoo请求体
+        in: body
+        name: twikoo_req_body
+        required: true
+        schema:
+          $ref: '#/definitions/comment.TwikooReqBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 处理Twikoo评论事件
+      tags:
+      - comment
+    get:
+      consumes:
+      - application/json
+      description: 处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论
+      parameters:
+      - description: Twikoo请求体
+        in: body
+        name: twikoo_req_body
+        required: true
+        schema:
+          $ref: '#/definitions/comment.TwikooReqBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 处理Twikoo评论事件
+      tags:
+      - comment
+    post:
+      consumes:
+      - application/json
+      description: 处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论
+      parameters:
+      - description: Twikoo请求体
+        in: body
+        name: twikoo_req_body
+        required: true
+        schema:
+          $ref: '#/definitions/comment.TwikooReqBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 处理Twikoo评论事件
+      tags:
+      - comment
+    put:
+      consumes:
+      - application/json
+      description: 处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论
+      parameters:
+      - description: Twikoo请求体
+        in: body
+        name: twikoo_req_body
+        required: true
+        schema:
+          $ref: '#/definitions/comment.TwikooReqBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 处理Twikoo评论事件
+      tags:
+      - comment
+  /api/v1/user/create:
     post:
       consumes:
       - application/json
@@ -3219,8 +4051,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 创建用户
       tags:
-      - users
-  /api/v1/users/{id}:
+      - user
+  /api/v1/user/delete/{id}:
     delete:
       consumes:
       - application/json
@@ -3252,7 +4084,189 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 删除用户
       tags:
-      - users
+      - user
+  /api/v1/user/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有用户的列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ent.User'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取用户列表
+      tags:
+      - user
+  /api/v1/user/page:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有用户的分页列表
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-model_UserResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取用户分页列表
+      tags:
+      - user
+  /api/v1/user/personal-access-token/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的个人令牌
+      parameters:
+      - description: 个人令牌创建请求
+        in: body
+        name: createReq
+        required: true
+        schema:
+          $ref: '#/definitions/model.PersonalAccessTokenCreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建 personalAccessToken 个人令牌
+      tags:
+      - user
+  /api/v1/user/personal-access-token/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询当前用户的所有个人令牌
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.PersonalAccessTokenListResp'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询个人令牌列表
+      tags:
+      - user
+  /api/v1/user/personal-access-token/query/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 查询指定个人令牌的详细信息
+      parameters:
+      - description: 个人令牌ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PersonalAccessTokenResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询个人令牌
+      tags:
+      - user
+  /api/v1/user/profile:
+    get:
+      consumes:
+      - application/json
+      description: 查询指定用户的个人信息
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserProfileResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询用户个人信息
+      tags:
+      - user
+  /api/v1/user/query/{id}:
     get:
       consumes:
       - application/json
@@ -3284,7 +4298,8 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 查询用户
       tags:
-      - users
+      - user
+  /api/v1/user/update/{id}:
     put:
       consumes:
       - application/json
@@ -3318,171 +4333,5 @@ paths:
             $ref: '#/definitions/model.HttpError'
       summary: 更新用户
       tags:
-      - users
-  /api/v1/users/{id}/profile:
-    get:
-      consumes:
-      - application/json
-      description: 查询指定用户的个人信息
-      parameters:
-      - description: 用户ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.UserProfileResp'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 查询用户个人信息
-      tags:
-      - users
-  /api/v1/users/personal-access-tokens:
-    post:
-      consumes:
-      - application/json
-      description: 创建一个新的个人令牌
-      parameters:
-      - description: 个人令牌创建请求
-        in: body
-        name: createReq
-        required: true
-        schema:
-          $ref: '#/definitions/model.PersonalAccessTokenCreateReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.HttpSuccess'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 创建 personalAccessToken 个人令牌
-      tags:
-      - users
-  /api/v1/users/personal-access-tokens/{id}:
-    get:
-      consumes:
-      - application/json
-      description: 查询指定个人令牌的详细信息
-      parameters:
-      - description: 个人令牌ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.PersonalAccessTokenResp'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 查询个人令牌
-      tags:
-      - users
-  /auth/login/password:
-    post:
-      consumes:
-      - application/json
-      description: 验证用户凭据并返回JWT令牌
-      parameters:
-      - description: 登录请求
-        in: body
-        name: login
-        required: true
-        schema:
-          $ref: '#/definitions/model.LoginRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.HttpSuccess'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 用户登录
-      tags:
-      - auth
-  /initialize:
-    post:
-      consumes:
-      - application/json
-      description: 首次运行系统时进行初始化设置，包括数据库配置和创建管理员账户
-      parameters:
-      - description: 初始化请求
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/model.InitializeRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 初始化成功
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: 请求参数错误
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "409":
-          description: 系统已初始化
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: 服务器内部错误
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 系统初始化
-      tags:
-      - Initialize
+      - user
 swagger: "2.0"

@@ -74,6 +74,48 @@ func (_c *PostCreate) SetContent(v string) *PostCreate {
 	return _c
 }
 
+// SetMdContent sets the "md_content" field.
+func (_c *PostCreate) SetMdContent(v string) *PostCreate {
+	_c.mutation.SetMdContent(v)
+	return _c
+}
+
+// SetNillableMdContent sets the "md_content" field if the given value is not nil.
+func (_c *PostCreate) SetNillableMdContent(v *string) *PostCreate {
+	if v != nil {
+		_c.SetMdContent(*v)
+	}
+	return _c
+}
+
+// SetHTMLContent sets the "html_content" field.
+func (_c *PostCreate) SetHTMLContent(v string) *PostCreate {
+	_c.mutation.SetHTMLContent(v)
+	return _c
+}
+
+// SetNillableHTMLContent sets the "html_content" field if the given value is not nil.
+func (_c *PostCreate) SetNillableHTMLContent(v *string) *PostCreate {
+	if v != nil {
+		_c.SetHTMLContent(*v)
+	}
+	return _c
+}
+
+// SetContentType sets the "content_type" field.
+func (_c *PostCreate) SetContentType(v post.ContentType) *PostCreate {
+	_c.mutation.SetContentType(v)
+	return _c
+}
+
+// SetNillableContentType sets the "content_type" field if the given value is not nil.
+func (_c *PostCreate) SetNillableContentType(v *post.ContentType) *PostCreate {
+	if v != nil {
+		_c.SetContentType(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *PostCreate) SetStatus(v post.Status) *PostCreate {
 	_c.mutation.SetStatus(v)
@@ -305,6 +347,10 @@ func (_c *PostCreate) defaults() {
 		v := post.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := _c.mutation.ContentType(); !ok {
+		v := post.DefaultContentType
+		_c.mutation.SetContentType(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := post.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -366,6 +412,14 @@ func (_c *PostCreate) check() error {
 	if v, ok := _c.mutation.Content(); ok {
 		if err := post.ContentValidator(v); err != nil {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.ContentType(); !ok {
+		return &ValidationError{Name: "content_type", err: errors.New(`ent: missing required field "Post.content_type"`)}
+	}
+	if v, ok := _c.mutation.ContentType(); ok {
+		if err := post.ContentTypeValidator(v); err != nil {
+			return &ValidationError{Name: "content_type", err: fmt.Errorf(`ent: validator failed for field "Post.content_type": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.Status(); !ok {
@@ -478,6 +532,18 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
 		_node.Content = value
+	}
+	if value, ok := _c.mutation.MdContent(); ok {
+		_spec.SetField(post.FieldMdContent, field.TypeString, value)
+		_node.MdContent = &value
+	}
+	if value, ok := _c.mutation.HTMLContent(); ok {
+		_spec.SetField(post.FieldHTMLContent, field.TypeString, value)
+		_node.HTMLContent = &value
+	}
+	if value, ok := _c.mutation.ContentType(); ok {
+		_spec.SetField(post.FieldContentType, field.TypeEnum, value)
+		_node.ContentType = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(post.FieldStatus, field.TypeEnum, value)

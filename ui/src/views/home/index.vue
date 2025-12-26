@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as commonApi from '@/api/common'
+import {apiClient,useApi} from "@/api"
 const homeStatistic = ref({
   commentCount: 0,
   postCount: 0,
@@ -18,7 +18,7 @@ const noticeList = ref([
 ])
 
 onMounted(() => {
-  commonApi.getHomeStatistic().then((res) => {
+  useApi(apiClient.api.v1CommonStatisticList).then((res)=>{
     if (res.code === 200) {
       homeStatistic.value.commentCount = res.data.commentCount
       homeStatistic.value.postCount = res.data.postCount

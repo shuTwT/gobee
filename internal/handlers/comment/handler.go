@@ -40,7 +40,7 @@ func NewCommentHandlerImpl(client *ent.Client, commentService comment_service.Co
 
 // @Summary 获取评论列表
 // @Description 获取评论列表
-// @Tags comments
+// @Tags comment
 // @Accept json
 // @Produce json
 // @Param page query int false "页码" default(1)
@@ -48,7 +48,7 @@ func NewCommentHandlerImpl(client *ent.Client, commentService comment_service.Co
 // @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.Comment]}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/comments [get]
+// @Router /api/v1/comment/page [get]
 func (h *CommentHandlerImpl) ListCommentPage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	if err := c.QueryParser(&pageQuery); err != nil {
@@ -63,6 +63,16 @@ func (h *CommentHandlerImpl) ListCommentPage(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("评论列表获取成功", resp))
 }
 
+// @Summary 获取评论
+// @Description 获取指定评论
+// @Tags comment
+// @Accept json
+// @Produce json
+// @Param id path int true "评论ID"
+// @Success 200 {object} model.HttpSuccess{data=ent.Comment}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/comment/{id} [get]
 func (h *CommentHandlerImpl) GetComment(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -94,14 +104,17 @@ type TwikooReqBody struct {
 
 // @Summary 处理Twikoo评论事件
 // @Description 处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论
-// @Tags comments
+// @Tags comment
 // @Accept json
 // @Produce json
 // @Param twikoo_req_body body TwikooReqBody true "Twikoo请求体"
 // @Success 200 {object} model.HttpSuccess{data=interface{}}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/comments/twikoo [post]
+// @Router /api/v1/twikoo [get]
+// @Router /api/v1/twikoo [post]
+// @Router /api/v1/twikoo [put]
+// @Router /api/v1/twikoo [delete]
 func (h *CommentHandlerImpl) HandleTwikoo(c *fiber.Ctx) error {
 
 	var reqBody TwikooReqBody
@@ -177,13 +190,13 @@ func (h *CommentHandlerImpl) HandleTwikoo(c *fiber.Ctx) error {
 
 // @Summary 获取最近评论
 // @Description 获取最近评论
-// @Tags comments
+// @Tags comment
 // @Accept json
 // @Produce json
 // @Success 200 {object} model.HttpSuccess{data=[]interface{}}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/comments/recent [get]
+// @Router /api/v1/comment/recent [get]
 func (h *CommentHandlerImpl) RecentComment(c *fiber.Ctx) error {
 	comments, err := h.commentService.GetRecentComment(c.Context(), 10)
 	if err != nil {

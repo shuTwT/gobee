@@ -35,7 +35,7 @@ import dayjs from 'dayjs'
 const message = useMessage()
 const dialog = useDialog()
 const router = useRouter()
-const { settingPost } = usePostHook()
+const { settingPost,publishPost,unpublishPost } = usePostHook()
 
 // 搜索和筛选
 const searchKeyword = ref('')
@@ -211,7 +211,16 @@ const columns: DataTableColumns<any> = [
             editPost(row)
             break
           case 'publish':
-            publishPost(row)
+            if(row.status==='publish'){
+               publishPost(row).then(()=>{
+                onSearch()
+               })
+            } else{
+              unpublishPost(row).then(()=>{
+                onSearch()
+              })
+            }
+
             break
           case 'setting':
             handleSettingPost(row)
@@ -289,19 +298,6 @@ const editPost = (post: any) => {
   })
 }
 
-// 发布文章
-const publishPost = (row: any) => {
-  dialog.info({
-    title: '确认',
-    content: '确定要发布该文章吗？',
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: () => {
-      row.status = 'published'
-      message.success('发布成功')
-    },
-  })
-}
 
 const handleSettingPost = (row: any) => {
   settingPost(row).then(()=>{

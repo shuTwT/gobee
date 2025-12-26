@@ -1,8 +1,8 @@
 package model
 
 type PageQuery struct {
-	Page int `json:"page_size" form:"page_size" validate:"required,min=1"`
-	Size int `json:"page_size" form:"size_size" validate:"required,min=1,max=100"`
+	Page int `json:"page" form:"page" validate:"required,min=1"`
+	Size int `json:"page_size" form:"page_size" validate:"required,min=1,max=100"`
 }
 
 type PageResult[T any] struct {

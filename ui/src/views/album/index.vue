@@ -6,6 +6,8 @@ import albumForm from "./albumForm.vue"
 import albumPhotoForm from "./albumPhotoForm.vue"
 import type { AlbumFormProps, AlbumPhotoFormProps } from './utils/types'
 import dayjs from "dayjs"
+import { apiClient, useApi } from '@/api'
+import { size } from 'lodash-es'
 
 const message = useMessage()
 
@@ -28,7 +30,7 @@ const albumList = ref<any[]>([])
 const albumPhotoList = ref<any[]>([])
 
 const onSearchAlbum=async()=>{
-  const res=await albumApi.getAlbumList()
+  const res=await useApi(apiClient.api.v1AlbumListList)
   if (res.code === 200) {
     albumList.value = res.data || []
   }
@@ -190,26 +192,7 @@ onMounted(()=>{
       </n-grid>
     </div>
 
-    <!-- 上传照片模态框 -->
-    <n-modal>
-      <div
-        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800"
-      >
-        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">上传照片</h3>
-        <div class="mt-2">
-          <input
-            type="file"
-            id="photoFile"
-            accept="image/*"
-            class="mt-1 block w-full text-gray-900 dark:text-white"
-          />
-        </div>
-        <div class="items-center px-4 py-3 mt-4">
-          <n-button id="confirmUploadBtn" type="primary"> 上传 </n-button>
-          <n-button id="cancelUploadBtn" type="default"> 取消 </n-button>
-        </div>
-      </div>
-    </n-modal>
+
   </div>
 </template>
 <style scoped>

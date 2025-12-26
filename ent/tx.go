@@ -20,6 +20,8 @@ type Tx struct {
 	ApiPerms *ApiPermsClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// Essay is the client for interacting with the Essay builders.
+	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
 	FLink *FLinkClient
 	// FLinkGroup is the client for interacting with the FLinkGroup builders.
@@ -195,6 +197,7 @@ func (tx *Tx) init() {
 	tx.AlbumPhoto = NewAlbumPhotoClient(tx.config)
 	tx.ApiPerms = NewApiPermsClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
+	tx.Essay = NewEssayClient(tx.config)
 	tx.FLink = NewFLinkClient(tx.config)
 	tx.FLinkGroup = NewFLinkGroupClient(tx.config)
 	tx.File = NewFileClient(tx.config)

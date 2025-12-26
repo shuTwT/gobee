@@ -2,6 +2,8 @@
 import { FileTraySharp } from "@vicons/ionicons5"
 import type { AlbumPhotoFormProps } from "./utils/types";
 import type { FormInst, FormRules } from "naive-ui";
+import { addDialog } from "@/components/dialog";
+import ImageUpload from "@/components/upload/ImageUpload.vue";
 
 const props = defineProps<AlbumPhotoFormProps>()
 
@@ -9,6 +11,22 @@ const formRef = ref<FormInst|null>()
 const formData = ref(props.formInline)
 const rules:FormRules = {
   title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
+}
+
+const openUploadImage = ()=>{
+  const fileList = ref<string[]>([])
+  const uploadRef = ref()
+  addDialog({
+    props:{
+      limit:1,
+      fileList,
+    },
+    contentRenderer:({options})=>h(ImageUpload,{ref:uploadRef,fileList:options.props!.fileList}),
+    beforeSure:async(done)=>{
+      console.log(fileList.value)
+      done()
+    }
+  })
 }
 
 const getData = () => {
@@ -37,7 +55,7 @@ defineExpose({getData})
     <n-form-item label="图片地址" path="image_url">
       <n-input-group >
         <n-input v-model:value="formData.image_url"/>
-        <n-button>
+        <n-button @click="openUploadImage">
           <n-icon>
             <file-tray-sharp/>
           </n-icon>

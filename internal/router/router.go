@@ -2,7 +2,6 @@ package router
 
 import (
 	"gobee/internal/handlers"
-	storagestrategy_handler "gobee/internal/handlers/storage_strategy"
 	"gobee/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,11 +26,6 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 	{
 		apiV1 := api.Group("/v1")
 		{
-			apiV1.Get("/users", func(c *fiber.Ctx) error {
-				return c.JSON(fiber.Map{
-					"message": "Hello, World!",
-				})
-			})
 			apiV1.Get("/routes", handlerMap.RouteHandler.GetRoutes)
 
 			apiV1.Get("/api-interface/page", handlerMap.ApiInterfaceHandler.ListApiRoutesPage)
@@ -44,11 +38,11 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			// apiV1.Use(middleware.Protected())
 
 			// 首页统计信息接口
-			apiV1.Get("/statistic", handlerMap.CommonHandler.GetHomeStatistics).Name("homeStatistic")
+			apiV1.Get("/common/statistic", handlerMap.CommonHandler.GetHomeStatistics).Name("homeStatistic")
 
-			apiV1.Get("/user/personal-access-token", handlerMap.UserHandler.GetPersonalAccessTokenList).Name("patList")
-			apiV1.Get("/user/personal-access-token/:id", handlerMap.UserHandler.GetPersonalAccessToken).Name("patInfo")
-			apiV1.Post("/user/personal-access-token", handlerMap.UserHandler.CreatePat).Name("patCreate")
+			apiV1.Get("/user/personal-access-token/list", handlerMap.UserHandler.GetPersonalAccessTokenList).Name("patList")
+			apiV1.Get("/user/personal-access-token/query/:id", handlerMap.UserHandler.GetPersonalAccessToken).Name("patInfo")
+			apiV1.Post("/user/personal-access-token/create", handlerMap.UserHandler.CreatePat).Name("patCreate")
 
 			settingsApi := apiV1.Group("/settings")
 			{
@@ -118,13 +112,13 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			}
 			storageStrategyApi := apiV1.Group("/storage-strategy")
 			{
-				storageStrategyApi.Get("/list", storagestrategy_handler.ListStorageStrategy).Name("storageStrategyList")
-				storageStrategyApi.Get("/list-all", storagestrategy_handler.ListStorageStrategyAll).Name("storageStrategyListAll")
-				storageStrategyApi.Post("/create", storagestrategy_handler.CreateStorageStrategy).Name("storageStrategyCreate")
-				storageStrategyApi.Put("/update/:id", storagestrategy_handler.UpdateStorageStrategy).Name("storageStrategyUpdate")
-				storageStrategyApi.Get("/query/:id", storagestrategy_handler.QueryStorageStrategy).Name("storageStrategyQuery")
-				storageStrategyApi.Delete("/delete/:id", storagestrategy_handler.DeleteStorageStrategy).Name("storageStrategyDelete")
-				storageStrategyApi.Put("/default/:id", storagestrategy_handler.SetDefaultStorageStrategy).Name("storageStrategyDefault")
+				storageStrategyApi.Get("/list", handlerMap.StorageStrategyHandler.ListStorageStrategy).Name("storageStrategyList")
+				storageStrategyApi.Get("/list-all", handlerMap.StorageStrategyHandler.ListStorageStrategyAll).Name("storageStrategyListAll")
+				storageStrategyApi.Post("/create", handlerMap.StorageStrategyHandler.CreateStorageStrategy).Name("storageStrategyCreate")
+				storageStrategyApi.Put("/update/:id", handlerMap.StorageStrategyHandler.UpdateStorageStrategy).Name("storageStrategyUpdate")
+				storageStrategyApi.Get("/query/:id", handlerMap.StorageStrategyHandler.QueryStorageStrategy).Name("storageStrategyQuery")
+				storageStrategyApi.Delete("/delete/:id", handlerMap.StorageStrategyHandler.DeleteStorageStrategy).Name("storageStrategyDelete")
+				storageStrategyApi.Put("/default/:id", handlerMap.StorageStrategyHandler.SetDefaultStorageStrategy).Name("storageStrategyDefault")
 			}
 			albumApi := apiV1.Group("/album")
 			{
@@ -172,7 +166,13 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			{
 				friendCircleRecordApi.Get("/page", handlerMap.FriendCircleRecordHandler.ListFriendCircleRecordPage).Name("friendCircleRecordPage")
 			}
-
+			essayApi := apiV1.Group("/essay")
+			{
+				essayApi.Get("/page", handlerMap.EssayHandler.GetEssayPage).Name("essayPage")
+				essayApi.Post("/create", handlerMap.EssayHandler.CreateEssay).Name("essayCreate")
+				essayApi.Put("/update/:id", handlerMap.EssayHandler.UpdateEssay).Name("essayUpdate")
+				essayApi.Delete("/delete/:id", handlerMap.EssayHandler.DeleteEssay).Name("essayDelete")
+			}
 		}
 	}
 }

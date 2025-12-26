@@ -20,6 +20,7 @@ import {
   type Comment,
   CommentStatus,
 } from '@/api/comment'
+import {apiClient,useApi} from "@/api"
 
 const message = useMessage()
 
@@ -42,7 +43,7 @@ const currentComment = ref<Comment | null>(null)
 const fetchComments = async () => {
   loading.value = true
   try {
-    const res = await getCommentPage({
+    const res = await useApi(apiClient.api.v1CommentPageList,{
       page: pagination.value.page,
       pageSize: pagination.value.pageSize,
     })
@@ -58,7 +59,7 @@ const fetchComments = async () => {
 // 查看评论详情
 const handleView = async (row: Comment) => {
   try {
-    const res = await getCommentDetail(row.id)
+    const res = await useApi(apiClient.api.v1CommentDetail,row.id)
     currentComment.value = res.data
     showModal.value = true
   } catch {

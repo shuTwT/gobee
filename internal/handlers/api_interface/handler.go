@@ -26,7 +26,7 @@ func NewApiInterfaceHandlerImpl(client *ent.Client, apiInterfaceService api_inte
 
 // @Summary 查询API路由分页列表
 // @Description 查询所有API路由的分页列表
-// @Tags api_interfaces
+// @Tags apiInterface
 // @Accept json
 // @Produce json
 // @Param page query int false "页码" default(1)
@@ -34,7 +34,7 @@ func NewApiInterfaceHandlerImpl(client *ent.Client, apiInterfaceService api_inte
 // @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.ApiRoute]}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/api_interfaces/routes [get]
+// @Router /api/v1/api-interface/page [get]
 func (h *ApiInterfaceHandlerImpl) ListApiRoutesPage(ctx *fiber.Ctx) error {
 	page := ctx.QueryInt("page", 1)
 	limit := ctx.QueryInt("limit", 10)

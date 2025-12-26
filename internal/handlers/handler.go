@@ -8,6 +8,7 @@ import (
 	auth "gobee/internal/handlers/auth"
 	"gobee/internal/handlers/comment"
 	"gobee/internal/handlers/common"
+	"gobee/internal/handlers/essay"
 	"gobee/internal/handlers/file"
 	"gobee/internal/handlers/flink"
 	flinkgroup "gobee/internal/handlers/flink_group"
@@ -20,6 +21,7 @@ import (
 	"gobee/internal/handlers/role"
 	"gobee/internal/handlers/route"
 	setting_handler "gobee/internal/handlers/setting"
+	storagestrategy "gobee/internal/handlers/storage_strategy"
 	user_handler "gobee/internal/handlers/user"
 	"gobee/pkg"
 )
@@ -44,6 +46,8 @@ type HandlerMap struct {
 	RouteHandler              route.RouteHandler
 	SettingHandler            setting_handler.SettingHandler
 	UserHandler               user_handler.UserHandler
+	EssayHandler              essay.EssayHandler
+	StorageStrategyHandler    storagestrategy.StorageStrategyHandler
 }
 
 func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
@@ -66,6 +70,8 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	routeHandler := route.NewRouteHandlerImpl()
 	settingHandler := setting_handler.NewSettingHandlerImpl(serviceMap.SettingService)
 	userHandler := user_handler.NewUserHandlerImpl(serviceMap.UserService, serviceMap.RoleService)
+	essayHandler := essay.NewEssayHandler(serviceMap.EssayService)
+	storageStrategyHandler := storagestrategy.NewStorageStrategyHandlerImpl(database.DB)
 
 	handlerMap := HandlerMap{
 		AlbumHandler:              albumHandler,
@@ -87,6 +93,8 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		RouteHandler:              routeHandler,
 		SettingHandler:            settingHandler,
 		UserHandler:               userHandler,
+		EssayHandler:              essayHandler,
+		StorageStrategyHandler:    storageStrategyHandler,
 	}
 
 	return handlerMap

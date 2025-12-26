@@ -18,6 +18,9 @@ type ApiPerms func(*sql.Selector)
 // Comment is the predicate function for comment builders.
 type Comment func(*sql.Selector)
 
+// Essay is the predicate function for essay builders.
+type Essay func(*sql.Selector)
+
 // FLink is the predicate function for flink builders.
 type FLink func(*sql.Selector)
 

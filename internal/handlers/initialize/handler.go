@@ -36,7 +36,7 @@ func NewInitializeHandlerImpl(userService services.UserService, settingService s
 // @Failure 400 {object} model.HttpError "请求参数错误"
 // @Failure 409 {object} model.HttpError "系统已初始化"
 // @Failure 500 {object} model.HttpError "服务器内部错误"
-// @Router /initialize [post]
+// @Router /api/initialize [post]
 func (h *InitializeHandlerImpl) Initialize(c *fiber.Ctx) error {
 	var req *model.InitializeRequest
 	if err := c.BodyParser(&req); err != nil {

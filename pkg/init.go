@@ -6,6 +6,7 @@ import (
 	api_interface_service "gobee/internal/services/api_interface"
 	comment_service "gobee/internal/services/comment"
 	common_service "gobee/internal/services/common"
+	"gobee/internal/services/essay"
 	friend_circle_service "gobee/internal/services/friend_circle"
 	permission_service "gobee/internal/services/permission"
 	post_service "gobee/internal/services/post"
@@ -26,6 +27,7 @@ type ServiceMap struct {
 	RoleService         role_service.RoleService
 	SettingService      setting_service.SettingService
 	UserService         user_service.UserService
+	EssayService        essay.EssayService
 }
 
 func InitializeServices(moduleDefs embed.FS) ServiceMap {
@@ -44,6 +46,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	roleService := role_service.NewRoleServiceImpl(database.DB)
 	settingService := setting_service.NewSettingServiceImpl(database.DB)
 	userService := user_service.NewUserServiceImpl(database.DB)
+	essayService := essay.NewEssayService(database.DB)
 	//执行
 	permissionService.LoadPermissionsFromDef(moduleDefs)
 
@@ -57,6 +60,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		RoleService:         roleService,
 		SettingService:      settingService,
 		UserService:         userService,
+		EssayService:        essayService,
 	}
 
 	return serviceMap

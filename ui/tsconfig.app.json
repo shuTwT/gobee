@@ -11,6 +11,10 @@
 
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+
+    "types": [
+      "naive-ui/volar.d.ts"
+    ]
   }
 }

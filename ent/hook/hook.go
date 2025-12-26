@@ -56,6 +56,18 @@ func (f CommentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommentMutation", m)
 }
 
+// The EssayFunc type is an adapter to allow the use of ordinary
+// function as Essay mutator.
+type EssayFunc func(context.Context, *ent.EssayMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EssayFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.EssayMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EssayMutation", m)
+}
+
 // The FLinkFunc type is an adapter to allow the use of ordinary
 // function as FLink mutator.
 type FLinkFunc func(context.Context, *ent.FLinkMutation) (ent.Value, error)

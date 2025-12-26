@@ -27,6 +27,12 @@ type Post struct {
 	Alias string `json:"alias,omitempty"`
 	// 文章内容
 	Content string `json:"content,omitempty"`
+	// md文章内容
+	MdContent *string `json:"md_content,omitempty"`
+	// html文章内容
+	HTMLContent *string `json:"html_content,omitempty"`
+	// 内容类型
+	ContentType post.ContentType `json:"content_type,omitempty"`
 	// 状态
 	Status post.Status `json:"status,omitempty"`
 	// 是否自动生成摘要
@@ -65,7 +71,7 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case post.FieldID, post.FieldViewCount, post.FieldCommentCount:
 			values[i] = new(sql.NullInt64)
-		case post.FieldTitle, post.FieldAlias, post.FieldContent, post.FieldStatus, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
+		case post.FieldTitle, post.FieldAlias, post.FieldContent, post.FieldMdContent, post.FieldHTMLContent, post.FieldContentType, post.FieldStatus, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
 			values[i] = new(sql.NullString)
 		case post.FieldCreatedAt, post.FieldUpdatedAt, post.FieldPublishedAt:
 			values[i] = new(sql.NullTime)
@@ -119,6 +125,26 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field content", values[i])
 			} else if value.Valid {
 				_m.Content = value.String
+			}
+		case post.FieldMdContent:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field md_content", values[i])
+			} else if value.Valid {
+				_m.MdContent = new(string)
+				*_m.MdContent = value.String
+			}
+		case post.FieldHTMLContent:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field html_content", values[i])
+			} else if value.Valid {
+				_m.HTMLContent = new(string)
+				*_m.HTMLContent = value.String
+			}
+		case post.FieldContentType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field content_type", values[i])
+			} else if value.Valid {
+				_m.ContentType = post.ContentType(value.String)
 			}
 		case post.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -249,6 +275,19 @@ func (_m *Post) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("content=")
 	builder.WriteString(_m.Content)
+	builder.WriteString(", ")
+	if v := _m.MdContent; v != nil {
+		builder.WriteString("md_content=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.HTMLContent; v != nil {
+		builder.WriteString("html_content=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("content_type=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ContentType))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status))

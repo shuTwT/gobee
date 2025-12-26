@@ -89,6 +89,21 @@ var (
 		Columns:    CommentsColumns,
 		PrimaryKey: []*schema.Column{CommentsColumns[0]},
 	}
+	// EssaysColumns holds the columns for the "essays" table.
+	EssaysColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "content", Type: field.TypeString},
+		{Name: "draft", Type: field.TypeBool, Default: false},
+		{Name: "images", Type: field.TypeJSON, Nullable: true},
+	}
+	// EssaysTable holds the schema information for the "essays" table.
+	EssaysTable = &schema.Table{
+		Name:       "essays",
+		Columns:    EssaysColumns,
+		PrimaryKey: []*schema.Column{EssaysColumns[0]},
+	}
 	// FlinksColumns holds the columns for the "flinks" table.
 	FlinksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -329,6 +344,9 @@ var (
 		{Name: "title", Type: field.TypeString, Size: 255},
 		{Name: "alias", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "content", Type: field.TypeString, Size: 2147483647},
+		{Name: "md_content", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "html_content", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "content_type", Type: field.TypeEnum, Enums: []string{"markdown", "html"}, Default: "html"},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"draft", "published", "archived"}, Default: "draft"},
 		{Name: "is_autogen_summary", Type: field.TypeBool, Default: false},
 		{Name: "is_visible", Type: field.TypeBool, Default: true},
@@ -464,6 +482,7 @@ var (
 		AlbumPhotosTable,
 		APIPermsTable,
 		CommentsTable,
+		EssaysTable,
 		FlinksTable,
 		FlinkGroupsTable,
 		FilesTable,

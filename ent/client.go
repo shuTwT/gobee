@@ -15,6 +15,7 @@ import (
 	"gobee/ent/albumphoto"
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
+	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
@@ -55,6 +56,8 @@ type Client struct {
 	ApiPerms *ApiPermsClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// Essay is the client for interacting with the Essay builders.
+	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
 	FLink *FLinkClient
 	// FLinkGroup is the client for interacting with the FLinkGroup builders.
@@ -110,6 +113,7 @@ func (c *Client) init() {
 	c.AlbumPhoto = NewAlbumPhotoClient(c.config)
 	c.ApiPerms = NewApiPermsClient(c.config)
 	c.Comment = NewCommentClient(c.config)
+	c.Essay = NewEssayClient(c.config)
 	c.FLink = NewFLinkClient(c.config)
 	c.FLinkGroup = NewFLinkGroupClient(c.config)
 	c.File = NewFileClient(c.config)
@@ -226,6 +230,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		ApiPerms:            NewApiPermsClient(cfg),
 		Comment:             NewCommentClient(cfg),
+		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
 		File:                NewFileClient(cfg),
@@ -269,6 +274,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		ApiPerms:            NewApiPermsClient(cfg),
 		Comment:             NewCommentClient(cfg),
+		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
 		File:                NewFileClient(cfg),
@@ -318,10 +324,10 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.FLink, c.FLinkGroup, c.File,
-		c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema, c.Oauth2AccessToken,
-		c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel, c.PayOrder,
-		c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Essay, c.FLink, c.FLinkGroup,
+		c.File, c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema,
+		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
+		c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
 		c.StorageStrategy, c.User, c.WebHook,
 	} {
 		n.Use(hooks...)
@@ -332,10 +338,10 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.FLink, c.FLinkGroup, c.File,
-		c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema, c.Oauth2AccessToken,
-		c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel, c.PayOrder,
-		c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Essay, c.FLink, c.FLinkGroup,
+		c.File, c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema,
+		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
+		c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
 		c.StorageStrategy, c.User, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
@@ -353,6 +359,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ApiPerms.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
+	case *EssayMutation:
+		return c.Essay.mutate(ctx, m)
 	case *FLinkMutation:
 		return c.FLink.mutate(ctx, m)
 	case *FLinkGroupMutation:
@@ -927,6 +935,139 @@ func (c *CommentClient) mutate(ctx context.Context, m *CommentMutation) (Value, 
 		return (&CommentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Comment mutation op: %q", m.Op())
+	}
+}
+
+// EssayClient is a client for the Essay schema.
+type EssayClient struct {
+	config
+}
+
+// NewEssayClient returns a client for the Essay from the given config.
+func NewEssayClient(c config) *EssayClient {
+	return &EssayClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `essay.Hooks(f(g(h())))`.
+func (c *EssayClient) Use(hooks ...Hook) {
+	c.hooks.Essay = append(c.hooks.Essay, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `essay.Intercept(f(g(h())))`.
+func (c *EssayClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Essay = append(c.inters.Essay, interceptors...)
+}
+
+// Create returns a builder for creating a Essay entity.
+func (c *EssayClient) Create() *EssayCreate {
+	mutation := newEssayMutation(c.config, OpCreate)
+	return &EssayCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Essay entities.
+func (c *EssayClient) CreateBulk(builders ...*EssayCreate) *EssayCreateBulk {
+	return &EssayCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EssayClient) MapCreateBulk(slice any, setFunc func(*EssayCreate, int)) *EssayCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EssayCreateBulk{err: fmt.Errorf("calling to EssayClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EssayCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EssayCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Essay.
+func (c *EssayClient) Update() *EssayUpdate {
+	mutation := newEssayMutation(c.config, OpUpdate)
+	return &EssayUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EssayClient) UpdateOne(_m *Essay) *EssayUpdateOne {
+	mutation := newEssayMutation(c.config, OpUpdateOne, withEssay(_m))
+	return &EssayUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EssayClient) UpdateOneID(id int) *EssayUpdateOne {
+	mutation := newEssayMutation(c.config, OpUpdateOne, withEssayID(id))
+	return &EssayUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Essay.
+func (c *EssayClient) Delete() *EssayDelete {
+	mutation := newEssayMutation(c.config, OpDelete)
+	return &EssayDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EssayClient) DeleteOne(_m *Essay) *EssayDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EssayClient) DeleteOneID(id int) *EssayDeleteOne {
+	builder := c.Delete().Where(essay.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EssayDeleteOne{builder}
+}
+
+// Query returns a query builder for Essay.
+func (c *EssayClient) Query() *EssayQuery {
+	return &EssayQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEssay},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Essay entity by its id.
+func (c *EssayClient) Get(ctx context.Context, id int) (*Essay, error) {
+	return c.Query().Where(essay.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EssayClient) GetX(ctx context.Context, id int) *Essay {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EssayClient) Hooks() []Hook {
+	return c.hooks.Essay
+}
+
+// Interceptors returns the client interceptors.
+func (c *EssayClient) Interceptors() []Interceptor {
+	return c.inters.Essay
+}
+
+func (c *EssayClient) mutate(ctx context.Context, m *EssayMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EssayCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EssayUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EssayUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EssayDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Essay mutation op: %q", m.Op())
 	}
 }
 
@@ -3657,14 +3798,14 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, ApiPerms, Comment, FLink, FLinkGroup, File,
+		Album, AlbumPhoto, ApiPerms, Comment, Essay, FLink, FLinkGroup, File,
 		FriendCircleRecord, FriendCircleRule, ModelSchema, Oauth2AccessToken,
 		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
 		PersonalAccessToken, Post, Role, ScheduleJob, Setting, StorageStrategy, User,
 		WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, ApiPerms, Comment, FLink, FLinkGroup, File,
+		Album, AlbumPhoto, ApiPerms, Comment, Essay, FLink, FLinkGroup, File,
 		FriendCircleRecord, FriendCircleRule, ModelSchema, Oauth2AccessToken,
 		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
 		PersonalAccessToken, Post, Role, ScheduleJob, Setting, StorageStrategy, User,

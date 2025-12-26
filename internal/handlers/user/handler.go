@@ -43,12 +43,12 @@ func NewUserHandlerImpl(userService user_service.UserService, roleService role_s
 
 // @Summary 获取用户列表
 // @Description 获取所有用户的列表
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Success 200 {array} ent.User
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/users [get]
+// @Router /api/v1/user/list [get]
 func (h *UserHandlerImpl) ListUser(c *fiber.Ctx) error {
 	users, err := h.userService.ListUser(c)
 	if err != nil {
@@ -66,6 +66,17 @@ func (h *UserHandlerImpl) ListUser(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", userRespList))
 }
 
+// @Summary 获取用户分页列表
+// @Description 获取所有用户的分页列表
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param page query int false "页码" default(1)
+// @Param page_size query int false "每页数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.UserResp]}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/user/page [get]
 func (h *UserHandlerImpl) ListUserPage(c *fiber.Ctx) error {
 	pageQuery := model.PageQuery{}
 	err := c.QueryParser(&pageQuery)
@@ -102,14 +113,14 @@ func (h *UserHandlerImpl) ListUserPage(c *fiber.Ctx) error {
 
 // @Summary 创建用户
 // @Description 创建一个新用户
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param user body ent.User true "用户信息"
 // @Success 201 {object} ent.User
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/users [post]
+// @Router /api/v1/user/create [post]
 func (h *UserHandlerImpl) CreateUser(c *fiber.Ctx) error {
 	client := database.DB
 	var userData *model.UserCreateReq
@@ -171,7 +182,7 @@ func (h *UserHandlerImpl) CreateUser(c *fiber.Ctx) error {
 
 // @Summary 更新用户
 // @Description 更新指定用户的信息
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param id path string true "用户ID"
@@ -179,7 +190,7 @@ func (h *UserHandlerImpl) CreateUser(c *fiber.Ctx) error {
 // @Success 200 {object} ent.User
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/users/{id} [put]
+// @Router /api/v1/user/update/{id} [put]
 func (h *UserHandlerImpl) UpdateUser(c *fiber.Ctx) error {
 	client := database.DB
 	var err error
@@ -253,7 +264,7 @@ func (h *UserHandlerImpl) UpdateUser(c *fiber.Ctx) error {
 
 // @Summary 查询用户
 // @Description 查询指定用户的详细信息
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param id path string true "用户ID"
@@ -261,7 +272,7 @@ func (h *UserHandlerImpl) UpdateUser(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/users/{id} [get]
+// @Router /api/v1/user/query/{id} [get]
 func (h *UserHandlerImpl) QueryUser(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
@@ -290,7 +301,7 @@ func (h *UserHandlerImpl) QueryUser(c *fiber.Ctx) error {
 
 // @Summary 删除用户
 // @Description 删除指定用户
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param id path string true "用户ID"
@@ -298,7 +309,7 @@ func (h *UserHandlerImpl) QueryUser(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/users/{id} [delete]
+// @Router /api/v1/user/delete/{id} [delete]
 func (h *UserHandlerImpl) DeleteUser(c *fiber.Ctx) error {
 	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
@@ -323,6 +334,15 @@ func (h *UserHandlerImpl) DeleteUser(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
+// @Summary 查询个人令牌列表
+// @Description 查询当前用户的所有个人令牌
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} []model.PersonalAccessTokenListResp
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/user/personal-access-token/list [get]
 func (h *UserHandlerImpl) GetPersonalAccessTokenList(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	client := database.DB
@@ -348,7 +368,7 @@ func (h *UserHandlerImpl) GetPersonalAccessTokenList(c *fiber.Ctx) error {
 
 // @Summary 查询个人令牌
 // @Description 查询指定个人令牌的详细信息
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param id path string true "个人令牌ID"
@@ -356,7 +376,7 @@ func (h *UserHandlerImpl) GetPersonalAccessTokenList(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/users/personal-access-tokens/{id} [get]
+// @Router /api/v1/user/personal-access-token/query/{id} [get]
 func (h *UserHandlerImpl) GetPersonalAccessToken(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	id, err := strconv.Atoi(c.Params("id"))
@@ -384,14 +404,14 @@ func (h *UserHandlerImpl) GetPersonalAccessToken(c *fiber.Ctx) error {
 
 // @Summary 创建 personalAccessToken 个人令牌
 // @Description 创建一个新的个人令牌
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param createReq body model.PersonalAccessTokenCreateReq true "个人令牌创建请求"
 // @Success 200 {object} model.HttpSuccess
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/users/personal-access-tokens [post]
+// @Router /api/v1/user/personal-access-token/create [post]
 func (h *UserHandlerImpl) CreatePat(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	var createReq *model.PersonalAccessTokenCreateReq
@@ -436,7 +456,7 @@ func (h *UserHandlerImpl) CreatePat(c *fiber.Ctx) error {
 
 // @Summary 查询用户个人信息
 // @Description 查询指定用户的个人信息
-// @Tags users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param id path string true "用户ID"
@@ -444,7 +464,7 @@ func (h *UserHandlerImpl) CreatePat(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/users/{id}/profile [get]
+// @Router /api/v1/user/profile [get]
 func (h *UserHandlerImpl) GetUserProfile(c *fiber.Ctx) error {
 	userId := int(c.Locals("userId").(float64))
 	client := database.DB

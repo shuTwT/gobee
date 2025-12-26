@@ -75,7 +75,7 @@ const openSettingDialog = () => {
 }
 
 const handlePreview = () => {
-  previewHtml.value = editorRef.value.getHtml()
+  previewHtml.value = valueHtml.value
   showPreview.value = true
 }
 
@@ -103,7 +103,7 @@ const handleUnpublish = () => {
 const handleImport = () =>{
   importPost({
     id:route.query.id
-  }).then((res)=>{
+  }).then((res:any)=>{
     valueHtml.value = res.importContent
   })
 }
@@ -164,7 +164,11 @@ onBeforeUnmount(() => {
       </div>
     </div>
     <n-modal v-model:show="showPreview" preset="card" style="height: 100vh">
-      <div class="w-full h-full" v-html="previewHtml" tabindex="1"></div>
+      <div class="w-full h-full"  tabindex="1">
+        <n-scrollbar style="height: calc(100vh - 80px);">
+          <div  v-html="previewHtml"></div>
+      </n-scrollbar>
+      </div>
     </n-modal>
   </div>
 </template>

@@ -8,9 +8,7 @@ const httpClient = new HttpClient({
 
 const apiClient = new Api(httpClient)
 
-type RequestFn<R, T> =
-  | ((req: R, params?: RequestParams) => Promise<AxiosResponse<T>>)
-  | ((req?: R, params?: RequestParams) => Promise<AxiosResponse<T>>)
+type RequestFn<P extends any[], T=any> = (...args:[...P,RequestParams|undefined]) => Promise<AxiosResponse<T>>
 
 /**
  * 调用 API 函数
@@ -19,12 +17,11 @@ type RequestFn<R, T> =
  * @param params 请求参数
  * @returns API 响应数据
  */
-async function useApi<R = any, T = any>(
-  requestFn: RequestFn<R, T>,
-  req?: R,
-  params?: RequestParams,
+async function useApi<P extends any[], T = any>(
+  requestFn: RequestFn<P, T>,
+  ...args:P
 ): Promise<T> {
-  const res = await requestFn(req as R, params)
+  const res = await requestFn(...args,undefined)
   return res.data
 }
 

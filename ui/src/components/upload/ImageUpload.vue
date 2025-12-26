@@ -4,8 +4,8 @@ import type { UploadFileInfo } from 'naive-ui';
 // import type { UploadFileInfo } from 'naive-ui';
 
 const props  = withDefaults(defineProps<{
-  fileList: string[],
-  limit:number
+  fileList?: string[],
+  limit?:number
 }>(),{
   fileList: ()=>[],
   limit:1
@@ -24,12 +24,17 @@ const handleUploadFinish=({file}:{file:UploadFileInfo,event?:ProgressEvent})=>{
   fileListRef.value.push(file.url||'')
   emit('update:fileList',fileListRef.value)
 }
+
+const getFileList = ()=>{
+  return fileListRef.value
+}
+defineExpose({getFileList})
 </script>
 <template>
   <n-upload
     :multiple="props.limit > 1"
     accept="image/*"
-    action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
+    action="/api/v1/file/upload"
     list-type="image"
     :max="props.limit"
     @finish="handleUploadFinish"

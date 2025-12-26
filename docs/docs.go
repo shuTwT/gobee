@@ -23,9 +23,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/album_photos": {
-            "get": {
-                "description": "查询所有相册照片",
+        "/api/auth/login/password": {
+            "post": {
+                "description": "验证用户凭据并返回JWT令牌",
                 "consumes": [
                     "application/json"
                 ],
@@ -33,33 +33,35 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "album_photos"
+                    "auth"
                 ],
-                "summary": "查询相册照片列表",
+                "summary": "用户登录",
+                "parameters": [
+                    {
+                        "description": "登录请求",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LoginRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/ent.AlbumPhoto"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/model.HttpSuccess"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
@@ -71,7 +73,64 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/initialize": {
+            "post": {
+                "description": "首次运行系统时进行初始化设置，包括数据库配置和创建管理员账户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Initialize"
+                ],
+                "summary": "系统初始化",
+                "parameters": [
+                    {
+                        "description": "初始化请求",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.InitializeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "初始化成功",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "409": {
+                        "description": "系统已初始化",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/album-photo/create": {
             "post": {
                 "description": "创建一个新的相册照片",
                 "consumes": [
@@ -81,7 +140,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "album_photos"
+                    "albumPhotos"
                 ],
                 "summary": "创建相册照片",
                 "parameters": [
@@ -129,7 +188,113 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/album_photos/page": {
+        "/api/v1/album-photo/delete/{id}": {
+            "delete": {
+                "description": "删除指定相册照片",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "albumPhotos"
+                ],
+                "summary": "删除相册照片",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "相册照片ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/album-photo/list": {
+            "get": {
+                "description": "查询所有相册照片",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "albumPhotos"
+                ],
+                "summary": "查询相册照片列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ent.AlbumPhoto"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/album-photo/page": {
             "get": {
                 "description": "查询所有相册照片分页列表",
                 "consumes": [
@@ -139,7 +304,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "album_photos"
+                    "albumPhotos"
                 ],
                 "summary": "查询相册照片分页列表",
                 "parameters": [
@@ -192,7 +357,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/album_photos/{id}": {
+        "/api/v1/album-photo/query/{id}": {
             "get": {
                 "description": "查询指定相册照片的信息",
                 "consumes": [
@@ -202,7 +367,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "album_photos"
+                    "albumPhotos"
                 ],
                 "summary": "查询相册照片",
                 "parameters": [
@@ -246,7 +411,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/album-photo/update/{id}": {
             "put": {
                 "description": "更新指定相册照片的信息",
                 "consumes": [
@@ -256,7 +423,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "album_photos"
+                    "albumPhotos"
                 ],
                 "summary": "更新相册照片",
                 "parameters": [
@@ -309,111 +476,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "删除指定相册照片",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "album_photos"
-                ],
-                "summary": "删除相册照片",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "相册照片ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
             }
         },
-        "/api/v1/albums": {
-            "get": {
-                "description": "查询所有相册",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "albums"
-                ],
-                "summary": "查询相册列表",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/ent.Album"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            },
+        "/api/v1/album/create": {
             "post": {
                 "description": "创建一个新相册",
                 "consumes": [
@@ -423,7 +488,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "albums"
+                    "album"
                 ],
                 "summary": "创建相册",
                 "parameters": [
@@ -471,7 +536,113 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/albums/page": {
+        "/api/v1/album/delete/{id}": {
+            "delete": {
+                "description": "删除指定相册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "删除相册",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "相册ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/album/list": {
+            "get": {
+                "description": "查询所有相册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "查询相册列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ent.Album"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/album/page": {
             "get": {
                 "description": "查询相册列表分页",
                 "consumes": [
@@ -481,7 +652,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "albums"
+                    "album"
                 ],
                 "summary": "查询相册列表分页",
                 "parameters": [
@@ -534,7 +705,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/albums/{id}": {
+        "/api/v1/album/query/{id}": {
             "get": {
                 "description": "查询指定相册的信息",
                 "consumes": [
@@ -544,7 +715,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "albums"
+                    "album"
                 ],
                 "summary": "查询相册",
                 "parameters": [
@@ -588,7 +759,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/album/update/{id}": {
             "put": {
                 "description": "更新指定相册的信息",
                 "consumes": [
@@ -598,7 +771,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "albums"
+                    "album"
                 ],
                 "summary": "更新相册",
                 "parameters": [
@@ -651,63 +824,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "删除指定相册",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "albums"
-                ],
-                "summary": "删除相册",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "相册ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
             }
         },
-        "/api/v1/api_interfaces/routes": {
+        "/api/v1/api-interface/page": {
             "get": {
                 "description": "查询所有API路由的分页列表",
                 "consumes": [
@@ -717,7 +836,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "api_interfaces"
+                    "apiInterface"
                 ],
                 "summary": "查询API路由分页列表",
                 "parameters": [
@@ -770,7 +889,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/comments": {
+        "/api/v1/comment/page": {
             "get": {
                 "description": "获取评论列表",
                 "consumes": [
@@ -780,7 +899,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "comments"
+                    "comment"
                 ],
                 "summary": "获取评论列表",
                 "parameters": [
@@ -833,7 +952,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/comments/recent": {
+        "/api/v1/comment/recent": {
             "get": {
                 "description": "获取最近评论",
                 "consumes": [
@@ -843,7 +962,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "comments"
+                    "comment"
                 ],
                 "summary": "获取最近评论",
                 "responses": {
@@ -881,9 +1000,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/comments/twikoo": {
-            "post": {
-                "description": "处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论",
+        "/api/v1/comment/{id}": {
+            "get": {
+                "description": "获取指定评论",
                 "consumes": [
                     "application/json"
                 ],
@@ -891,18 +1010,16 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "comments"
+                    "comment"
                 ],
-                "summary": "处理Twikoo评论事件",
+                "summary": "获取评论",
                 "parameters": [
                     {
-                        "description": "Twikoo请求体",
-                        "name": "twikoo_req_body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/comment.TwikooReqBody"
-                        }
+                        "type": "integer",
+                        "description": "评论ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -916,7 +1033,9 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        "data": {}
+                                        "data": {
+                                            "$ref": "#/definitions/ent.Comment"
+                                        }
                                     }
                                 }
                             ]
@@ -937,7 +1056,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/common/statistics": {
+        "/api/v1/common/statistic": {
             "get": {
                 "description": "获取首页统计信息，包括文章数量、评论数量、相册数量、照片数量",
                 "consumes": [
@@ -984,9 +1103,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/flink_groups": {
-            "get": {
-                "description": "查询FlinkGroup",
+        "/api/v1/essay/create": {
+            "post": {
+                "description": "创建一个新说说",
                 "consumes": [
                     "application/json"
                 ],
@@ -994,9 +1113,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "flink_groups"
+                    "essay"
                 ],
-                "summary": "查询FlinkGroup",
+                "summary": "创建说说",
+                "parameters": [
+                    {
+                        "description": "说创建请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.EssayCreateReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1009,10 +1139,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/ent.FLinkGroup"
-                                            }
+                                            "$ref": "#/definitions/model.EssayCreateReq"
                                         }
                                     }
                                 }
@@ -1032,7 +1159,193 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/essay/delete/{id}": {
+            "delete": {
+                "description": "删除指定说说",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "essay"
+                ],
+                "summary": "删除说说",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "说说ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.EssayResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/essay/page": {
+            "get": {
+                "description": "获取说说分页列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "essay"
+                ],
+                "summary": "获取说说分页列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "每页数量",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PageResult-model_EssayResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/essay/update/{id}": {
+            "put": {
+                "description": "更新指定说说的信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "essay"
+                ],
+                "summary": "更新说说",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "说说ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "说说更新请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.EssayUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.EssayUpdateReq"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/flink-group/create": {
             "post": {
                 "description": "创建FlinkGroup",
                 "consumes": [
@@ -1042,7 +1355,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "flink_groups"
+                    "flinkGroup"
                 ],
                 "summary": "创建FlinkGroup",
                 "parameters": [
@@ -1090,7 +1403,113 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/flink_groups/{id}": {
+        "/api/v1/flink-group/delete/{id}": {
+            "delete": {
+                "description": "删除FlinkGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flinkGroup"
+                ],
+                "summary": "删除FlinkGroup",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "FlinkGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/flink-group/list": {
+            "get": {
+                "description": "查询FlinkGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flinkGroup"
+                ],
+                "summary": "查询FlinkGroup",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ent.FLinkGroup"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/flink-group/update/{id}": {
             "put": {
                 "description": "更新FlinkGroup",
                 "consumes": [
@@ -1100,7 +1519,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "flink_groups"
+                    "flinkGroup"
                 ],
                 "summary": "更新FlinkGroup",
                 "parameters": [
@@ -1153,111 +1572,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "删除FlinkGroup",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flink_groups"
-                ],
-                "summary": "删除FlinkGroup",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "FlinkGroup ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
             }
         },
-        "/api/v1/flinks": {
-            "get": {
-                "description": "获取所有Flink",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flinks"
-                ],
-                "summary": "获取所有Flink",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/model.FlinkResp"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            },
+        "/api/v1/flink/create": {
             "post": {
                 "description": "创建Flink",
                 "consumes": [
@@ -1267,7 +1584,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "flinks"
+                    "flink"
                 ],
                 "summary": "创建Flink",
                 "parameters": [
@@ -1315,7 +1632,57 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/flinks/page": {
+        "/api/v1/flink/list": {
+            "get": {
+                "description": "获取所有Flink",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flink"
+                ],
+                "summary": "获取所有Flink",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.FlinkResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/flink/page": {
             "get": {
                 "description": "获取Flink分页列表",
                 "consumes": [
@@ -1325,7 +1692,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "flinks"
+                    "flink"
                 ],
                 "summary": "获取Flink分页列表",
                 "parameters": [
@@ -1378,7 +1745,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/flinks/{id}": {
+        "/api/v1/flink/query/{id}": {
             "get": {
                 "description": "查询Flink",
                 "consumes": [
@@ -1388,7 +1755,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "flinks"
+                    "flink"
                 ],
                 "summary": "查询Flink",
                 "parameters": [
@@ -1432,7 +1799,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/flink/update/{id}": {
             "put": {
                 "description": "更新Flink",
                 "consumes": [
@@ -1442,7 +1811,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "flinks"
+                    "flink"
                 ],
                 "summary": "更新Flink",
                 "parameters": [
@@ -1495,7 +1864,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/flink/{id}": {
             "delete": {
                 "description": "删除Flink",
                 "consumes": [
@@ -1505,7 +1876,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "flinks"
+                    "flink"
                 ],
                 "summary": "删除Flink",
                 "parameters": [
@@ -2919,6 +3290,62 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/posts/{id}/summary": {
+            "get": {
+                "description": "获取指定文章的摘要流",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "获取文章摘要流",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "文章ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.AIResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/posts/{id}/unpublish": {
             "put": {
                 "description": "取消发布指定文章",
@@ -3478,9 +3905,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users": {
-            "get": {
-                "description": "获取所有用户的列表",
+        "/api/v1/storage-strategy/create": {
+            "post": {
+                "description": "创建一个新的存储策略",
                 "consumes": [
                     "application/json"
                 ],
@@ -3488,17 +3915,474 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "storageStrategy"
                 ],
-                "summary": "获取用户列表",
+                "summary": "创建存储策略",
+                "parameters": [
+                    {
+                        "description": "Storage Strategy Create Request",
+                        "name": "strategy",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.StorageStrategyCreateReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ent.User"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ent.StorageStrategy"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/storage-strategy/default/{id}": {
+            "put": {
+                "description": "设置指定ID的存储策略为默认策略",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "storageStrategy"
+                ],
+                "summary": "设置默认存储策略",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Storage Strategy ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/storage-strategy/delete/{id}": {
+            "delete": {
+                "description": "删除指定ID的存储策略",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "storageStrategy"
+                ],
+                "summary": "删除存储策略",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Storage Strategy ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/storage-strategy/list": {
+            "get": {
+                "description": "获取所有存储策略的列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "storageStrategy"
+                ],
+                "summary": "获取存储策略列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ent.StorageStrategy"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/storage-strategy/list-all": {
+            "get": {
+                "description": "获取所有存储策略的列表，包括默认策略",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "storageStrategy"
+                ],
+                "summary": "获取所有存储策略列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.StorageStrategyListResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/storage-strategy/query/{id}": {
+            "get": {
+                "description": "查询指定ID的存储策略",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "storageStrategy"
+                ],
+                "summary": "查询存储策略",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Storage Strategy ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ent.StorageStrategy"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/storage-strategy/update/{id}": {
+            "put": {
+                "description": "更新指定ID的存储策略",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "storageStrategy"
+                ],
+                "summary": "更新存储策略",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Storage Strategy ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Storage Strategy Update Request",
+                        "name": "strategy",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.StorageStrategyUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ent.StorageStrategy"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/twikoo": {
+            "get": {
+                "description": "处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "处理Twikoo评论事件",
+                "parameters": [
+                    {
+                        "description": "Twikoo请求体",
+                        "name": "twikoo_req_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/comment.TwikooReqBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {}
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "处理Twikoo评论事件",
+                "parameters": [
+                    {
+                        "description": "Twikoo请求体",
+                        "name": "twikoo_req_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/comment.TwikooReqBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {}
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
                         }
                     },
                     "500": {
@@ -3510,6 +4394,116 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "description": "处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "处理Twikoo评论事件",
+                "parameters": [
+                    {
+                        "description": "Twikoo请求体",
+                        "name": "twikoo_req_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/comment.TwikooReqBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {}
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "处理Twikoo评论事件，包括获取配置、获取评论、获取评论数量、提交评论",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "处理Twikoo评论事件",
+                "parameters": [
+                    {
+                        "description": "Twikoo请求体",
+                        "name": "twikoo_req_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/comment.TwikooReqBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {}
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/create": {
+            "post": {
                 "description": "创建一个新用户",
                 "consumes": [
                     "application/json"
@@ -3518,7 +4512,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "创建用户",
                 "parameters": [
@@ -3554,202 +4548,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/personal-access-tokens": {
-            "post": {
-                "description": "创建一个新的个人令牌",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "创建 personalAccessToken 个人令牌",
-                "parameters": [
-                    {
-                        "description": "个人令牌创建请求",
-                        "name": "createReq",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.PersonalAccessTokenCreateReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpSuccess"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/users/personal-access-tokens/{id}": {
-            "get": {
-                "description": "查询指定个人令牌的详细信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "查询个人令牌",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "个人令牌ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.PersonalAccessTokenResp"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/users/{id}": {
-            "get": {
-                "description": "查询指定用户的详细信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "查询用户",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ent.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "更新指定用户的信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "更新用户",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "用户信息",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ent.User"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ent.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            },
+        "/api/v1/user/delete/{id}": {
             "delete": {
                 "description": "删除指定用户",
                 "consumes": [
@@ -3759,7 +4558,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "删除用户",
                 "parameters": [
@@ -3799,7 +4598,236 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/{id}/profile": {
+        "/api/v1/user/list": {
+            "get": {
+                "description": "获取所有用户的列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取用户列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ent.User"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/page": {
+            "get": {
+                "description": "获取所有用户的分页列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取用户分页列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "每页数量",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PageResult-model_UserResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/personal-access-token/create": {
+            "post": {
+                "description": "创建一个新的个人令牌",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "创建 personalAccessToken 个人令牌",
+                "parameters": [
+                    {
+                        "description": "个人令牌创建请求",
+                        "name": "createReq",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PersonalAccessTokenCreateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/personal-access-token/list": {
+            "get": {
+                "description": "查询当前用户的所有个人令牌",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "查询个人令牌列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.PersonalAccessTokenListResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/personal-access-token/query/{id}": {
+            "get": {
+                "description": "查询指定个人令牌的详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "查询个人令牌",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "个人令牌ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.PersonalAccessTokenResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/profile": {
             "get": {
                 "description": "查询指定用户的个人信息",
                 "consumes": [
@@ -3809,7 +4837,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "查询用户个人信息",
                 "parameters": [
@@ -3849,9 +4877,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/login/password": {
-            "post": {
-                "description": "验证用户凭据并返回JWT令牌",
+        "/api/v1/user/query/{id}": {
+            "get": {
+                "description": "查询指定用户的详细信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -3859,25 +4887,23 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "user"
                 ],
-                "summary": "用户登录",
+                "summary": "查询用户",
                 "parameters": [
                     {
-                        "description": "登录请求",
-                        "name": "login",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.LoginRequest"
-                        }
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpSuccess"
+                            "$ref": "#/definitions/ent.User"
                         }
                     },
                     "400": {
@@ -3886,8 +4912,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.HttpError"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
@@ -3901,9 +4927,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/initialize": {
-            "post": {
-                "description": "首次运行系统时进行初始化设置，包括数据库配置和创建管理员账户",
+        "/api/v1/user/update/{id}": {
+            "put": {
+                "description": "更新指定用户的信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -3911,44 +4937,42 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Initialize"
+                    "user"
                 ],
-                "summary": "系统初始化",
+                "summary": "更新用户",
                 "parameters": [
                     {
-                        "description": "初始化请求",
-                        "name": "request",
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "用户信息",
+                        "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.InitializeRequest"
+                            "$ref": "#/definitions/ent.User"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "初始化成功",
+                        "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/ent.User"
                         }
                     },
                     "400": {
-                        "description": "请求参数错误",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "409": {
-                        "description": "系统已初始化",
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
                     },
                     "500": {
-                        "description": "服务器内部错误",
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
@@ -4573,6 +5597,71 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.StorageStrategy": {
+            "type": "object",
+            "properties": {
+                "access_key": {
+                    "description": "accessKey",
+                    "type": "string"
+                },
+                "base_path": {
+                    "description": "local 基础路径",
+                    "type": "string"
+                },
+                "bucket": {
+                    "description": "存储桶名称",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "domain": {
+                    "description": "访问域名",
+                    "type": "string"
+                },
+                "endpoint": {
+                    "description": "端点",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "master": {
+                    "description": "是否为默认策略",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "策略名称",
+                    "type": "string"
+                },
+                "node_id": {
+                    "description": "节点 ID",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "region",
+                    "type": "string"
+                },
+                "secret_key": {
+                    "description": "secret_key",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "策略类型",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/storagestrategy.Type"
+                        }
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
         "ent.User": {
             "type": "object",
             "properties": {
@@ -4632,6 +5721,17 @@ const docTemplate = `{
                             "$ref": "#/definitions/ent.Role"
                         }
                     ]
+                }
+            }
+        },
+        "model.AIResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "done": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4743,6 +5843,66 @@ const docTemplate = `{
                 "status": {
                     "description": "状态",
                     "type": "string"
+                }
+            }
+        },
+        "model.EssayCreateReq": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "draft": {
+                    "type": "boolean"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "model.EssayResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "create_at": {
+                    "type": "string"
+                },
+                "draft": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "model.EssayUpdateReq": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "draft": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -5162,6 +6322,20 @@ const docTemplate = `{
                 }
             }
         },
+        "model.PageResult-model_EssayResp": {
+            "type": "object",
+            "properties": {
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.EssayResp"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.PageResult-model_FlinkResp": {
             "type": "object",
             "properties": {
@@ -5204,6 +6378,20 @@ const docTemplate = `{
                 }
             }
         },
+        "model.PageResult-model_UserResp": {
+            "type": "object",
+            "properties": {
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.UserResp"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.PersonalAccessTokenCreateReq": {
             "type": "object",
             "properties": {
@@ -5214,6 +6402,26 @@ const docTemplate = `{
                 "expires": {
                     "description": "过期时间",
                     "type": "string"
+                },
+                "name": {
+                    "description": "令牌名称",
+                    "type": "string"
+                }
+            }
+        },
+        "model.PersonalAccessTokenListResp": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "描述",
+                    "type": "string"
+                },
+                "expires": {
+                    "description": "过期时间",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "name": {
                     "description": "令牌名称",
@@ -5376,6 +6584,113 @@ const docTemplate = `{
                 }
             }
         },
+        "model.StorageStrategyCreateReq": {
+            "type": "object",
+            "required": [
+                "domain",
+                "name",
+                "type"
+            ],
+            "properties": {
+                "access_key": {
+                    "type": "string"
+                },
+                "base_path": {
+                    "type": "string"
+                },
+                "bucket": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string"
+                },
+                "endpoint": {
+                    "type": "string"
+                },
+                "master": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "secret_key": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "local",
+                        "s3"
+                    ]
+                }
+            }
+        },
+        "model.StorageStrategyListResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "master": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.StorageStrategyUpdateReq": {
+            "type": "object",
+            "required": [
+                "domain",
+                "type"
+            ],
+            "properties": {
+                "access_key": {
+                    "type": "string"
+                },
+                "base_path": {
+                    "type": "string"
+                },
+                "bucket": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string"
+                },
+                "endpoint": {
+                    "type": "string"
+                },
+                "master": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "secret_key": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "local",
+                        "s3"
+                    ]
+                }
+            }
+        },
         "model.UserProfileResp": {
             "type": "object",
             "properties": {
@@ -5405,6 +6720,38 @@ const docTemplate = `{
                 }
             }
         },
+        "model.UserResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "email_verified": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "phone_number_verified": {
+                    "type": "boolean"
+                },
+                "role": {
+                    "$ref": "#/definitions/ent.Role"
+                },
+                "role_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "post.Status": {
             "type": "string",
             "enum": [
@@ -5418,6 +6765,19 @@ const docTemplate = `{
                 "StatusDraft",
                 "StatusPublished",
                 "StatusArchived"
+            ]
+        },
+        "storagestrategy.Type": {
+            "type": "string",
+            "enum": [
+                "local",
+                "local",
+                "s3"
+            ],
+            "x-enum-varnames": [
+                "DefaultType",
+                "TypeLocal",
+                "TypeS3"
             ]
         }
     }

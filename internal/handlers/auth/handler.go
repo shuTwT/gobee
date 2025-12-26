@@ -34,7 +34,7 @@ func NewAuthHandlerImpl(client *ent.Client) *AuthHandlerImpl {
 // @Failure 400 {object} model.HttpError
 // @Failure 401 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /auth/login/password [post]
+// @Router /api/auth/login/password [post]
 func (h *AuthHandlerImpl) Login(c *fiber.Ctx) error {
 	var req *model.LoginRequest
 	if err := c.BodyParser(&req); err != nil {

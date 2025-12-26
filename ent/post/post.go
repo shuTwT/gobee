@@ -24,6 +24,12 @@ const (
 	FieldAlias = "alias"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
+	// FieldMdContent holds the string denoting the md_content field in the database.
+	FieldMdContent = "md_content"
+	// FieldHTMLContent holds the string denoting the html_content field in the database.
+	FieldHTMLContent = "html_content"
+	// FieldContentType holds the string denoting the content_type field in the database.
+	FieldContentType = "content_type"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldIsAutogenSummary holds the string denoting the is_autogen_summary field in the database.
@@ -62,6 +68,9 @@ var Columns = []string{
 	FieldTitle,
 	FieldAlias,
 	FieldContent,
+	FieldMdContent,
+	FieldHTMLContent,
+	FieldContentType,
 	FieldStatus,
 	FieldIsAutogenSummary,
 	FieldIsVisible,
@@ -128,6 +137,32 @@ var (
 	SummaryValidator func(string) error
 )
 
+// ContentType defines the type for the "content_type" enum field.
+type ContentType string
+
+// ContentTypeHTML is the default value of the ContentType enum.
+const DefaultContentType = ContentTypeHTML
+
+// ContentType values.
+const (
+	ContentTypeMarkdown ContentType = "markdown"
+	ContentTypeHTML     ContentType = "html"
+)
+
+func (ct ContentType) String() string {
+	return string(ct)
+}
+
+// ContentTypeValidator is a validator for the "content_type" field enum values. It is called by the builders before save.
+func ContentTypeValidator(ct ContentType) error {
+	switch ct {
+	case ContentTypeMarkdown, ContentTypeHTML:
+		return nil
+	default:
+		return fmt.Errorf("post: invalid enum value for content_type field: %q", ct)
+	}
+}
+
 // Status defines the type for the "status" enum field.
 type Status string
 
@@ -186,6 +221,21 @@ func ByAlias(opts ...sql.OrderTermOption) OrderOption {
 // ByContent orders the results by the content field.
 func ByContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContent, opts...).ToFunc()
+}
+
+// ByMdContent orders the results by the md_content field.
+func ByMdContent(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMdContent, opts...).ToFunc()
+}
+
+// ByHTMLContent orders the results by the html_content field.
+func ByHTMLContent(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHTMLContent, opts...).ToFunc()
+}
+
+// ByContentType orders the results by the content_type field.
+func ByContentType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldContentType, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

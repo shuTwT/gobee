@@ -30,7 +30,7 @@ func NewCommonHandlerImpl(commonService common_service.CommonService) *CommonHan
 // @Success 200 {object} model.HttpSuccess{data=model.HomeStatistic}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/common/statistics [get]
+// @Router /api/v1/common/statistic [get]
 func (h *CommonHandlerImpl) GetHomeStatistics(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("统计信息获取成功", h.commonService.GetHomeStatistic(c.Context())))
 }

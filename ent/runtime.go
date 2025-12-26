@@ -7,6 +7,7 @@ import (
 	"gobee/ent/albumphoto"
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
+	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
@@ -156,6 +157,25 @@ func init() {
 	commentDescPinned := commentFields[10].Descriptor()
 	// comment.DefaultPinned holds the default value on creation for the pinned field.
 	comment.DefaultPinned = commentDescPinned.Default.(bool)
+	essayMixin := schema.Essay{}.Mixin()
+	essayMixinFields0 := essayMixin[0].Fields()
+	_ = essayMixinFields0
+	essayFields := schema.Essay{}.Fields()
+	_ = essayFields
+	// essayDescCreatedAt is the schema descriptor for created_at field.
+	essayDescCreatedAt := essayMixinFields0[1].Descriptor()
+	// essay.DefaultCreatedAt holds the default value on creation for the created_at field.
+	essay.DefaultCreatedAt = essayDescCreatedAt.Default.(func() time.Time)
+	// essayDescUpdatedAt is the schema descriptor for updated_at field.
+	essayDescUpdatedAt := essayMixinFields0[2].Descriptor()
+	// essay.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	essay.DefaultUpdatedAt = essayDescUpdatedAt.Default.(func() time.Time)
+	// essay.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	essay.UpdateDefaultUpdatedAt = essayDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// essayDescDraft is the schema descriptor for draft field.
+	essayDescDraft := essayFields[1].Descriptor()
+	// essay.DefaultDraft holds the default value on creation for the draft field.
+	essay.DefaultDraft = essayDescDraft.Default.(bool)
 	flinkMixin := schema.FLink{}.Mixin()
 	flinkMixinFields0 := flinkMixin[0].Fields()
 	_ = flinkMixinFields0
@@ -736,51 +756,51 @@ func init() {
 	// post.ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	post.ContentValidator = postDescContent.Validators[0].(func(string) error)
 	// postDescIsAutogenSummary is the schema descriptor for is_autogen_summary field.
-	postDescIsAutogenSummary := postFields[4].Descriptor()
+	postDescIsAutogenSummary := postFields[7].Descriptor()
 	// post.DefaultIsAutogenSummary holds the default value on creation for the is_autogen_summary field.
 	post.DefaultIsAutogenSummary = postDescIsAutogenSummary.Default.(bool)
 	// postDescIsVisible is the schema descriptor for is_visible field.
-	postDescIsVisible := postFields[5].Descriptor()
+	postDescIsVisible := postFields[8].Descriptor()
 	// post.DefaultIsVisible holds the default value on creation for the is_visible field.
 	post.DefaultIsVisible = postDescIsVisible.Default.(bool)
 	// postDescIsTipToTop is the schema descriptor for is_tip_to_top field.
-	postDescIsTipToTop := postFields[6].Descriptor()
+	postDescIsTipToTop := postFields[9].Descriptor()
 	// post.DefaultIsTipToTop holds the default value on creation for the is_tip_to_top field.
 	post.DefaultIsTipToTop = postDescIsTipToTop.Default.(bool)
 	// postDescIsAllowComment is the schema descriptor for is_allow_comment field.
-	postDescIsAllowComment := postFields[7].Descriptor()
+	postDescIsAllowComment := postFields[10].Descriptor()
 	// post.DefaultIsAllowComment holds the default value on creation for the is_allow_comment field.
 	post.DefaultIsAllowComment = postDescIsAllowComment.Default.(bool)
 	// postDescViewCount is the schema descriptor for view_count field.
-	postDescViewCount := postFields[9].Descriptor()
+	postDescViewCount := postFields[12].Descriptor()
 	// post.DefaultViewCount holds the default value on creation for the view_count field.
 	post.DefaultViewCount = postDescViewCount.Default.(int)
 	// post.ViewCountValidator is a validator for the "view_count" field. It is called by the builders before save.
 	post.ViewCountValidator = postDescViewCount.Validators[0].(func(int) error)
 	// postDescCommentCount is the schema descriptor for comment_count field.
-	postDescCommentCount := postFields[10].Descriptor()
+	postDescCommentCount := postFields[13].Descriptor()
 	// post.DefaultCommentCount holds the default value on creation for the comment_count field.
 	post.DefaultCommentCount = postDescCommentCount.Default.(int)
 	// post.CommentCountValidator is a validator for the "comment_count" field. It is called by the builders before save.
 	post.CommentCountValidator = postDescCommentCount.Validators[0].(func(int) error)
 	// postDescCover is the schema descriptor for cover field.
-	postDescCover := postFields[11].Descriptor()
+	postDescCover := postFields[14].Descriptor()
 	// post.CoverValidator is a validator for the "cover" field. It is called by the builders before save.
 	post.CoverValidator = postDescCover.Validators[0].(func(string) error)
 	// postDescKeywords is the schema descriptor for keywords field.
-	postDescKeywords := postFields[12].Descriptor()
+	postDescKeywords := postFields[15].Descriptor()
 	// post.KeywordsValidator is a validator for the "keywords" field. It is called by the builders before save.
 	post.KeywordsValidator = postDescKeywords.Validators[0].(func(string) error)
 	// postDescCopyright is the schema descriptor for copyright field.
-	postDescCopyright := postFields[13].Descriptor()
+	postDescCopyright := postFields[16].Descriptor()
 	// post.CopyrightValidator is a validator for the "copyright" field. It is called by the builders before save.
 	post.CopyrightValidator = postDescCopyright.Validators[0].(func(string) error)
 	// postDescAuthor is the schema descriptor for author field.
-	postDescAuthor := postFields[14].Descriptor()
+	postDescAuthor := postFields[17].Descriptor()
 	// post.DefaultAuthor holds the default value on creation for the author field.
 	post.DefaultAuthor = postDescAuthor.Default.(string)
 	// postDescSummary is the schema descriptor for summary field.
-	postDescSummary := postFields[15].Descriptor()
+	postDescSummary := postFields[18].Descriptor()
 	// post.SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
 	post.SummaryValidator = postDescSummary.Validators[0].(func(string) error)
 	roleMixin := schema.Role{}.Mixin()

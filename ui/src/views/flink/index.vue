@@ -20,8 +20,7 @@ import type {
   FlinkGroupFormPorps,
 } from './utils/types'
 import flinkForm from './flinkForm.vue'
-import * as flinkGroupApi from '@/api/flinkGroup'
-import * as flinkApi from '@/api/flink'
+import {apiClient,useApi} from "@/api"
 import FlinkGroupForm from './flinkGroupForm.vue'
 
 const message = useMessage()
@@ -123,10 +122,10 @@ const openGroupEditDialog = (title = '新增', row?: FlinkGroupFormItemProps) =>
           onSearchCategory()
         }
         if (title == '新增') {
-          await flinkGroupApi.createFlinkGroup(curData)
+          await useApi(apiClient.api.v1FlinkGroupCreateCreate,curData)
           chores()
         } else {
-          await flinkGroupApi.updateFlinkGroup(row?.id as any, curData)
+          await useApi(apiClient.api.v1FlinkGroupUpdateUpdate,row?.id!, curData)
         }
       } catch {}
     },
@@ -162,10 +161,10 @@ const openEditDialog = (title = '新增', row?: FlinkFormItemProps) => {
           onSearchFlink()
         }
         if (title == '新增') {
-          await flinkApi.createFlink(curData)
+          await useApi(apiClient.api.v1FlinkCreateCreate,curData)
           chores()
         } else {
-          await flinkApi.updateFlink(row!.id!, curData)
+          await useApi(apiClient.api.v1FlinkUpdateUpdate,row?.id!,curData)
           chores()
         }
       } catch {
@@ -180,7 +179,7 @@ const handleEdit = (row: any) => {}
 const handleDelete = async (row: any) => {
   // TODO: 实现删除逻辑
   try{
-    await flinkApi.deleteFlink(row.id)
+    await useApi(apiClient.api.v1FlinkDelete,row.id!)
     message.success('删除成功喵~')
     await onSearchFlink()
   }catch{
@@ -194,12 +193,12 @@ const handleSubmit = async () => {
   message.success('保存成功喵~')
 }
 const onSearchCategory = async () => {
-  const res = await flinkGroupApi.getFlinkGroupList()
+  const res = await useApi(apiClient.api.v1FlinkGroupListList)
   flinkGroups.value = res.data
 }
 const onSearchFlink = async () => {
   try {
-    const res = await flinkApi.getFlinkPage()
+    const res = await useApi(apiClient.api.v1FlinkPageList,{page:1,size:10})
     dataList.value = res.data.records
   } catch {}
 }
