@@ -15,7 +15,6 @@ await generateApi({
     generateClient: true,
     generateRouteTypes: true,
     sortTypes: true,
-    addReadonly: true,
     hooks:{
 
     },

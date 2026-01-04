@@ -49,6 +49,26 @@ func (_u *FLinkGroupUpdate) SetNillableName(v *string) *FLinkGroupUpdate {
 	return _u
 }
 
+// SetDescription sets the "description" field.
+func (_u *FLinkGroupUpdate) SetDescription(v string) *FLinkGroupUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *FLinkGroupUpdate) SetNillableDescription(v *string) *FLinkGroupUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *FLinkGroupUpdate) ClearDescription() *FLinkGroupUpdate {
+	_u.mutation.ClearDescription()
+	return _u
+}
+
 // AddLinkIDs adds the "links" edge to the FLink entity by IDs.
 func (_u *FLinkGroupUpdate) AddLinkIDs(ids ...int) *FLinkGroupUpdate {
 	_u.mutation.AddLinkIDs(ids...)
@@ -154,6 +174,12 @@ func (_u *FLinkGroupUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(flinkgroup.FieldName, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(flinkgroup.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(flinkgroup.FieldDescription, field.TypeString)
+	}
 	if _u.mutation.LinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -236,6 +262,26 @@ func (_u *FLinkGroupUpdateOne) SetNillableName(v *string) *FLinkGroupUpdateOne {
 	if v != nil {
 		_u.SetName(*v)
 	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *FLinkGroupUpdateOne) SetDescription(v string) *FLinkGroupUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *FLinkGroupUpdateOne) SetNillableDescription(v *string) *FLinkGroupUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *FLinkGroupUpdateOne) ClearDescription() *FLinkGroupUpdateOne {
+	_u.mutation.ClearDescription()
 	return _u
 }
 
@@ -373,6 +419,12 @@ func (_u *FLinkGroupUpdateOne) sqlSave(ctx context.Context) (_node *FLinkGroup, 
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(flinkgroup.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(flinkgroup.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(flinkgroup.FieldDescription, field.TypeString)
 	}
 	if _u.mutation.LinksCleared() {
 		edge := &sqlgraph.EdgeSpec{

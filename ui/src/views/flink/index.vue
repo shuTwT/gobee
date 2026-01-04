@@ -20,10 +20,13 @@ import type {
   FlinkGroupFormPorps,
 } from './utils/types'
 import flinkForm from './flinkForm.vue'
-import {apiClient,useApi} from "@/api"
+import { apiClient, useApi } from '@/api'
 import FlinkGroupForm from './flinkGroupForm.vue'
+import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 
 const message = useMessage()
+
+const currentFlinkGroup = ref<number>(0)
 
 // 友链表格数据
 const loading = ref(false)
@@ -76,10 +79,10 @@ const columns: DataTableColumns = [
             h(
               NPopconfirm,
               {
-                onPositiveClick:()=>handleDelete(row)
+                onPositiveClick: () => handleDelete(row),
               },
               {
-                default:()=>"确认删除吗",
+                default: () => '确认删除吗',
                 trigger: () =>
                   h(
                     NButton,
@@ -101,6 +104,21 @@ const columns: DataTableColumns = [
     },
   },
 ]
+const contextMenuX = ref(0)
+const contextMenuY = ref(0)
+const showDropdownRef = ref(false)
+const dropdownRow = ref<any>()
+
+const handleFlinkGroupContextMenu = (e: MouseEvent, row: any) => {
+  e.preventDefault()
+  dropdownRow.value = row
+  showDropdownRef.value = false
+  nextTick().then(() => {
+    contextMenuX.value = e.clientX
+    contextMenuY.value = e.clientY
+    showDropdownRef.value = true
+  })
+}
 
 const openGroupEditDialog = (title = '新增', row?: FlinkGroupFormItemProps) => {
   const formRef = ref()
@@ -109,6 +127,7 @@ const openGroupEditDialog = (title = '新增', row?: FlinkGroupFormItemProps) =>
     props: {
       formInline: {
         name: row?.name ?? '',
+        description: row?.description ?? '',
       },
     },
     contentRenderer: ({ options }) =>
@@ -122,15 +141,27 @@ const openGroupEditDialog = (title = '新增', row?: FlinkGroupFormItemProps) =>
           onSearchCategory()
         }
         if (title == '新增') {
-          await useApi(apiClient.api.v1FlinkGroupCreateCreate,curData)
+          await useApi(apiClient.api.v1FlinkGroupCreateCreate, curData)
           chores()
         } else {
-          await useApi(apiClient.api.v1FlinkGroupUpdateUpdate,row?.id!, curData)
+          await useApi(apiClient.api.v1FlinkGroupUpdateUpdate, row?.id!, curData)
+          chores()
         }
       } catch {}
     },
   })
 }
+
+const dropdownOptions: DropdownMixedOption[] = [
+  {
+    label: '编辑',
+    key: 'edit',
+  },
+  {
+    label: '删除',
+    key: 'delete',
+  },
+]
 
 const openEditDialog = (title = '新增', row?: FlinkFormItemProps) => {
   const formRef = ref()
@@ -143,11 +174,12 @@ const openEditDialog = (title = '新增', row?: FlinkFormItemProps) => {
         url: row?.url ?? '',
         avatar_url: row?.avatar_url ?? '',
         description: row?.description ?? '',
-        cover_url:row?.cover_url??'',
-        snapshot_url:row?.snapshot_url??'',
-        email:row?.email??'',
-        enable_friend_circle:row?.enable_friend_circle??true,
-        friend_circle_rule_id:row?.friend_circle_rule_id??undefined
+        cover_url: row?.cover_url ?? '',
+        snapshot_url: row?.snapshot_url ?? '',
+        email: row?.email ?? '',
+        enable_friend_circle: row?.enable_friend_circle ?? true,
+        friend_circle_rule_id: row?.friend_circle_rule_id ?? undefined,
+        group_id: currentFlinkGroup.value ?? 0,
       },
     },
     contentRenderer: ({ options }) =>
@@ -161,31 +193,36 @@ const openEditDialog = (title = '新增', row?: FlinkFormItemProps) => {
           onSearchFlink()
         }
         if (title == '新增') {
-          await useApi(apiClient.api.v1FlinkCreateCreate,curData)
+          await useApi(apiClient.api.v1FlinkCreateCreate, curData)
           chores()
         } else {
-          await useApi(apiClient.api.v1FlinkUpdateUpdate,row?.id!,curData)
+          await useApi(apiClient.api.v1FlinkUpdateUpdate, row?.id!, curData)
           chores()
         }
-      } catch {
+      } catch (e) {
+        console.error(e)
         done()
       }
     },
   })
 }
 
-const handleEdit = (row: any) => {}
+const handleDeleteGroup = async (row: any) => {
+  // TODO: 实现删除逻辑
+  try {
+    await useApi(apiClient.api.v1FlinkGroupDeleteDelete, row.id!)
+    message.success('删除成功喵~')
+    await onSearchCategory()
+  } catch {}
+}
 
 const handleDelete = async (row: any) => {
   // TODO: 实现删除逻辑
-  try{
-    await useApi(apiClient.api.v1FlinkDelete,row.id!)
+  try {
+    await useApi(apiClient.api.v1FlinkDelete, row.id!)
     message.success('删除成功喵~')
     await onSearchFlink()
-  }catch{
-
-  }
-
+  } catch {}
 }
 
 const handleSubmit = async () => {
@@ -198,14 +235,47 @@ const onSearchCategory = async () => {
 }
 const onSearchFlink = async () => {
   try {
-    const res = await useApi(apiClient.api.v1FlinkPageList,{page:1,size:10})
+    const res = await useApi(apiClient.api.v1FlinkPageList, {
+      page: 1,
+      size: 5,
+      group_id: currentFlinkGroup.value,
+    })
     dataList.value = res.data.records
   } catch {}
 }
 
-onMounted(() => {
-  onSearchCategory()
+const handleContextMenuClickoutside = async () => {
+  showDropdownRef.value = false
+}
+
+const handleContextMenuSelect = async (key: string | number) => {
+  showDropdownRef.value = false
+  switch (key) {
+    case 'edit':
+      openGroupEditDialog('编辑', dropdownRow.value)
+      break
+    case 'delete':
+      handleDeleteGroup(dropdownRow.value)
+      break
+  }
+}
+
+const switchCurrentFlinkGroup = (id: number) => {
+  currentFlinkGroup.value = id
   onSearchFlink()
+}
+
+onMounted(async () => {
+  try {
+    await onSearchCategory()
+    if (flinkGroups.value.length > 0) {
+      currentFlinkGroup.value = flinkGroups.value[0].id!
+    }
+    await onSearchFlink()
+
+  } catch (e) {
+    console.error(e)
+  }
 })
 </script>
 
@@ -231,13 +301,25 @@ onMounted(() => {
               <li
                 v-for="(item, index) in flinkGroups"
                 :key="index"
-                class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 album-item"
-                :data-album-id="item.id"
+                :class="{ active: item.id == currentFlinkGroup }"
+                class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 flink-group-item"
+                @click="switchCurrentFlinkGroup(item.id!)"
+                @contextmenu="(e) => handleFlinkGroupContextMenu(e, item)"
               >
                 <span class="text-gray-800 dark:text-gray-200">{{ item.name }}</span>
-                <span class="text-sm text-gray-500 dark:text-gray-400">0 个</span>
+                <span class="text-sm text-gray-500 dark:text-gray-400">{{ item.count }} 个</span>
               </li>
             </ul>
+            <n-dropdown
+              placement="bottom-start"
+              trigger="manual"
+              :x="contextMenuX"
+              :y="contextMenuY"
+              :options="dropdownOptions"
+              :show="showDropdownRef"
+              :on-clickoutside="handleContextMenuClickoutside"
+              @select="handleContextMenuSelect"
+            />
           </n-card>
         </n-gi>
         <n-gi span="2">
@@ -276,5 +358,8 @@ onMounted(() => {
 .title {
   font-size: 16px;
   font-weight: 500;
+}
+.flink-group-item.active {
+  background-color: var(--color-gray-100);
 }
 </style>

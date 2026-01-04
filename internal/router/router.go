@@ -34,6 +34,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			apiV1.Get("/settings", handlerMap.SettingHandler.GetSettings)
 			apiV1.All("/twikoo", handlerMap.CommentHandler.HandleTwikoo).Name("twikoo")
 			apiV1.Get("/comment/recent", handlerMap.CommentHandler.RecentComment).Name("recentComment")
+			apiV1.Get("/flink/random", handlerMap.FlinkHandler.RandomFlink).Name("randomFlink")
 			// 登录身份验证中间件
 			// apiV1.Use(middleware.Protected())
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
-import type { FlinkFormProps } from './utils/types'
+import type { FlinkGroupFormPorps } from './utils/types'
 
-const props = defineProps<FlinkFormProps>()
+const props = defineProps<FlinkGroupFormPorps>()
 
 const formRef = ref<FormInst | null>(null)
 const formData = ref(props.formInline)
@@ -32,6 +32,9 @@ defineExpose({ getData })
   <n-form ref="formRef" :model="formData" :rules="rules" label-placement="left" label-width="80">
     <n-form-item label="名称" path="name">
       <n-input v-model:value="formData.name" placeholder="请输入名称" />
+    </n-form-item>
+    <n-form-item label="描述" path="description">
+      <n-input v-model:value="formData.description" type="textarea" placeholder="请输入描述" />
     </n-form-item>
   </n-form>
 </template>

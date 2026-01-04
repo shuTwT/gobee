@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/swagger"
 
@@ -47,6 +48,7 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	// 	OAuth2RedirectUrl: "http://localhost:3000/swagger/oauth2-redirect.html",
 	// }))
 	app.Use(logger.New())
+	app.Use(cors.New())
 
 	router.InitFrontendRes(app, frontendRes)
 

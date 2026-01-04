@@ -20,6 +20,7 @@ type FlinkCreateReq struct {
 	EnableFriendCircle bool `json:"enable_friend_circle"`
 	// 朋友圈解析规则
 	FriendCircleRuleID *int `json:"friend_circle_rule_id"`
+	GroupID            int  `json:"group_id" validate:"required"`
 }
 
 type FlinkUpdateReq struct {
@@ -42,6 +43,7 @@ type FlinkUpdateReq struct {
 	EnableFriendCircle bool `json:"enable_friend_circle"`
 	// 朋友圈解析规则
 	FriendCircleRuleID int `json:"friend_circle_rule_id"`
+	GroupID            int `json:"group_id" validate:"required"`
 }
 
 type FlinkResp struct {
@@ -69,5 +71,21 @@ type FlinkResp struct {
 	// 是否开启朋友圈
 	EnableFriendCircle bool `json:"enable_friend_circle"`
 	// 朋友圈解析规则
-	FriendCircleRuleID *int `json:"friend_circle_rule_id"`
+	FriendCircleRuleID *int            `json:"friend_circle_rule_id"`
+	Group              *FlinkGroupResp `json:"group,omitempty"`
+}
+
+type FlinkListReq struct {
+	GroupId   *int    `json:"group_id" query:"group_id"`
+	GroupName *string `json:"group_name" query:"group_name"`
+}
+
+type FlinkPageReq struct {
+	GroupId *int `json:"group_id" query:"group_id" form:"group_id"`
+	Page    int  `json:"page" query:"page" form:"page" validate:"required,min=1"`
+	Size    int  `json:"page_size" query:"page_size" form:"page_size" validate:"required,min=1,max=100"`
+}
+
+type FlinkRandomReq struct {
+	Limit int `json:"limit" query:"limit" form:"limit" validate:"required,min=1,max=100"`
 }

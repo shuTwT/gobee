@@ -3,9 +3,12 @@ package flink
 import (
 	"gobee/ent"
 	"gobee/ent/flink"
+	flink_service "gobee/internal/services/flink"
 	"gobee/pkg/domain/model"
+	"log"
 	"strconv"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -16,15 +19,18 @@ type FlinkHandler interface {
 	UpdateFlink(c *fiber.Ctx) error
 	QueryFlink(c *fiber.Ctx) error
 	DeleteFlink(c *fiber.Ctx) error
+	RandomFlink(c *fiber.Ctx) error
 }
 
 type FlinkHandlerImpl struct {
-	client *ent.Client
+	client       *ent.Client
+	flinkService flink_service.FlinkService
 }
 
-func NewFlinkHandlerImpl(client *ent.Client) *FlinkHandlerImpl {
+func NewFlinkHandlerImpl(client *ent.Client, flinkService flink_service.FlinkService) *FlinkHandlerImpl {
 	return &FlinkHandlerImpl{
-		client: client,
+		client:       client,
+		flinkService: flinkService,
 	}
 }
 
@@ -38,12 +44,23 @@ func NewFlinkHandlerImpl(client *ent.Client) *FlinkHandlerImpl {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/flink/list [get]
 func (h *FlinkHandlerImpl) ListFlink(c *fiber.Ctx) error {
-	flinks, err := h.client.FLink.Query().All(c.Context())
+	var listPage model.FlinkListReq
+	if err := c.QueryParser(&listPage); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	flinks, err := h.flinkService.ListFlink(c.Context(), listPage)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 	result := []model.FlinkResp{}
 	for _, flink := range flinks {
+		var groupResp *model.FlinkGroupResp
+		if flink.Edges.Group != nil {
+			groupResp = &model.FlinkGroupResp{
+				ID:   flink.Edges.Group.ID,
+				Name: flink.Edges.Group.Name,
+			}
+		}
 		result = append(result, model.FlinkResp{
 			ID:                 flink.ID,
 			CreatedAt:          &flink.CreatedAt,
@@ -58,6 +75,7 @@ func (h *FlinkHandlerImpl) ListFlink(c *fiber.Ctx) error {
 			Email:              flink.Email,
 			EnableFriendCircle: flink.EnableFriendCircle,
 			FriendCircleRuleID: flink.FriendCircleRuleID,
+			Group:              groupResp,
 		})
 	}
 	return c.JSON(model.NewSuccess("success", result))
@@ -75,17 +93,12 @@ func (h *FlinkHandlerImpl) ListFlink(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/flink/page [get]
 func (h *FlinkHandlerImpl) ListFlinkPage(c *fiber.Ctx) error {
-	pageQuery := model.PageQuery{}
+	var pageQuery model.FlinkPageReq
 	if err := c.QueryParser(&pageQuery); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	count, err := h.client.FLink.Query().Count(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
-	}
-	flinks, err := h.client.FLink.Query().
-		Offset((pageQuery.Page - 1) * pageQuery.Size).
-		Limit(pageQuery.Size).All(c.Context())
+	log.Printf("pageQuery: %+v", pageQuery)
+	flinks, count, err := h.flinkService.ListFlinkPage(c.Context(), pageQuery)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -139,6 +152,7 @@ func (h *FlinkHandlerImpl) CreateFlink(c *fiber.Ctx) error {
 		SetEmail(createReq.Email).
 		SetEnableFriendCircle(createReq.EnableFriendCircle).
 		SetNillableFriendCircleRuleID(createReq.FriendCircleRuleID).
+		SetGroupID(createReq.GroupID).
 		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
@@ -176,6 +190,7 @@ func (h *FlinkHandlerImpl) UpdateFlink(c *fiber.Ctx) error {
 		SetEmail(updateReq.Email).
 		SetEnableFriendCircle(updateReq.EnableFriendCircle).
 		SetFriendCircleRuleID(updateReq.FriendCircleRuleID).
+		SetGroupID(updateReq.GroupID).
 		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
@@ -228,4 +243,28 @@ func (h *FlinkHandlerImpl) DeleteFlink(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("success", nil))
+}
+
+// @Summary 随机查询Flink
+// @Description 随机查询Flink
+// @Tags flink
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=ent.FLink}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/flink/random [get]
+func (h *FlinkHandlerImpl) RandomFlink(c *fiber.Ctx) error {
+	var req model.FlinkRandomReq
+	if err := c.QueryParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	flink, err := h.client.FLink.Query().
+		Order(sql.OrderByRand()).
+		Limit(req.Limit).
+		All(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", flink))
 }

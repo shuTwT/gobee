@@ -2,6 +2,7 @@
 import type { FormInst, FormRules } from 'naive-ui'
 import type { FlinkFormProps } from './utils/types'
 import * as FriendCircleRuleApi from "@/api/friendCircle/friendCircleRule"
+import { apiClient, useApi } from '@/api';
 
 const props = defineProps<FlinkFormProps>()
 
@@ -12,7 +13,10 @@ const rules: FormRules = {
   url:[{required:true,message:"请输入网站地址"}],
   logo:[{required:true,message:"请输入Logo"}],
   description:[{required:true,message:"请输入网站描述"}],
+  group_id:[{required:true,message:"请选择分组"}]
 }
+
+const flinkGroups = ref<any[]>([])
 
 const friendCircleRuleOptions = ref([])
 
@@ -34,8 +38,13 @@ const getData = () => {
 
 onMounted(async ()=>{
   try{
-    const res= await FriendCircleRuleApi.getFriendCircleRuleList()
-    friendCircleRuleOptions.value = res.data.map((item:any)=>({
+    const res1 = await useApi(apiClient.api.v1FlinkGroupListList)
+    flinkGroups.value = res1.data.map((item)=>({
+      label: item.name,
+      value: item.id
+    }))
+    const res2= await FriendCircleRuleApi.getFriendCircleRuleList()
+    friendCircleRuleOptions.value = res2.data.map((item:any)=>({
       value: item.id,
       label: item.name
     }))
@@ -72,6 +81,9 @@ defineExpose({ getData })
     </n-form-item>
     <n-form-item label="朋友圈解析规则" path="friend_circle_rule_id">
       <n-select v-model:value="formData.friend_circle_rule_id" :options="friendCircleRuleOptions"/>
+    </n-form-item>
+    <n-form-item label="分组" path="group_id">
+      <n-select v-model:value="formData.group_id" :options="flinkGroups"/>
     </n-form-item>
   </n-form>
 </template>

@@ -2,6 +2,7 @@ package flinkgroup
 
 import (
 	"gobee/ent"
+	"gobee/internal/services/flink"
 	"gobee/pkg/domain/model"
 	"strconv"
 
@@ -16,12 +17,14 @@ type FlinkGroupHandler interface {
 }
 
 type FlinkGroupHandlerImpl struct {
-	client *ent.Client
+	client       *ent.Client
+	flinkService flink.FlinkService
 }
 
-func NewFlinkGroupHandlerImpl(client *ent.Client) *FlinkGroupHandlerImpl {
+func NewFlinkGroupHandlerImpl(client *ent.Client, flinkService flink.FlinkService) *FlinkGroupHandlerImpl {
 	return &FlinkGroupHandlerImpl{
-		client: client,
+		client:       client,
+		flinkService: flinkService,
 	}
 }
 
@@ -39,7 +42,17 @@ func (h *FlinkGroupHandlerImpl) ListFLinkGroup(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("success", flinkGroups))
+	resp := make([]*model.FlinkGroupResp, 0)
+	for _, flinkGroup := range flinkGroups {
+		count, _ := h.flinkService.CountFlinkByGroupID(c.Context(), flinkGroup.ID)
+		resp = append(resp, &model.FlinkGroupResp{
+			ID:          flinkGroup.ID,
+			Name:        flinkGroup.Name,
+			Description: flinkGroup.Description,
+			Count:       count,
+		})
+	}
+	return c.JSON(model.NewSuccess("success", resp))
 }
 
 // @Summary 创建FlinkGroup
@@ -57,7 +70,10 @@ func (h *FlinkGroupHandlerImpl) CreateFlinkGroup(c *fiber.Ctx) error {
 	if err := c.BodyParser(&createReq); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	flinkGroup, err := h.client.FLinkGroup.Create().SetName(createReq.Name).Save(c.Context())
+	flinkGroup, err := h.client.FLinkGroup.Create().
+		SetName(createReq.Name).
+		SetDescription(createReq.Description).
+		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -84,7 +100,10 @@ func (h *FlinkGroupHandlerImpl) UpdateFlinkGroup(c *fiber.Ctx) error {
 	if err = c.BodyParser(&updateReq); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	flinkGroup, err := h.client.FLinkGroup.UpdateOneID(id).SetName(updateReq.Name).Save(c.Context())
+	flinkGroup, err := h.client.FLinkGroup.UpdateOneID(id).
+		SetName(updateReq.Name).
+		SetDescription(updateReq.Description).
+		Save(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}

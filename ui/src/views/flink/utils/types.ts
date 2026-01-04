@@ -1,6 +1,7 @@
 export type FlinkGroupFormItemProps = {
   id?:number
   name:string
+  description?:string
 }
 export type FlinkFormItemProps = {
   id?:number
@@ -13,6 +14,7 @@ export type FlinkFormItemProps = {
   email:string
   enable_friend_circle:boolean
   friend_circle_rule_id?:number
+  group_id?:number
 }
 
 export type FlinkGroupFormPorps = {

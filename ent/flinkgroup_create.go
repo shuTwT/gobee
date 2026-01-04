@@ -55,6 +55,20 @@ func (_c *FLinkGroupCreate) SetName(v string) *FLinkGroupCreate {
 	return _c
 }
 
+// SetDescription sets the "description" field.
+func (_c *FLinkGroupCreate) SetDescription(v string) *FLinkGroupCreate {
+	_c.mutation.SetDescription(v)
+	return _c
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_c *FLinkGroupCreate) SetNillableDescription(v *string) *FLinkGroupCreate {
+	if v != nil {
+		_c.SetDescription(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *FLinkGroupCreate) SetID(v int) *FLinkGroupCreate {
 	_c.mutation.SetID(v)
@@ -180,6 +194,10 @@ func (_c *FLinkGroupCreate) createSpec() (*FLinkGroup, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(flinkgroup.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := _c.mutation.Description(); ok {
+		_spec.SetField(flinkgroup.FieldDescription, field.TypeString, value)
+		_node.Description = value
 	}
 	if nodes := _c.mutation.LinksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

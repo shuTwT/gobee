@@ -21,6 +21,7 @@ func (FLinkGroup) Mixin() []ent.Mixin {
 func (FLinkGroup) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Comment("名称"),
+		field.String("description").Optional().Comment("描述"),
 	}
 }
 

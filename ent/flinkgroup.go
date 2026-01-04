@@ -23,6 +23,8 @@ type FLinkGroup struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// 名称
 	Name string `json:"name,omitempty"`
+	// 描述
+	Description string `json:"description,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FLinkGroupQuery when eager-loading is set.
 	Edges        FLinkGroupEdges `json:"edges"`
@@ -54,7 +56,7 @@ func (*FLinkGroup) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case flinkgroup.FieldID:
 			values[i] = new(sql.NullInt64)
-		case flinkgroup.FieldName:
+		case flinkgroup.FieldName, flinkgroup.FieldDescription:
 			values[i] = new(sql.NullString)
 		case flinkgroup.FieldCreatedAt, flinkgroup.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -96,6 +98,12 @@ func (_m *FLinkGroup) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
+			}
+		case flinkgroup.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				_m.Description = value.String
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -146,6 +154,9 @@ func (_m *FLinkGroup) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(_m.Description)
 	builder.WriteByte(')')
 	return builder.String()
 }

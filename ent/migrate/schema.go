@@ -141,6 +141,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
 	}
 	// FlinkGroupsTable holds the schema information for the "flink_groups" table.
 	FlinkGroupsTable = &schema.Table{
