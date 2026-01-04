@@ -44,14 +44,11 @@ func InitializeDB(cfg DBConfig, autoMigrate bool) (*ent.Client, error) {
 	case "sqlite":
 		// 如果没有提供文件路径，则使用默认路径
 		if cfg.SqliteFile == "" {
-			var homeDir string
-			homeDir, err = os.UserHomeDir()
-			if err != nil {
-				log.Fatalf("failed getting user home directory: %v", err)
-			}
-			dataDir := filepath.Join(homeDir, "data")
+			// 直接指定当前目录下的 data 文件夹
+			dataDir := "data"
+			// 确保当前目录下的 data 文件夹存在
 			if err = os.MkdirAll(dataDir, 0755); err != nil {
-				log.Fatalf("创建 ~/data 目录失败: %v", err)
+				log.Fatalf("创建 ./data 目录失败: %v", err)
 			}
 			cfg.SqliteFile = filepath.Join(dataDir, "sql.db")
 		}
