@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 
@@ -27,8 +28,7 @@ func Init() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")
 	viper.AddConfigPath(".")
-	viper.AddConfigPath("./config")
-	viper.AddConfigPath("/etc/gobee")
+	viper.AddConfigPath("./data")
 	viper.AddConfigPath("$HOME/.gobee")
 	viper.AutomaticEnv()
 
@@ -40,26 +40,33 @@ func Init() {
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			// 配置文件不存在，在可执行文件同级目录创建默认配置文件
+			// 配置文件不存在，在工作空间/data创建默认配置文件
 			createDefaultConfig()
 		} else {
 			// 配置文件存在但读取失败
 			panic("fatal error config file: " + err.Error())
 		}
+	} else {
+		log.Printf("已加载配置文件: %s", viper.ConfigFileUsed())
 	}
 }
 
 func createDefaultConfig() {
-	// 获取可执行文件路径
-	execPath, err := os.Executable()
+	// 获取当前工作目录
+	workDir, err := os.Getwd()
 	if err != nil {
-		println("警告: 无法获取可执行文件路径:", err.Error())
+		println("警告: 无法获取当前工作目录:", err.Error())
 		return
 	}
 
-	// 获取可执行文件所在目录
-	execDir := filepath.Dir(execPath)
-	configPath := filepath.Join(execDir, "config.toml")
+	configDir := filepath.Join(workDir, "data")
+	configPath := filepath.Join(configDir, "config.toml")
+
+	// 确保目录存在
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		log.Panicln("警告: 无法创建配置目录:", err.Error())
+		return
+	}
 
 	// 设置配置值
 	viper.Set("database.url", viper.GetString(DATABASE_URL))
