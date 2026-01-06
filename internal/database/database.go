@@ -2,11 +2,8 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"gobee/ent"
 	"log"
-	"os"
-	"path/filepath"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
@@ -18,22 +15,7 @@ var DB *ent.Client
 type DBConfig struct {
 	DBType string
 
-	// SQLite
-	SqliteFile string
-
-	// MySQL
-	MysqlHost     string
-	MysqlPort     string
-	MysqlUser     string
-	MysqlPassword string
-	MysqlDatabase string
-
-	// PostgreSQL
-	PgHost     string
-	PgPort     string
-	PgUser     string
-	PgPassword string
-	PgDatabase string
+	DBUrl string
 }
 
 func InitializeDB(cfg DBConfig, autoMigrate bool) (*ent.Client, error) {
@@ -42,31 +24,19 @@ func InitializeDB(cfg DBConfig, autoMigrate bool) (*ent.Client, error) {
 
 	switch cfg.DBType {
 	case "sqlite":
-		// 如果没有提供文件路径，则使用默认路径
-		if cfg.SqliteFile == "" {
-			// 直接指定当前目录下的 data 文件夹
-			dataDir := "data"
-			// 确保当前目录下的 data 文件夹存在
-			if err = os.MkdirAll(dataDir, 0755); err != nil {
-				log.Fatalf("创建 ./data 目录失败: %v", err)
-			}
-			cfg.SqliteFile = filepath.Join(dataDir, "sql.db")
-		}
-		client, err = ent.Open("sqlite3", fmt.Sprintf("file:%s?cache=shared&_fk=1", cfg.SqliteFile))
+
+		client, err = ent.Open("sqlite3", cfg.DBUrl)
 	case "mysql":
-		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=True",
-			cfg.MysqlUser, cfg.MysqlPassword, cfg.MysqlHost, cfg.MysqlPort, cfg.MysqlDatabase)
-		client, err = ent.Open("mysql", dsn)
+		client, err = ent.Open("mysql", cfg.DBUrl)
 	case "postgresql":
-		dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-			cfg.PgHost, cfg.PgPort, cfg.PgUser, cfg.PgPassword, cfg.PgDatabase)
-		client, err = ent.Open("postgres", dsn)
+		client, err = ent.Open("postgres", cfg.DBUrl)
 	default:
 		log.Fatalf("unsupported database type: %s", cfg.DBType)
 	}
 
 	if err != nil {
 		log.Fatalf("failed opening connection to %s: %v", cfg.DBType, err)
+		return nil, err
 	}
 	DB = client
 
@@ -76,9 +46,9 @@ func InitializeDB(cfg DBConfig, autoMigrate bool) (*ent.Client, error) {
 			log.Fatalf("failed creating schema resources: %v", err)
 		}
 	}
-	return client, err
+	return client, nil
 }
 
-func CloseDB() {
-	DB.Close()
+func CloseDB() error {
+	return DB.Close()
 }

@@ -10,20 +10,30 @@ import (
 
 var configKeys = []string{
 	DATABASE_URL,
-	PORT,
-	STAGE,
+	SERVER_PORT,
+	SERVER_STAGE,
 }
 
 const (
-	DATABASE_URL = "DATABASE_URL"
-	PORT         = "PORT"
-	STAGE        = "STAGE"
+	DATABASE_TYPE     = "database.type"
+	DATABASE_URL      = "database.url"
+	SERVER_PORT       = "server.port"
+	SERVER_STAGE      = "server.stage"
+	SERVER_DEBUG      = "server.debug"
+	SWAGGER_ENABLE    = "swagger.enable"
+	AUTH_TOKEN_SECRET = "auth.token_secret"
+	AUTH_PAT_SECRET   = "auth.pat_secret"
 )
 
 func Init() {
-	viper.SetDefault(DATABASE_URL, "file:ent?mode=memory&cache=shared&_fk=1")
-	viper.SetDefault(PORT, "8000")
-	viper.SetDefault(STAGE, "dev")
+	viper.SetDefault(DATABASE_TYPE, "sqlite")
+	viper.SetDefault(DATABASE_URL, "file:./data/sql.db?cache=shared&_fk=1")
+	viper.SetDefault(SERVER_PORT, "8000")
+	viper.SetDefault(SERVER_STAGE, "dev")
+	viper.SetDefault(SERVER_DEBUG, false)
+	viper.SetDefault(SWAGGER_ENABLE, true)
+	viper.SetDefault(AUTH_TOKEN_SECRET, "your-secret-key")
+	viper.SetDefault(AUTH_PAT_SECRET, "your-pat-secret")
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")
@@ -68,11 +78,6 @@ func createDefaultConfig() {
 		return
 	}
 
-	// 设置配置值
-	viper.Set("database.url", viper.GetString(DATABASE_URL))
-	viper.Set("server.port", viper.GetString(PORT))
-	viper.Set("server.stage", viper.GetString(STAGE))
-
 	// 在可执行文件同级目录创建配置文件
 	if err := viper.WriteConfigAs(configPath); err != nil {
 		// 如果写入失败，记录警告但不影响程序运行
@@ -86,18 +91,14 @@ func GetDatabaseUrl() string {
 	return os.Getenv("DATABASE_URL")
 }
 
-func GetPort() string {
-	port := os.Getenv("PORT")
-	if port == "" {
-		return "8000"
-	}
-	return port
+func GetString(key string) string {
+	return viper.GetString(key)
 }
 
-func GetIsProduction() bool {
-	return os.Getenv("STAGE") == "prod"
+func GetInt(key string) int {
+	return viper.GetInt(key)
 }
 
-func GetSecret() string {
-	return os.Getenv("SECRET")
+func GetBool(key string) bool {
+	return viper.GetBool(key)
 }

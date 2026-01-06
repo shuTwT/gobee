@@ -69,33 +69,6 @@ func (h *InitializeHandlerImpl) Initialize(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, "不支持的数据库类型"))
 	}
 
-	// 数据库初始化
-	dbConfig := database.DBConfig{
-		DBType: req.DBType,
-	}
-
-	switch req.DBType {
-	case "mysql":
-		dbConfig.MysqlHost = req.DBHost
-		dbConfig.MysqlPort = fmt.Sprintf("%d", req.DBPort)
-		dbConfig.MysqlUser = req.DBUser
-		dbConfig.MysqlPassword = req.DBPassword
-		dbConfig.MysqlDatabase = req.DBName
-	case "postgres":
-		dbConfig.PgHost = req.DBHost
-		dbConfig.PgPort = fmt.Sprintf("%d", req.DBPort)
-		dbConfig.PgUser = req.DBUser
-		dbConfig.PgPassword = req.DBPassword
-		dbConfig.PgDatabase = req.DBName
-	case "sqlite":
-		dbConfig.SqliteFile = req.DBName
-	}
-
-	// _, err = database.InitializeDB(dbConfig, true)
-	// if err != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("数据库初始化失败: %v", err)))
-	// }
-
 	// 创建角色e
 	initRole(c)
 	// 创建超级管理员账户

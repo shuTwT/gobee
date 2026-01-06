@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"embed"
-	"gobee/config"
 	"gobee/internal/handlers"
 	"gobee/internal/router"
 	"gobee/pkg"
+	"gobee/pkg/config"
 	"io/fs"
 	"net/http"
 
@@ -32,7 +32,9 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 		Views:   engine, // 关联模板引擎
 	})
 
-	app.Get("/swagger/*", swagger.HandlerDefault) // default
+	if config.GetBool(config.SWAGGER_ENABLE) {
+		app.Get("/swagger/*", swagger.HandlerDefault) // default
+	}
 
 	// app.Get("/swagger/*", swagger.New(swagger.Config{ // custom
 	// 	URL:         "http://example.com/doc.json",

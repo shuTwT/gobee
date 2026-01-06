@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
 
 	jwtware "github.com/gofiber/contrib/jwt"
@@ -10,10 +11,12 @@ import (
 
 // Protected 保护需要认证的路由
 func Protected() fiber.Handler {
+	// 从配置中获取密钥
+	secret := config.GetString(config.AUTH_TOKEN_SECRET)
 	return jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{
 			JWTAlg: "HS256",
-			Key:    []byte("your-secret-key")}, // 注意：在生产环境中应该使用环境变量存储密钥
+			Key:    []byte(secret)}, // 注意：在生产环境中应该使用环境变量存储密钥
 		ErrorHandler:   jwtError,
 		SuccessHandler: jwtSuccess,
 	})

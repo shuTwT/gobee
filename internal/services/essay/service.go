@@ -19,7 +19,7 @@ type EssayServiceImpl struct {
 	client *ent.Client
 }
 
-func NewEssayService(client *ent.Client) EssayService {
+func NewEssayServiceImpl(client *ent.Client) EssayService {
 	return &EssayServiceImpl{client: client}
 }
 

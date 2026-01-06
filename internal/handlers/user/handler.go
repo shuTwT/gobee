@@ -13,6 +13,7 @@ import (
 	"gobee/internal/database"
 	role_service "gobee/internal/services/role"
 	user_service "gobee/internal/services/user"
+	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
 )
 
@@ -436,8 +437,10 @@ func (h *UserHandlerImpl) CreatePat(c *fiber.Ctx) error {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
+	secret := config.GetString(config.AUTH_PAT_SECRET)
+
 	// 使用密钥签名令牌
-	t, err := token.SignedString([]byte("your-secret-key")) // 注意：在生产环境中应该使用环境变量存储密钥
+	t, err := token.SignedString([]byte(secret)) // 注意：在生产环境中应该使用环境变量存储密钥
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(
 			fiber.StatusBadRequest, "Could not generate token",

@@ -14,6 +14,7 @@ import (
 	role_service "gobee/internal/services/role"
 	setting_service "gobee/internal/services/setting"
 	user_service "gobee/internal/services/user"
+	"gobee/pkg/config"
 )
 
 const autoMigrate = true
@@ -33,23 +34,29 @@ type ServiceMap struct {
 }
 
 func InitializeServices(moduleDefs embed.FS) ServiceMap {
+	dbType := config.GetString(config.DATABASE_TYPE)
+	dbConfig := database.DBConfig{
+		DBType: dbType,
+		DBUrl:  config.GetString(config.DATABASE_URL),
+	}
 	//初始化数据库
-	database.InitializeDB(database.DBConfig{
-		DBType:     "sqlite",
-		SqliteFile: "",
-	}, autoMigrate)
+	db, err := database.InitializeDB(dbConfig, autoMigrate)
+	if err != nil {
+		panic(err)
+	}
+
 	// 初始化 service
-	apiInterfaceService := api_interface_service.NewApiInterfaceServiceImpl(database.DB)
-	commentService := comment_service.NewCommentServiceImpl(database.DB)
-	commonService := common_service.NewCommonServiceImpl(database.DB, user_service.NewUserServiceImpl(database.DB), post_service.NewPostServiceImpl(database.DB), comment_service.NewCommentServiceImpl(database.DB))
-	friendCircleService := friend_circle_service.NewFriendCircleServiceImpl(database.DB)
-	permissionService := permission_service.NewPermissionServiceImpl(database.DB)
-	postService := post_service.NewPostServiceImpl(database.DB)
-	roleService := role_service.NewRoleServiceImpl(database.DB)
-	settingService := setting_service.NewSettingServiceImpl(database.DB)
-	userService := user_service.NewUserServiceImpl(database.DB)
-	essayService := essay_service.NewEssayService(database.DB)
-	flinkService := flink_service.NewFlinkServiceImpl(database.DB)
+	apiInterfaceService := api_interface_service.NewApiInterfaceServiceImpl(db)
+	commentService := comment_service.NewCommentServiceImpl(db)
+	commonService := common_service.NewCommonServiceImpl(db, user_service.NewUserServiceImpl(db), post_service.NewPostServiceImpl(db), comment_service.NewCommentServiceImpl(db))
+	friendCircleService := friend_circle_service.NewFriendCircleServiceImpl(db)
+	permissionService := permission_service.NewPermissionServiceImpl(db)
+	postService := post_service.NewPostServiceImpl(db)
+	roleService := role_service.NewRoleServiceImpl(db)
+	settingService := setting_service.NewSettingServiceImpl(db)
+	userService := user_service.NewUserServiceImpl(db)
+	essayService := essay_service.NewEssayServiceImpl(db)
+	flinkService := flink_service.NewFlinkServiceImpl(db)
 
 	//执行
 	permissionService.LoadPermissionsFromDef(moduleDefs)
