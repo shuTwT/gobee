@@ -23,6 +23,7 @@ import (
 	setting_handler "gobee/internal/handlers/setting"
 	storagestrategy "gobee/internal/handlers/storage_strategy"
 	user_handler "gobee/internal/handlers/user"
+	"gobee/internal/handlers/visit"
 	"gobee/pkg"
 )
 
@@ -48,6 +49,7 @@ type HandlerMap struct {
 	UserHandler               user_handler.UserHandler
 	EssayHandler              essay.EssayHandler
 	StorageStrategyHandler    storagestrategy.StorageStrategyHandler
+	VisitHandler              visit.VisitHandler
 }
 
 func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
@@ -72,6 +74,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	userHandler := user_handler.NewUserHandlerImpl(serviceMap.UserService, serviceMap.RoleService)
 	essayHandler := essay.NewEssayHandler(serviceMap.EssayService)
 	storageStrategyHandler := storagestrategy.NewStorageStrategyHandlerImpl(database.DB)
+	visitHandler := visit.NewVisitHandlerImpl(serviceMap.VisitService)
 
 	handlerMap := HandlerMap{
 		AlbumHandler:              albumHandler,
@@ -95,6 +98,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		UserHandler:               userHandler,
 		EssayHandler:              essayHandler,
 		StorageStrategyHandler:    storageStrategyHandler,
+		VisitHandler:              visitHandler,
 	}
 
 	return handlerMap

@@ -14,6 +14,7 @@ import (
 	role_service "gobee/internal/services/role"
 	setting_service "gobee/internal/services/setting"
 	user_service "gobee/internal/services/user"
+	"gobee/internal/services/visit"
 	"gobee/pkg/config"
 )
 
@@ -31,6 +32,7 @@ type ServiceMap struct {
 	UserService         user_service.UserService
 	EssayService        essay_service.EssayService
 	FlinkService        flink_service.FlinkService
+	VisitService        visit.VisitService
 }
 
 func InitializeServices(moduleDefs embed.FS) ServiceMap {
@@ -57,6 +59,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	userService := user_service.NewUserServiceImpl(db)
 	essayService := essay_service.NewEssayServiceImpl(db)
 	flinkService := flink_service.NewFlinkServiceImpl(db)
+	visitService := visit.NewVisitServiceImpl(db)
 
 	//执行
 	permissionService.LoadPermissionsFromDef(moduleDefs)
@@ -73,6 +76,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		UserService:         userService,
 		EssayService:        essayService,
 		FlinkService:        flinkService,
+		VisitService:        visitService,
 	}
 
 	return serviceMap

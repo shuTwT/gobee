@@ -60,6 +60,8 @@ type Tx struct {
 	StorageStrategy *StorageStrategyClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// VisitLog is the client for interacting with the VisitLog builders.
+	VisitLog *VisitLogClient
 	// WebHook is the client for interacting with the WebHook builders.
 	WebHook *WebHookClient
 
@@ -217,6 +219,7 @@ func (tx *Tx) init() {
 	tx.Setting = NewSettingClient(tx.config)
 	tx.StorageStrategy = NewStorageStrategyClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.VisitLog = NewVisitLogClient(tx.config)
 	tx.WebHook = NewWebHookClient(tx.config)
 }
 

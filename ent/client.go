@@ -35,6 +35,7 @@ import (
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
+	"gobee/ent/visitlog"
 	"gobee/ent/webhook"
 
 	"entgo.io/ent"
@@ -96,6 +97,8 @@ type Client struct {
 	StorageStrategy *StorageStrategyClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// VisitLog is the client for interacting with the VisitLog builders.
+	VisitLog *VisitLogClient
 	// WebHook is the client for interacting with the WebHook builders.
 	WebHook *WebHookClient
 }
@@ -133,6 +136,7 @@ func (c *Client) init() {
 	c.Setting = NewSettingClient(c.config)
 	c.StorageStrategy = NewStorageStrategyClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.VisitLog = NewVisitLogClient(c.config)
 	c.WebHook = NewWebHookClient(c.config)
 }
 
@@ -250,6 +254,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Setting:             NewSettingClient(cfg),
 		StorageStrategy:     NewStorageStrategyClient(cfg),
 		User:                NewUserClient(cfg),
+		VisitLog:            NewVisitLogClient(cfg),
 		WebHook:             NewWebHookClient(cfg),
 	}, nil
 }
@@ -294,6 +299,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Setting:             NewSettingClient(cfg),
 		StorageStrategy:     NewStorageStrategyClient(cfg),
 		User:                NewUserClient(cfg),
+		VisitLog:            NewVisitLogClient(cfg),
 		WebHook:             NewWebHookClient(cfg),
 	}, nil
 }
@@ -328,7 +334,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.File, c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema,
 		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
 		c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.User, c.WebHook,
+		c.StorageStrategy, c.User, c.VisitLog, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -342,7 +348,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.File, c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema,
 		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
 		c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.User, c.WebHook,
+		c.StorageStrategy, c.User, c.VisitLog, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -399,6 +405,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.StorageStrategy.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
+	case *VisitLogMutation:
+		return c.VisitLog.mutate(ctx, m)
 	case *WebHookMutation:
 		return c.WebHook.mutate(ctx, m)
 	default:
@@ -3662,6 +3670,139 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 	}
 }
 
+// VisitLogClient is a client for the VisitLog schema.
+type VisitLogClient struct {
+	config
+}
+
+// NewVisitLogClient returns a client for the VisitLog from the given config.
+func NewVisitLogClient(c config) *VisitLogClient {
+	return &VisitLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `visitlog.Hooks(f(g(h())))`.
+func (c *VisitLogClient) Use(hooks ...Hook) {
+	c.hooks.VisitLog = append(c.hooks.VisitLog, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `visitlog.Intercept(f(g(h())))`.
+func (c *VisitLogClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VisitLog = append(c.inters.VisitLog, interceptors...)
+}
+
+// Create returns a builder for creating a VisitLog entity.
+func (c *VisitLogClient) Create() *VisitLogCreate {
+	mutation := newVisitLogMutation(c.config, OpCreate)
+	return &VisitLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VisitLog entities.
+func (c *VisitLogClient) CreateBulk(builders ...*VisitLogCreate) *VisitLogCreateBulk {
+	return &VisitLogCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VisitLogClient) MapCreateBulk(slice any, setFunc func(*VisitLogCreate, int)) *VisitLogCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VisitLogCreateBulk{err: fmt.Errorf("calling to VisitLogClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VisitLogCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VisitLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VisitLog.
+func (c *VisitLogClient) Update() *VisitLogUpdate {
+	mutation := newVisitLogMutation(c.config, OpUpdate)
+	return &VisitLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VisitLogClient) UpdateOne(_m *VisitLog) *VisitLogUpdateOne {
+	mutation := newVisitLogMutation(c.config, OpUpdateOne, withVisitLog(_m))
+	return &VisitLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VisitLogClient) UpdateOneID(id int) *VisitLogUpdateOne {
+	mutation := newVisitLogMutation(c.config, OpUpdateOne, withVisitLogID(id))
+	return &VisitLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VisitLog.
+func (c *VisitLogClient) Delete() *VisitLogDelete {
+	mutation := newVisitLogMutation(c.config, OpDelete)
+	return &VisitLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VisitLogClient) DeleteOne(_m *VisitLog) *VisitLogDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VisitLogClient) DeleteOneID(id int) *VisitLogDeleteOne {
+	builder := c.Delete().Where(visitlog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VisitLogDeleteOne{builder}
+}
+
+// Query returns a query builder for VisitLog.
+func (c *VisitLogClient) Query() *VisitLogQuery {
+	return &VisitLogQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVisitLog},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VisitLog entity by its id.
+func (c *VisitLogClient) Get(ctx context.Context, id int) (*VisitLog, error) {
+	return c.Query().Where(visitlog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VisitLogClient) GetX(ctx context.Context, id int) *VisitLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *VisitLogClient) Hooks() []Hook {
+	return c.hooks.VisitLog
+}
+
+// Interceptors returns the client interceptors.
+func (c *VisitLogClient) Interceptors() []Interceptor {
+	return c.inters.VisitLog
+}
+
+func (c *VisitLogClient) mutate(ctx context.Context, m *VisitLogMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VisitLogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VisitLogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VisitLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VisitLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VisitLog mutation op: %q", m.Op())
+	}
+}
+
 // WebHookClient is a client for the WebHook schema.
 type WebHookClient struct {
 	config
@@ -3802,13 +3943,13 @@ type (
 		FriendCircleRecord, FriendCircleRule, ModelSchema, Oauth2AccessToken,
 		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
 		PersonalAccessToken, Post, Role, ScheduleJob, Setting, StorageStrategy, User,
-		WebHook []ent.Hook
+		VisitLog, WebHook []ent.Hook
 	}
 	inters struct {
 		Album, AlbumPhoto, ApiPerms, Comment, Essay, FLink, FLinkGroup, File,
 		FriendCircleRecord, FriendCircleRule, ModelSchema, Oauth2AccessToken,
 		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
 		PersonalAccessToken, Post, Role, ScheduleJob, Setting, StorageStrategy, User,
-		WebHook []ent.Interceptor
+		VisitLog, WebHook []ent.Interceptor
 	}
 )

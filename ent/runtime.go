@@ -27,6 +27,7 @@ import (
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
+	"gobee/ent/visitlog"
 	"gobee/ent/webhook"
 	"time"
 )
@@ -1036,6 +1037,21 @@ func init() {
 			return nil
 		}
 	}()
+	visitlogMixin := schema.VisitLog{}.Mixin()
+	visitlogMixinFields0 := visitlogMixin[0].Fields()
+	_ = visitlogMixinFields0
+	visitlogFields := schema.VisitLog{}.Fields()
+	_ = visitlogFields
+	// visitlogDescCreatedAt is the schema descriptor for created_at field.
+	visitlogDescCreatedAt := visitlogMixinFields0[1].Descriptor()
+	// visitlog.DefaultCreatedAt holds the default value on creation for the created_at field.
+	visitlog.DefaultCreatedAt = visitlogDescCreatedAt.Default.(func() time.Time)
+	// visitlogDescUpdatedAt is the schema descriptor for updated_at field.
+	visitlogDescUpdatedAt := visitlogMixinFields0[2].Descriptor()
+	// visitlog.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	visitlog.DefaultUpdatedAt = visitlogDescUpdatedAt.Default.(func() time.Time)
+	// visitlog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	visitlog.UpdateDefaultUpdatedAt = visitlogDescUpdatedAt.UpdateDefault.(func() time.Time)
 	webhookMixin := schema.WebHook{}.Mixin()
 	webhookMixinFields0 := webhookMixin[0].Fields()
 	_ = webhookMixinFields0

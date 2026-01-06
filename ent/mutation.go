@@ -30,6 +30,7 @@ import (
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
+	"gobee/ent/visitlog"
 	"gobee/ent/webhook"
 	"sync"
 	"time"
@@ -71,6 +72,7 @@ const (
 	TypeSetting             = "Setting"
 	TypeStorageStrategy     = "StorageStrategy"
 	TypeUser                = "User"
+	TypeVisitLog            = "VisitLog"
 	TypeWebHook             = "WebHook"
 )
 
@@ -18775,6 +18777,795 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
+}
+
+// VisitLogMutation represents an operation that mutates the VisitLog nodes in the graph.
+type VisitLogMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	created_at    *time.Time
+	updated_at    *time.Time
+	ip            *string
+	user_agent    *string
+	_path         *string
+	os            *string
+	browser       *string
+	device        *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*VisitLog, error)
+	predicates    []predicate.VisitLog
+}
+
+var _ ent.Mutation = (*VisitLogMutation)(nil)
+
+// visitlogOption allows management of the mutation configuration using functional options.
+type visitlogOption func(*VisitLogMutation)
+
+// newVisitLogMutation creates new mutation for the VisitLog entity.
+func newVisitLogMutation(c config, op Op, opts ...visitlogOption) *VisitLogMutation {
+	m := &VisitLogMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeVisitLog,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withVisitLogID sets the ID field of the mutation.
+func withVisitLogID(id int) visitlogOption {
+	return func(m *VisitLogMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *VisitLog
+		)
+		m.oldValue = func(ctx context.Context) (*VisitLog, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().VisitLog.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withVisitLog sets the old VisitLog of the mutation.
+func withVisitLog(node *VisitLog) visitlogOption {
+	return func(m *VisitLogMutation) {
+		m.oldValue = func(context.Context) (*VisitLog, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m VisitLogMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m VisitLogMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of VisitLog entities.
+func (m *VisitLogMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *VisitLogMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *VisitLogMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().VisitLog.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *VisitLogMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *VisitLogMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *VisitLogMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *VisitLogMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *VisitLogMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *VisitLogMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetIP sets the "ip" field.
+func (m *VisitLogMutation) SetIP(s string) {
+	m.ip = &s
+}
+
+// IP returns the value of the "ip" field in the mutation.
+func (m *VisitLogMutation) IP() (r string, exists bool) {
+	v := m.ip
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIP returns the old "ip" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldIP(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIP is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIP requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIP: %w", err)
+	}
+	return oldValue.IP, nil
+}
+
+// ResetIP resets all changes to the "ip" field.
+func (m *VisitLogMutation) ResetIP() {
+	m.ip = nil
+}
+
+// SetUserAgent sets the "user_agent" field.
+func (m *VisitLogMutation) SetUserAgent(s string) {
+	m.user_agent = &s
+}
+
+// UserAgent returns the value of the "user_agent" field in the mutation.
+func (m *VisitLogMutation) UserAgent() (r string, exists bool) {
+	v := m.user_agent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserAgent returns the old "user_agent" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldUserAgent(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserAgent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserAgent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserAgent: %w", err)
+	}
+	return oldValue.UserAgent, nil
+}
+
+// ClearUserAgent clears the value of the "user_agent" field.
+func (m *VisitLogMutation) ClearUserAgent() {
+	m.user_agent = nil
+	m.clearedFields[visitlog.FieldUserAgent] = struct{}{}
+}
+
+// UserAgentCleared returns if the "user_agent" field was cleared in this mutation.
+func (m *VisitLogMutation) UserAgentCleared() bool {
+	_, ok := m.clearedFields[visitlog.FieldUserAgent]
+	return ok
+}
+
+// ResetUserAgent resets all changes to the "user_agent" field.
+func (m *VisitLogMutation) ResetUserAgent() {
+	m.user_agent = nil
+	delete(m.clearedFields, visitlog.FieldUserAgent)
+}
+
+// SetPath sets the "path" field.
+func (m *VisitLogMutation) SetPath(s string) {
+	m._path = &s
+}
+
+// Path returns the value of the "path" field in the mutation.
+func (m *VisitLogMutation) Path() (r string, exists bool) {
+	v := m._path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPath returns the old "path" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldPath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPath: %w", err)
+	}
+	return oldValue.Path, nil
+}
+
+// ResetPath resets all changes to the "path" field.
+func (m *VisitLogMutation) ResetPath() {
+	m._path = nil
+}
+
+// SetOs sets the "os" field.
+func (m *VisitLogMutation) SetOs(s string) {
+	m.os = &s
+}
+
+// Os returns the value of the "os" field in the mutation.
+func (m *VisitLogMutation) Os() (r string, exists bool) {
+	v := m.os
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOs returns the old "os" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldOs(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOs: %w", err)
+	}
+	return oldValue.Os, nil
+}
+
+// ClearOs clears the value of the "os" field.
+func (m *VisitLogMutation) ClearOs() {
+	m.os = nil
+	m.clearedFields[visitlog.FieldOs] = struct{}{}
+}
+
+// OsCleared returns if the "os" field was cleared in this mutation.
+func (m *VisitLogMutation) OsCleared() bool {
+	_, ok := m.clearedFields[visitlog.FieldOs]
+	return ok
+}
+
+// ResetOs resets all changes to the "os" field.
+func (m *VisitLogMutation) ResetOs() {
+	m.os = nil
+	delete(m.clearedFields, visitlog.FieldOs)
+}
+
+// SetBrowser sets the "browser" field.
+func (m *VisitLogMutation) SetBrowser(s string) {
+	m.browser = &s
+}
+
+// Browser returns the value of the "browser" field in the mutation.
+func (m *VisitLogMutation) Browser() (r string, exists bool) {
+	v := m.browser
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBrowser returns the old "browser" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldBrowser(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBrowser is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBrowser requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBrowser: %w", err)
+	}
+	return oldValue.Browser, nil
+}
+
+// ClearBrowser clears the value of the "browser" field.
+func (m *VisitLogMutation) ClearBrowser() {
+	m.browser = nil
+	m.clearedFields[visitlog.FieldBrowser] = struct{}{}
+}
+
+// BrowserCleared returns if the "browser" field was cleared in this mutation.
+func (m *VisitLogMutation) BrowserCleared() bool {
+	_, ok := m.clearedFields[visitlog.FieldBrowser]
+	return ok
+}
+
+// ResetBrowser resets all changes to the "browser" field.
+func (m *VisitLogMutation) ResetBrowser() {
+	m.browser = nil
+	delete(m.clearedFields, visitlog.FieldBrowser)
+}
+
+// SetDevice sets the "device" field.
+func (m *VisitLogMutation) SetDevice(s string) {
+	m.device = &s
+}
+
+// Device returns the value of the "device" field in the mutation.
+func (m *VisitLogMutation) Device() (r string, exists bool) {
+	v := m.device
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDevice returns the old "device" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldDevice(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDevice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDevice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDevice: %w", err)
+	}
+	return oldValue.Device, nil
+}
+
+// ClearDevice clears the value of the "device" field.
+func (m *VisitLogMutation) ClearDevice() {
+	m.device = nil
+	m.clearedFields[visitlog.FieldDevice] = struct{}{}
+}
+
+// DeviceCleared returns if the "device" field was cleared in this mutation.
+func (m *VisitLogMutation) DeviceCleared() bool {
+	_, ok := m.clearedFields[visitlog.FieldDevice]
+	return ok
+}
+
+// ResetDevice resets all changes to the "device" field.
+func (m *VisitLogMutation) ResetDevice() {
+	m.device = nil
+	delete(m.clearedFields, visitlog.FieldDevice)
+}
+
+// Where appends a list predicates to the VisitLogMutation builder.
+func (m *VisitLogMutation) Where(ps ...predicate.VisitLog) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the VisitLogMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *VisitLogMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.VisitLog, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *VisitLogMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *VisitLogMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (VisitLog).
+func (m *VisitLogMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *VisitLogMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_at != nil {
+		fields = append(fields, visitlog.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, visitlog.FieldUpdatedAt)
+	}
+	if m.ip != nil {
+		fields = append(fields, visitlog.FieldIP)
+	}
+	if m.user_agent != nil {
+		fields = append(fields, visitlog.FieldUserAgent)
+	}
+	if m._path != nil {
+		fields = append(fields, visitlog.FieldPath)
+	}
+	if m.os != nil {
+		fields = append(fields, visitlog.FieldOs)
+	}
+	if m.browser != nil {
+		fields = append(fields, visitlog.FieldBrowser)
+	}
+	if m.device != nil {
+		fields = append(fields, visitlog.FieldDevice)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *VisitLogMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case visitlog.FieldCreatedAt:
+		return m.CreatedAt()
+	case visitlog.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case visitlog.FieldIP:
+		return m.IP()
+	case visitlog.FieldUserAgent:
+		return m.UserAgent()
+	case visitlog.FieldPath:
+		return m.Path()
+	case visitlog.FieldOs:
+		return m.Os()
+	case visitlog.FieldBrowser:
+		return m.Browser()
+	case visitlog.FieldDevice:
+		return m.Device()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *VisitLogMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case visitlog.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case visitlog.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case visitlog.FieldIP:
+		return m.OldIP(ctx)
+	case visitlog.FieldUserAgent:
+		return m.OldUserAgent(ctx)
+	case visitlog.FieldPath:
+		return m.OldPath(ctx)
+	case visitlog.FieldOs:
+		return m.OldOs(ctx)
+	case visitlog.FieldBrowser:
+		return m.OldBrowser(ctx)
+	case visitlog.FieldDevice:
+		return m.OldDevice(ctx)
+	}
+	return nil, fmt.Errorf("unknown VisitLog field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *VisitLogMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case visitlog.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case visitlog.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case visitlog.FieldIP:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIP(v)
+		return nil
+	case visitlog.FieldUserAgent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserAgent(v)
+		return nil
+	case visitlog.FieldPath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPath(v)
+		return nil
+	case visitlog.FieldOs:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOs(v)
+		return nil
+	case visitlog.FieldBrowser:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBrowser(v)
+		return nil
+	case visitlog.FieldDevice:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDevice(v)
+		return nil
+	}
+	return fmt.Errorf("unknown VisitLog field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *VisitLogMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *VisitLogMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *VisitLogMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown VisitLog numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *VisitLogMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(visitlog.FieldUserAgent) {
+		fields = append(fields, visitlog.FieldUserAgent)
+	}
+	if m.FieldCleared(visitlog.FieldOs) {
+		fields = append(fields, visitlog.FieldOs)
+	}
+	if m.FieldCleared(visitlog.FieldBrowser) {
+		fields = append(fields, visitlog.FieldBrowser)
+	}
+	if m.FieldCleared(visitlog.FieldDevice) {
+		fields = append(fields, visitlog.FieldDevice)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *VisitLogMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *VisitLogMutation) ClearField(name string) error {
+	switch name {
+	case visitlog.FieldUserAgent:
+		m.ClearUserAgent()
+		return nil
+	case visitlog.FieldOs:
+		m.ClearOs()
+		return nil
+	case visitlog.FieldBrowser:
+		m.ClearBrowser()
+		return nil
+	case visitlog.FieldDevice:
+		m.ClearDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown VisitLog nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *VisitLogMutation) ResetField(name string) error {
+	switch name {
+	case visitlog.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case visitlog.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case visitlog.FieldIP:
+		m.ResetIP()
+		return nil
+	case visitlog.FieldUserAgent:
+		m.ResetUserAgent()
+		return nil
+	case visitlog.FieldPath:
+		m.ResetPath()
+		return nil
+	case visitlog.FieldOs:
+		m.ResetOs()
+		return nil
+	case visitlog.FieldBrowser:
+		m.ResetBrowser()
+		return nil
+	case visitlog.FieldDevice:
+		m.ResetDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown VisitLog field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *VisitLogMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *VisitLogMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *VisitLogMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *VisitLogMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *VisitLogMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *VisitLogMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *VisitLogMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown VisitLog unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *VisitLogMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown VisitLog edge %s", name)
 }
 
 // WebHookMutation represents an operation that mutates the WebHook nodes in the graph.

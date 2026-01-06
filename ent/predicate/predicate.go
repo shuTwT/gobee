@@ -78,5 +78,8 @@ type StorageStrategy func(*sql.Selector)
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 
+// VisitLog is the predicate function for visitlog builders.
+type VisitLog func(*sql.Selector)
+
 // WebHook is the predicate function for webhook builders.
 type WebHook func(*sql.Selector)

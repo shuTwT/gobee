@@ -462,6 +462,36 @@ var (
 			},
 		},
 	}
+	// VisitLogsColumns holds the columns for the "visit_logs" table.
+	VisitLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "ip", Type: field.TypeString},
+		{Name: "user_agent", Type: field.TypeString, Nullable: true},
+		{Name: "path", Type: field.TypeString},
+		{Name: "os", Type: field.TypeString, Nullable: true},
+		{Name: "browser", Type: field.TypeString, Nullable: true},
+		{Name: "device", Type: field.TypeString, Nullable: true},
+	}
+	// VisitLogsTable holds the schema information for the "visit_logs" table.
+	VisitLogsTable = &schema.Table{
+		Name:       "visit_logs",
+		Columns:    VisitLogsColumns,
+		PrimaryKey: []*schema.Column{VisitLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "visitlog_ip",
+				Unique:  false,
+				Columns: []*schema.Column{VisitLogsColumns[3]},
+			},
+			{
+				Name:    "visitlog_path",
+				Unique:  false,
+				Columns: []*schema.Column{VisitLogsColumns[5]},
+			},
+		},
+	}
 	// WebHooksColumns holds the columns for the "web_hooks" table.
 	WebHooksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -503,6 +533,7 @@ var (
 		SettingsTable,
 		StorageStrategiesTable,
 		UsersTable,
+		VisitLogsTable,
 		WebHooksTable,
 	}
 )

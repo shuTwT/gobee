@@ -296,6 +296,18 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
 }
 
+// The VisitLogFunc type is an adapter to allow the use of ordinary
+// function as VisitLog mutator.
+type VisitLogFunc func(context.Context, *ent.VisitLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VisitLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VisitLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VisitLogMutation", m)
+}
+
 // The WebHookFunc type is an adapter to allow the use of ordinary
 // function as WebHook mutator.
 type WebHookFunc func(context.Context, *ent.WebHookMutation) (ent.Value, error)

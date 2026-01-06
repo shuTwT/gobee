@@ -26,6 +26,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 	{
 		apiV1 := api.Group("/v1")
 		{
+			apiV1.Get("/visit", handlerMap.VisitHandler.HandleVisitor)
 			apiV1.Get("/routes", handlerMap.RouteHandler.GetRoutes)
 
 			apiV1.Get("/api-interface/page", handlerMap.ApiInterfaceHandler.ListApiRoutesPage)

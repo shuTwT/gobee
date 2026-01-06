@@ -30,6 +30,7 @@ import (
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
+	"gobee/ent/visitlog"
 	"gobee/ent/webhook"
 	"reflect"
 	"sync"
@@ -121,6 +122,7 @@ func checkColumn(t, c string) error {
 			setting.Table:             setting.ValidColumn,
 			storagestrategy.Table:     storagestrategy.ValidColumn,
 			user.Table:                user.ValidColumn,
+			visitlog.Table:            visitlog.ValidColumn,
 			webhook.Table:             webhook.ValidColumn,
 		})
 	})
