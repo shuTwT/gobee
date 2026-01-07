@@ -53,10 +53,12 @@ const pagination = reactive({
   pageSizes: [10, 20, 30, 40],
   onChange: (page: number) => {
     pagination.page = page
+    onSearch()
   },
   onUpdatePageSize: (pageSize: number) => {
     pagination.pageSize = pageSize
     pagination.page = 1
+    onSearch()
   },
 })
 
@@ -449,6 +451,7 @@ onMounted(() => {
         :data="dataList"
         :loading="loading"
         :pagination="pagination"
+        remote
         :row-key="(row) => row.id"
       />
     </n-card>

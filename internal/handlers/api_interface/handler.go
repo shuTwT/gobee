@@ -36,9 +36,11 @@ func NewApiInterfaceHandlerImpl(client *ent.Client, apiInterfaceService api_inte
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/api-interface/page [get]
 func (h *ApiInterfaceHandlerImpl) ListApiRoutesPage(ctx *fiber.Ctx) error {
-	page := ctx.QueryInt("page", 1)
-	limit := ctx.QueryInt("limit", 10)
-	count, apiRoutes, err := h.apiInterfaceService.ListApiRoutesPage(page, limit)
+	var req model.PageQuery
+	if err := ctx.QueryParser(&req); err != nil {
+		return ctx.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	count, apiRoutes, err := h.apiInterfaceService.ListApiRoutesPage(req.Page, req.Size)
 	if err != nil {
 		return ctx.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}

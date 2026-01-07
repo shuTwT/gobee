@@ -56,6 +56,7 @@
         :pagination="pagination"
         :row-key="(row) => row.id"
         :scroll-x="1500"
+        remote
         @update:checked-row-keys="handleCheck"
         class="api-table"
       />
@@ -328,10 +329,12 @@ const pagination = reactive({
   itemCount:0,
   onChange: (page: number) => {
     pagination.page = page
+    onSearch()
   },
   onUpdatePageSize: (pageSize: number) => {
     pagination.pageSize = pageSize
     pagination.page = 1
+    onSearch()
   }
 })
 
@@ -706,132 +709,16 @@ const executeBatchOperation = async () => {
 
 // 刷新数据
 const handleRefresh = () => {
-  loadApiList()
+  onSearch()
 }
 
-// 加载API列表
-const loadApiList = async () => {
-  loading.value = true
-  try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 1000))
 
-    // 模拟数据
-    dataList.value = [
-      {
-        id: '1',
-        name: '用户登录',
-        path: '/api/auth/login',
-        method: 'POST',
-        description: '用户登录接口，验证用户身份',
-        permission_type: 'public',
-        roles: [],
-        category: '认证',
-        status: 'active',
-        createdAt: '2024-01-15 10:00:00',
-        updatedAt: '2024-01-15 10:00:00'
-      },
-      {
-        id: '2',
-        name: '获取用户信息',
-        path: '/api/user/profile',
-        method: 'GET',
-        description: '获取当前登录用户的详细信息',
-        permission_type: 'private',
-        roles: ['normal_user', 'vip_user', 'super_admin'],
-        category: '用户',
-        status: 'active',
-        createdAt: '2024-01-15 10:30:00',
-        updatedAt: '2024-01-15 10:30:00'
-      },
-      {
-        id: '3',
-        name: '创建文章',
-        path: '/api/article/create',
-        method: 'POST',
-        description: '创建新的文章内容',
-        permission_type: 'private',
-        roles: ['content_admin', 'super_admin'],
-        category: '内容',
-        status: 'active',
-        createdAt: '2024-01-15 11:00:00',
-        updatedAt: '2024-01-15 11:00:00'
-      },
-      {
-        id: '4',
-        name: '获取文章列表',
-        path: '/api/article/list',
-        method: 'GET',
-        description: '获取文章列表，支持分页和筛选',
-        permission_type: 'public',
-        roles: [],
-        category: '内容',
-        status: 'active',
-        createdAt: '2024-01-15 11:30:00',
-        updatedAt: '2024-01-15 11:30:00'
-      },
-      {
-        id: '5',
-        name: '删除文章',
-        path: '/api/article/delete',
-        method: 'DELETE',
-        description: '删除指定的文章',
-        permission_type: 'private',
-        roles: ['content_admin', 'super_admin'],
-        category: '内容',
-        status: 'active',
-        createdAt: '2024-01-15 12:00:00',
-        updatedAt: '2024-01-15 12:00:00'
-      },
-      {
-        id: '6',
-        name: '文件上传',
-        path: '/api/file/upload',
-        method: 'POST',
-        description: '上传文件到服务器',
-        permission_type: 'private',
-        roles: ['normal_user', 'vip_user', 'super_admin'],
-        category: '文件',
-        status: 'active',
-        createdAt: '2024-01-15 12:30:00',
-        updatedAt: '2024-01-15 12:30:00'
-      },
-      {
-        id: '7',
-        name: '获取系统设置',
-        path: '/api/system/settings',
-        method: 'GET',
-        description: '获取系统配置信息',
-        permission_type: 'private',
-        roles: ['system_admin', 'super_admin'],
-        category: '系统',
-        status: 'active',
-        createdAt: '2024-01-15 13:00:00',
-        updatedAt: '2024-01-15 13:00:00'
-      },
-      {
-        id: '8',
-        name: '更新系统设置',
-        path: '/api/system/settings',
-        method: 'PUT',
-        description: '更新系统配置信息',
-        permission_type: 'private',
-        roles: ['super_admin'],
-        category: '系统',
-        status: 'active',
-        createdAt: '2024-01-15 13:30:00',
-        updatedAt: '2024-01-15 13:30:00'
-      }
-    ]
-  } catch {
-    message.error('API列表加载失败')
-  } finally {
-    loading.value = false
-  }
-}
 
 const onSearch=()=>{
-  routesApi.getAllRoutes().then(res=>{
+  routesApi.getAllRoutes({
+    page:pagination.page,
+    page_size:pagination.pageSize,
+  }).then(res=>{
     if(res.code===200){
       dataList.value=res.data.records
       pagination.itemCount=res.data.total
@@ -840,7 +727,6 @@ const onSearch=()=>{
 }
 
 onMounted(() => {
-  // loadApiList()
   onSearch()
 })
 </script>
