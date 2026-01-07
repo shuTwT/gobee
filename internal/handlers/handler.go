@@ -15,7 +15,6 @@ import (
 	friendcirclerecord "gobee/internal/handlers/friend_circle_record"
 	friendcirclerule "gobee/internal/handlers/friend_circle_rule"
 	initialize "gobee/internal/handlers/initialize"
-	paychannel "gobee/internal/handlers/pay_channel"
 	payorder "gobee/internal/handlers/pay_order"
 	"gobee/internal/handlers/post"
 	"gobee/internal/handlers/role"
@@ -40,7 +39,6 @@ type HandlerMap struct {
 	FriendCircleRecordHandler friendcirclerecord.FriendCircleRecordHandler
 	FriendCircleRuleHandler   friendcirclerule.FriendCircleRuleHandler
 	InitializeHandler         initialize.InitializeHandler
-	PayChannelHandler         paychannel.PayChannelHandler
 	PayOrderHandler           payorder.PayOrderHandler
 	PostHandler               post.PostHandler
 	RoleHandler               role.RoleHandler
@@ -65,7 +63,6 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	friendCircleRecordHandler := friendcirclerecord.NewFriendCircleRecordHandlerImpl(database.DB)
 	friendCircleRuleHandler := friendcirclerule.NewFriendCircleRuleHandlerImpl(database.DB)
 	initializeHandler := initialize.NewInitializeHandlerImpl(serviceMap.UserService, serviceMap.SettingService)
-	payChannelHandler := paychannel.NewPayChannelHandlerImpl(database.DB)
 	payOrderHandler := payorder.NewPayOrderHandlerImpl(database.DB, serviceMap.PayOrderService)
 	postHandler := post.NewPostHandlerImpl(serviceMap.PostService)
 	roleHandler := role.NewRoleHandlerImpl(serviceMap.RoleService)
@@ -89,7 +86,6 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		FriendCircleRecordHandler: friendCircleRecordHandler,
 		FriendCircleRuleHandler:   friendCircleRuleHandler,
 		InitializeHandler:         initializeHandler,
-		PayChannelHandler:         payChannelHandler,
 		PayOrderHandler:           payOrderHandler,
 		PostHandler:               postHandler,
 		RoleHandler:               roleHandler,

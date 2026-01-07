@@ -19,11 +19,9 @@ import (
 	"gobee/ent/friendcirclerule"
 	"gobee/ent/member"
 	"gobee/ent/memberlevel"
-	"gobee/ent/modelschema"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
-	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
@@ -114,11 +112,9 @@ func checkColumn(t, c string) error {
 			friendcirclerule.Table:    friendcirclerule.ValidColumn,
 			member.Table:              member.ValidColumn,
 			memberlevel.Table:         memberlevel.ValidColumn,
-			modelschema.Table:         modelschema.ValidColumn,
 			oauth2accesstoken.Table:   oauth2accesstoken.ValidColumn,
 			oauth2code.Table:          oauth2code.ValidColumn,
 			oauth2refreshtoken.Table:  oauth2refreshtoken.ValidColumn,
-			paychannel.Table:          paychannel.ValidColumn,
 			payorder.Table:            payorder.ValidColumn,
 			personalaccesstoken.Table: personalaccesstoken.ValidColumn,
 			post.Table:                post.ValidColumn,

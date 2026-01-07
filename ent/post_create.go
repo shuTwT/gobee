@@ -186,6 +186,48 @@ func (_c *PostCreate) SetNillableIsAllowComment(v *bool) *PostCreate {
 	return _c
 }
 
+// SetIsVisibleAfterComment sets the "is_visible_after_comment" field.
+func (_c *PostCreate) SetIsVisibleAfterComment(v bool) *PostCreate {
+	_c.mutation.SetIsVisibleAfterComment(v)
+	return _c
+}
+
+// SetNillableIsVisibleAfterComment sets the "is_visible_after_comment" field if the given value is not nil.
+func (_c *PostCreate) SetNillableIsVisibleAfterComment(v *bool) *PostCreate {
+	if v != nil {
+		_c.SetIsVisibleAfterComment(*v)
+	}
+	return _c
+}
+
+// SetIsVisibleAfterPay sets the "is_visible_after_pay" field.
+func (_c *PostCreate) SetIsVisibleAfterPay(v bool) *PostCreate {
+	_c.mutation.SetIsVisibleAfterPay(v)
+	return _c
+}
+
+// SetNillableIsVisibleAfterPay sets the "is_visible_after_pay" field if the given value is not nil.
+func (_c *PostCreate) SetNillableIsVisibleAfterPay(v *bool) *PostCreate {
+	if v != nil {
+		_c.SetIsVisibleAfterPay(*v)
+	}
+	return _c
+}
+
+// SetMoney sets the "money" field.
+func (_c *PostCreate) SetMoney(v int) *PostCreate {
+	_c.mutation.SetMoney(v)
+	return _c
+}
+
+// SetNillableMoney sets the "money" field if the given value is not nil.
+func (_c *PostCreate) SetNillableMoney(v *int) *PostCreate {
+	if v != nil {
+		_c.SetMoney(*v)
+	}
+	return _c
+}
+
 // SetPublishedAt sets the "published_at" field.
 func (_c *PostCreate) SetPublishedAt(v time.Time) *PostCreate {
 	_c.mutation.SetPublishedAt(v)
@@ -371,6 +413,18 @@ func (_c *PostCreate) defaults() {
 		v := post.DefaultIsAllowComment
 		_c.mutation.SetIsAllowComment(v)
 	}
+	if _, ok := _c.mutation.IsVisibleAfterComment(); !ok {
+		v := post.DefaultIsVisibleAfterComment
+		_c.mutation.SetIsVisibleAfterComment(v)
+	}
+	if _, ok := _c.mutation.IsVisibleAfterPay(); !ok {
+		v := post.DefaultIsVisibleAfterPay
+		_c.mutation.SetIsVisibleAfterPay(v)
+	}
+	if _, ok := _c.mutation.Money(); !ok {
+		v := post.DefaultMoney
+		_c.mutation.SetMoney(v)
+	}
 	if _, ok := _c.mutation.ViewCount(); !ok {
 		v := post.DefaultViewCount
 		_c.mutation.SetViewCount(v)
@@ -441,6 +495,20 @@ func (_c *PostCreate) check() error {
 	}
 	if _, ok := _c.mutation.IsAllowComment(); !ok {
 		return &ValidationError{Name: "is_allow_comment", err: errors.New(`ent: missing required field "Post.is_allow_comment"`)}
+	}
+	if _, ok := _c.mutation.IsVisibleAfterComment(); !ok {
+		return &ValidationError{Name: "is_visible_after_comment", err: errors.New(`ent: missing required field "Post.is_visible_after_comment"`)}
+	}
+	if _, ok := _c.mutation.IsVisibleAfterPay(); !ok {
+		return &ValidationError{Name: "is_visible_after_pay", err: errors.New(`ent: missing required field "Post.is_visible_after_pay"`)}
+	}
+	if _, ok := _c.mutation.Money(); !ok {
+		return &ValidationError{Name: "money", err: errors.New(`ent: missing required field "Post.money"`)}
+	}
+	if v, ok := _c.mutation.Money(); ok {
+		if err := post.MoneyValidator(v); err != nil {
+			return &ValidationError{Name: "money", err: fmt.Errorf(`ent: validator failed for field "Post.money": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.ViewCount(); !ok {
 		return &ValidationError{Name: "view_count", err: errors.New(`ent: missing required field "Post.view_count"`)}
@@ -564,6 +632,18 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.IsAllowComment(); ok {
 		_spec.SetField(post.FieldIsAllowComment, field.TypeBool, value)
 		_node.IsAllowComment = value
+	}
+	if value, ok := _c.mutation.IsVisibleAfterComment(); ok {
+		_spec.SetField(post.FieldIsVisibleAfterComment, field.TypeBool, value)
+		_node.IsVisibleAfterComment = value
+	}
+	if value, ok := _c.mutation.IsVisibleAfterPay(); ok {
+		_spec.SetField(post.FieldIsVisibleAfterPay, field.TypeBool, value)
+		_node.IsVisibleAfterPay = value
+	}
+	if value, ok := _c.mutation.Money(); ok {
+		_spec.SetField(post.FieldMoney, field.TypeInt, value)
+		_node.Money = value
 	}
 	if value, ok := _c.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)

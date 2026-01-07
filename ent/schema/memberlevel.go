@@ -2,7 +2,7 @@ package schema
 
 import "entgo.io/ent"
 
-// MemberLevel holds the schema definition for the MemberLevel entity.
+// 会员等级
 type MemberLevel struct {
 	ent.Schema
 }

@@ -71,36 +71,6 @@ export default [
       roles: ['admin', 'common'],
     },
   },
-  // {
-  //   path: '/model-content',
-  //   name: 'ModelContentManagement',
-  //   component: () => import('@/views/model-content/index.vue'),
-  //   meta: {
-  //     title: '模型内容管理',
-  //     showLink: true,
-  //     roles: ['admin', 'common'],
-  //   },
-  // },
-  // {
-  //   path: '/model-schema',
-  //   name: 'ModelSchemaManagement',
-  //   component: () => import('@/views/model-schema/index.vue'),
-  //   meta: {
-  //     title: '模型内容管理',
-  //     showLink: true,
-  //     roles: ['admin', 'common'],
-  //   },
-  // },
-  {
-    path: '/pay-channel',
-    name: 'PayChannelManagement',
-    component: () => import('@/views/pay-channel/index.vue'),
-    meta: {
-      title: '支付渠道管理',
-      showLink: true,
-      roles: ['admin', 'common'],
-    },
-  },
   {
     path: '/pay-order',
     name: 'PayOrderManagement',

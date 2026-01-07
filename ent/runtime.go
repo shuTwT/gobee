@@ -16,7 +16,6 @@ import (
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
-	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
@@ -27,6 +26,7 @@ import (
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
 	"gobee/ent/visitlog"
+	"gobee/ent/wallet"
 	"gobee/ent/webhook"
 	"time"
 )
@@ -556,75 +556,6 @@ func init() {
 			return nil
 		}
 	}()
-	paychannelMixin := schema.PayChannel{}.Mixin()
-	paychannelMixinFields0 := paychannelMixin[0].Fields()
-	_ = paychannelMixinFields0
-	paychannelFields := schema.PayChannel{}.Fields()
-	_ = paychannelFields
-	// paychannelDescCreatedAt is the schema descriptor for created_at field.
-	paychannelDescCreatedAt := paychannelMixinFields0[1].Descriptor()
-	// paychannel.DefaultCreatedAt holds the default value on creation for the created_at field.
-	paychannel.DefaultCreatedAt = paychannelDescCreatedAt.Default.(func() time.Time)
-	// paychannelDescUpdatedAt is the schema descriptor for updated_at field.
-	paychannelDescUpdatedAt := paychannelMixinFields0[2].Descriptor()
-	// paychannel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	paychannel.DefaultUpdatedAt = paychannelDescUpdatedAt.Default.(func() time.Time)
-	// paychannel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	paychannel.UpdateDefaultUpdatedAt = paychannelDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// paychannelDescName is the schema descriptor for name field.
-	paychannelDescName := paychannelFields[0].Descriptor()
-	// paychannel.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	paychannel.NameValidator = func() func(string) error {
-		validators := paychannelDescName.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(name string) error {
-			for _, fn := range fns {
-				if err := fn(name); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// paychannelDescCode is the schema descriptor for code field.
-	paychannelDescCode := paychannelFields[1].Descriptor()
-	// paychannel.CodeValidator is a validator for the "code" field. It is called by the builders before save.
-	paychannel.CodeValidator = func() func(string) error {
-		validators := paychannelDescCode.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(code string) error {
-			for _, fn := range fns {
-				if err := fn(code); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// paychannelDescType is the schema descriptor for type field.
-	paychannelDescType := paychannelFields[2].Descriptor()
-	// paychannel.TypeValidator is a validator for the "type" field. It is called by the builders before save.
-	paychannel.TypeValidator = func() func(string) error {
-		validators := paychannelDescType.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(_type string) error {
-			for _, fn := range fns {
-				if err := fn(_type); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
 	payorderMixin := schema.PayOrder{}.Mixin()
 	payorderMixinFields0 := payorderMixin[0].Fields()
 	_ = payorderMixinFields0
@@ -734,36 +665,50 @@ func init() {
 	postDescIsAllowComment := postFields[10].Descriptor()
 	// post.DefaultIsAllowComment holds the default value on creation for the is_allow_comment field.
 	post.DefaultIsAllowComment = postDescIsAllowComment.Default.(bool)
+	// postDescIsVisibleAfterComment is the schema descriptor for is_visible_after_comment field.
+	postDescIsVisibleAfterComment := postFields[11].Descriptor()
+	// post.DefaultIsVisibleAfterComment holds the default value on creation for the is_visible_after_comment field.
+	post.DefaultIsVisibleAfterComment = postDescIsVisibleAfterComment.Default.(bool)
+	// postDescIsVisibleAfterPay is the schema descriptor for is_visible_after_pay field.
+	postDescIsVisibleAfterPay := postFields[12].Descriptor()
+	// post.DefaultIsVisibleAfterPay holds the default value on creation for the is_visible_after_pay field.
+	post.DefaultIsVisibleAfterPay = postDescIsVisibleAfterPay.Default.(bool)
+	// postDescMoney is the schema descriptor for money field.
+	postDescMoney := postFields[13].Descriptor()
+	// post.DefaultMoney holds the default value on creation for the money field.
+	post.DefaultMoney = postDescMoney.Default.(int)
+	// post.MoneyValidator is a validator for the "money" field. It is called by the builders before save.
+	post.MoneyValidator = postDescMoney.Validators[0].(func(int) error)
 	// postDescViewCount is the schema descriptor for view_count field.
-	postDescViewCount := postFields[12].Descriptor()
+	postDescViewCount := postFields[15].Descriptor()
 	// post.DefaultViewCount holds the default value on creation for the view_count field.
 	post.DefaultViewCount = postDescViewCount.Default.(int)
 	// post.ViewCountValidator is a validator for the "view_count" field. It is called by the builders before save.
 	post.ViewCountValidator = postDescViewCount.Validators[0].(func(int) error)
 	// postDescCommentCount is the schema descriptor for comment_count field.
-	postDescCommentCount := postFields[13].Descriptor()
+	postDescCommentCount := postFields[16].Descriptor()
 	// post.DefaultCommentCount holds the default value on creation for the comment_count field.
 	post.DefaultCommentCount = postDescCommentCount.Default.(int)
 	// post.CommentCountValidator is a validator for the "comment_count" field. It is called by the builders before save.
 	post.CommentCountValidator = postDescCommentCount.Validators[0].(func(int) error)
 	// postDescCover is the schema descriptor for cover field.
-	postDescCover := postFields[14].Descriptor()
+	postDescCover := postFields[17].Descriptor()
 	// post.CoverValidator is a validator for the "cover" field. It is called by the builders before save.
 	post.CoverValidator = postDescCover.Validators[0].(func(string) error)
 	// postDescKeywords is the schema descriptor for keywords field.
-	postDescKeywords := postFields[15].Descriptor()
+	postDescKeywords := postFields[18].Descriptor()
 	// post.KeywordsValidator is a validator for the "keywords" field. It is called by the builders before save.
 	post.KeywordsValidator = postDescKeywords.Validators[0].(func(string) error)
 	// postDescCopyright is the schema descriptor for copyright field.
-	postDescCopyright := postFields[16].Descriptor()
+	postDescCopyright := postFields[19].Descriptor()
 	// post.CopyrightValidator is a validator for the "copyright" field. It is called by the builders before save.
 	post.CopyrightValidator = postDescCopyright.Validators[0].(func(string) error)
 	// postDescAuthor is the schema descriptor for author field.
-	postDescAuthor := postFields[17].Descriptor()
+	postDescAuthor := postFields[20].Descriptor()
 	// post.DefaultAuthor holds the default value on creation for the author field.
 	post.DefaultAuthor = postDescAuthor.Default.(string)
 	// postDescSummary is the schema descriptor for summary field.
-	postDescSummary := postFields[18].Descriptor()
+	postDescSummary := postFields[21].Descriptor()
 	// post.SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
 	post.SummaryValidator = postDescSummary.Validators[0].(func(string) error)
 	roleMixin := schema.Role{}.Mixin()
@@ -1014,6 +959,12 @@ func init() {
 	visitlog.DefaultUpdatedAt = visitlogDescUpdatedAt.Default.(func() time.Time)
 	// visitlog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	visitlog.UpdateDefaultUpdatedAt = visitlogDescUpdatedAt.UpdateDefault.(func() time.Time)
+	walletFields := schema.Wallet{}.Fields()
+	_ = walletFields
+	// walletDescBalance is the schema descriptor for balance field.
+	walletDescBalance := walletFields[1].Descriptor()
+	// wallet.DefaultBalance holds the default value on creation for the balance field.
+	wallet.DefaultBalance = walletDescBalance.Default.(int)
 	webhookMixin := schema.WebHook{}.Mixin()
 	webhookMixinFields0 := webhookMixin[0].Fields()
 	_ = webhookMixinFields0

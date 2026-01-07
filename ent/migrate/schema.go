@@ -231,16 +231,6 @@ var (
 		Columns:    MemberLevelsColumns,
 		PrimaryKey: []*schema.Column{MemberLevelsColumns[0]},
 	}
-	// ModelSchemasColumns holds the columns for the "model_schemas" table.
-	ModelSchemasColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-	}
-	// ModelSchemasTable holds the schema information for the "model_schemas" table.
-	ModelSchemasTable = &schema.Table{
-		Name:       "model_schemas",
-		Columns:    ModelSchemasColumns,
-		PrimaryKey: []*schema.Column{ModelSchemasColumns[0]},
-	}
 	// Oauth2accessTokensColumns holds the columns for the "oauth2access_tokens" table.
 	Oauth2accessTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -293,22 +283,6 @@ var (
 		Name:       "oauth2refresh_tokens",
 		Columns:    Oauth2refreshTokensColumns,
 		PrimaryKey: []*schema.Column{Oauth2refreshTokensColumns[0]},
-	}
-	// PayChannelsColumns holds the columns for the "pay_channels" table.
-	PayChannelsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Size: 255},
-		{Name: "code", Type: field.TypeString, Size: 255},
-		{Name: "type", Type: field.TypeString, Size: 255},
-		{Name: "config", Type: field.TypeString},
-	}
-	// PayChannelsTable holds the schema information for the "pay_channels" table.
-	PayChannelsTable = &schema.Table{
-		Name:       "pay_channels",
-		Columns:    PayChannelsColumns,
-		PrimaryKey: []*schema.Column{PayChannelsColumns[0]},
 	}
 	// PayOrdersColumns holds the columns for the "pay_orders" table.
 	PayOrdersColumns = []*schema.Column{
@@ -368,6 +342,9 @@ var (
 		{Name: "is_visible", Type: field.TypeBool, Default: true},
 		{Name: "is_tip_to_top", Type: field.TypeBool, Default: false},
 		{Name: "is_allow_comment", Type: field.TypeBool, Default: true},
+		{Name: "is_visible_after_comment", Type: field.TypeBool, Default: false},
+		{Name: "is_visible_after_pay", Type: field.TypeBool, Default: false},
+		{Name: "money", Type: field.TypeInt, Default: 0},
 		{Name: "published_at", Type: field.TypeTime, Nullable: true},
 		{Name: "view_count", Type: field.TypeInt, Default: 0},
 		{Name: "comment_count", Type: field.TypeInt, Default: 0},
@@ -510,6 +487,8 @@ var (
 	// WalletsColumns holds the columns for the "wallets" table.
 	WalletsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "balance", Type: field.TypeInt, Default: 0},
 	}
 	// WalletsTable holds the schema information for the "wallets" table.
 	WalletsTable = &schema.Table{
@@ -547,11 +526,9 @@ var (
 		FriendCircleRulesTable,
 		MembersTable,
 		MemberLevelsTable,
-		ModelSchemasTable,
 		Oauth2accessTokensTable,
 		Oauth2codesTable,
 		Oauth2refreshTokensTable,
-		PayChannelsTable,
 		PayOrdersTable,
 		PersonalAccessTokensTable,
 		PostsTable,

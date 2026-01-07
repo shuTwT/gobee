@@ -38,16 +38,12 @@ type Tx struct {
 	Member *MemberClient
 	// MemberLevel is the client for interacting with the MemberLevel builders.
 	MemberLevel *MemberLevelClient
-	// ModelSchema is the client for interacting with the ModelSchema builders.
-	ModelSchema *ModelSchemaClient
 	// Oauth2AccessToken is the client for interacting with the Oauth2AccessToken builders.
 	Oauth2AccessToken *Oauth2AccessTokenClient
 	// Oauth2Code is the client for interacting with the Oauth2Code builders.
 	Oauth2Code *Oauth2CodeClient
 	// Oauth2RefreshToken is the client for interacting with the Oauth2RefreshToken builders.
 	Oauth2RefreshToken *Oauth2RefreshTokenClient
-	// PayChannel is the client for interacting with the PayChannel builders.
-	PayChannel *PayChannelClient
 	// PayOrder is the client for interacting with the PayOrder builders.
 	PayOrder *PayOrderClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
@@ -214,11 +210,9 @@ func (tx *Tx) init() {
 	tx.FriendCircleRule = NewFriendCircleRuleClient(tx.config)
 	tx.Member = NewMemberClient(tx.config)
 	tx.MemberLevel = NewMemberLevelClient(tx.config)
-	tx.ModelSchema = NewModelSchemaClient(tx.config)
 	tx.Oauth2AccessToken = NewOauth2AccessTokenClient(tx.config)
 	tx.Oauth2Code = NewOauth2CodeClient(tx.config)
 	tx.Oauth2RefreshToken = NewOauth2RefreshTokenClient(tx.config)
-	tx.PayChannel = NewPayChannelClient(tx.config)
 	tx.PayOrder = NewPayOrderClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.Post = NewPostClient(tx.config)

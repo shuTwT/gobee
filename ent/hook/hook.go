@@ -164,18 +164,6 @@ func (f MemberLevelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MemberLevelMutation", m)
 }
 
-// The ModelSchemaFunc type is an adapter to allow the use of ordinary
-// function as ModelSchema mutator.
-type ModelSchemaFunc func(context.Context, *ent.ModelSchemaMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ModelSchemaFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ModelSchemaMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ModelSchemaMutation", m)
-}
-
 // The Oauth2AccessTokenFunc type is an adapter to allow the use of ordinary
 // function as Oauth2AccessToken mutator.
 type Oauth2AccessTokenFunc func(context.Context, *ent.Oauth2AccessTokenMutation) (ent.Value, error)
@@ -210,18 +198,6 @@ func (f Oauth2RefreshTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.Oauth2RefreshTokenMutation", m)
-}
-
-// The PayChannelFunc type is an adapter to allow the use of ordinary
-// function as PayChannel mutator.
-type PayChannelFunc func(context.Context, *ent.PayChannelMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f PayChannelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.PayChannelMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PayChannelMutation", m)
 }
 
 // The PayOrderFunc type is an adapter to allow the use of ordinary

@@ -11,6 +11,10 @@ const (
 	Label = "wallet"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
+	// FieldBalance holds the string denoting the balance field in the database.
+	FieldBalance = "balance"
 	// Table holds the table name of the wallet in the database.
 	Table = "wallets"
 )
@@ -18,6 +22,8 @@ const (
 // Columns holds all SQL columns for wallet fields.
 var Columns = []string{
 	FieldID,
+	FieldUserID,
+	FieldBalance,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -30,10 +36,25 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+var (
+	// DefaultBalance holds the default value on creation for the "balance" field.
+	DefaultBalance int
+)
+
 // OrderOption defines the ordering options for the Wallet queries.
 type OrderOption func(*sql.Selector)
 
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// ByBalance orders the results by the balance field.
+func ByBalance(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBalance, opts...).ToFunc()
 }

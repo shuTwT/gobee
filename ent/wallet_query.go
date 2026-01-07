@@ -258,6 +258,18 @@ func (_q *WalletQuery) Clone() *WalletQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		UserID int `json:"user_id,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Wallet.Query().
+//		GroupBy(wallet.FieldUserID).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (_q *WalletQuery) GroupBy(field string, fields ...string) *WalletGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &WalletGroupBy{build: _q}
@@ -269,6 +281,16 @@ func (_q *WalletQuery) GroupBy(field string, fields ...string) *WalletGroupBy {
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		UserID int `json:"user_id,omitempty"`
+//	}
+//
+//	client.Wallet.Query().
+//		Select(wallet.FieldUserID).
+//		Scan(ctx, &v)
 func (_q *WalletQuery) Select(fields ...string) *WalletSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
 	sbuild := &WalletSelect{WalletQuery: _q}

@@ -2,7 +2,7 @@ package schema
 
 import "entgo.io/ent"
 
-// Member holds the schema definition for the Member entity.
+// 会员
 type Member struct {
 	ent.Schema
 }

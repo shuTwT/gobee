@@ -109,6 +109,21 @@ func IsAllowComment(v bool) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldIsAllowComment, v))
 }
 
+// IsVisibleAfterComment applies equality check predicate on the "is_visible_after_comment" field. It's identical to IsVisibleAfterCommentEQ.
+func IsVisibleAfterComment(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsVisibleAfterComment, v))
+}
+
+// IsVisibleAfterPay applies equality check predicate on the "is_visible_after_pay" field. It's identical to IsVisibleAfterPayEQ.
+func IsVisibleAfterPay(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsVisibleAfterPay, v))
+}
+
+// Money applies equality check predicate on the "money" field. It's identical to MoneyEQ.
+func Money(v int) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldMoney, v))
+}
+
 // PublishedAt applies equality check predicate on the "published_at" field. It's identical to PublishedAtEQ.
 func PublishedAt(v time.Time) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldPublishedAt, v))
@@ -662,6 +677,66 @@ func IsAllowCommentEQ(v bool) predicate.Post {
 // IsAllowCommentNEQ applies the NEQ predicate on the "is_allow_comment" field.
 func IsAllowCommentNEQ(v bool) predicate.Post {
 	return predicate.Post(sql.FieldNEQ(FieldIsAllowComment, v))
+}
+
+// IsVisibleAfterCommentEQ applies the EQ predicate on the "is_visible_after_comment" field.
+func IsVisibleAfterCommentEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsVisibleAfterComment, v))
+}
+
+// IsVisibleAfterCommentNEQ applies the NEQ predicate on the "is_visible_after_comment" field.
+func IsVisibleAfterCommentNEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldIsVisibleAfterComment, v))
+}
+
+// IsVisibleAfterPayEQ applies the EQ predicate on the "is_visible_after_pay" field.
+func IsVisibleAfterPayEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldIsVisibleAfterPay, v))
+}
+
+// IsVisibleAfterPayNEQ applies the NEQ predicate on the "is_visible_after_pay" field.
+func IsVisibleAfterPayNEQ(v bool) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldIsVisibleAfterPay, v))
+}
+
+// MoneyEQ applies the EQ predicate on the "money" field.
+func MoneyEQ(v int) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldMoney, v))
+}
+
+// MoneyNEQ applies the NEQ predicate on the "money" field.
+func MoneyNEQ(v int) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldMoney, v))
+}
+
+// MoneyIn applies the In predicate on the "money" field.
+func MoneyIn(vs ...int) predicate.Post {
+	return predicate.Post(sql.FieldIn(FieldMoney, vs...))
+}
+
+// MoneyNotIn applies the NotIn predicate on the "money" field.
+func MoneyNotIn(vs ...int) predicate.Post {
+	return predicate.Post(sql.FieldNotIn(FieldMoney, vs...))
+}
+
+// MoneyGT applies the GT predicate on the "money" field.
+func MoneyGT(v int) predicate.Post {
+	return predicate.Post(sql.FieldGT(FieldMoney, v))
+}
+
+// MoneyGTE applies the GTE predicate on the "money" field.
+func MoneyGTE(v int) predicate.Post {
+	return predicate.Post(sql.FieldGTE(FieldMoney, v))
+}
+
+// MoneyLT applies the LT predicate on the "money" field.
+func MoneyLT(v int) predicate.Post {
+	return predicate.Post(sql.FieldLT(FieldMoney, v))
+}
+
+// MoneyLTE applies the LTE predicate on the "money" field.
+func MoneyLTE(v int) predicate.Post {
+	return predicate.Post(sql.FieldLTE(FieldMoney, v))
 }
 
 // PublishedAtEQ applies the EQ predicate on the "published_at" field.

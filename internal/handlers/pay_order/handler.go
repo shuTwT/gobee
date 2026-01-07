@@ -40,7 +40,7 @@ func NewPayOrderHandlerImpl(client *ent.Client, service payorder_service.PayOrde
 // @Router /api/v1/payorders [get]
 func (h *PayOrderHandlerImpl) ListPayOrderPage(c *fiber.Ctx) error {
 	var req model.PageQuery
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.QueryParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 	orders, count, err := h.payOrderService.ListPayOrderPage(c.Context(), &req)

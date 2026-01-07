@@ -13,9 +13,13 @@ import (
 
 // Wallet is the model entity for the Wallet schema.
 type Wallet struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// 用户ID
+	UserID int `json:"user_id,omitempty"`
+	// 余额 单位分
+	Balance      int `json:"balance,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -24,7 +28,7 @@ func (*Wallet) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case wallet.FieldID:
+		case wallet.FieldID, wallet.FieldUserID, wallet.FieldBalance:
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -47,6 +51,18 @@ func (_m *Wallet) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
+		case wallet.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				_m.UserID = int(value.Int64)
+			}
+		case wallet.FieldBalance:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field balance", values[i])
+			} else if value.Valid {
+				_m.Balance = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -82,7 +98,12 @@ func (_m *Wallet) Unwrap() *Wallet {
 func (_m *Wallet) String() string {
 	var builder strings.Builder
 	builder.WriteString("Wallet(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("balance=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Balance))
 	builder.WriteByte(')')
 	return builder.String()
 }

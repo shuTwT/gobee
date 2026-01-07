@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// FriendCircleRule 好友圈规则
+// 朋友圈规则
 type FriendCircleRule struct {
 	ent.Schema
 }

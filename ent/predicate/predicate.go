@@ -45,9 +45,6 @@ type Member func(*sql.Selector)
 // MemberLevel is the predicate function for memberlevel builders.
 type MemberLevel func(*sql.Selector)
 
-// ModelSchema is the predicate function for modelschema builders.
-type ModelSchema func(*sql.Selector)
-
 // Oauth2AccessToken is the predicate function for oauth2accesstoken builders.
 type Oauth2AccessToken func(*sql.Selector)
 
@@ -56,9 +53,6 @@ type Oauth2Code func(*sql.Selector)
 
 // Oauth2RefreshToken is the predicate function for oauth2refreshtoken builders.
 type Oauth2RefreshToken func(*sql.Selector)
-
-// PayChannel is the predicate function for paychannel builders.
-type PayChannel func(*sql.Selector)
 
 // PayOrder is the predicate function for payorder builders.
 type PayOrder func(*sql.Selector)

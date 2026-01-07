@@ -43,6 +43,12 @@ type Post struct {
 	IsTipToTop bool `json:"is_tip_to_top,omitempty"`
 	// 是否允许评论
 	IsAllowComment bool `json:"is_allow_comment,omitempty"`
+	// 是否评论后可见
+	IsVisibleAfterComment bool `json:"is_visible_after_comment,omitempty"`
+	// 是否支付后可见
+	IsVisibleAfterPay bool `json:"is_visible_after_pay,omitempty"`
+	// 支付金额
+	Money int `json:"money,omitempty"`
 	// 发布时间
 	PublishedAt *time.Time `json:"published_at,omitempty"`
 	// 浏览次数
@@ -67,9 +73,9 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case post.FieldIsAutogenSummary, post.FieldIsVisible, post.FieldIsTipToTop, post.FieldIsAllowComment:
+		case post.FieldIsAutogenSummary, post.FieldIsVisible, post.FieldIsTipToTop, post.FieldIsAllowComment, post.FieldIsVisibleAfterComment, post.FieldIsVisibleAfterPay:
 			values[i] = new(sql.NullBool)
-		case post.FieldID, post.FieldViewCount, post.FieldCommentCount:
+		case post.FieldID, post.FieldMoney, post.FieldViewCount, post.FieldCommentCount:
 			values[i] = new(sql.NullInt64)
 		case post.FieldTitle, post.FieldAlias, post.FieldContent, post.FieldMdContent, post.FieldHTMLContent, post.FieldContentType, post.FieldStatus, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
 			values[i] = new(sql.NullString)
@@ -175,6 +181,24 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field is_allow_comment", values[i])
 			} else if value.Valid {
 				_m.IsAllowComment = value.Bool
+			}
+		case post.FieldIsVisibleAfterComment:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_visible_after_comment", values[i])
+			} else if value.Valid {
+				_m.IsVisibleAfterComment = value.Bool
+			}
+		case post.FieldIsVisibleAfterPay:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_visible_after_pay", values[i])
+			} else if value.Valid {
+				_m.IsVisibleAfterPay = value.Bool
+			}
+		case post.FieldMoney:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field money", values[i])
+			} else if value.Valid {
+				_m.Money = int(value.Int64)
 			}
 		case post.FieldPublishedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -303,6 +327,15 @@ func (_m *Post) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("is_allow_comment=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsAllowComment))
+	builder.WriteString(", ")
+	builder.WriteString("is_visible_after_comment=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsVisibleAfterComment))
+	builder.WriteString(", ")
+	builder.WriteString("is_visible_after_pay=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsVisibleAfterPay))
+	builder.WriteString(", ")
+	builder.WriteString("money=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Money))
 	builder.WriteString(", ")
 	if v := _m.PublishedAt; v != nil {
 		builder.WriteString("published_at=")

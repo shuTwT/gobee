@@ -27,6 +27,48 @@ func (_u *WalletUpdate) Where(ps ...predicate.Wallet) *WalletUpdate {
 	return _u
 }
 
+// SetUserID sets the "user_id" field.
+func (_u *WalletUpdate) SetUserID(v int) *WalletUpdate {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *WalletUpdate) SetNillableUserID(v *int) *WalletUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *WalletUpdate) AddUserID(v int) *WalletUpdate {
+	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// SetBalance sets the "balance" field.
+func (_u *WalletUpdate) SetBalance(v int) *WalletUpdate {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (_u *WalletUpdate) SetNillableBalance(v *int) *WalletUpdate {
+	if v != nil {
+		_u.SetBalance(*v)
+	}
+	return _u
+}
+
+// AddBalance adds value to the "balance" field.
+func (_u *WalletUpdate) AddBalance(v int) *WalletUpdate {
+	_u.mutation.AddBalance(v)
+	return _u
+}
+
 // Mutation returns the WalletMutation object of the builder.
 func (_u *WalletUpdate) Mutation() *WalletMutation {
 	return _u.mutation
@@ -68,6 +110,18 @@ func (_u *WalletUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(wallet.FieldUserID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(wallet.FieldUserID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Balance(); ok {
+		_spec.SetField(wallet.FieldBalance, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedBalance(); ok {
+		_spec.AddField(wallet.FieldBalance, field.TypeInt, value)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{wallet.Label}
@@ -86,6 +140,48 @@ type WalletUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *WalletMutation
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *WalletUpdateOne) SetUserID(v int) *WalletUpdateOne {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *WalletUpdateOne) SetNillableUserID(v *int) *WalletUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *WalletUpdateOne) AddUserID(v int) *WalletUpdateOne {
+	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// SetBalance sets the "balance" field.
+func (_u *WalletUpdateOne) SetBalance(v int) *WalletUpdateOne {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (_u *WalletUpdateOne) SetNillableBalance(v *int) *WalletUpdateOne {
+	if v != nil {
+		_u.SetBalance(*v)
+	}
+	return _u
+}
+
+// AddBalance adds value to the "balance" field.
+func (_u *WalletUpdateOne) AddBalance(v int) *WalletUpdateOne {
+	_u.mutation.AddBalance(v)
+	return _u
 }
 
 // Mutation returns the WalletMutation object of the builder.
@@ -158,6 +254,18 @@ func (_u *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err erro
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(wallet.FieldUserID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(wallet.FieldUserID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Balance(); ok {
+		_spec.SetField(wallet.FieldBalance, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedBalance(); ok {
+		_spec.AddField(wallet.FieldBalance, field.TypeInt, value)
 	}
 	_node = &Wallet{config: _u.config}
 	_spec.Assign = _node.assignValues

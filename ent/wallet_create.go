@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"gobee/ent/wallet"
 
@@ -18,6 +19,26 @@ type WalletCreate struct {
 	hooks    []Hook
 }
 
+// SetUserID sets the "user_id" field.
+func (_c *WalletCreate) SetUserID(v int) *WalletCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetBalance sets the "balance" field.
+func (_c *WalletCreate) SetBalance(v int) *WalletCreate {
+	_c.mutation.SetBalance(v)
+	return _c
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (_c *WalletCreate) SetNillableBalance(v *int) *WalletCreate {
+	if v != nil {
+		_c.SetBalance(*v)
+	}
+	return _c
+}
+
 // Mutation returns the WalletMutation object of the builder.
 func (_c *WalletCreate) Mutation() *WalletMutation {
 	return _c.mutation
@@ -25,6 +46,7 @@ func (_c *WalletCreate) Mutation() *WalletMutation {
 
 // Save creates the Wallet in the database.
 func (_c *WalletCreate) Save(ctx context.Context) (*Wallet, error) {
+	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -50,8 +72,22 @@ func (_c *WalletCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_c *WalletCreate) defaults() {
+	if _, ok := _c.mutation.Balance(); !ok {
+		v := wallet.DefaultBalance
+		_c.mutation.SetBalance(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (_c *WalletCreate) check() error {
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Wallet.user_id"`)}
+	}
+	if _, ok := _c.mutation.Balance(); !ok {
+		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Wallet.balance"`)}
+	}
 	return nil
 }
 
@@ -78,6 +114,14 @@ func (_c *WalletCreate) createSpec() (*Wallet, *sqlgraph.CreateSpec) {
 		_node = &Wallet{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(wallet.Table, sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt))
 	)
+	if value, ok := _c.mutation.UserID(); ok {
+		_spec.SetField(wallet.FieldUserID, field.TypeInt, value)
+		_node.UserID = value
+	}
+	if value, ok := _c.mutation.Balance(); ok {
+		_spec.SetField(wallet.FieldBalance, field.TypeInt, value)
+		_node.Balance = value
+	}
 	return _node, _spec
 }
 
@@ -99,6 +143,7 @@ func (_c *WalletCreateBulk) Save(ctx context.Context) ([]*Wallet, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*WalletMutation)
 				if !ok {

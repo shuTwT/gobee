@@ -206,6 +206,55 @@ func (_u *PostUpdate) SetNillableIsAllowComment(v *bool) *PostUpdate {
 	return _u
 }
 
+// SetIsVisibleAfterComment sets the "is_visible_after_comment" field.
+func (_u *PostUpdate) SetIsVisibleAfterComment(v bool) *PostUpdate {
+	_u.mutation.SetIsVisibleAfterComment(v)
+	return _u
+}
+
+// SetNillableIsVisibleAfterComment sets the "is_visible_after_comment" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableIsVisibleAfterComment(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetIsVisibleAfterComment(*v)
+	}
+	return _u
+}
+
+// SetIsVisibleAfterPay sets the "is_visible_after_pay" field.
+func (_u *PostUpdate) SetIsVisibleAfterPay(v bool) *PostUpdate {
+	_u.mutation.SetIsVisibleAfterPay(v)
+	return _u
+}
+
+// SetNillableIsVisibleAfterPay sets the "is_visible_after_pay" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableIsVisibleAfterPay(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetIsVisibleAfterPay(*v)
+	}
+	return _u
+}
+
+// SetMoney sets the "money" field.
+func (_u *PostUpdate) SetMoney(v int) *PostUpdate {
+	_u.mutation.ResetMoney()
+	_u.mutation.SetMoney(v)
+	return _u
+}
+
+// SetNillableMoney sets the "money" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableMoney(v *int) *PostUpdate {
+	if v != nil {
+		_u.SetMoney(*v)
+	}
+	return _u
+}
+
+// AddMoney adds value to the "money" field.
+func (_u *PostUpdate) AddMoney(v int) *PostUpdate {
+	_u.mutation.AddMoney(v)
+	return _u
+}
+
 // SetPublishedAt sets the "published_at" field.
 func (_u *PostUpdate) SetPublishedAt(v time.Time) *PostUpdate {
 	_u.mutation.SetPublishedAt(v)
@@ -430,6 +479,11 @@ func (_u *PostUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Money(); ok {
+		if err := post.MoneyValidator(v); err != nil {
+			return &ValidationError{Name: "money", err: fmt.Errorf(`ent: validator failed for field "Post.money": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.ViewCount(); ok {
 		if err := post.ViewCountValidator(v); err != nil {
 			return &ValidationError{Name: "view_count", err: fmt.Errorf(`ent: validator failed for field "Post.view_count": %w`, err)}
@@ -519,6 +573,18 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.IsAllowComment(); ok {
 		_spec.SetField(post.FieldIsAllowComment, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsVisibleAfterComment(); ok {
+		_spec.SetField(post.FieldIsVisibleAfterComment, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsVisibleAfterPay(); ok {
+		_spec.SetField(post.FieldIsVisibleAfterPay, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Money(); ok {
+		_spec.SetField(post.FieldMoney, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMoney(); ok {
+		_spec.AddField(post.FieldMoney, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)
@@ -763,6 +829,55 @@ func (_u *PostUpdateOne) SetNillableIsAllowComment(v *bool) *PostUpdateOne {
 	return _u
 }
 
+// SetIsVisibleAfterComment sets the "is_visible_after_comment" field.
+func (_u *PostUpdateOne) SetIsVisibleAfterComment(v bool) *PostUpdateOne {
+	_u.mutation.SetIsVisibleAfterComment(v)
+	return _u
+}
+
+// SetNillableIsVisibleAfterComment sets the "is_visible_after_comment" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableIsVisibleAfterComment(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetIsVisibleAfterComment(*v)
+	}
+	return _u
+}
+
+// SetIsVisibleAfterPay sets the "is_visible_after_pay" field.
+func (_u *PostUpdateOne) SetIsVisibleAfterPay(v bool) *PostUpdateOne {
+	_u.mutation.SetIsVisibleAfterPay(v)
+	return _u
+}
+
+// SetNillableIsVisibleAfterPay sets the "is_visible_after_pay" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableIsVisibleAfterPay(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetIsVisibleAfterPay(*v)
+	}
+	return _u
+}
+
+// SetMoney sets the "money" field.
+func (_u *PostUpdateOne) SetMoney(v int) *PostUpdateOne {
+	_u.mutation.ResetMoney()
+	_u.mutation.SetMoney(v)
+	return _u
+}
+
+// SetNillableMoney sets the "money" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableMoney(v *int) *PostUpdateOne {
+	if v != nil {
+		_u.SetMoney(*v)
+	}
+	return _u
+}
+
+// AddMoney adds value to the "money" field.
+func (_u *PostUpdateOne) AddMoney(v int) *PostUpdateOne {
+	_u.mutation.AddMoney(v)
+	return _u
+}
+
 // SetPublishedAt sets the "published_at" field.
 func (_u *PostUpdateOne) SetPublishedAt(v time.Time) *PostUpdateOne {
 	_u.mutation.SetPublishedAt(v)
@@ -1000,6 +1115,11 @@ func (_u *PostUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Money(); ok {
+		if err := post.MoneyValidator(v); err != nil {
+			return &ValidationError{Name: "money", err: fmt.Errorf(`ent: validator failed for field "Post.money": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.ViewCount(); ok {
 		if err := post.ViewCountValidator(v); err != nil {
 			return &ValidationError{Name: "view_count", err: fmt.Errorf(`ent: validator failed for field "Post.view_count": %w`, err)}
@@ -1106,6 +1226,18 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	}
 	if value, ok := _u.mutation.IsAllowComment(); ok {
 		_spec.SetField(post.FieldIsAllowComment, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsVisibleAfterComment(); ok {
+		_spec.SetField(post.FieldIsVisibleAfterComment, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.IsVisibleAfterPay(); ok {
+		_spec.SetField(post.FieldIsVisibleAfterPay, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Money(); ok {
+		_spec.SetField(post.FieldMoney, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMoney(); ok {
+		_spec.AddField(post.FieldMoney, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)

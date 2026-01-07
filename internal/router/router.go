@@ -60,14 +60,6 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 				fileApi.Delete("/delete/:id", handlerMap.FileHandler.DeleteFile).Name("fileDelete")
 				fileApi.Post("/upload", handlerMap.FileHandler.Upload).Name("fileUpload")
 			}
-			payChannelApi := apiV1.Group("/pay-channel")
-			{
-				payChannelApi.Get("/page", handlerMap.PayChannelHandler.ListPayChannelPage).Name("payChannelPage")
-				payChannelApi.Post("/create", handlerMap.PayChannelHandler.CreatePayChannel).Name("payChannelCreate")
-				payChannelApi.Put("/update/:id", handlerMap.PayChannelHandler.UpdatePayChannel).Name("payChannelUpdate")
-				payChannelApi.Get("/query/:id", handlerMap.PayChannelHandler.QueryPayChannel).Name("payChannelQuery")
-				payChannelApi.Delete("/delete/:id", handlerMap.PayChannelHandler.DeletePayChannel).Name("payChannelDelete")
-			}
 			payOrderApi := apiV1.Group("/pay-order")
 			{
 				payOrderApi.Get("/page", handlerMap.PayOrderHandler.ListPayOrderPage).Name("payOrderPage")
