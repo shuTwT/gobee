@@ -1,6 +1,3 @@
-/**
- * 相册
- */
 package schema
 
 import (
@@ -8,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Album holds the schema definition for the Album entity.
+// 相册
 type Album struct {
 	ent.Schema
 }

@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ScheduleJob holds the schema definition for the ScheduleJob entity.
+// 定时任务
 type ScheduleJob struct {
 	ent.Schema
 }

@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/schema/index"
 )
 
-// ApiPerms holds the schema definition for the ApiPerms entity.
+// 接口权限
 type ApiPerms struct {
 	ent.Schema
 }

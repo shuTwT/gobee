@@ -16,7 +16,6 @@ import (
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
-	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
@@ -557,43 +556,6 @@ func init() {
 			return nil
 		}
 	}()
-	pageMixin := schema.Page{}.Mixin()
-	pageMixinFields0 := pageMixin[0].Fields()
-	_ = pageMixinFields0
-	pageFields := schema.Page{}.Fields()
-	_ = pageFields
-	// pageDescCreatedAt is the schema descriptor for created_at field.
-	pageDescCreatedAt := pageMixinFields0[1].Descriptor()
-	// page.DefaultCreatedAt holds the default value on creation for the created_at field.
-	page.DefaultCreatedAt = pageDescCreatedAt.Default.(func() time.Time)
-	// pageDescUpdatedAt is the schema descriptor for updated_at field.
-	pageDescUpdatedAt := pageMixinFields0[2].Descriptor()
-	// page.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	page.DefaultUpdatedAt = pageDescUpdatedAt.Default.(func() time.Time)
-	// page.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	page.UpdateDefaultUpdatedAt = pageDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// pageDescTitle is the schema descriptor for title field.
-	pageDescTitle := pageFields[0].Descriptor()
-	// page.TitleValidator is a validator for the "title" field. It is called by the builders before save.
-	page.TitleValidator = func() func(string) error {
-		validators := pageDescTitle.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(title string) error {
-			for _, fn := range fns {
-				if err := fn(title); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// pageDescContent is the schema descriptor for content field.
-	pageDescContent := pageFields[1].Descriptor()
-	// page.ContentValidator is a validator for the "content" field. It is called by the builders before save.
-	page.ContentValidator = pageDescContent.Validators[0].(func(string) error)
 	paychannelMixin := schema.PayChannel{}.Mixin()
 	paychannelMixinFields0 := paychannelMixin[0].Fields()
 	_ = paychannelMixinFields0

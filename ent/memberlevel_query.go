@@ -5,7 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/page"
+	"gobee/ent/memberlevel"
 	"gobee/ent/predicate"
 	"math"
 
@@ -15,64 +15,64 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// PageQuery is the builder for querying Page entities.
-type PageQuery struct {
+// MemberLevelQuery is the builder for querying MemberLevel entities.
+type MemberLevelQuery struct {
 	config
 	ctx        *QueryContext
-	order      []page.OrderOption
+	order      []memberlevel.OrderOption
 	inters     []Interceptor
-	predicates []predicate.Page
+	predicates []predicate.MemberLevel
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the PageQuery builder.
-func (_q *PageQuery) Where(ps ...predicate.Page) *PageQuery {
+// Where adds a new predicate for the MemberLevelQuery builder.
+func (_q *MemberLevelQuery) Where(ps ...predicate.MemberLevel) *MemberLevelQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *PageQuery) Limit(limit int) *PageQuery {
+func (_q *MemberLevelQuery) Limit(limit int) *MemberLevelQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *PageQuery) Offset(offset int) *PageQuery {
+func (_q *MemberLevelQuery) Offset(offset int) *MemberLevelQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *PageQuery) Unique(unique bool) *PageQuery {
+func (_q *MemberLevelQuery) Unique(unique bool) *MemberLevelQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *PageQuery) Order(o ...page.OrderOption) *PageQuery {
+func (_q *MemberLevelQuery) Order(o ...memberlevel.OrderOption) *MemberLevelQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
-// First returns the first Page entity from the query.
-// Returns a *NotFoundError when no Page was found.
-func (_q *PageQuery) First(ctx context.Context) (*Page, error) {
+// First returns the first MemberLevel entity from the query.
+// Returns a *NotFoundError when no MemberLevel was found.
+func (_q *MemberLevelQuery) First(ctx context.Context) (*MemberLevel, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{page.Label}
+		return nil, &NotFoundError{memberlevel.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *PageQuery) FirstX(ctx context.Context) *Page {
+func (_q *MemberLevelQuery) FirstX(ctx context.Context) *MemberLevel {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -80,22 +80,22 @@ func (_q *PageQuery) FirstX(ctx context.Context) *Page {
 	return node
 }
 
-// FirstID returns the first Page ID from the query.
-// Returns a *NotFoundError when no Page ID was found.
-func (_q *PageQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first MemberLevel ID from the query.
+// Returns a *NotFoundError when no MemberLevel ID was found.
+func (_q *MemberLevelQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{page.Label}
+		err = &NotFoundError{memberlevel.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *PageQuery) FirstIDX(ctx context.Context) int {
+func (_q *MemberLevelQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -103,10 +103,10 @@ func (_q *PageQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single Page entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one Page entity is found.
-// Returns a *NotFoundError when no Page entities are found.
-func (_q *PageQuery) Only(ctx context.Context) (*Page, error) {
+// Only returns a single MemberLevel entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one MemberLevel entity is found.
+// Returns a *NotFoundError when no MemberLevel entities are found.
+func (_q *MemberLevelQuery) Only(ctx context.Context) (*MemberLevel, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -115,14 +115,14 @@ func (_q *PageQuery) Only(ctx context.Context) (*Page, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{page.Label}
+		return nil, &NotFoundError{memberlevel.Label}
 	default:
-		return nil, &NotSingularError{page.Label}
+		return nil, &NotSingularError{memberlevel.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *PageQuery) OnlyX(ctx context.Context) *Page {
+func (_q *MemberLevelQuery) OnlyX(ctx context.Context) *MemberLevel {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -130,10 +130,10 @@ func (_q *PageQuery) OnlyX(ctx context.Context) *Page {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Page ID in the query.
-// Returns a *NotSingularError when more than one Page ID is found.
+// OnlyID is like Only, but returns the only MemberLevel ID in the query.
+// Returns a *NotSingularError when more than one MemberLevel ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *PageQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *MemberLevelQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
@@ -142,15 +142,15 @@ func (_q *PageQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{page.Label}
+		err = &NotFoundError{memberlevel.Label}
 	default:
-		err = &NotSingularError{page.Label}
+		err = &NotSingularError{memberlevel.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *PageQuery) OnlyIDX(ctx context.Context) int {
+func (_q *MemberLevelQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -158,18 +158,18 @@ func (_q *PageQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of Pages.
-func (_q *PageQuery) All(ctx context.Context) ([]*Page, error) {
+// All executes the query and returns a list of MemberLevels.
+func (_q *MemberLevelQuery) All(ctx context.Context) ([]*MemberLevel, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*Page, *PageQuery]()
-	return withInterceptors[[]*Page](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*MemberLevel, *MemberLevelQuery]()
+	return withInterceptors[[]*MemberLevel](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *PageQuery) AllX(ctx context.Context) []*Page {
+func (_q *MemberLevelQuery) AllX(ctx context.Context) []*MemberLevel {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -177,20 +177,20 @@ func (_q *PageQuery) AllX(ctx context.Context) []*Page {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Page IDs.
-func (_q *PageQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of MemberLevel IDs.
+func (_q *MemberLevelQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(page.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(memberlevel.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *PageQuery) IDsX(ctx context.Context) []int {
+func (_q *MemberLevelQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -199,16 +199,16 @@ func (_q *PageQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (_q *PageQuery) Count(ctx context.Context) (int, error) {
+func (_q *MemberLevelQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*PageQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*MemberLevelQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *PageQuery) CountX(ctx context.Context) int {
+func (_q *MemberLevelQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -217,7 +217,7 @@ func (_q *PageQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *PageQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *MemberLevelQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -230,7 +230,7 @@ func (_q *PageQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *PageQuery) ExistX(ctx context.Context) bool {
+func (_q *MemberLevelQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -238,18 +238,18 @@ func (_q *PageQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the PageQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the MemberLevelQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *PageQuery) Clone() *PageQuery {
+func (_q *MemberLevelQuery) Clone() *MemberLevelQuery {
 	if _q == nil {
 		return nil
 	}
-	return &PageQuery{
+	return &MemberLevelQuery{
 		config:     _q.config,
 		ctx:        _q.ctx.Clone(),
-		order:      append([]page.OrderOption{}, _q.order...),
+		order:      append([]memberlevel.OrderOption{}, _q.order...),
 		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.Page{}, _q.predicates...),
+		predicates: append([]predicate.MemberLevel{}, _q.predicates...),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -258,53 +258,31 @@ func (_q *PageQuery) Clone() *PageQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
-//
-// Example:
-//
-//	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
-//		Count int `json:"count,omitempty"`
-//	}
-//
-//	client.Page.Query().
-//		GroupBy(page.FieldCreatedAt).
-//		Aggregate(ent.Count()).
-//		Scan(ctx, &v)
-func (_q *PageQuery) GroupBy(field string, fields ...string) *PageGroupBy {
+func (_q *MemberLevelQuery) GroupBy(field string, fields ...string) *MemberLevelGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &PageGroupBy{build: _q}
+	grbuild := &MemberLevelGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = page.Label
+	grbuild.label = memberlevel.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
-//
-// Example:
-//
-//	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
-//	}
-//
-//	client.Page.Query().
-//		Select(page.FieldCreatedAt).
-//		Scan(ctx, &v)
-func (_q *PageQuery) Select(fields ...string) *PageSelect {
+func (_q *MemberLevelQuery) Select(fields ...string) *MemberLevelSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &PageSelect{PageQuery: _q}
-	sbuild.label = page.Label
+	sbuild := &MemberLevelSelect{MemberLevelQuery: _q}
+	sbuild.label = memberlevel.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a PageSelect configured with the given aggregations.
-func (_q *PageQuery) Aggregate(fns ...AggregateFunc) *PageSelect {
+// Aggregate returns a MemberLevelSelect configured with the given aggregations.
+func (_q *MemberLevelQuery) Aggregate(fns ...AggregateFunc) *MemberLevelSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *PageQuery) prepareQuery(ctx context.Context) error {
+func (_q *MemberLevelQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -316,7 +294,7 @@ func (_q *PageQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !page.ValidColumn(f) {
+		if !memberlevel.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -330,16 +308,16 @@ func (_q *PageQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *PageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Page, error) {
+func (_q *MemberLevelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*MemberLevel, error) {
 	var (
-		nodes = []*Page{}
+		nodes = []*MemberLevel{}
 		_spec = _q.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*Page).scanValues(nil, columns)
+		return (*MemberLevel).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &Page{config: _q.config}
+		node := &MemberLevel{config: _q.config}
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
@@ -355,7 +333,7 @@ func (_q *PageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Page, e
 	return nodes, nil
 }
 
-func (_q *PageQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *MemberLevelQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -364,8 +342,8 @@ func (_q *PageQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *PageQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(page.Table, page.Columns, sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt))
+func (_q *MemberLevelQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(memberlevel.Table, memberlevel.Columns, sqlgraph.NewFieldSpec(memberlevel.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -374,9 +352,9 @@ func (_q *PageQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, page.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, memberlevel.FieldID)
 		for i := range fields {
-			if fields[i] != page.FieldID {
+			if fields[i] != memberlevel.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -404,12 +382,12 @@ func (_q *PageQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *PageQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *MemberLevelQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(page.Table)
+	t1 := builder.Table(memberlevel.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = page.Columns
+		columns = memberlevel.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -436,28 +414,28 @@ func (_q *PageQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// PageGroupBy is the group-by builder for Page entities.
-type PageGroupBy struct {
+// MemberLevelGroupBy is the group-by builder for MemberLevel entities.
+type MemberLevelGroupBy struct {
 	selector
-	build *PageQuery
+	build *MemberLevelQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *PageGroupBy) Aggregate(fns ...AggregateFunc) *PageGroupBy {
+func (_g *MemberLevelGroupBy) Aggregate(fns ...AggregateFunc) *MemberLevelGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *PageGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *MemberLevelGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*PageQuery, *PageGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*MemberLevelQuery, *MemberLevelGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *PageGroupBy) sqlScan(ctx context.Context, root *PageQuery, v any) error {
+func (_g *MemberLevelGroupBy) sqlScan(ctx context.Context, root *MemberLevelQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -484,28 +462,28 @@ func (_g *PageGroupBy) sqlScan(ctx context.Context, root *PageQuery, v any) erro
 	return sql.ScanSlice(rows, v)
 }
 
-// PageSelect is the builder for selecting fields of Page entities.
-type PageSelect struct {
-	*PageQuery
+// MemberLevelSelect is the builder for selecting fields of MemberLevel entities.
+type MemberLevelSelect struct {
+	*MemberLevelQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *PageSelect) Aggregate(fns ...AggregateFunc) *PageSelect {
+func (_s *MemberLevelSelect) Aggregate(fns ...AggregateFunc) *MemberLevelSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *PageSelect) Scan(ctx context.Context, v any) error {
+func (_s *MemberLevelSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*PageQuery, *PageSelect](ctx, _s.PageQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*MemberLevelQuery, *MemberLevelSelect](ctx, _s.MemberLevelQuery, _s, _s.inters, v)
 }
 
-func (_s *PageSelect) sqlScan(ctx context.Context, root *PageQuery, v any) error {
+func (_s *MemberLevelSelect) sqlScan(ctx context.Context, root *MemberLevelQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {

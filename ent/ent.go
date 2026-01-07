@@ -10,17 +10,19 @@ import (
 	"gobee/ent/albumphoto"
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
+	"gobee/ent/coupon"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
 	"gobee/ent/friendcirclerecord"
 	"gobee/ent/friendcirclerule"
+	"gobee/ent/member"
+	"gobee/ent/memberlevel"
 	"gobee/ent/modelschema"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
-	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
@@ -31,6 +33,7 @@ import (
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
 	"gobee/ent/visitlog"
+	"gobee/ent/wallet"
 	"gobee/ent/webhook"
 	"reflect"
 	"sync"
@@ -102,17 +105,19 @@ func checkColumn(t, c string) error {
 			albumphoto.Table:          albumphoto.ValidColumn,
 			apiperms.Table:            apiperms.ValidColumn,
 			comment.Table:             comment.ValidColumn,
+			coupon.Table:              coupon.ValidColumn,
 			essay.Table:               essay.ValidColumn,
 			flink.Table:               flink.ValidColumn,
 			flinkgroup.Table:          flinkgroup.ValidColumn,
 			file.Table:                file.ValidColumn,
 			friendcirclerecord.Table:  friendcirclerecord.ValidColumn,
 			friendcirclerule.Table:    friendcirclerule.ValidColumn,
+			member.Table:              member.ValidColumn,
+			memberlevel.Table:         memberlevel.ValidColumn,
 			modelschema.Table:         modelschema.ValidColumn,
 			oauth2accesstoken.Table:   oauth2accesstoken.ValidColumn,
 			oauth2code.Table:          oauth2code.ValidColumn,
 			oauth2refreshtoken.Table:  oauth2refreshtoken.ValidColumn,
-			page.Table:                page.ValidColumn,
 			paychannel.Table:          paychannel.ValidColumn,
 			payorder.Table:            payorder.ValidColumn,
 			personalaccesstoken.Table: personalaccesstoken.ValidColumn,
@@ -123,6 +128,7 @@ func checkColumn(t, c string) error {
 			storagestrategy.Table:     storagestrategy.ValidColumn,
 			user.Table:                user.ValidColumn,
 			visitlog.Table:            visitlog.ValidColumn,
+			wallet.Table:              wallet.ValidColumn,
 			webhook.Table:             webhook.ValidColumn,
 		})
 	})

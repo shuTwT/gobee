@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// FLink holds the schema definition for the FLink entity.
+// 链接
 type FLink struct {
 	ent.Schema
 }

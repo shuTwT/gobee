@@ -4,7 +4,7 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/page"
+	"gobee/ent/coupon"
 	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
@@ -12,26 +12,26 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// PageDelete is the builder for deleting a Page entity.
-type PageDelete struct {
+// CouponDelete is the builder for deleting a Coupon entity.
+type CouponDelete struct {
 	config
 	hooks    []Hook
-	mutation *PageMutation
+	mutation *CouponMutation
 }
 
-// Where appends a list predicates to the PageDelete builder.
-func (_d *PageDelete) Where(ps ...predicate.Page) *PageDelete {
+// Where appends a list predicates to the CouponDelete builder.
+func (_d *CouponDelete) Where(ps ...predicate.Coupon) *CouponDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *PageDelete) Exec(ctx context.Context) (int, error) {
+func (_d *CouponDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *PageDelete) ExecX(ctx context.Context) int {
+func (_d *CouponDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *PageDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *PageDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(page.Table, sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt))
+func (_d *CouponDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(coupon.Table, sqlgraph.NewFieldSpec(coupon.FieldID, field.TypeInt))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *PageDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// PageDeleteOne is the builder for deleting a single Page entity.
-type PageDeleteOne struct {
-	_d *PageDelete
+// CouponDeleteOne is the builder for deleting a single Coupon entity.
+type CouponDeleteOne struct {
+	_d *CouponDelete
 }
 
-// Where appends a list predicates to the PageDelete builder.
-func (_d *PageDeleteOne) Where(ps ...predicate.Page) *PageDeleteOne {
+// Where appends a list predicates to the CouponDelete builder.
+func (_d *CouponDeleteOne) Where(ps ...predicate.Coupon) *CouponDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *PageDeleteOne) Exec(ctx context.Context) error {
+func (_d *CouponDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{page.Label}
+		return &NotFoundError{coupon.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *PageDeleteOne) ExecX(ctx context.Context) {
+func (_d *CouponDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

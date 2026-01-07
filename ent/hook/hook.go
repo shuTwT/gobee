@@ -56,6 +56,18 @@ func (f CommentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommentMutation", m)
 }
 
+// The CouponFunc type is an adapter to allow the use of ordinary
+// function as Coupon mutator.
+type CouponFunc func(context.Context, *ent.CouponMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CouponFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CouponMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CouponMutation", m)
+}
+
 // The EssayFunc type is an adapter to allow the use of ordinary
 // function as Essay mutator.
 type EssayFunc func(context.Context, *ent.EssayMutation) (ent.Value, error)
@@ -128,6 +140,30 @@ func (f FriendCircleRuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.V
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FriendCircleRuleMutation", m)
 }
 
+// The MemberFunc type is an adapter to allow the use of ordinary
+// function as Member mutator.
+type MemberFunc func(context.Context, *ent.MemberMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MemberFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MemberMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MemberMutation", m)
+}
+
+// The MemberLevelFunc type is an adapter to allow the use of ordinary
+// function as MemberLevel mutator.
+type MemberLevelFunc func(context.Context, *ent.MemberLevelMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MemberLevelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MemberLevelMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MemberLevelMutation", m)
+}
+
 // The ModelSchemaFunc type is an adapter to allow the use of ordinary
 // function as ModelSchema mutator.
 type ModelSchemaFunc func(context.Context, *ent.ModelSchemaMutation) (ent.Value, error)
@@ -174,18 +210,6 @@ func (f Oauth2RefreshTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.Oauth2RefreshTokenMutation", m)
-}
-
-// The PageFunc type is an adapter to allow the use of ordinary
-// function as Page mutator.
-type PageFunc func(context.Context, *ent.PageMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f PageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.PageMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PageMutation", m)
 }
 
 // The PayChannelFunc type is an adapter to allow the use of ordinary
@@ -306,6 +330,18 @@ func (f VisitLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VisitLogMutation", m)
+}
+
+// The WalletFunc type is an adapter to allow the use of ordinary
+// function as Wallet mutator.
+type WalletFunc func(context.Context, *ent.WalletMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WalletFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.WalletMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.WalletMutation", m)
 }
 
 // The WebHookFunc type is an adapter to allow the use of ordinary

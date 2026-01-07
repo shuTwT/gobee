@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Comment holds the schema definition for the Comment entity.
+// 评论
 type Comment struct {
 	ent.Schema
 }

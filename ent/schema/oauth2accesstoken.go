@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Oauth2AccessToken holds the schema definition for the Oauth2AccessToken entity.
+// 访问令牌
 type Oauth2AccessToken struct {
 	ent.Schema
 }

@@ -20,6 +20,8 @@ type Tx struct {
 	ApiPerms *ApiPermsClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// Coupon is the client for interacting with the Coupon builders.
+	Coupon *CouponClient
 	// Essay is the client for interacting with the Essay builders.
 	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
@@ -32,6 +34,10 @@ type Tx struct {
 	FriendCircleRecord *FriendCircleRecordClient
 	// FriendCircleRule is the client for interacting with the FriendCircleRule builders.
 	FriendCircleRule *FriendCircleRuleClient
+	// Member is the client for interacting with the Member builders.
+	Member *MemberClient
+	// MemberLevel is the client for interacting with the MemberLevel builders.
+	MemberLevel *MemberLevelClient
 	// ModelSchema is the client for interacting with the ModelSchema builders.
 	ModelSchema *ModelSchemaClient
 	// Oauth2AccessToken is the client for interacting with the Oauth2AccessToken builders.
@@ -40,8 +46,6 @@ type Tx struct {
 	Oauth2Code *Oauth2CodeClient
 	// Oauth2RefreshToken is the client for interacting with the Oauth2RefreshToken builders.
 	Oauth2RefreshToken *Oauth2RefreshTokenClient
-	// Page is the client for interacting with the Page builders.
-	Page *PageClient
 	// PayChannel is the client for interacting with the PayChannel builders.
 	PayChannel *PayChannelClient
 	// PayOrder is the client for interacting with the PayOrder builders.
@@ -62,6 +66,8 @@ type Tx struct {
 	User *UserClient
 	// VisitLog is the client for interacting with the VisitLog builders.
 	VisitLog *VisitLogClient
+	// Wallet is the client for interacting with the Wallet builders.
+	Wallet *WalletClient
 	// WebHook is the client for interacting with the WebHook builders.
 	WebHook *WebHookClient
 
@@ -199,17 +205,19 @@ func (tx *Tx) init() {
 	tx.AlbumPhoto = NewAlbumPhotoClient(tx.config)
 	tx.ApiPerms = NewApiPermsClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
+	tx.Coupon = NewCouponClient(tx.config)
 	tx.Essay = NewEssayClient(tx.config)
 	tx.FLink = NewFLinkClient(tx.config)
 	tx.FLinkGroup = NewFLinkGroupClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.FriendCircleRecord = NewFriendCircleRecordClient(tx.config)
 	tx.FriendCircleRule = NewFriendCircleRuleClient(tx.config)
+	tx.Member = NewMemberClient(tx.config)
+	tx.MemberLevel = NewMemberLevelClient(tx.config)
 	tx.ModelSchema = NewModelSchemaClient(tx.config)
 	tx.Oauth2AccessToken = NewOauth2AccessTokenClient(tx.config)
 	tx.Oauth2Code = NewOauth2CodeClient(tx.config)
 	tx.Oauth2RefreshToken = NewOauth2RefreshTokenClient(tx.config)
-	tx.Page = NewPageClient(tx.config)
 	tx.PayChannel = NewPayChannelClient(tx.config)
 	tx.PayOrder = NewPayOrderClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
@@ -220,6 +228,7 @@ func (tx *Tx) init() {
 	tx.StorageStrategy = NewStorageStrategyClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.VisitLog = NewVisitLogClient(tx.config)
+	tx.Wallet = NewWalletClient(tx.config)
 	tx.WebHook = NewWebHookClient(tx.config)
 }
 

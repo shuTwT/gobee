@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Role holds the schema definition for the Role entity.
+// 角色
 type Role struct {
 	ent.Schema
 }

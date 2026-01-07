@@ -15,17 +15,19 @@ import (
 	"gobee/ent/albumphoto"
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
+	"gobee/ent/coupon"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
 	"gobee/ent/friendcirclerecord"
 	"gobee/ent/friendcirclerule"
+	"gobee/ent/member"
+	"gobee/ent/memberlevel"
 	"gobee/ent/modelschema"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
-	"gobee/ent/page"
 	"gobee/ent/paychannel"
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
@@ -36,6 +38,7 @@ import (
 	"gobee/ent/storagestrategy"
 	"gobee/ent/user"
 	"gobee/ent/visitlog"
+	"gobee/ent/wallet"
 	"gobee/ent/webhook"
 
 	"entgo.io/ent"
@@ -57,6 +60,8 @@ type Client struct {
 	ApiPerms *ApiPermsClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// Coupon is the client for interacting with the Coupon builders.
+	Coupon *CouponClient
 	// Essay is the client for interacting with the Essay builders.
 	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
@@ -69,6 +74,10 @@ type Client struct {
 	FriendCircleRecord *FriendCircleRecordClient
 	// FriendCircleRule is the client for interacting with the FriendCircleRule builders.
 	FriendCircleRule *FriendCircleRuleClient
+	// Member is the client for interacting with the Member builders.
+	Member *MemberClient
+	// MemberLevel is the client for interacting with the MemberLevel builders.
+	MemberLevel *MemberLevelClient
 	// ModelSchema is the client for interacting with the ModelSchema builders.
 	ModelSchema *ModelSchemaClient
 	// Oauth2AccessToken is the client for interacting with the Oauth2AccessToken builders.
@@ -77,8 +86,6 @@ type Client struct {
 	Oauth2Code *Oauth2CodeClient
 	// Oauth2RefreshToken is the client for interacting with the Oauth2RefreshToken builders.
 	Oauth2RefreshToken *Oauth2RefreshTokenClient
-	// Page is the client for interacting with the Page builders.
-	Page *PageClient
 	// PayChannel is the client for interacting with the PayChannel builders.
 	PayChannel *PayChannelClient
 	// PayOrder is the client for interacting with the PayOrder builders.
@@ -99,6 +106,8 @@ type Client struct {
 	User *UserClient
 	// VisitLog is the client for interacting with the VisitLog builders.
 	VisitLog *VisitLogClient
+	// Wallet is the client for interacting with the Wallet builders.
+	Wallet *WalletClient
 	// WebHook is the client for interacting with the WebHook builders.
 	WebHook *WebHookClient
 }
@@ -116,17 +125,19 @@ func (c *Client) init() {
 	c.AlbumPhoto = NewAlbumPhotoClient(c.config)
 	c.ApiPerms = NewApiPermsClient(c.config)
 	c.Comment = NewCommentClient(c.config)
+	c.Coupon = NewCouponClient(c.config)
 	c.Essay = NewEssayClient(c.config)
 	c.FLink = NewFLinkClient(c.config)
 	c.FLinkGroup = NewFLinkGroupClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.FriendCircleRecord = NewFriendCircleRecordClient(c.config)
 	c.FriendCircleRule = NewFriendCircleRuleClient(c.config)
+	c.Member = NewMemberClient(c.config)
+	c.MemberLevel = NewMemberLevelClient(c.config)
 	c.ModelSchema = NewModelSchemaClient(c.config)
 	c.Oauth2AccessToken = NewOauth2AccessTokenClient(c.config)
 	c.Oauth2Code = NewOauth2CodeClient(c.config)
 	c.Oauth2RefreshToken = NewOauth2RefreshTokenClient(c.config)
-	c.Page = NewPageClient(c.config)
 	c.PayChannel = NewPayChannelClient(c.config)
 	c.PayOrder = NewPayOrderClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
@@ -137,6 +148,7 @@ func (c *Client) init() {
 	c.StorageStrategy = NewStorageStrategyClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.VisitLog = NewVisitLogClient(c.config)
+	c.Wallet = NewWalletClient(c.config)
 	c.WebHook = NewWebHookClient(c.config)
 }
 
@@ -234,17 +246,19 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		ApiPerms:            NewApiPermsClient(cfg),
 		Comment:             NewCommentClient(cfg),
+		Coupon:              NewCouponClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
 		File:                NewFileClient(cfg),
 		FriendCircleRecord:  NewFriendCircleRecordClient(cfg),
 		FriendCircleRule:    NewFriendCircleRuleClient(cfg),
+		Member:              NewMemberClient(cfg),
+		MemberLevel:         NewMemberLevelClient(cfg),
 		ModelSchema:         NewModelSchemaClient(cfg),
 		Oauth2AccessToken:   NewOauth2AccessTokenClient(cfg),
 		Oauth2Code:          NewOauth2CodeClient(cfg),
 		Oauth2RefreshToken:  NewOauth2RefreshTokenClient(cfg),
-		Page:                NewPageClient(cfg),
 		PayChannel:          NewPayChannelClient(cfg),
 		PayOrder:            NewPayOrderClient(cfg),
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
@@ -255,6 +269,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		StorageStrategy:     NewStorageStrategyClient(cfg),
 		User:                NewUserClient(cfg),
 		VisitLog:            NewVisitLogClient(cfg),
+		Wallet:              NewWalletClient(cfg),
 		WebHook:             NewWebHookClient(cfg),
 	}, nil
 }
@@ -279,17 +294,19 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		ApiPerms:            NewApiPermsClient(cfg),
 		Comment:             NewCommentClient(cfg),
+		Coupon:              NewCouponClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
 		File:                NewFileClient(cfg),
 		FriendCircleRecord:  NewFriendCircleRecordClient(cfg),
 		FriendCircleRule:    NewFriendCircleRuleClient(cfg),
+		Member:              NewMemberClient(cfg),
+		MemberLevel:         NewMemberLevelClient(cfg),
 		ModelSchema:         NewModelSchemaClient(cfg),
 		Oauth2AccessToken:   NewOauth2AccessTokenClient(cfg),
 		Oauth2Code:          NewOauth2CodeClient(cfg),
 		Oauth2RefreshToken:  NewOauth2RefreshTokenClient(cfg),
-		Page:                NewPageClient(cfg),
 		PayChannel:          NewPayChannelClient(cfg),
 		PayOrder:            NewPayOrderClient(cfg),
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
@@ -300,6 +317,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		StorageStrategy:     NewStorageStrategyClient(cfg),
 		User:                NewUserClient(cfg),
 		VisitLog:            NewVisitLogClient(cfg),
+		Wallet:              NewWalletClient(cfg),
 		WebHook:             NewWebHookClient(cfg),
 	}, nil
 }
@@ -330,11 +348,12 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Essay, c.FLink, c.FLinkGroup,
-		c.File, c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
-		c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.User, c.VisitLog, c.WebHook,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Coupon, c.Essay, c.FLink,
+		c.FLinkGroup, c.File, c.FriendCircleRecord, c.FriendCircleRule, c.Member,
+		c.MemberLevel, c.ModelSchema, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.PayChannel, c.PayOrder, c.PersonalAccessToken, c.Post,
+		c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.User, c.VisitLog,
+		c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -344,11 +363,12 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Essay, c.FLink, c.FLinkGroup,
-		c.File, c.FriendCircleRecord, c.FriendCircleRule, c.ModelSchema,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.Page, c.PayChannel,
-		c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.User, c.VisitLog, c.WebHook,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Coupon, c.Essay, c.FLink,
+		c.FLinkGroup, c.File, c.FriendCircleRecord, c.FriendCircleRule, c.Member,
+		c.MemberLevel, c.ModelSchema, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.PayChannel, c.PayOrder, c.PersonalAccessToken, c.Post,
+		c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.User, c.VisitLog,
+		c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -365,6 +385,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ApiPerms.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
+	case *CouponMutation:
+		return c.Coupon.mutate(ctx, m)
 	case *EssayMutation:
 		return c.Essay.mutate(ctx, m)
 	case *FLinkMutation:
@@ -377,6 +399,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.FriendCircleRecord.mutate(ctx, m)
 	case *FriendCircleRuleMutation:
 		return c.FriendCircleRule.mutate(ctx, m)
+	case *MemberMutation:
+		return c.Member.mutate(ctx, m)
+	case *MemberLevelMutation:
+		return c.MemberLevel.mutate(ctx, m)
 	case *ModelSchemaMutation:
 		return c.ModelSchema.mutate(ctx, m)
 	case *Oauth2AccessTokenMutation:
@@ -385,8 +411,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Oauth2Code.mutate(ctx, m)
 	case *Oauth2RefreshTokenMutation:
 		return c.Oauth2RefreshToken.mutate(ctx, m)
-	case *PageMutation:
-		return c.Page.mutate(ctx, m)
 	case *PayChannelMutation:
 		return c.PayChannel.mutate(ctx, m)
 	case *PayOrderMutation:
@@ -407,6 +431,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.User.mutate(ctx, m)
 	case *VisitLogMutation:
 		return c.VisitLog.mutate(ctx, m)
+	case *WalletMutation:
+		return c.Wallet.mutate(ctx, m)
 	case *WebHookMutation:
 		return c.WebHook.mutate(ctx, m)
 	default:
@@ -943,6 +969,139 @@ func (c *CommentClient) mutate(ctx context.Context, m *CommentMutation) (Value, 
 		return (&CommentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Comment mutation op: %q", m.Op())
+	}
+}
+
+// CouponClient is a client for the Coupon schema.
+type CouponClient struct {
+	config
+}
+
+// NewCouponClient returns a client for the Coupon from the given config.
+func NewCouponClient(c config) *CouponClient {
+	return &CouponClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `coupon.Hooks(f(g(h())))`.
+func (c *CouponClient) Use(hooks ...Hook) {
+	c.hooks.Coupon = append(c.hooks.Coupon, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `coupon.Intercept(f(g(h())))`.
+func (c *CouponClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Coupon = append(c.inters.Coupon, interceptors...)
+}
+
+// Create returns a builder for creating a Coupon entity.
+func (c *CouponClient) Create() *CouponCreate {
+	mutation := newCouponMutation(c.config, OpCreate)
+	return &CouponCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Coupon entities.
+func (c *CouponClient) CreateBulk(builders ...*CouponCreate) *CouponCreateBulk {
+	return &CouponCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CouponClient) MapCreateBulk(slice any, setFunc func(*CouponCreate, int)) *CouponCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CouponCreateBulk{err: fmt.Errorf("calling to CouponClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CouponCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CouponCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Coupon.
+func (c *CouponClient) Update() *CouponUpdate {
+	mutation := newCouponMutation(c.config, OpUpdate)
+	return &CouponUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CouponClient) UpdateOne(_m *Coupon) *CouponUpdateOne {
+	mutation := newCouponMutation(c.config, OpUpdateOne, withCoupon(_m))
+	return &CouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CouponClient) UpdateOneID(id int) *CouponUpdateOne {
+	mutation := newCouponMutation(c.config, OpUpdateOne, withCouponID(id))
+	return &CouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Coupon.
+func (c *CouponClient) Delete() *CouponDelete {
+	mutation := newCouponMutation(c.config, OpDelete)
+	return &CouponDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CouponClient) DeleteOne(_m *Coupon) *CouponDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CouponClient) DeleteOneID(id int) *CouponDeleteOne {
+	builder := c.Delete().Where(coupon.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CouponDeleteOne{builder}
+}
+
+// Query returns a query builder for Coupon.
+func (c *CouponClient) Query() *CouponQuery {
+	return &CouponQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCoupon},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Coupon entity by its id.
+func (c *CouponClient) Get(ctx context.Context, id int) (*Coupon, error) {
+	return c.Query().Where(coupon.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CouponClient) GetX(ctx context.Context, id int) *Coupon {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CouponClient) Hooks() []Hook {
+	return c.hooks.Coupon
+}
+
+// Interceptors returns the client interceptors.
+func (c *CouponClient) Interceptors() []Interceptor {
+	return c.inters.Coupon
+}
+
+func (c *CouponClient) mutate(ctx context.Context, m *CouponMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CouponCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CouponUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CouponDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Coupon mutation op: %q", m.Op())
 	}
 }
 
@@ -1776,6 +1935,272 @@ func (c *FriendCircleRuleClient) mutate(ctx context.Context, m *FriendCircleRule
 	}
 }
 
+// MemberClient is a client for the Member schema.
+type MemberClient struct {
+	config
+}
+
+// NewMemberClient returns a client for the Member from the given config.
+func NewMemberClient(c config) *MemberClient {
+	return &MemberClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `member.Hooks(f(g(h())))`.
+func (c *MemberClient) Use(hooks ...Hook) {
+	c.hooks.Member = append(c.hooks.Member, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `member.Intercept(f(g(h())))`.
+func (c *MemberClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Member = append(c.inters.Member, interceptors...)
+}
+
+// Create returns a builder for creating a Member entity.
+func (c *MemberClient) Create() *MemberCreate {
+	mutation := newMemberMutation(c.config, OpCreate)
+	return &MemberCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Member entities.
+func (c *MemberClient) CreateBulk(builders ...*MemberCreate) *MemberCreateBulk {
+	return &MemberCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MemberClient) MapCreateBulk(slice any, setFunc func(*MemberCreate, int)) *MemberCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MemberCreateBulk{err: fmt.Errorf("calling to MemberClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MemberCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MemberCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Member.
+func (c *MemberClient) Update() *MemberUpdate {
+	mutation := newMemberMutation(c.config, OpUpdate)
+	return &MemberUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MemberClient) UpdateOne(_m *Member) *MemberUpdateOne {
+	mutation := newMemberMutation(c.config, OpUpdateOne, withMember(_m))
+	return &MemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MemberClient) UpdateOneID(id int) *MemberUpdateOne {
+	mutation := newMemberMutation(c.config, OpUpdateOne, withMemberID(id))
+	return &MemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Member.
+func (c *MemberClient) Delete() *MemberDelete {
+	mutation := newMemberMutation(c.config, OpDelete)
+	return &MemberDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MemberClient) DeleteOne(_m *Member) *MemberDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MemberClient) DeleteOneID(id int) *MemberDeleteOne {
+	builder := c.Delete().Where(member.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MemberDeleteOne{builder}
+}
+
+// Query returns a query builder for Member.
+func (c *MemberClient) Query() *MemberQuery {
+	return &MemberQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMember},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Member entity by its id.
+func (c *MemberClient) Get(ctx context.Context, id int) (*Member, error) {
+	return c.Query().Where(member.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MemberClient) GetX(ctx context.Context, id int) *Member {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MemberClient) Hooks() []Hook {
+	return c.hooks.Member
+}
+
+// Interceptors returns the client interceptors.
+func (c *MemberClient) Interceptors() []Interceptor {
+	return c.inters.Member
+}
+
+func (c *MemberClient) mutate(ctx context.Context, m *MemberMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MemberCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MemberUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MemberDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Member mutation op: %q", m.Op())
+	}
+}
+
+// MemberLevelClient is a client for the MemberLevel schema.
+type MemberLevelClient struct {
+	config
+}
+
+// NewMemberLevelClient returns a client for the MemberLevel from the given config.
+func NewMemberLevelClient(c config) *MemberLevelClient {
+	return &MemberLevelClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `memberlevel.Hooks(f(g(h())))`.
+func (c *MemberLevelClient) Use(hooks ...Hook) {
+	c.hooks.MemberLevel = append(c.hooks.MemberLevel, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `memberlevel.Intercept(f(g(h())))`.
+func (c *MemberLevelClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MemberLevel = append(c.inters.MemberLevel, interceptors...)
+}
+
+// Create returns a builder for creating a MemberLevel entity.
+func (c *MemberLevelClient) Create() *MemberLevelCreate {
+	mutation := newMemberLevelMutation(c.config, OpCreate)
+	return &MemberLevelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MemberLevel entities.
+func (c *MemberLevelClient) CreateBulk(builders ...*MemberLevelCreate) *MemberLevelCreateBulk {
+	return &MemberLevelCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MemberLevelClient) MapCreateBulk(slice any, setFunc func(*MemberLevelCreate, int)) *MemberLevelCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MemberLevelCreateBulk{err: fmt.Errorf("calling to MemberLevelClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MemberLevelCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MemberLevelCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MemberLevel.
+func (c *MemberLevelClient) Update() *MemberLevelUpdate {
+	mutation := newMemberLevelMutation(c.config, OpUpdate)
+	return &MemberLevelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MemberLevelClient) UpdateOne(_m *MemberLevel) *MemberLevelUpdateOne {
+	mutation := newMemberLevelMutation(c.config, OpUpdateOne, withMemberLevel(_m))
+	return &MemberLevelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MemberLevelClient) UpdateOneID(id int) *MemberLevelUpdateOne {
+	mutation := newMemberLevelMutation(c.config, OpUpdateOne, withMemberLevelID(id))
+	return &MemberLevelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MemberLevel.
+func (c *MemberLevelClient) Delete() *MemberLevelDelete {
+	mutation := newMemberLevelMutation(c.config, OpDelete)
+	return &MemberLevelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MemberLevelClient) DeleteOne(_m *MemberLevel) *MemberLevelDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MemberLevelClient) DeleteOneID(id int) *MemberLevelDeleteOne {
+	builder := c.Delete().Where(memberlevel.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MemberLevelDeleteOne{builder}
+}
+
+// Query returns a query builder for MemberLevel.
+func (c *MemberLevelClient) Query() *MemberLevelQuery {
+	return &MemberLevelQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMemberLevel},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MemberLevel entity by its id.
+func (c *MemberLevelClient) Get(ctx context.Context, id int) (*MemberLevel, error) {
+	return c.Query().Where(memberlevel.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MemberLevelClient) GetX(ctx context.Context, id int) *MemberLevel {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MemberLevelClient) Hooks() []Hook {
+	return c.hooks.MemberLevel
+}
+
+// Interceptors returns the client interceptors.
+func (c *MemberLevelClient) Interceptors() []Interceptor {
+	return c.inters.MemberLevel
+}
+
+func (c *MemberLevelClient) mutate(ctx context.Context, m *MemberLevelMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MemberLevelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MemberLevelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MemberLevelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MemberLevelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MemberLevel mutation op: %q", m.Op())
+	}
+}
+
 // ModelSchemaClient is a client for the ModelSchema schema.
 type ModelSchemaClient struct {
 	config
@@ -2305,139 +2730,6 @@ func (c *Oauth2RefreshTokenClient) mutate(ctx context.Context, m *Oauth2RefreshT
 		return (&Oauth2RefreshTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Oauth2RefreshToken mutation op: %q", m.Op())
-	}
-}
-
-// PageClient is a client for the Page schema.
-type PageClient struct {
-	config
-}
-
-// NewPageClient returns a client for the Page from the given config.
-func NewPageClient(c config) *PageClient {
-	return &PageClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `page.Hooks(f(g(h())))`.
-func (c *PageClient) Use(hooks ...Hook) {
-	c.hooks.Page = append(c.hooks.Page, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `page.Intercept(f(g(h())))`.
-func (c *PageClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Page = append(c.inters.Page, interceptors...)
-}
-
-// Create returns a builder for creating a Page entity.
-func (c *PageClient) Create() *PageCreate {
-	mutation := newPageMutation(c.config, OpCreate)
-	return &PageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Page entities.
-func (c *PageClient) CreateBulk(builders ...*PageCreate) *PageCreateBulk {
-	return &PageCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *PageClient) MapCreateBulk(slice any, setFunc func(*PageCreate, int)) *PageCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &PageCreateBulk{err: fmt.Errorf("calling to PageClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*PageCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &PageCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Page.
-func (c *PageClient) Update() *PageUpdate {
-	mutation := newPageMutation(c.config, OpUpdate)
-	return &PageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *PageClient) UpdateOne(_m *Page) *PageUpdateOne {
-	mutation := newPageMutation(c.config, OpUpdateOne, withPage(_m))
-	return &PageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *PageClient) UpdateOneID(id int) *PageUpdateOne {
-	mutation := newPageMutation(c.config, OpUpdateOne, withPageID(id))
-	return &PageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Page.
-func (c *PageClient) Delete() *PageDelete {
-	mutation := newPageMutation(c.config, OpDelete)
-	return &PageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *PageClient) DeleteOne(_m *Page) *PageDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PageClient) DeleteOneID(id int) *PageDeleteOne {
-	builder := c.Delete().Where(page.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &PageDeleteOne{builder}
-}
-
-// Query returns a query builder for Page.
-func (c *PageClient) Query() *PageQuery {
-	return &PageQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypePage},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Page entity by its id.
-func (c *PageClient) Get(ctx context.Context, id int) (*Page, error) {
-	return c.Query().Where(page.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *PageClient) GetX(ctx context.Context, id int) *Page {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *PageClient) Hooks() []Hook {
-	return c.hooks.Page
-}
-
-// Interceptors returns the client interceptors.
-func (c *PageClient) Interceptors() []Interceptor {
-	return c.inters.Page
-}
-
-func (c *PageClient) mutate(ctx context.Context, m *PageMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&PageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&PageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&PageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&PageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown Page mutation op: %q", m.Op())
 	}
 }
 
@@ -3803,6 +4095,139 @@ func (c *VisitLogClient) mutate(ctx context.Context, m *VisitLogMutation) (Value
 	}
 }
 
+// WalletClient is a client for the Wallet schema.
+type WalletClient struct {
+	config
+}
+
+// NewWalletClient returns a client for the Wallet from the given config.
+func NewWalletClient(c config) *WalletClient {
+	return &WalletClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `wallet.Hooks(f(g(h())))`.
+func (c *WalletClient) Use(hooks ...Hook) {
+	c.hooks.Wallet = append(c.hooks.Wallet, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `wallet.Intercept(f(g(h())))`.
+func (c *WalletClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Wallet = append(c.inters.Wallet, interceptors...)
+}
+
+// Create returns a builder for creating a Wallet entity.
+func (c *WalletClient) Create() *WalletCreate {
+	mutation := newWalletMutation(c.config, OpCreate)
+	return &WalletCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Wallet entities.
+func (c *WalletClient) CreateBulk(builders ...*WalletCreate) *WalletCreateBulk {
+	return &WalletCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *WalletClient) MapCreateBulk(slice any, setFunc func(*WalletCreate, int)) *WalletCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &WalletCreateBulk{err: fmt.Errorf("calling to WalletClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*WalletCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &WalletCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Wallet.
+func (c *WalletClient) Update() *WalletUpdate {
+	mutation := newWalletMutation(c.config, OpUpdate)
+	return &WalletUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *WalletClient) UpdateOne(_m *Wallet) *WalletUpdateOne {
+	mutation := newWalletMutation(c.config, OpUpdateOne, withWallet(_m))
+	return &WalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *WalletClient) UpdateOneID(id int) *WalletUpdateOne {
+	mutation := newWalletMutation(c.config, OpUpdateOne, withWalletID(id))
+	return &WalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Wallet.
+func (c *WalletClient) Delete() *WalletDelete {
+	mutation := newWalletMutation(c.config, OpDelete)
+	return &WalletDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *WalletClient) DeleteOne(_m *Wallet) *WalletDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *WalletClient) DeleteOneID(id int) *WalletDeleteOne {
+	builder := c.Delete().Where(wallet.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &WalletDeleteOne{builder}
+}
+
+// Query returns a query builder for Wallet.
+func (c *WalletClient) Query() *WalletQuery {
+	return &WalletQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeWallet},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Wallet entity by its id.
+func (c *WalletClient) Get(ctx context.Context, id int) (*Wallet, error) {
+	return c.Query().Where(wallet.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *WalletClient) GetX(ctx context.Context, id int) *Wallet {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *WalletClient) Hooks() []Hook {
+	return c.hooks.Wallet
+}
+
+// Interceptors returns the client interceptors.
+func (c *WalletClient) Interceptors() []Interceptor {
+	return c.inters.Wallet
+}
+
+func (c *WalletClient) mutate(ctx context.Context, m *WalletMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&WalletCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&WalletUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&WalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&WalletDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Wallet mutation op: %q", m.Op())
+	}
+}
+
 // WebHookClient is a client for the WebHook schema.
 type WebHookClient struct {
 	config
@@ -3939,17 +4364,17 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, ApiPerms, Comment, Essay, FLink, FLinkGroup, File,
-		FriendCircleRecord, FriendCircleRule, ModelSchema, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
+		Album, AlbumPhoto, ApiPerms, Comment, Coupon, Essay, FLink, FLinkGroup, File,
+		FriendCircleRecord, FriendCircleRule, Member, MemberLevel, ModelSchema,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayChannel, PayOrder,
 		PersonalAccessToken, Post, Role, ScheduleJob, Setting, StorageStrategy, User,
-		VisitLog, WebHook []ent.Hook
+		VisitLog, Wallet, WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, ApiPerms, Comment, Essay, FLink, FLinkGroup, File,
-		FriendCircleRecord, FriendCircleRule, ModelSchema, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, Page, PayChannel, PayOrder,
+		Album, AlbumPhoto, ApiPerms, Comment, Coupon, Essay, FLink, FLinkGroup, File,
+		FriendCircleRecord, FriendCircleRule, Member, MemberLevel, ModelSchema,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayChannel, PayOrder,
 		PersonalAccessToken, Post, Role, ScheduleJob, Setting, StorageStrategy, User,
-		VisitLog, WebHook []ent.Interceptor
+		VisitLog, Wallet, WebHook []ent.Interceptor
 	}
 )

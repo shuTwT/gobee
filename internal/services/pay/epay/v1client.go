@@ -115,30 +115,30 @@ func NewV1Client(config Config) *V1Client {
 
 // 生成签名
 func (c *V1Client) generateSign(params map[string]string, key string) string {
-	// 1. 排序参数
-	keys := make([]string, 0, len(params))
-	for k := range params {
-		if k != "sign" {
-			keys = append(keys, k)
+	// 1. 收集所有需要签名的 k=v 字符串（排除 sign 和空值）
+	var pairs []string
+	for k, v := range params {
+		if k == "sign" || v == "" {
+			continue
 		}
-	}
-	sort.Strings(keys)
-
-	// 2. 拼接参数
-	var signStr strings.Builder
-	for _, k := range keys {
-		if params[k] != "" {
-			signStr.WriteString(fmt.Sprintf("%s=%s&", k, params[k]))
-		}
+		pairs = append(pairs, fmt.Sprintf("%s=%s", k, v))
 	}
 
-	// 3. 拼接密钥
-	signStr.WriteString(fmt.Sprintf("key=%s", key))
+	// 2. 按 key 排序
+	sort.Strings(pairs)
 
-	// 4. MD5加密
+	// 3. 拼接为 a=b&c=d&e=f
+	signStr := strings.Join(pairs, "&")
+
+	// 4. 直接拼接 key（前面无 &）
+	signStr += key
+
+	log.Printf("签名前字符串: %s", signStr)
+
+	// 5. MD5 加密
 	md5Ctx := md5.New()
-	md5Ctx.Write([]byte(signStr.String()))
-	return strings.ToUpper(hex.EncodeToString(md5Ctx.Sum(nil)))
+	md5Ctx.Write([]byte(signStr))
+	return hex.EncodeToString(md5Ctx.Sum(nil))
 }
 
 // 创建支付订单
@@ -162,7 +162,9 @@ func (c *V1Client) CreateOrder(params V1PayRequestParams) (*V1CreateOrderResp, e
 
 	// 发送请求 - 使用转换函数将map转换为url.Values
 	log.Printf("易支付请求地址: %v", c.config.APIURL+"/mapi.php")
-	resp, err := http.PostForm(c.config.APIURL+"/mapi.php", toURLValues(paramsMap))
+	data := toURLValues(paramsMap)
+	log.Printf("请求参数: %v", data)
+	resp, err := http.PostForm(c.config.APIURL+"/mapi.php", data)
 	if err != nil {
 		return nil, fmt.Errorf("请求失败: %v", err)
 	}

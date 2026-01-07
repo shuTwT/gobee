@@ -2,7 +2,7 @@ package schema
 
 import "entgo.io/ent"
 
-// ModelSchema holds the schema definition for the ModelSchema entity.
+// ModelSchema 模型架构
 type ModelSchema struct {
 	ent.Schema
 }

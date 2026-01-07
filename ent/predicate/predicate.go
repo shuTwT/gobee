@@ -18,6 +18,9 @@ type ApiPerms func(*sql.Selector)
 // Comment is the predicate function for comment builders.
 type Comment func(*sql.Selector)
 
+// Coupon is the predicate function for coupon builders.
+type Coupon func(*sql.Selector)
+
 // Essay is the predicate function for essay builders.
 type Essay func(*sql.Selector)
 
@@ -36,6 +39,12 @@ type FriendCircleRecord func(*sql.Selector)
 // FriendCircleRule is the predicate function for friendcirclerule builders.
 type FriendCircleRule func(*sql.Selector)
 
+// Member is the predicate function for member builders.
+type Member func(*sql.Selector)
+
+// MemberLevel is the predicate function for memberlevel builders.
+type MemberLevel func(*sql.Selector)
+
 // ModelSchema is the predicate function for modelschema builders.
 type ModelSchema func(*sql.Selector)
 
@@ -47,9 +56,6 @@ type Oauth2Code func(*sql.Selector)
 
 // Oauth2RefreshToken is the predicate function for oauth2refreshtoken builders.
 type Oauth2RefreshToken func(*sql.Selector)
-
-// Page is the predicate function for page builders.
-type Page func(*sql.Selector)
 
 // PayChannel is the predicate function for paychannel builders.
 type PayChannel func(*sql.Selector)
@@ -80,6 +86,9 @@ type User func(*sql.Selector)
 
 // VisitLog is the predicate function for visitlog builders.
 type VisitLog func(*sql.Selector)
+
+// Wallet is the predicate function for wallet builders.
+type Wallet func(*sql.Selector)
 
 // WebHook is the predicate function for webhook builders.
 type WebHook func(*sql.Selector)

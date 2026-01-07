@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/schema/index"
 )
 
-// VisitLog holds the schema definition for the VisitLog entity.
+// 访问日志
 type VisitLog struct {
 	ent.Schema
 }

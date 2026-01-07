@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// StorageStrategy holds the schema definition for the StorageStrategy entity.
+// 存储策略
 type StorageStrategy struct {
 	ent.Schema
 }

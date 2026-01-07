@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Post holds the schema definition for the Post entity.
+// 文章
 type Post struct {
 	ent.Schema
 }

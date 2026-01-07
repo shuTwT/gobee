@@ -89,6 +89,16 @@ var (
 		Columns:    CommentsColumns,
 		PrimaryKey: []*schema.Column{CommentsColumns[0]},
 	}
+	// CouponsColumns holds the columns for the "coupons" table.
+	CouponsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// CouponsTable holds the schema information for the "coupons" table.
+	CouponsTable = &schema.Table{
+		Name:       "coupons",
+		Columns:    CouponsColumns,
+		PrimaryKey: []*schema.Column{CouponsColumns[0]},
+	}
 	// EssaysColumns holds the columns for the "essays" table.
 	EssaysColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -201,6 +211,26 @@ var (
 		Columns:    FriendCircleRulesColumns,
 		PrimaryKey: []*schema.Column{FriendCircleRulesColumns[0]},
 	}
+	// MembersColumns holds the columns for the "members" table.
+	MembersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// MembersTable holds the schema information for the "members" table.
+	MembersTable = &schema.Table{
+		Name:       "members",
+		Columns:    MembersColumns,
+		PrimaryKey: []*schema.Column{MembersColumns[0]},
+	}
+	// MemberLevelsColumns holds the columns for the "member_levels" table.
+	MemberLevelsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// MemberLevelsTable holds the schema information for the "member_levels" table.
+	MemberLevelsTable = &schema.Table{
+		Name:       "member_levels",
+		Columns:    MemberLevelsColumns,
+		PrimaryKey: []*schema.Column{MemberLevelsColumns[0]},
+	}
 	// ModelSchemasColumns holds the columns for the "model_schemas" table.
 	ModelSchemasColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -263,21 +293,6 @@ var (
 		Name:       "oauth2refresh_tokens",
 		Columns:    Oauth2refreshTokensColumns,
 		PrimaryKey: []*schema.Column{Oauth2refreshTokensColumns[0]},
-	}
-	// PagesColumns holds the columns for the "pages" table.
-	PagesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "title", Type: field.TypeString, Size: 255},
-		{Name: "content", Type: field.TypeString, Size: 2147483647},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-	}
-	// PagesTable holds the schema information for the "pages" table.
-	PagesTable = &schema.Table{
-		Name:       "pages",
-		Columns:    PagesColumns,
-		PrimaryKey: []*schema.Column{PagesColumns[0]},
 	}
 	// PayChannelsColumns holds the columns for the "pay_channels" table.
 	PayChannelsColumns = []*schema.Column{
@@ -492,6 +507,16 @@ var (
 			},
 		},
 	}
+	// WalletsColumns holds the columns for the "wallets" table.
+	WalletsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// WalletsTable holds the schema information for the "wallets" table.
+	WalletsTable = &schema.Table{
+		Name:       "wallets",
+		Columns:    WalletsColumns,
+		PrimaryKey: []*schema.Column{WalletsColumns[0]},
+	}
 	// WebHooksColumns holds the columns for the "web_hooks" table.
 	WebHooksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -513,17 +538,19 @@ var (
 		AlbumPhotosTable,
 		APIPermsTable,
 		CommentsTable,
+		CouponsTable,
 		EssaysTable,
 		FlinksTable,
 		FlinkGroupsTable,
 		FilesTable,
 		FriendCircleRecordsTable,
 		FriendCircleRulesTable,
+		MembersTable,
+		MemberLevelsTable,
 		ModelSchemasTable,
 		Oauth2accessTokensTable,
 		Oauth2codesTable,
 		Oauth2refreshTokensTable,
-		PagesTable,
 		PayChannelsTable,
 		PayOrdersTable,
 		PersonalAccessTokensTable,
@@ -534,6 +561,7 @@ var (
 		StorageStrategiesTable,
 		UsersTable,
 		VisitLogsTable,
+		WalletsTable,
 		WebHooksTable,
 	}
 )

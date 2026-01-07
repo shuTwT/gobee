@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// PayChannel holds the schema definition for the PayChannel entity.
+// 支付渠道
 type PayChannel struct {
 	ent.Schema
 }

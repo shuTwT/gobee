@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// WebHook holds the schema definition for the WebHook entity.
+// WebHook
 type WebHook struct {
 	ent.Schema
 }

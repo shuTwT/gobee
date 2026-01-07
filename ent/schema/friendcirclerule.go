@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// FriendCircleRule holds the schema definition for the FriendCircleRule entity.
+// FriendCircleRule 好友圈规则
 type FriendCircleRule struct {
 	ent.Schema
 }

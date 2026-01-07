@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Essay holds the schema definition for the Essay entity.
+// 说说
 type Essay struct {
 	ent.Schema
 }

@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// PersonalAccessToken holds the schema definition for the PersonalAccessToken entity.
+// 个人访问令牌
 type PersonalAccessToken struct {
 	ent.Schema
 }

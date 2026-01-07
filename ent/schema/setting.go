@@ -1,6 +1,3 @@
-/**
-* 设置
- */
 package schema
 
 import (
@@ -8,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Setting holds the schema definition for the Setting entity.
+// 设置
 type Setting struct {
 	ent.Schema
 }

@@ -1,6 +1,3 @@
-/**
- * 支付订单
- */
 package schema
 
 import (
@@ -8,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// PayOrder holds the schema definition for the PayOrder entity.
+// 支付订单
 type PayOrder struct {
 	ent.Schema
 }

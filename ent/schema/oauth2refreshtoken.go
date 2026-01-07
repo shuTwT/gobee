@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Oauth2RefreshToken holds the schema definition for the Oauth2RefreshToken entity.
+// 刷新令牌
 type Oauth2RefreshToken struct {
 	ent.Schema
 }

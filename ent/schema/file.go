@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// File holds the schema definition for the File entity.
+// 文件
 type File struct {
 	ent.Schema
 }

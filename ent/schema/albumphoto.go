@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// AlbumPhoto holds the schema definition for the AlbumPhoto entity.
+// 相册相片
 type AlbumPhoto struct {
 	ent.Schema
 }

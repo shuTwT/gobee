@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Oauth2Code holds the schema definition for the Oauth2Code entity.
+// 授权码
 type Oauth2Code struct {
 	ent.Schema
 }
