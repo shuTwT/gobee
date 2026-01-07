@@ -11701,7 +11701,7 @@ type PayOrderMutation struct {
 	id            *int
 	created_at    *time.Time
 	updated_at    *time.Time
-	channel_id    *string
+	channel_type  *string
 	order_id      *string
 	out_trade_no  *string
 	total_fee     *string
@@ -11896,40 +11896,53 @@ func (m *PayOrderMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
-// SetChannelID sets the "channel_id" field.
-func (m *PayOrderMutation) SetChannelID(s string) {
-	m.channel_id = &s
+// SetChannelType sets the "channel_type" field.
+func (m *PayOrderMutation) SetChannelType(s string) {
+	m.channel_type = &s
 }
 
-// ChannelID returns the value of the "channel_id" field in the mutation.
-func (m *PayOrderMutation) ChannelID() (r string, exists bool) {
-	v := m.channel_id
+// ChannelType returns the value of the "channel_type" field in the mutation.
+func (m *PayOrderMutation) ChannelType() (r string, exists bool) {
+	v := m.channel_type
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldChannelID returns the old "channel_id" field's value of the PayOrder entity.
+// OldChannelType returns the old "channel_type" field's value of the PayOrder entity.
 // If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PayOrderMutation) OldChannelID(ctx context.Context) (v string, err error) {
+func (m *PayOrderMutation) OldChannelType(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChannelID is only allowed on UpdateOne operations")
+		return v, errors.New("OldChannelType is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChannelID requires an ID field in the mutation")
+		return v, errors.New("OldChannelType requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChannelID: %w", err)
+		return v, fmt.Errorf("querying old value for OldChannelType: %w", err)
 	}
-	return oldValue.ChannelID, nil
+	return oldValue.ChannelType, nil
 }
 
-// ResetChannelID resets all changes to the "channel_id" field.
-func (m *PayOrderMutation) ResetChannelID() {
-	m.channel_id = nil
+// ClearChannelType clears the value of the "channel_type" field.
+func (m *PayOrderMutation) ClearChannelType() {
+	m.channel_type = nil
+	m.clearedFields[payorder.FieldChannelType] = struct{}{}
+}
+
+// ChannelTypeCleared returns if the "channel_type" field was cleared in this mutation.
+func (m *PayOrderMutation) ChannelTypeCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldChannelType]
+	return ok
+}
+
+// ResetChannelType resets all changes to the "channel_type" field.
+func (m *PayOrderMutation) ResetChannelType() {
+	m.channel_type = nil
+	delete(m.clearedFields, payorder.FieldChannelType)
 }
 
 // SetOrderID sets the "order_id" field.
@@ -11949,7 +11962,7 @@ func (m *PayOrderMutation) OrderID() (r string, exists bool) {
 // OldOrderID returns the old "order_id" field's value of the PayOrder entity.
 // If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PayOrderMutation) OldOrderID(ctx context.Context) (v string, err error) {
+func (m *PayOrderMutation) OldOrderID(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOrderID is only allowed on UpdateOne operations")
 	}
@@ -11963,9 +11976,22 @@ func (m *PayOrderMutation) OldOrderID(ctx context.Context) (v string, err error)
 	return oldValue.OrderID, nil
 }
 
+// ClearOrderID clears the value of the "order_id" field.
+func (m *PayOrderMutation) ClearOrderID() {
+	m.order_id = nil
+	m.clearedFields[payorder.FieldOrderID] = struct{}{}
+}
+
+// OrderIDCleared returns if the "order_id" field was cleared in this mutation.
+func (m *PayOrderMutation) OrderIDCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldOrderID]
+	return ok
+}
+
 // ResetOrderID resets all changes to the "order_id" field.
 func (m *PayOrderMutation) ResetOrderID() {
 	m.order_id = nil
+	delete(m.clearedFields, payorder.FieldOrderID)
 }
 
 // SetOutTradeNo sets the "out_trade_no" field.
@@ -11985,7 +12011,7 @@ func (m *PayOrderMutation) OutTradeNo() (r string, exists bool) {
 // OldOutTradeNo returns the old "out_trade_no" field's value of the PayOrder entity.
 // If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PayOrderMutation) OldOutTradeNo(ctx context.Context) (v string, err error) {
+func (m *PayOrderMutation) OldOutTradeNo(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOutTradeNo is only allowed on UpdateOne operations")
 	}
@@ -11999,9 +12025,22 @@ func (m *PayOrderMutation) OldOutTradeNo(ctx context.Context) (v string, err err
 	return oldValue.OutTradeNo, nil
 }
 
+// ClearOutTradeNo clears the value of the "out_trade_no" field.
+func (m *PayOrderMutation) ClearOutTradeNo() {
+	m.out_trade_no = nil
+	m.clearedFields[payorder.FieldOutTradeNo] = struct{}{}
+}
+
+// OutTradeNoCleared returns if the "out_trade_no" field was cleared in this mutation.
+func (m *PayOrderMutation) OutTradeNoCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldOutTradeNo]
+	return ok
+}
+
 // ResetOutTradeNo resets all changes to the "out_trade_no" field.
 func (m *PayOrderMutation) ResetOutTradeNo() {
 	m.out_trade_no = nil
+	delete(m.clearedFields, payorder.FieldOutTradeNo)
 }
 
 // SetTotalFee sets the "total_fee" field.
@@ -12035,9 +12074,22 @@ func (m *PayOrderMutation) OldTotalFee(ctx context.Context) (v string, err error
 	return oldValue.TotalFee, nil
 }
 
+// ClearTotalFee clears the value of the "total_fee" field.
+func (m *PayOrderMutation) ClearTotalFee() {
+	m.total_fee = nil
+	m.clearedFields[payorder.FieldTotalFee] = struct{}{}
+}
+
+// TotalFeeCleared returns if the "total_fee" field was cleared in this mutation.
+func (m *PayOrderMutation) TotalFeeCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldTotalFee]
+	return ok
+}
+
 // ResetTotalFee resets all changes to the "total_fee" field.
 func (m *PayOrderMutation) ResetTotalFee() {
 	m.total_fee = nil
+	delete(m.clearedFields, payorder.FieldTotalFee)
 }
 
 // SetSubject sets the "subject" field.
@@ -12071,9 +12123,22 @@ func (m *PayOrderMutation) OldSubject(ctx context.Context) (v string, err error)
 	return oldValue.Subject, nil
 }
 
+// ClearSubject clears the value of the "subject" field.
+func (m *PayOrderMutation) ClearSubject() {
+	m.subject = nil
+	m.clearedFields[payorder.FieldSubject] = struct{}{}
+}
+
+// SubjectCleared returns if the "subject" field was cleared in this mutation.
+func (m *PayOrderMutation) SubjectCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldSubject]
+	return ok
+}
+
 // ResetSubject resets all changes to the "subject" field.
 func (m *PayOrderMutation) ResetSubject() {
 	m.subject = nil
+	delete(m.clearedFields, payorder.FieldSubject)
 }
 
 // SetBody sets the "body" field.
@@ -12107,9 +12172,22 @@ func (m *PayOrderMutation) OldBody(ctx context.Context) (v string, err error) {
 	return oldValue.Body, nil
 }
 
+// ClearBody clears the value of the "body" field.
+func (m *PayOrderMutation) ClearBody() {
+	m.body = nil
+	m.clearedFields[payorder.FieldBody] = struct{}{}
+}
+
+// BodyCleared returns if the "body" field was cleared in this mutation.
+func (m *PayOrderMutation) BodyCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldBody]
+	return ok
+}
+
 // ResetBody resets all changes to the "body" field.
 func (m *PayOrderMutation) ResetBody() {
 	m.body = nil
+	delete(m.clearedFields, payorder.FieldBody)
 }
 
 // SetNotifyURL sets the "notify_url" field.
@@ -12143,9 +12221,22 @@ func (m *PayOrderMutation) OldNotifyURL(ctx context.Context) (v string, err erro
 	return oldValue.NotifyURL, nil
 }
 
+// ClearNotifyURL clears the value of the "notify_url" field.
+func (m *PayOrderMutation) ClearNotifyURL() {
+	m.notify_url = nil
+	m.clearedFields[payorder.FieldNotifyURL] = struct{}{}
+}
+
+// NotifyURLCleared returns if the "notify_url" field was cleared in this mutation.
+func (m *PayOrderMutation) NotifyURLCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldNotifyURL]
+	return ok
+}
+
 // ResetNotifyURL resets all changes to the "notify_url" field.
 func (m *PayOrderMutation) ResetNotifyURL() {
 	m.notify_url = nil
+	delete(m.clearedFields, payorder.FieldNotifyURL)
 }
 
 // SetReturnURL sets the "return_url" field.
@@ -12165,7 +12256,7 @@ func (m *PayOrderMutation) ReturnURL() (r string, exists bool) {
 // OldReturnURL returns the old "return_url" field's value of the PayOrder entity.
 // If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PayOrderMutation) OldReturnURL(ctx context.Context) (v string, err error) {
+func (m *PayOrderMutation) OldReturnURL(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldReturnURL is only allowed on UpdateOne operations")
 	}
@@ -12179,9 +12270,22 @@ func (m *PayOrderMutation) OldReturnURL(ctx context.Context) (v string, err erro
 	return oldValue.ReturnURL, nil
 }
 
+// ClearReturnURL clears the value of the "return_url" field.
+func (m *PayOrderMutation) ClearReturnURL() {
+	m.return_url = nil
+	m.clearedFields[payorder.FieldReturnURL] = struct{}{}
+}
+
+// ReturnURLCleared returns if the "return_url" field was cleared in this mutation.
+func (m *PayOrderMutation) ReturnURLCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldReturnURL]
+	return ok
+}
+
 // ResetReturnURL resets all changes to the "return_url" field.
 func (m *PayOrderMutation) ResetReturnURL() {
 	m.return_url = nil
+	delete(m.clearedFields, payorder.FieldReturnURL)
 }
 
 // SetExtra sets the "extra" field.
@@ -12201,7 +12305,7 @@ func (m *PayOrderMutation) Extra() (r string, exists bool) {
 // OldExtra returns the old "extra" field's value of the PayOrder entity.
 // If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PayOrderMutation) OldExtra(ctx context.Context) (v string, err error) {
+func (m *PayOrderMutation) OldExtra(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldExtra is only allowed on UpdateOne operations")
 	}
@@ -12215,9 +12319,22 @@ func (m *PayOrderMutation) OldExtra(ctx context.Context) (v string, err error) {
 	return oldValue.Extra, nil
 }
 
+// ClearExtra clears the value of the "extra" field.
+func (m *PayOrderMutation) ClearExtra() {
+	m.extra = nil
+	m.clearedFields[payorder.FieldExtra] = struct{}{}
+}
+
+// ExtraCleared returns if the "extra" field was cleared in this mutation.
+func (m *PayOrderMutation) ExtraCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldExtra]
+	return ok
+}
+
 // ResetExtra resets all changes to the "extra" field.
 func (m *PayOrderMutation) ResetExtra() {
 	m.extra = nil
+	delete(m.clearedFields, payorder.FieldExtra)
 }
 
 // SetPayURL sets the "pay_url" field.
@@ -12237,7 +12354,7 @@ func (m *PayOrderMutation) PayURL() (r string, exists bool) {
 // OldPayURL returns the old "pay_url" field's value of the PayOrder entity.
 // If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PayOrderMutation) OldPayURL(ctx context.Context) (v string, err error) {
+func (m *PayOrderMutation) OldPayURL(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPayURL is only allowed on UpdateOne operations")
 	}
@@ -12300,9 +12417,22 @@ func (m *PayOrderMutation) OldState(ctx context.Context) (v string, err error) {
 	return oldValue.State, nil
 }
 
+// ClearState clears the value of the "state" field.
+func (m *PayOrderMutation) ClearState() {
+	m.state = nil
+	m.clearedFields[payorder.FieldState] = struct{}{}
+}
+
+// StateCleared returns if the "state" field was cleared in this mutation.
+func (m *PayOrderMutation) StateCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldState]
+	return ok
+}
+
 // ResetState resets all changes to the "state" field.
 func (m *PayOrderMutation) ResetState() {
 	m.state = nil
+	delete(m.clearedFields, payorder.FieldState)
 }
 
 // SetErrorMsg sets the "error_msg" field.
@@ -12444,8 +12574,8 @@ func (m *PayOrderMutation) Fields() []string {
 	if m.updated_at != nil {
 		fields = append(fields, payorder.FieldUpdatedAt)
 	}
-	if m.channel_id != nil {
-		fields = append(fields, payorder.FieldChannelID)
+	if m.channel_type != nil {
+		fields = append(fields, payorder.FieldChannelType)
 	}
 	if m.order_id != nil {
 		fields = append(fields, payorder.FieldOrderID)
@@ -12495,8 +12625,8 @@ func (m *PayOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case payorder.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case payorder.FieldChannelID:
-		return m.ChannelID()
+	case payorder.FieldChannelType:
+		return m.ChannelType()
 	case payorder.FieldOrderID:
 		return m.OrderID()
 	case payorder.FieldOutTradeNo:
@@ -12534,8 +12664,8 @@ func (m *PayOrderMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldCreatedAt(ctx)
 	case payorder.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case payorder.FieldChannelID:
-		return m.OldChannelID(ctx)
+	case payorder.FieldChannelType:
+		return m.OldChannelType(ctx)
 	case payorder.FieldOrderID:
 		return m.OldOrderID(ctx)
 	case payorder.FieldOutTradeNo:
@@ -12583,12 +12713,12 @@ func (m *PayOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case payorder.FieldChannelID:
+	case payorder.FieldChannelType:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetChannelID(v)
+		m.SetChannelType(v)
 		return nil
 	case payorder.FieldOrderID:
 		v, ok := value.(string)
@@ -12704,8 +12834,38 @@ func (m *PayOrderMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *PayOrderMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(payorder.FieldChannelType) {
+		fields = append(fields, payorder.FieldChannelType)
+	}
+	if m.FieldCleared(payorder.FieldOrderID) {
+		fields = append(fields, payorder.FieldOrderID)
+	}
+	if m.FieldCleared(payorder.FieldOutTradeNo) {
+		fields = append(fields, payorder.FieldOutTradeNo)
+	}
+	if m.FieldCleared(payorder.FieldTotalFee) {
+		fields = append(fields, payorder.FieldTotalFee)
+	}
+	if m.FieldCleared(payorder.FieldSubject) {
+		fields = append(fields, payorder.FieldSubject)
+	}
+	if m.FieldCleared(payorder.FieldBody) {
+		fields = append(fields, payorder.FieldBody)
+	}
+	if m.FieldCleared(payorder.FieldNotifyURL) {
+		fields = append(fields, payorder.FieldNotifyURL)
+	}
+	if m.FieldCleared(payorder.FieldReturnURL) {
+		fields = append(fields, payorder.FieldReturnURL)
+	}
+	if m.FieldCleared(payorder.FieldExtra) {
+		fields = append(fields, payorder.FieldExtra)
+	}
 	if m.FieldCleared(payorder.FieldPayURL) {
 		fields = append(fields, payorder.FieldPayURL)
+	}
+	if m.FieldCleared(payorder.FieldState) {
+		fields = append(fields, payorder.FieldState)
 	}
 	if m.FieldCleared(payorder.FieldErrorMsg) {
 		fields = append(fields, payorder.FieldErrorMsg)
@@ -12727,8 +12887,38 @@ func (m *PayOrderMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *PayOrderMutation) ClearField(name string) error {
 	switch name {
+	case payorder.FieldChannelType:
+		m.ClearChannelType()
+		return nil
+	case payorder.FieldOrderID:
+		m.ClearOrderID()
+		return nil
+	case payorder.FieldOutTradeNo:
+		m.ClearOutTradeNo()
+		return nil
+	case payorder.FieldTotalFee:
+		m.ClearTotalFee()
+		return nil
+	case payorder.FieldSubject:
+		m.ClearSubject()
+		return nil
+	case payorder.FieldBody:
+		m.ClearBody()
+		return nil
+	case payorder.FieldNotifyURL:
+		m.ClearNotifyURL()
+		return nil
+	case payorder.FieldReturnURL:
+		m.ClearReturnURL()
+		return nil
+	case payorder.FieldExtra:
+		m.ClearExtra()
+		return nil
 	case payorder.FieldPayURL:
 		m.ClearPayURL()
+		return nil
+	case payorder.FieldState:
+		m.ClearState()
 		return nil
 	case payorder.FieldErrorMsg:
 		m.ClearErrorMsg()
@@ -12750,8 +12940,8 @@ func (m *PayOrderMutation) ResetField(name string) error {
 	case payorder.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case payorder.FieldChannelID:
-		m.ResetChannelID()
+	case payorder.FieldChannelType:
+		m.ResetChannelType()
 		return nil
 	case payorder.FieldOrderID:
 		m.ResetOrderID()

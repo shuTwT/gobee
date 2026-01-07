@@ -7,7 +7,6 @@ import albumPhotoForm from "./albumPhotoForm.vue"
 import type { AlbumFormProps, AlbumPhotoFormProps } from './utils/types'
 import dayjs from "dayjs"
 import { apiClient, useApi } from '@/api'
-import { size } from 'lodash-es'
 
 const message = useMessage()
 

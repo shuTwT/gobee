@@ -41,3 +41,9 @@ type PayChannelResp struct {
 	Type      string    `json:"type"`
 	Config    string    `json:"config"`
 }
+
+type PayChannelPageReq struct {
+	PageQuery
+	Name string `query:"name"`
+	Type string `query:"type"`
+}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gobee/internal/job"
 	schedule_model "gobee/pkg/domain/model/schedule"
+	"log"
 
 	"github.com/go-co-op/gocron/v2"
 )
@@ -67,7 +68,7 @@ func InitializeSchedule() (gocron.Scheduler, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("已添加任务:", taskJob.ID())
+		log.Println("已添加任务:", taskJob.ID())
 	}
 
 	scheduler.Start()

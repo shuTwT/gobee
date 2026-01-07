@@ -64,9 +64,9 @@ func UpdatedAt(v time.Time) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// ChannelID applies equality check predicate on the "channel_id" field. It's identical to ChannelIDEQ.
-func ChannelID(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldEQ(FieldChannelID, v))
+// ChannelType applies equality check predicate on the "channel_type" field. It's identical to ChannelTypeEQ.
+func ChannelType(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldChannelType, v))
 }
 
 // OrderID applies equality check predicate on the "order_id" field. It's identical to OrderIDEQ.
@@ -209,69 +209,79 @@ func UpdatedAtLTE(v time.Time) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// ChannelIDEQ applies the EQ predicate on the "channel_id" field.
-func ChannelIDEQ(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldEQ(FieldChannelID, v))
+// ChannelTypeEQ applies the EQ predicate on the "channel_type" field.
+func ChannelTypeEQ(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldChannelType, v))
 }
 
-// ChannelIDNEQ applies the NEQ predicate on the "channel_id" field.
-func ChannelIDNEQ(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldNEQ(FieldChannelID, v))
+// ChannelTypeNEQ applies the NEQ predicate on the "channel_type" field.
+func ChannelTypeNEQ(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNEQ(FieldChannelType, v))
 }
 
-// ChannelIDIn applies the In predicate on the "channel_id" field.
-func ChannelIDIn(vs ...string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldIn(FieldChannelID, vs...))
+// ChannelTypeIn applies the In predicate on the "channel_type" field.
+func ChannelTypeIn(vs ...string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIn(FieldChannelType, vs...))
 }
 
-// ChannelIDNotIn applies the NotIn predicate on the "channel_id" field.
-func ChannelIDNotIn(vs ...string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldNotIn(FieldChannelID, vs...))
+// ChannelTypeNotIn applies the NotIn predicate on the "channel_type" field.
+func ChannelTypeNotIn(vs ...string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotIn(FieldChannelType, vs...))
 }
 
-// ChannelIDGT applies the GT predicate on the "channel_id" field.
-func ChannelIDGT(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldGT(FieldChannelID, v))
+// ChannelTypeGT applies the GT predicate on the "channel_type" field.
+func ChannelTypeGT(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldGT(FieldChannelType, v))
 }
 
-// ChannelIDGTE applies the GTE predicate on the "channel_id" field.
-func ChannelIDGTE(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldGTE(FieldChannelID, v))
+// ChannelTypeGTE applies the GTE predicate on the "channel_type" field.
+func ChannelTypeGTE(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldGTE(FieldChannelType, v))
 }
 
-// ChannelIDLT applies the LT predicate on the "channel_id" field.
-func ChannelIDLT(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldLT(FieldChannelID, v))
+// ChannelTypeLT applies the LT predicate on the "channel_type" field.
+func ChannelTypeLT(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldLT(FieldChannelType, v))
 }
 
-// ChannelIDLTE applies the LTE predicate on the "channel_id" field.
-func ChannelIDLTE(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldLTE(FieldChannelID, v))
+// ChannelTypeLTE applies the LTE predicate on the "channel_type" field.
+func ChannelTypeLTE(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldLTE(FieldChannelType, v))
 }
 
-// ChannelIDContains applies the Contains predicate on the "channel_id" field.
-func ChannelIDContains(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldContains(FieldChannelID, v))
+// ChannelTypeContains applies the Contains predicate on the "channel_type" field.
+func ChannelTypeContains(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldContains(FieldChannelType, v))
 }
 
-// ChannelIDHasPrefix applies the HasPrefix predicate on the "channel_id" field.
-func ChannelIDHasPrefix(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldHasPrefix(FieldChannelID, v))
+// ChannelTypeHasPrefix applies the HasPrefix predicate on the "channel_type" field.
+func ChannelTypeHasPrefix(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldHasPrefix(FieldChannelType, v))
 }
 
-// ChannelIDHasSuffix applies the HasSuffix predicate on the "channel_id" field.
-func ChannelIDHasSuffix(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldHasSuffix(FieldChannelID, v))
+// ChannelTypeHasSuffix applies the HasSuffix predicate on the "channel_type" field.
+func ChannelTypeHasSuffix(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldHasSuffix(FieldChannelType, v))
 }
 
-// ChannelIDEqualFold applies the EqualFold predicate on the "channel_id" field.
-func ChannelIDEqualFold(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldEqualFold(FieldChannelID, v))
+// ChannelTypeIsNil applies the IsNil predicate on the "channel_type" field.
+func ChannelTypeIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldChannelType))
 }
 
-// ChannelIDContainsFold applies the ContainsFold predicate on the "channel_id" field.
-func ChannelIDContainsFold(v string) predicate.PayOrder {
-	return predicate.PayOrder(sql.FieldContainsFold(FieldChannelID, v))
+// ChannelTypeNotNil applies the NotNil predicate on the "channel_type" field.
+func ChannelTypeNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldChannelType))
+}
+
+// ChannelTypeEqualFold applies the EqualFold predicate on the "channel_type" field.
+func ChannelTypeEqualFold(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEqualFold(FieldChannelType, v))
+}
+
+// ChannelTypeContainsFold applies the ContainsFold predicate on the "channel_type" field.
+func ChannelTypeContainsFold(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldContainsFold(FieldChannelType, v))
 }
 
 // OrderIDEQ applies the EQ predicate on the "order_id" field.
@@ -327,6 +337,16 @@ func OrderIDHasPrefix(v string) predicate.PayOrder {
 // OrderIDHasSuffix applies the HasSuffix predicate on the "order_id" field.
 func OrderIDHasSuffix(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldHasSuffix(FieldOrderID, v))
+}
+
+// OrderIDIsNil applies the IsNil predicate on the "order_id" field.
+func OrderIDIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldOrderID))
+}
+
+// OrderIDNotNil applies the NotNil predicate on the "order_id" field.
+func OrderIDNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldOrderID))
 }
 
 // OrderIDEqualFold applies the EqualFold predicate on the "order_id" field.
@@ -394,6 +414,16 @@ func OutTradeNoHasSuffix(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldHasSuffix(FieldOutTradeNo, v))
 }
 
+// OutTradeNoIsNil applies the IsNil predicate on the "out_trade_no" field.
+func OutTradeNoIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldOutTradeNo))
+}
+
+// OutTradeNoNotNil applies the NotNil predicate on the "out_trade_no" field.
+func OutTradeNoNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldOutTradeNo))
+}
+
 // OutTradeNoEqualFold applies the EqualFold predicate on the "out_trade_no" field.
 func OutTradeNoEqualFold(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldEqualFold(FieldOutTradeNo, v))
@@ -457,6 +487,16 @@ func TotalFeeHasPrefix(v string) predicate.PayOrder {
 // TotalFeeHasSuffix applies the HasSuffix predicate on the "total_fee" field.
 func TotalFeeHasSuffix(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldHasSuffix(FieldTotalFee, v))
+}
+
+// TotalFeeIsNil applies the IsNil predicate on the "total_fee" field.
+func TotalFeeIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldTotalFee))
+}
+
+// TotalFeeNotNil applies the NotNil predicate on the "total_fee" field.
+func TotalFeeNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldTotalFee))
 }
 
 // TotalFeeEqualFold applies the EqualFold predicate on the "total_fee" field.
@@ -524,6 +564,16 @@ func SubjectHasSuffix(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldHasSuffix(FieldSubject, v))
 }
 
+// SubjectIsNil applies the IsNil predicate on the "subject" field.
+func SubjectIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldSubject))
+}
+
+// SubjectNotNil applies the NotNil predicate on the "subject" field.
+func SubjectNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldSubject))
+}
+
 // SubjectEqualFold applies the EqualFold predicate on the "subject" field.
 func SubjectEqualFold(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldEqualFold(FieldSubject, v))
@@ -587,6 +637,16 @@ func BodyHasPrefix(v string) predicate.PayOrder {
 // BodyHasSuffix applies the HasSuffix predicate on the "body" field.
 func BodyHasSuffix(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldHasSuffix(FieldBody, v))
+}
+
+// BodyIsNil applies the IsNil predicate on the "body" field.
+func BodyIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldBody))
+}
+
+// BodyNotNil applies the NotNil predicate on the "body" field.
+func BodyNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldBody))
 }
 
 // BodyEqualFold applies the EqualFold predicate on the "body" field.
@@ -654,6 +714,16 @@ func NotifyURLHasSuffix(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldHasSuffix(FieldNotifyURL, v))
 }
 
+// NotifyURLIsNil applies the IsNil predicate on the "notify_url" field.
+func NotifyURLIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldNotifyURL))
+}
+
+// NotifyURLNotNil applies the NotNil predicate on the "notify_url" field.
+func NotifyURLNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldNotifyURL))
+}
+
 // NotifyURLEqualFold applies the EqualFold predicate on the "notify_url" field.
 func NotifyURLEqualFold(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldEqualFold(FieldNotifyURL, v))
@@ -719,6 +789,16 @@ func ReturnURLHasSuffix(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldHasSuffix(FieldReturnURL, v))
 }
 
+// ReturnURLIsNil applies the IsNil predicate on the "return_url" field.
+func ReturnURLIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldReturnURL))
+}
+
+// ReturnURLNotNil applies the NotNil predicate on the "return_url" field.
+func ReturnURLNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldReturnURL))
+}
+
 // ReturnURLEqualFold applies the EqualFold predicate on the "return_url" field.
 func ReturnURLEqualFold(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldEqualFold(FieldReturnURL, v))
@@ -782,6 +862,16 @@ func ExtraHasPrefix(v string) predicate.PayOrder {
 // ExtraHasSuffix applies the HasSuffix predicate on the "extra" field.
 func ExtraHasSuffix(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldHasSuffix(FieldExtra, v))
+}
+
+// ExtraIsNil applies the IsNil predicate on the "extra" field.
+func ExtraIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldExtra))
+}
+
+// ExtraNotNil applies the NotNil predicate on the "extra" field.
+func ExtraNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldExtra))
 }
 
 // ExtraEqualFold applies the EqualFold predicate on the "extra" field.
@@ -922,6 +1012,16 @@ func StateHasPrefix(v string) predicate.PayOrder {
 // StateHasSuffix applies the HasSuffix predicate on the "state" field.
 func StateHasSuffix(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldHasSuffix(FieldState, v))
+}
+
+// StateIsNil applies the IsNil predicate on the "state" field.
+func StateIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldState))
+}
+
+// StateNotNil applies the NotNil predicate on the "state" field.
+func StateNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldState))
 }
 
 // StateEqualFold applies the EqualFold predicate on the "state" field.

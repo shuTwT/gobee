@@ -6,6 +6,7 @@ const message = useMessage()
 const paymentFormRef = ref<FormInst | null>(null)
 
 const defaultForm = {
+  enableEpay: false,
   enableAlipay: false,
   alipayAppId: '',
   alipayPrivateKey: '',
@@ -16,9 +17,10 @@ const defaultForm = {
   wechatAppId: '',
   paymentNotifyUrl: '',
   orderTimeout: 30,
-  refundReview: true
+  refundReview: true,
 }
 const paymentForm = ref({
+  enableEpay: false,
   enableAlipay: false,
   alipayAppId: '',
   alipayPrivateKey: '',
@@ -29,17 +31,16 @@ const paymentForm = ref({
   wechatAppId: '',
   paymentNotifyUrl: '',
   orderTimeout: 30,
-  refundReview: true
+  refundReview: true,
 })
 const paymentLoading = ref(false)
-
 
 // 保存支付设置
 const savePaymentSettings = async () => {
   paymentLoading.value = true
   try {
-    await settingApi.saveSettings('payment',paymentForm.value)
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await settingApi.saveSettings('payment', paymentForm.value)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     onSearch()
     message.success('支付设置保存成功')
   } catch {
@@ -52,19 +53,19 @@ const savePaymentSettings = async () => {
 // 测试支付连接
 const testPaymentConnection = async () => {
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     message.success('支付连接测试成功')
   } catch {
     message.error('支付连接测试失败')
   }
 }
 
-const onSearch = async()=>{
+const onSearch = async () => {
   const res = await settingApi.getSettingsMap('payment')
-  paymentForm.value = Object.assign({},defaultForm, res.data)
+  paymentForm.value = Object.assign({}, defaultForm, res.data)
 }
 
-onMounted(()=>{
+onMounted(() => {
   onSearch()
 })
 </script>
@@ -77,6 +78,13 @@ onMounted(()=>{
     require-mark-placement="right-hanging"
     class="settings-form"
   >
+    <n-form-item label="启用易支付" path="enableEpay">
+      <n-switch v-model:value="paymentForm.enableEpay" />
+      <n-text>
+        启用易支付后，支付宝和微信的渠道将被易支付替代。
+      </n-text>
+    </n-form-item>
+    <n-divider />
     <n-form-item label="启用支付宝" path="enableAlipay">
       <n-switch v-model:value="paymentForm.enableAlipay" />
     </n-form-item>

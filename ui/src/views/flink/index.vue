@@ -349,6 +349,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+  .flink-card{
+  max-width: 1600px;
+  margin: 0 auto;
+}
 .header-section {
   display: flex;
   justify-content: space-between;

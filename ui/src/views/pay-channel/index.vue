@@ -403,6 +403,7 @@ const columns: DataTableColumns<ChannelItem> = [
   {
     title: '操作',
     key: 'actions',
+    fixed:"right",
     width: 200,
     render: (row) => {
       return h('div', { class: 'action-buttons' }, [

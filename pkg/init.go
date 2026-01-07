@@ -9,6 +9,7 @@ import (
 	essay_service "gobee/internal/services/essay"
 	flink_service "gobee/internal/services/flink"
 	friend_circle_service "gobee/internal/services/friend_circle"
+	payorder "gobee/internal/services/pay_order"
 	permission_service "gobee/internal/services/permission"
 	post_service "gobee/internal/services/post"
 	role_service "gobee/internal/services/role"
@@ -33,6 +34,7 @@ type ServiceMap struct {
 	EssayService        essay_service.EssayService
 	FlinkService        flink_service.FlinkService
 	VisitService        visit.VisitService
+	PayOrderService     payorder.PayOrderService
 }
 
 func InitializeServices(moduleDefs embed.FS) ServiceMap {
@@ -60,6 +62,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	essayService := essay_service.NewEssayServiceImpl(db)
 	flinkService := flink_service.NewFlinkServiceImpl(db)
 	visitService := visit.NewVisitServiceImpl(db)
+	payOderService := payorder.NewPayOrderServiceImpl(db)
 
 	//执行
 	permissionService.LoadPermissionsFromDef(moduleDefs)
@@ -77,6 +80,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		EssayService:        essayService,
 		FlinkService:        flinkService,
 		VisitService:        visitService,
+		PayOrderService:     payOderService,
 	}
 
 	return serviceMap

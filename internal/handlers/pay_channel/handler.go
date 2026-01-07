@@ -7,11 +7,12 @@ import (
 
 	"gobee/ent"
 	"gobee/ent/paychannel"
+	"gobee/ent/predicate"
 	"gobee/pkg/domain/model"
 )
 
 type PayChannelHandler interface {
-	ListPayChannel(c *fiber.Ctx) error
+	ListPayChannelPage(c *fiber.Ctx) error
 	CreatePayChannel(c *fiber.Ctx) error
 	UpdatePayChannel(c *fiber.Ctx) error
 	QueryPayChannel(c *fiber.Ctx) error
@@ -28,14 +29,29 @@ func NewPayChannelHandlerImpl(client *ent.Client) *PayChannelHandlerImpl {
 
 // @Summary 获取支付渠道列表
 // @Description 获取所有支付渠道的列表
-// @Tags paychannels
+// @Tags paychannel
 // @Accept json
 // @Produce json
 // @Success 200 {object} []ent.PayChannel
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/paychannels [get]
-func (h *PayChannelHandlerImpl) ListPayChannel(c *fiber.Ctx) error {
-	channels, err := h.client.PayChannel.Query().All(c.Context())
+// @Router /api/v1/paychannel/page [get]
+func (h *PayChannelHandlerImpl) ListPayChannelPage(c *fiber.Ctx) error {
+	pageReq := model.PayChannelPageReq{}
+	if err := c.QueryParser(&pageReq); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	var preds []predicate.PayChannel
+	if pageReq.Name != "" {
+		preds = append(preds, paychannel.NameContains(pageReq.Name))
+	}
+	if pageReq.Type != "" {
+		preds = append(preds, paychannel.TypeEQ(pageReq.Type))
+	}
+	channels, err := h.client.PayChannel.Query().
+		Where(preds...).
+		Limit(pageReq.Page).
+		Offset((pageReq.Size - 1) * pageReq.Size).
+		All(c.Context())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}

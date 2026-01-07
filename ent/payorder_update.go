@@ -34,17 +34,23 @@ func (_u *PayOrderUpdate) SetUpdatedAt(v time.Time) *PayOrderUpdate {
 	return _u
 }
 
-// SetChannelID sets the "channel_id" field.
-func (_u *PayOrderUpdate) SetChannelID(v string) *PayOrderUpdate {
-	_u.mutation.SetChannelID(v)
+// SetChannelType sets the "channel_type" field.
+func (_u *PayOrderUpdate) SetChannelType(v string) *PayOrderUpdate {
+	_u.mutation.SetChannelType(v)
 	return _u
 }
 
-// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
-func (_u *PayOrderUpdate) SetNillableChannelID(v *string) *PayOrderUpdate {
+// SetNillableChannelType sets the "channel_type" field if the given value is not nil.
+func (_u *PayOrderUpdate) SetNillableChannelType(v *string) *PayOrderUpdate {
 	if v != nil {
-		_u.SetChannelID(*v)
+		_u.SetChannelType(*v)
 	}
+	return _u
+}
+
+// ClearChannelType clears the value of the "channel_type" field.
+func (_u *PayOrderUpdate) ClearChannelType() *PayOrderUpdate {
+	_u.mutation.ClearChannelType()
 	return _u
 }
 
@@ -62,6 +68,12 @@ func (_u *PayOrderUpdate) SetNillableOrderID(v *string) *PayOrderUpdate {
 	return _u
 }
 
+// ClearOrderID clears the value of the "order_id" field.
+func (_u *PayOrderUpdate) ClearOrderID() *PayOrderUpdate {
+	_u.mutation.ClearOrderID()
+	return _u
+}
+
 // SetOutTradeNo sets the "out_trade_no" field.
 func (_u *PayOrderUpdate) SetOutTradeNo(v string) *PayOrderUpdate {
 	_u.mutation.SetOutTradeNo(v)
@@ -73,6 +85,12 @@ func (_u *PayOrderUpdate) SetNillableOutTradeNo(v *string) *PayOrderUpdate {
 	if v != nil {
 		_u.SetOutTradeNo(*v)
 	}
+	return _u
+}
+
+// ClearOutTradeNo clears the value of the "out_trade_no" field.
+func (_u *PayOrderUpdate) ClearOutTradeNo() *PayOrderUpdate {
+	_u.mutation.ClearOutTradeNo()
 	return _u
 }
 
@@ -90,6 +108,12 @@ func (_u *PayOrderUpdate) SetNillableTotalFee(v *string) *PayOrderUpdate {
 	return _u
 }
 
+// ClearTotalFee clears the value of the "total_fee" field.
+func (_u *PayOrderUpdate) ClearTotalFee() *PayOrderUpdate {
+	_u.mutation.ClearTotalFee()
+	return _u
+}
+
 // SetSubject sets the "subject" field.
 func (_u *PayOrderUpdate) SetSubject(v string) *PayOrderUpdate {
 	_u.mutation.SetSubject(v)
@@ -101,6 +125,12 @@ func (_u *PayOrderUpdate) SetNillableSubject(v *string) *PayOrderUpdate {
 	if v != nil {
 		_u.SetSubject(*v)
 	}
+	return _u
+}
+
+// ClearSubject clears the value of the "subject" field.
+func (_u *PayOrderUpdate) ClearSubject() *PayOrderUpdate {
+	_u.mutation.ClearSubject()
 	return _u
 }
 
@@ -118,6 +148,12 @@ func (_u *PayOrderUpdate) SetNillableBody(v *string) *PayOrderUpdate {
 	return _u
 }
 
+// ClearBody clears the value of the "body" field.
+func (_u *PayOrderUpdate) ClearBody() *PayOrderUpdate {
+	_u.mutation.ClearBody()
+	return _u
+}
+
 // SetNotifyURL sets the "notify_url" field.
 func (_u *PayOrderUpdate) SetNotifyURL(v string) *PayOrderUpdate {
 	_u.mutation.SetNotifyURL(v)
@@ -129,6 +165,12 @@ func (_u *PayOrderUpdate) SetNillableNotifyURL(v *string) *PayOrderUpdate {
 	if v != nil {
 		_u.SetNotifyURL(*v)
 	}
+	return _u
+}
+
+// ClearNotifyURL clears the value of the "notify_url" field.
+func (_u *PayOrderUpdate) ClearNotifyURL() *PayOrderUpdate {
+	_u.mutation.ClearNotifyURL()
 	return _u
 }
 
@@ -146,6 +188,12 @@ func (_u *PayOrderUpdate) SetNillableReturnURL(v *string) *PayOrderUpdate {
 	return _u
 }
 
+// ClearReturnURL clears the value of the "return_url" field.
+func (_u *PayOrderUpdate) ClearReturnURL() *PayOrderUpdate {
+	_u.mutation.ClearReturnURL()
+	return _u
+}
+
 // SetExtra sets the "extra" field.
 func (_u *PayOrderUpdate) SetExtra(v string) *PayOrderUpdate {
 	_u.mutation.SetExtra(v)
@@ -157,6 +205,12 @@ func (_u *PayOrderUpdate) SetNillableExtra(v *string) *PayOrderUpdate {
 	if v != nil {
 		_u.SetExtra(*v)
 	}
+	return _u
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (_u *PayOrderUpdate) ClearExtra() *PayOrderUpdate {
+	_u.mutation.ClearExtra()
 	return _u
 }
 
@@ -191,6 +245,12 @@ func (_u *PayOrderUpdate) SetNillableState(v *string) *PayOrderUpdate {
 	if v != nil {
 		_u.SetState(*v)
 	}
+	return _u
+}
+
+// ClearState clears the value of the "state" field.
+func (_u *PayOrderUpdate) ClearState() *PayOrderUpdate {
+	_u.mutation.ClearState()
 	return _u
 }
 
@@ -287,32 +347,59 @@ func (_u *PayOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(payorder.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.ChannelID(); ok {
-		_spec.SetField(payorder.FieldChannelID, field.TypeString, value)
+	if value, ok := _u.mutation.ChannelType(); ok {
+		_spec.SetField(payorder.FieldChannelType, field.TypeString, value)
+	}
+	if _u.mutation.ChannelTypeCleared() {
+		_spec.ClearField(payorder.FieldChannelType, field.TypeString)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
 		_spec.SetField(payorder.FieldOrderID, field.TypeString, value)
 	}
+	if _u.mutation.OrderIDCleared() {
+		_spec.ClearField(payorder.FieldOrderID, field.TypeString)
+	}
 	if value, ok := _u.mutation.OutTradeNo(); ok {
 		_spec.SetField(payorder.FieldOutTradeNo, field.TypeString, value)
+	}
+	if _u.mutation.OutTradeNoCleared() {
+		_spec.ClearField(payorder.FieldOutTradeNo, field.TypeString)
 	}
 	if value, ok := _u.mutation.TotalFee(); ok {
 		_spec.SetField(payorder.FieldTotalFee, field.TypeString, value)
 	}
+	if _u.mutation.TotalFeeCleared() {
+		_spec.ClearField(payorder.FieldTotalFee, field.TypeString)
+	}
 	if value, ok := _u.mutation.Subject(); ok {
 		_spec.SetField(payorder.FieldSubject, field.TypeString, value)
+	}
+	if _u.mutation.SubjectCleared() {
+		_spec.ClearField(payorder.FieldSubject, field.TypeString)
 	}
 	if value, ok := _u.mutation.Body(); ok {
 		_spec.SetField(payorder.FieldBody, field.TypeString, value)
 	}
+	if _u.mutation.BodyCleared() {
+		_spec.ClearField(payorder.FieldBody, field.TypeString)
+	}
 	if value, ok := _u.mutation.NotifyURL(); ok {
 		_spec.SetField(payorder.FieldNotifyURL, field.TypeString, value)
+	}
+	if _u.mutation.NotifyURLCleared() {
+		_spec.ClearField(payorder.FieldNotifyURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.ReturnURL(); ok {
 		_spec.SetField(payorder.FieldReturnURL, field.TypeString, value)
 	}
+	if _u.mutation.ReturnURLCleared() {
+		_spec.ClearField(payorder.FieldReturnURL, field.TypeString)
+	}
 	if value, ok := _u.mutation.Extra(); ok {
 		_spec.SetField(payorder.FieldExtra, field.TypeString, value)
+	}
+	if _u.mutation.ExtraCleared() {
+		_spec.ClearField(payorder.FieldExtra, field.TypeString)
 	}
 	if value, ok := _u.mutation.PayURL(); ok {
 		_spec.SetField(payorder.FieldPayURL, field.TypeString, value)
@@ -322,6 +409,9 @@ func (_u *PayOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.State(); ok {
 		_spec.SetField(payorder.FieldState, field.TypeString, value)
+	}
+	if _u.mutation.StateCleared() {
+		_spec.ClearField(payorder.FieldState, field.TypeString)
 	}
 	if value, ok := _u.mutation.ErrorMsg(); ok {
 		_spec.SetField(payorder.FieldErrorMsg, field.TypeString, value)
@@ -361,17 +451,23 @@ func (_u *PayOrderUpdateOne) SetUpdatedAt(v time.Time) *PayOrderUpdateOne {
 	return _u
 }
 
-// SetChannelID sets the "channel_id" field.
-func (_u *PayOrderUpdateOne) SetChannelID(v string) *PayOrderUpdateOne {
-	_u.mutation.SetChannelID(v)
+// SetChannelType sets the "channel_type" field.
+func (_u *PayOrderUpdateOne) SetChannelType(v string) *PayOrderUpdateOne {
+	_u.mutation.SetChannelType(v)
 	return _u
 }
 
-// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
-func (_u *PayOrderUpdateOne) SetNillableChannelID(v *string) *PayOrderUpdateOne {
+// SetNillableChannelType sets the "channel_type" field if the given value is not nil.
+func (_u *PayOrderUpdateOne) SetNillableChannelType(v *string) *PayOrderUpdateOne {
 	if v != nil {
-		_u.SetChannelID(*v)
+		_u.SetChannelType(*v)
 	}
+	return _u
+}
+
+// ClearChannelType clears the value of the "channel_type" field.
+func (_u *PayOrderUpdateOne) ClearChannelType() *PayOrderUpdateOne {
+	_u.mutation.ClearChannelType()
 	return _u
 }
 
@@ -389,6 +485,12 @@ func (_u *PayOrderUpdateOne) SetNillableOrderID(v *string) *PayOrderUpdateOne {
 	return _u
 }
 
+// ClearOrderID clears the value of the "order_id" field.
+func (_u *PayOrderUpdateOne) ClearOrderID() *PayOrderUpdateOne {
+	_u.mutation.ClearOrderID()
+	return _u
+}
+
 // SetOutTradeNo sets the "out_trade_no" field.
 func (_u *PayOrderUpdateOne) SetOutTradeNo(v string) *PayOrderUpdateOne {
 	_u.mutation.SetOutTradeNo(v)
@@ -400,6 +502,12 @@ func (_u *PayOrderUpdateOne) SetNillableOutTradeNo(v *string) *PayOrderUpdateOne
 	if v != nil {
 		_u.SetOutTradeNo(*v)
 	}
+	return _u
+}
+
+// ClearOutTradeNo clears the value of the "out_trade_no" field.
+func (_u *PayOrderUpdateOne) ClearOutTradeNo() *PayOrderUpdateOne {
+	_u.mutation.ClearOutTradeNo()
 	return _u
 }
 
@@ -417,6 +525,12 @@ func (_u *PayOrderUpdateOne) SetNillableTotalFee(v *string) *PayOrderUpdateOne {
 	return _u
 }
 
+// ClearTotalFee clears the value of the "total_fee" field.
+func (_u *PayOrderUpdateOne) ClearTotalFee() *PayOrderUpdateOne {
+	_u.mutation.ClearTotalFee()
+	return _u
+}
+
 // SetSubject sets the "subject" field.
 func (_u *PayOrderUpdateOne) SetSubject(v string) *PayOrderUpdateOne {
 	_u.mutation.SetSubject(v)
@@ -428,6 +542,12 @@ func (_u *PayOrderUpdateOne) SetNillableSubject(v *string) *PayOrderUpdateOne {
 	if v != nil {
 		_u.SetSubject(*v)
 	}
+	return _u
+}
+
+// ClearSubject clears the value of the "subject" field.
+func (_u *PayOrderUpdateOne) ClearSubject() *PayOrderUpdateOne {
+	_u.mutation.ClearSubject()
 	return _u
 }
 
@@ -445,6 +565,12 @@ func (_u *PayOrderUpdateOne) SetNillableBody(v *string) *PayOrderUpdateOne {
 	return _u
 }
 
+// ClearBody clears the value of the "body" field.
+func (_u *PayOrderUpdateOne) ClearBody() *PayOrderUpdateOne {
+	_u.mutation.ClearBody()
+	return _u
+}
+
 // SetNotifyURL sets the "notify_url" field.
 func (_u *PayOrderUpdateOne) SetNotifyURL(v string) *PayOrderUpdateOne {
 	_u.mutation.SetNotifyURL(v)
@@ -456,6 +582,12 @@ func (_u *PayOrderUpdateOne) SetNillableNotifyURL(v *string) *PayOrderUpdateOne 
 	if v != nil {
 		_u.SetNotifyURL(*v)
 	}
+	return _u
+}
+
+// ClearNotifyURL clears the value of the "notify_url" field.
+func (_u *PayOrderUpdateOne) ClearNotifyURL() *PayOrderUpdateOne {
+	_u.mutation.ClearNotifyURL()
 	return _u
 }
 
@@ -473,6 +605,12 @@ func (_u *PayOrderUpdateOne) SetNillableReturnURL(v *string) *PayOrderUpdateOne 
 	return _u
 }
 
+// ClearReturnURL clears the value of the "return_url" field.
+func (_u *PayOrderUpdateOne) ClearReturnURL() *PayOrderUpdateOne {
+	_u.mutation.ClearReturnURL()
+	return _u
+}
+
 // SetExtra sets the "extra" field.
 func (_u *PayOrderUpdateOne) SetExtra(v string) *PayOrderUpdateOne {
 	_u.mutation.SetExtra(v)
@@ -484,6 +622,12 @@ func (_u *PayOrderUpdateOne) SetNillableExtra(v *string) *PayOrderUpdateOne {
 	if v != nil {
 		_u.SetExtra(*v)
 	}
+	return _u
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (_u *PayOrderUpdateOne) ClearExtra() *PayOrderUpdateOne {
+	_u.mutation.ClearExtra()
 	return _u
 }
 
@@ -518,6 +662,12 @@ func (_u *PayOrderUpdateOne) SetNillableState(v *string) *PayOrderUpdateOne {
 	if v != nil {
 		_u.SetState(*v)
 	}
+	return _u
+}
+
+// ClearState clears the value of the "state" field.
+func (_u *PayOrderUpdateOne) ClearState() *PayOrderUpdateOne {
+	_u.mutation.ClearState()
 	return _u
 }
 
@@ -644,32 +794,59 @@ func (_u *PayOrderUpdateOne) sqlSave(ctx context.Context) (_node *PayOrder, err 
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(payorder.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.ChannelID(); ok {
-		_spec.SetField(payorder.FieldChannelID, field.TypeString, value)
+	if value, ok := _u.mutation.ChannelType(); ok {
+		_spec.SetField(payorder.FieldChannelType, field.TypeString, value)
+	}
+	if _u.mutation.ChannelTypeCleared() {
+		_spec.ClearField(payorder.FieldChannelType, field.TypeString)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
 		_spec.SetField(payorder.FieldOrderID, field.TypeString, value)
 	}
+	if _u.mutation.OrderIDCleared() {
+		_spec.ClearField(payorder.FieldOrderID, field.TypeString)
+	}
 	if value, ok := _u.mutation.OutTradeNo(); ok {
 		_spec.SetField(payorder.FieldOutTradeNo, field.TypeString, value)
+	}
+	if _u.mutation.OutTradeNoCleared() {
+		_spec.ClearField(payorder.FieldOutTradeNo, field.TypeString)
 	}
 	if value, ok := _u.mutation.TotalFee(); ok {
 		_spec.SetField(payorder.FieldTotalFee, field.TypeString, value)
 	}
+	if _u.mutation.TotalFeeCleared() {
+		_spec.ClearField(payorder.FieldTotalFee, field.TypeString)
+	}
 	if value, ok := _u.mutation.Subject(); ok {
 		_spec.SetField(payorder.FieldSubject, field.TypeString, value)
+	}
+	if _u.mutation.SubjectCleared() {
+		_spec.ClearField(payorder.FieldSubject, field.TypeString)
 	}
 	if value, ok := _u.mutation.Body(); ok {
 		_spec.SetField(payorder.FieldBody, field.TypeString, value)
 	}
+	if _u.mutation.BodyCleared() {
+		_spec.ClearField(payorder.FieldBody, field.TypeString)
+	}
 	if value, ok := _u.mutation.NotifyURL(); ok {
 		_spec.SetField(payorder.FieldNotifyURL, field.TypeString, value)
+	}
+	if _u.mutation.NotifyURLCleared() {
+		_spec.ClearField(payorder.FieldNotifyURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.ReturnURL(); ok {
 		_spec.SetField(payorder.FieldReturnURL, field.TypeString, value)
 	}
+	if _u.mutation.ReturnURLCleared() {
+		_spec.ClearField(payorder.FieldReturnURL, field.TypeString)
+	}
 	if value, ok := _u.mutation.Extra(); ok {
 		_spec.SetField(payorder.FieldExtra, field.TypeString, value)
+	}
+	if _u.mutation.ExtraCleared() {
+		_spec.ClearField(payorder.FieldExtra, field.TypeString)
 	}
 	if value, ok := _u.mutation.PayURL(); ok {
 		_spec.SetField(payorder.FieldPayURL, field.TypeString, value)
@@ -679,6 +856,9 @@ func (_u *PayOrderUpdateOne) sqlSave(ctx context.Context) (_node *PayOrder, err 
 	}
 	if value, ok := _u.mutation.State(); ok {
 		_spec.SetField(payorder.FieldState, field.TypeString, value)
+	}
+	if _u.mutation.StateCleared() {
+		_spec.ClearField(payorder.FieldState, field.TypeString)
 	}
 	if value, ok := _u.mutation.ErrorMsg(); ok {
 		_spec.SetField(payorder.FieldErrorMsg, field.TypeString, value)

@@ -22,11 +22,11 @@ type PayOrder struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// 支付渠道ID
-	ChannelID string `json:"channel_id,omitempty"`
+	ChannelType *string `json:"channel_type,omitempty"`
 	// 支付订单ID
-	OrderID string `json:"order_id,omitempty"`
+	OrderID *string `json:"order_id,omitempty"`
 	// 商户订单号
-	OutTradeNo string `json:"out_trade_no,omitempty"`
+	OutTradeNo *string `json:"out_trade_no,omitempty"`
 	// 订单金额
 	TotalFee string `json:"total_fee,omitempty"`
 	// 订单标题
@@ -36,11 +36,11 @@ type PayOrder struct {
 	// 异步通知地址
 	NotifyURL string `json:"notify_url,omitempty"`
 	// 同步通知地址
-	ReturnURL string `json:"return_url,omitempty"`
+	ReturnURL *string `json:"return_url,omitempty"`
 	// 额外参数
-	Extra string `json:"extra,omitempty"`
+	Extra *string `json:"extra,omitempty"`
 	// 支付链接
-	PayURL string `json:"pay_url,omitempty"`
+	PayURL *string `json:"pay_url,omitempty"`
 	// 支付状态
 	State string `json:"state,omitempty"`
 	// 错误信息
@@ -57,7 +57,7 @@ func (*PayOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case payorder.FieldID:
 			values[i] = new(sql.NullInt64)
-		case payorder.FieldChannelID, payorder.FieldOrderID, payorder.FieldOutTradeNo, payorder.FieldTotalFee, payorder.FieldSubject, payorder.FieldBody, payorder.FieldNotifyURL, payorder.FieldReturnURL, payorder.FieldExtra, payorder.FieldPayURL, payorder.FieldState, payorder.FieldErrorMsg, payorder.FieldRaw:
+		case payorder.FieldChannelType, payorder.FieldOrderID, payorder.FieldOutTradeNo, payorder.FieldTotalFee, payorder.FieldSubject, payorder.FieldBody, payorder.FieldNotifyURL, payorder.FieldReturnURL, payorder.FieldExtra, payorder.FieldPayURL, payorder.FieldState, payorder.FieldErrorMsg, payorder.FieldRaw:
 			values[i] = new(sql.NullString)
 		case payorder.FieldCreatedAt, payorder.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -94,23 +94,26 @@ func (_m *PayOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
-		case payorder.FieldChannelID:
+		case payorder.FieldChannelType:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field channel_id", values[i])
+				return fmt.Errorf("unexpected type %T for field channel_type", values[i])
 			} else if value.Valid {
-				_m.ChannelID = value.String
+				_m.ChannelType = new(string)
+				*_m.ChannelType = value.String
 			}
 		case payorder.FieldOrderID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field order_id", values[i])
 			} else if value.Valid {
-				_m.OrderID = value.String
+				_m.OrderID = new(string)
+				*_m.OrderID = value.String
 			}
 		case payorder.FieldOutTradeNo:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field out_trade_no", values[i])
 			} else if value.Valid {
-				_m.OutTradeNo = value.String
+				_m.OutTradeNo = new(string)
+				*_m.OutTradeNo = value.String
 			}
 		case payorder.FieldTotalFee:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -140,19 +143,22 @@ func (_m *PayOrder) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field return_url", values[i])
 			} else if value.Valid {
-				_m.ReturnURL = value.String
+				_m.ReturnURL = new(string)
+				*_m.ReturnURL = value.String
 			}
 		case payorder.FieldExtra:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field extra", values[i])
 			} else if value.Valid {
-				_m.Extra = value.String
+				_m.Extra = new(string)
+				*_m.Extra = value.String
 			}
 		case payorder.FieldPayURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field pay_url", values[i])
 			} else if value.Valid {
-				_m.PayURL = value.String
+				_m.PayURL = new(string)
+				*_m.PayURL = value.String
 			}
 		case payorder.FieldState:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -214,14 +220,20 @@ func (_m *PayOrder) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("channel_id=")
-	builder.WriteString(_m.ChannelID)
+	if v := _m.ChannelType; v != nil {
+		builder.WriteString("channel_type=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
-	builder.WriteString("order_id=")
-	builder.WriteString(_m.OrderID)
+	if v := _m.OrderID; v != nil {
+		builder.WriteString("order_id=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
-	builder.WriteString("out_trade_no=")
-	builder.WriteString(_m.OutTradeNo)
+	if v := _m.OutTradeNo; v != nil {
+		builder.WriteString("out_trade_no=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("total_fee=")
 	builder.WriteString(_m.TotalFee)
@@ -235,14 +247,20 @@ func (_m *PayOrder) String() string {
 	builder.WriteString("notify_url=")
 	builder.WriteString(_m.NotifyURL)
 	builder.WriteString(", ")
-	builder.WriteString("return_url=")
-	builder.WriteString(_m.ReturnURL)
+	if v := _m.ReturnURL; v != nil {
+		builder.WriteString("return_url=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
-	builder.WriteString("extra=")
-	builder.WriteString(_m.Extra)
+	if v := _m.Extra; v != nil {
+		builder.WriteString("extra=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
-	builder.WriteString("pay_url=")
-	builder.WriteString(_m.PayURL)
+	if v := _m.PayURL; v != nil {
+		builder.WriteString("pay_url=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("state=")
 	builder.WriteString(_m.State)

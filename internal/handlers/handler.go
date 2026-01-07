@@ -66,7 +66,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	friendCircleRuleHandler := friendcirclerule.NewFriendCircleRuleHandlerImpl(database.DB)
 	initializeHandler := initialize.NewInitializeHandlerImpl(serviceMap.UserService, serviceMap.SettingService)
 	payChannelHandler := paychannel.NewPayChannelHandlerImpl(database.DB)
-	payOrderHandler := payorder.NewPayOrderHandlerImpl(database.DB)
+	payOrderHandler := payorder.NewPayOrderHandlerImpl(database.DB, serviceMap.PayOrderService)
 	postHandler := post.NewPostHandlerImpl(serviceMap.PostService)
 	roleHandler := role.NewRoleHandlerImpl(serviceMap.RoleService)
 	routeHandler := route.NewRouteHandlerImpl()

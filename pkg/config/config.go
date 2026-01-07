@@ -15,14 +15,20 @@ var configKeys = []string{
 }
 
 const (
-	DATABASE_TYPE     = "database.type"
-	DATABASE_URL      = "database.url"
-	SERVER_PORT       = "server.port"
-	SERVER_STAGE      = "server.stage"
-	SERVER_DEBUG      = "server.debug"
-	SWAGGER_ENABLE    = "swagger.enable"
-	AUTH_TOKEN_SECRET = "auth.token_secret"
-	AUTH_PAT_SECRET   = "auth.pat_secret"
+	DATABASE_TYPE         = "database.type"
+	DATABASE_URL          = "database.url"
+	SERVER_PORT           = "server.port"
+	SERVER_STAGE          = "server.stage"
+	SERVER_DEBUG          = "server.debug"
+	SWAGGER_ENABLE        = "swagger.enable"
+	AUTH_TOKEN_SECRET     = "auth.token_secret"
+	AUTH_PAT_SECRET       = "auth.pat_secret"
+	PAY_EPAY_ENABLE       = "pay.epay_enable"
+	PAY_EPAY_API_URL      = "pay.epay_api_url"
+	PAY_EPAY_MERCHANT_ID  = "pay.epay_merchant_id"
+	PAY_EPAY_MERCHANT_KEY = "pay.epay_merchant_key"
+	PAY_EPAY_NOTIFY_URL   = "pay.epay_notify_url"
+	PAY_EPAY_RETURN_URL   = "pay.epay_return_url"
 )
 
 func Init() {
@@ -34,6 +40,13 @@ func Init() {
 	viper.SetDefault(SWAGGER_ENABLE, true)
 	viper.SetDefault(AUTH_TOKEN_SECRET, "your-secret-key")
 	viper.SetDefault(AUTH_PAT_SECRET, "your-pat-secret")
+	// 易支付相关
+	viper.SetDefault(PAY_EPAY_ENABLE, true)
+	viper.SetDefault(PAY_EPAY_API_URL, "https://api.pay.com")
+	viper.SetDefault(PAY_EPAY_MERCHANT_ID, "your-merchant-id")
+	viper.SetDefault(PAY_EPAY_MERCHANT_KEY, "your-merchant-key")
+	viper.SetDefault(PAY_EPAY_NOTIFY_URL, "https://api.shhsu.com/api/v1/payorder/notify")
+	viper.SetDefault(PAY_EPAY_RETURN_URL, "https://api.shhsu.com/api/v1/payorder/return")
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")

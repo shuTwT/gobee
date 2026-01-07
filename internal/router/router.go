@@ -62,7 +62,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			}
 			payChannelApi := apiV1.Group("/pay-channel")
 			{
-				payChannelApi.Get("/list", handlerMap.PayChannelHandler.ListPayChannel).Name("payChannelList")
+				payChannelApi.Get("/page", handlerMap.PayChannelHandler.ListPayChannelPage).Name("payChannelPage")
 				payChannelApi.Post("/create", handlerMap.PayChannelHandler.CreatePayChannel).Name("payChannelCreate")
 				payChannelApi.Put("/update/:id", handlerMap.PayChannelHandler.UpdatePayChannel).Name("payChannelUpdate")
 				payChannelApi.Get("/query/:id", handlerMap.PayChannelHandler.QueryPayChannel).Name("payChannelQuery")
@@ -70,11 +70,12 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			}
 			payOrderApi := apiV1.Group("/pay-order")
 			{
-				payOrderApi.Get("/list", handlerMap.PayOrderHandler.ListPayOrder).Name("payOrderList")
+				payOrderApi.Get("/page", handlerMap.PayOrderHandler.ListPayOrderPage).Name("payOrderPage")
 				payOrderApi.Put("/create", handlerMap.PayOrderHandler.CreatePayOrder).Name("payOrderCreate")
 				payOrderApi.Put("/update/:id", handlerMap.PayOrderHandler.UpdatePayOrder).Name("payOrderUpdate")
 				payOrderApi.Get("/query/:id", handlerMap.PayOrderHandler.QueryPayOrder).Name("payOrderQuery")
 				payOrderApi.Delete("/delete/:id", handlerMap.PayOrderHandler.DeletePayOrder).Name("payOrderDelete")
+				payOrderApi.Post("/submit", handlerMap.PayOrderHandler.SubmitPayOrder).Name("payOrderSubmit")
 			}
 			roleApi := apiV1.Group("/role")
 			{

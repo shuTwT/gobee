@@ -48,9 +48,17 @@ func (_c *PayOrderCreate) SetNillableUpdatedAt(v *time.Time) *PayOrderCreate {
 	return _c
 }
 
-// SetChannelID sets the "channel_id" field.
-func (_c *PayOrderCreate) SetChannelID(v string) *PayOrderCreate {
-	_c.mutation.SetChannelID(v)
+// SetChannelType sets the "channel_type" field.
+func (_c *PayOrderCreate) SetChannelType(v string) *PayOrderCreate {
+	_c.mutation.SetChannelType(v)
+	return _c
+}
+
+// SetNillableChannelType sets the "channel_type" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableChannelType(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetChannelType(*v)
+	}
 	return _c
 }
 
@@ -60,9 +68,25 @@ func (_c *PayOrderCreate) SetOrderID(v string) *PayOrderCreate {
 	return _c
 }
 
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableOrderID(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetOrderID(*v)
+	}
+	return _c
+}
+
 // SetOutTradeNo sets the "out_trade_no" field.
 func (_c *PayOrderCreate) SetOutTradeNo(v string) *PayOrderCreate {
 	_c.mutation.SetOutTradeNo(v)
+	return _c
+}
+
+// SetNillableOutTradeNo sets the "out_trade_no" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableOutTradeNo(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetOutTradeNo(*v)
+	}
 	return _c
 }
 
@@ -72,9 +96,25 @@ func (_c *PayOrderCreate) SetTotalFee(v string) *PayOrderCreate {
 	return _c
 }
 
+// SetNillableTotalFee sets the "total_fee" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableTotalFee(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetTotalFee(*v)
+	}
+	return _c
+}
+
 // SetSubject sets the "subject" field.
 func (_c *PayOrderCreate) SetSubject(v string) *PayOrderCreate {
 	_c.mutation.SetSubject(v)
+	return _c
+}
+
+// SetNillableSubject sets the "subject" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableSubject(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetSubject(*v)
+	}
 	return _c
 }
 
@@ -84,9 +124,25 @@ func (_c *PayOrderCreate) SetBody(v string) *PayOrderCreate {
 	return _c
 }
 
+// SetNillableBody sets the "body" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableBody(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetBody(*v)
+	}
+	return _c
+}
+
 // SetNotifyURL sets the "notify_url" field.
 func (_c *PayOrderCreate) SetNotifyURL(v string) *PayOrderCreate {
 	_c.mutation.SetNotifyURL(v)
+	return _c
+}
+
+// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableNotifyURL(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetNotifyURL(*v)
+	}
 	return _c
 }
 
@@ -96,9 +152,25 @@ func (_c *PayOrderCreate) SetReturnURL(v string) *PayOrderCreate {
 	return _c
 }
 
+// SetNillableReturnURL sets the "return_url" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableReturnURL(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetReturnURL(*v)
+	}
+	return _c
+}
+
 // SetExtra sets the "extra" field.
 func (_c *PayOrderCreate) SetExtra(v string) *PayOrderCreate {
 	_c.mutation.SetExtra(v)
+	return _c
+}
+
+// SetNillableExtra sets the "extra" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableExtra(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetExtra(*v)
+	}
 	return _c
 }
 
@@ -221,36 +293,6 @@ func (_c *PayOrderCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "PayOrder.updated_at"`)}
 	}
-	if _, ok := _c.mutation.ChannelID(); !ok {
-		return &ValidationError{Name: "channel_id", err: errors.New(`ent: missing required field "PayOrder.channel_id"`)}
-	}
-	if _, ok := _c.mutation.OrderID(); !ok {
-		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "PayOrder.order_id"`)}
-	}
-	if _, ok := _c.mutation.OutTradeNo(); !ok {
-		return &ValidationError{Name: "out_trade_no", err: errors.New(`ent: missing required field "PayOrder.out_trade_no"`)}
-	}
-	if _, ok := _c.mutation.TotalFee(); !ok {
-		return &ValidationError{Name: "total_fee", err: errors.New(`ent: missing required field "PayOrder.total_fee"`)}
-	}
-	if _, ok := _c.mutation.Subject(); !ok {
-		return &ValidationError{Name: "subject", err: errors.New(`ent: missing required field "PayOrder.subject"`)}
-	}
-	if _, ok := _c.mutation.Body(); !ok {
-		return &ValidationError{Name: "body", err: errors.New(`ent: missing required field "PayOrder.body"`)}
-	}
-	if _, ok := _c.mutation.NotifyURL(); !ok {
-		return &ValidationError{Name: "notify_url", err: errors.New(`ent: missing required field "PayOrder.notify_url"`)}
-	}
-	if _, ok := _c.mutation.ReturnURL(); !ok {
-		return &ValidationError{Name: "return_url", err: errors.New(`ent: missing required field "PayOrder.return_url"`)}
-	}
-	if _, ok := _c.mutation.Extra(); !ok {
-		return &ValidationError{Name: "extra", err: errors.New(`ent: missing required field "PayOrder.extra"`)}
-	}
-	if _, ok := _c.mutation.State(); !ok {
-		return &ValidationError{Name: "state", err: errors.New(`ent: missing required field "PayOrder.state"`)}
-	}
 	return nil
 }
 
@@ -291,17 +333,17 @@ func (_c *PayOrderCreate) createSpec() (*PayOrder, *sqlgraph.CreateSpec) {
 		_spec.SetField(payorder.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := _c.mutation.ChannelID(); ok {
-		_spec.SetField(payorder.FieldChannelID, field.TypeString, value)
-		_node.ChannelID = value
+	if value, ok := _c.mutation.ChannelType(); ok {
+		_spec.SetField(payorder.FieldChannelType, field.TypeString, value)
+		_node.ChannelType = &value
 	}
 	if value, ok := _c.mutation.OrderID(); ok {
 		_spec.SetField(payorder.FieldOrderID, field.TypeString, value)
-		_node.OrderID = value
+		_node.OrderID = &value
 	}
 	if value, ok := _c.mutation.OutTradeNo(); ok {
 		_spec.SetField(payorder.FieldOutTradeNo, field.TypeString, value)
-		_node.OutTradeNo = value
+		_node.OutTradeNo = &value
 	}
 	if value, ok := _c.mutation.TotalFee(); ok {
 		_spec.SetField(payorder.FieldTotalFee, field.TypeString, value)
@@ -321,15 +363,15 @@ func (_c *PayOrderCreate) createSpec() (*PayOrder, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.ReturnURL(); ok {
 		_spec.SetField(payorder.FieldReturnURL, field.TypeString, value)
-		_node.ReturnURL = value
+		_node.ReturnURL = &value
 	}
 	if value, ok := _c.mutation.Extra(); ok {
 		_spec.SetField(payorder.FieldExtra, field.TypeString, value)
-		_node.Extra = value
+		_node.Extra = &value
 	}
 	if value, ok := _c.mutation.PayURL(); ok {
 		_spec.SetField(payorder.FieldPayURL, field.TypeString, value)
-		_node.PayURL = value
+		_node.PayURL = &value
 	}
 	if value, ok := _c.mutation.State(); ok {
 		_spec.SetField(payorder.FieldState, field.TypeString, value)

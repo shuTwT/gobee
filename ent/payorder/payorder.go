@@ -17,8 +17,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
-	// FieldChannelID holds the string denoting the channel_id field in the database.
-	FieldChannelID = "channel_id"
+	// FieldChannelType holds the string denoting the channel_type field in the database.
+	FieldChannelType = "channel_type"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
 	// FieldOutTradeNo holds the string denoting the out_trade_no field in the database.
@@ -52,7 +52,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
-	FieldChannelID,
+	FieldChannelType,
 	FieldOrderID,
 	FieldOutTradeNo,
 	FieldTotalFee,
@@ -106,9 +106,9 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByChannelID orders the results by the channel_id field.
-func ByChannelID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldChannelID, opts...).ToFunc()
+// ByChannelType orders the results by the channel_type field.
+func ByChannelType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldChannelType, opts...).ToFunc()
 }
 
 // ByOrderID orders the results by the order_id field.

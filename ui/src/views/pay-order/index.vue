@@ -463,6 +463,7 @@ const columns: DataTableColumns<PayOrderItem> = [
   },
   {
     title: '操作',
+    fixed:"right",
     key: 'actions',
     width: 100,
     render: (row) => {
