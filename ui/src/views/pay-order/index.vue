@@ -222,7 +222,7 @@ import {
   TimeOutline,
   EyeOutline,
 } from '@vicons/ionicons5'
-import * as payOrderApi from '@/api/payOrder'
+import * as payOrderApi from '@/api/pay/payOrder'
 
 const message = useMessage()
 

@@ -10,7 +10,7 @@ import {
   deleteStorageStrategy,
   setDefaultStorageStrategy,
   type StorageStrategy,
-} from '@/api/storage'
+} from '@/api/infra/storage'
 import { addDialog } from '@/components/dialog'
 import FormComponent from './form.vue'
 import type { FormItemProps } from './utils/types'

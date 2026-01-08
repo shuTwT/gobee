@@ -5,7 +5,7 @@ import Zhcn from '@uppy/locales/lib/zh_CN';
 import XHRUpload from '@uppy/xhr-upload';
 import { BASE_URL } from '@/api/utils';
 import { getToken } from '@/utils/auth';
-import { getStorageStrategyListAll } from '@/api/storage';
+import { getStorageStrategyListAll } from '@/api/infra/storage';
 
 import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';

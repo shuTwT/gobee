@@ -1,5 +1,5 @@
 import { NButton, NPopconfirm, type MessageReactive } from 'naive-ui'
-import * as postApi from '@/api/post'
+import * as postApi from '@/api/content/post'
 import { addDialog } from '@/components/dialog'
 import type { FormProps } from './types'
 import SettingForm from '../settingForm.vue'

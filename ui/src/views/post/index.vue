@@ -28,7 +28,7 @@ import {
 import { h } from 'vue'
 import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 import { useRouter } from 'vue-router'
-import * as postApi from '@/api/post'
+import * as postApi from '@/api/content/post'
 import { usePostHook } from './utils/hook'
 import dayjs from 'dayjs'
 

@@ -122,7 +122,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 				postApi.Delete("/delete/:id", handlerMap.PostHandler.DeletePost).Name("postDelete")
 				postApi.Get("/summary/stream/:id", handlerMap.PostHandler.GetSummaryForStream).Name("postSummaryStream")
 			}
-			productApi := apiV1.Group("/products")
+			productApi := apiV1.Group("/product")
 			{
 				productApi.Get("/list", handlerMap.ProductHandler.ListProducts).Name("productList")
 				productApi.Get("/page", handlerMap.ProductHandler.ListProductsPage).Name("productPage")
@@ -182,17 +182,9 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 				flinkGroupApi.Put("/update/:id", handlerMap.FlinkGroupHandler.UpdateFlinkGroup).Name("flinkGroupUpdate")
 				flinkGroupApi.Delete("/delete/:id", handlerMap.FlinkGroupHandler.DeleteFLinkGroup).Name("flinkGroupDelete")
 			}
-			friendCircleRuleApi := apiV1.Group("/friend-circle-rule")
+			friendCircleRecordApi := apiV1.Group("/friend-circle")
 			{
-				friendCircleRuleApi.Get("/list", handlerMap.FriendCircleRuleHandler.ListFriendCircleRule).Name("friendCiecleRuleList")
-				friendCircleRuleApi.Get("/page", handlerMap.FriendCircleRuleHandler.ListFriendCircleRulePage).Name("friendCiecleRulePage")
-				friendCircleRuleApi.Post("/create", handlerMap.FriendCircleRuleHandler.CreateFriendCircleRule).Name("friendCiecleRuleCreate")
-				friendCircleRuleApi.Put("/update/:id", handlerMap.FriendCircleRuleHandler.UpdateFriendCircleRule).Name("friendCiecleRuleUpdate")
-				friendCircleRuleApi.Delete("/delete/:id", handlerMap.FriendCircleRuleHandler.DeleteFriendCircleRule).Name("friendCiecleRuleDelete")
-			}
-			friendCircleRecordApi := apiV1.Group("/friend-circle-record")
-			{
-				friendCircleRecordApi.Get("/page", handlerMap.FriendCircleRecordHandler.ListFriendCircleRecordPage).Name("friendCircleRecordPage")
+				friendCircleRecordApi.Get("/page", handlerMap.FriendCircleHandler.ListFriendCircleRecordPage).Name("friendCircleRecordPage")
 			}
 			essayApi := apiV1.Group("/essay")
 			{

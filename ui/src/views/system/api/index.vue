@@ -236,7 +236,7 @@ import {
   PlayOutline,
   PencilOutline
 } from '@vicons/ionicons5'
-import * as routesApi from '@/api/routes'
+import * as routesApi from '@/api/system/routes'
 
 const message = useMessage()
 

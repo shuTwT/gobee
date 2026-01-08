@@ -14,7 +14,6 @@ import (
 	flink_service "gobee/internal/services/flink"
 	friend_circle_service "gobee/internal/services/friend_circle"
 	friendcirclerecord_service "gobee/internal/services/friendcirclerecord"
-	friendcirclerule_service "gobee/internal/services/friendcirclerule"
 	member_service "gobee/internal/services/member"
 	memberlevel_service "gobee/internal/services/memberlevel"
 	payorder "gobee/internal/services/pay_order"
@@ -52,7 +51,6 @@ type ServiceMap struct {
 	FileService               file_service.FileService
 	AlbumPhotoService         albumphoto_service.AlbumPhotoService
 	FriendCircleRecordService friendcirclerecord_service.FriendCircleRecordService
-	FriendCircleRuleService   friendcirclerule_service.FriendCircleRuleService
 	StorageStrategyService    storagestrategy_service.StorageStrategyService
 	WalletService             wallet_service.WalletService
 	MemberService             member_service.MemberService
@@ -91,7 +89,6 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	fileService := file_service.NewFileServiceImpl(db)
 	albumPhotoService := albumphoto_service.NewAlbumPhotoServiceImpl(db)
 	friendCircleRecordService := friendcirclerecord_service.NewFriendCircleRecordServiceImpl(db)
-	friendCircleRuleService := friendcirclerule_service.NewFriendCircleRuleServiceImpl(db)
 	storageStrategyService := storagestrategy_service.NewStorageStrategyServiceImpl(db)
 	walletService := wallet_service.NewWalletServiceImpl(db)
 	memberService := member_service.NewMemberServiceImpl(db)
@@ -120,7 +117,6 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		FileService:               fileService,
 		AlbumPhotoService:         albumPhotoService,
 		FriendCircleRecordService: friendCircleRecordService,
-		FriendCircleRuleService:   friendCircleRuleService,
 		StorageStrategyService:    storageStrategyService,
 		WalletService:             walletService,
 		MemberService:             memberService,

@@ -140,18 +140,6 @@ func (f FriendCircleRecordFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FriendCircleRecordMutation", m)
 }
 
-// The FriendCircleRuleFunc type is an adapter to allow the use of ordinary
-// function as FriendCircleRule mutator.
-type FriendCircleRuleFunc func(context.Context, *ent.FriendCircleRuleMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f FriendCircleRuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.FriendCircleRuleMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FriendCircleRuleMutation", m)
-}
-
 // The MemberFunc type is an adapter to allow the use of ordinary
 // function as Member mutator.
 type MemberFunc func(context.Context, *ent.MemberMutation) (ent.Value, error)

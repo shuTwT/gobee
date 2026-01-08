@@ -31,9 +31,11 @@
 
 10.后端运行在`localhost:13000`，前端运行在`localhost:5732`
 
-11.前端 api 接口地址以`${BASE_URL}/v1`开头，其中`${BASE_URL}`为后端运行地址，一般情况下为`localhost:13000/api`。
+11.前端项目在`ui`文件夹下，采用vue3 + typescript + naive-ui 框架。
 
-12.后端handler中c.QueryParser()传入的参数为指针类型，该传入参数的变量类型不能被定义为指针，需要用`&`符号来获取指针地址。例如：
+12.前端 api 接口地址以`${BASE_URL}/v1`开头，其中`${BASE_URL}`为后端运行地址，一般情况下为`localhost:13000/api`。
+
+13.后端handler中c.QueryParser()传入的参数为指针类型，该传入参数的变量类型不能被定义为指针，需要用`&`符号来获取指针地址。例如：
 ```
 var pageQuery model.PageQuery
 if err := c.QueryParser(&pageQuery); err != nil {

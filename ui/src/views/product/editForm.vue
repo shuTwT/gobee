@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
-import * as productApi from '@/api/product'
+import * as productApi from '@/api/mall/product'
 
 interface Props {
   productId?: number

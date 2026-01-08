@@ -12,8 +12,7 @@ import (
 	file_handler "gobee/internal/handlers/file"
 	flink_handler "gobee/internal/handlers/flink"
 	flinkgroup_handler "gobee/internal/handlers/flink_group"
-	friendcirclerecord_handler "gobee/internal/handlers/friend_circle_record"
-	friendcirclerule_handler "gobee/internal/handlers/friend_circle_rule"
+	friendcircle_handler "gobee/internal/handlers/friend_circle"
 	initialize_handler "gobee/internal/handlers/initialize"
 	member_handler "gobee/internal/handlers/member"
 	memberlevel_handler "gobee/internal/handlers/memberlevel"
@@ -31,31 +30,30 @@ import (
 )
 
 type HandlerMap struct {
-	AlbumHandler              album_handler.AlbumHandler
-	AlbumPhotoHandler         albumphoto_handler.AlbumPhotoHandler
-	ApiInterfaceHandler       apiinterface_handler.ApiInterfaceHandler
-	AuthHandler               auth_handler.AuthHandler
-	CommentHandler            comment_handler.CommentHandler
-	CommonHandler             common_handler.CommonHandler
-	FileHandler               file_handler.FileHandler
-	FlinkHandler              flink_handler.FlinkHandler
-	FlinkGroupHandler         flinkgroup_handler.FlinkGroupHandler
-	FriendCircleRecordHandler friendcirclerecord_handler.FriendCircleRecordHandler
-	FriendCircleRuleHandler   friendcirclerule_handler.FriendCircleRuleHandler
-	InitializeHandler         initialize_handler.InitializeHandler
-	MemberHandler             member_handler.MemberHandler
-	MemberLevelHandler        memberlevel_handler.MemberLevelHandler
-	PayOrderHandler           payorder_handler.PayOrderHandler
-	PostHandler               post_handler.PostHandler
-	ProductHandler            product_handler.ProductHandler
-	RoleHandler               role_handler.RoleHandler
-	RouteHandler              route_handler.RouteHandler
-	SettingHandler            setting_handler.SettingHandler
-	UserHandler               user_handler.UserHandler
-	EssayHandler              essay_handler.EssayHandler
-	StorageStrategyHandler    storagestrategy.StorageStrategyHandler
-	VisitHandler              visit_handler.VisitHandler
-	WalletHandler             wallet_handler.WalletHandler
+	AlbumHandler           album_handler.AlbumHandler
+	AlbumPhotoHandler      albumphoto_handler.AlbumPhotoHandler
+	ApiInterfaceHandler    apiinterface_handler.ApiInterfaceHandler
+	AuthHandler            auth_handler.AuthHandler
+	CommentHandler         comment_handler.CommentHandler
+	CommonHandler          common_handler.CommonHandler
+	FileHandler            file_handler.FileHandler
+	FlinkHandler           flink_handler.FlinkHandler
+	FlinkGroupHandler      flinkgroup_handler.FlinkGroupHandler
+	FriendCircleHandler    friendcircle_handler.FriendCircleHandler
+	InitializeHandler      initialize_handler.InitializeHandler
+	MemberHandler          member_handler.MemberHandler
+	MemberLevelHandler     memberlevel_handler.MemberLevelHandler
+	PayOrderHandler        payorder_handler.PayOrderHandler
+	PostHandler            post_handler.PostHandler
+	ProductHandler         product_handler.ProductHandler
+	RoleHandler            role_handler.RoleHandler
+	RouteHandler           route_handler.RouteHandler
+	SettingHandler         setting_handler.SettingHandler
+	UserHandler            user_handler.UserHandler
+	EssayHandler           essay_handler.EssayHandler
+	StorageStrategyHandler storagestrategy.StorageStrategyHandler
+	VisitHandler           visit_handler.VisitHandler
+	WalletHandler          wallet_handler.WalletHandler
 }
 
 func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
@@ -68,8 +66,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	fileHandler := file_handler.NewFileHandlerImpl(serviceMap.FileService)
 	flinkHandler := flink_handler.NewFlinkHandlerImpl(database.DB, serviceMap.FlinkService)
 	flinkGroupHandler := flinkgroup_handler.NewFlinkGroupHandlerImpl(database.DB, serviceMap.FlinkService)
-	friendCircleRecordHandler := friendcirclerecord_handler.NewFriendCircleRecordHandlerImpl(serviceMap.FriendCircleRecordService)
-	friendCircleRuleHandler := friendcirclerule_handler.NewFriendCircleRuleHandlerImpl(serviceMap.FriendCircleRuleService)
+	friendCircleHandler := friendcircle_handler.NewFriendCircleHandlerImpl(serviceMap.FriendCircleService)
 	initializeHandler := initialize_handler.NewInitializeHandlerImpl(serviceMap.UserService, serviceMap.SettingService)
 	payOrderHandler := payorder_handler.NewPayOrderHandlerImpl(database.DB, serviceMap.PayOrderService)
 	postHandler := post_handler.NewPostHandlerImpl(serviceMap.PostService)
@@ -86,31 +83,30 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	memberLevelHandler := memberlevel_handler.NewMemberLevelHandlerImpl(serviceMap.MemberLevelService)
 
 	handlerMap := HandlerMap{
-		AlbumHandler:              albumHandler,
-		AlbumPhotoHandler:         albnumPhotoHandler,
-		ApiInterfaceHandler:       apiInterfaceHandler,
-		AuthHandler:               authHandler,
-		CommentHandler:            commentHandler,
-		CommonHandler:             commonHandler,
-		FileHandler:               fileHandler,
-		FlinkHandler:              flinkHandler,
-		FlinkGroupHandler:         flinkGroupHandler,
-		FriendCircleRecordHandler: friendCircleRecordHandler,
-		FriendCircleRuleHandler:   friendCircleRuleHandler,
-		InitializeHandler:         initializeHandler,
-		MemberHandler:             memberHandler,
-		MemberLevelHandler:        memberLevelHandler,
-		PayOrderHandler:           payOrderHandler,
-		PostHandler:               postHandler,
-		ProductHandler:            productHandler,
-		RoleHandler:               roleHandler,
-		RouteHandler:              routeHandler,
-		SettingHandler:            settingHandler,
-		UserHandler:               userHandler,
-		EssayHandler:              essayHandler,
-		StorageStrategyHandler:    storageStrategyHandler,
-		VisitHandler:              visitHandler,
-		WalletHandler:             walletHandler,
+		AlbumHandler:           albumHandler,
+		AlbumPhotoHandler:      albnumPhotoHandler,
+		ApiInterfaceHandler:    apiInterfaceHandler,
+		AuthHandler:            authHandler,
+		CommentHandler:         commentHandler,
+		CommonHandler:          commonHandler,
+		FileHandler:            fileHandler,
+		FlinkHandler:           flinkHandler,
+		FlinkGroupHandler:      flinkGroupHandler,
+		FriendCircleHandler:    friendCircleHandler,
+		InitializeHandler:      initializeHandler,
+		MemberHandler:          memberHandler,
+		MemberLevelHandler:     memberLevelHandler,
+		PayOrderHandler:        payOrderHandler,
+		PostHandler:            postHandler,
+		ProductHandler:         productHandler,
+		RoleHandler:            roleHandler,
+		RouteHandler:           routeHandler,
+		SettingHandler:         settingHandler,
+		UserHandler:            userHandler,
+		EssayHandler:           essayHandler,
+		StorageStrategyHandler: storageStrategyHandler,
+		VisitHandler:           visitHandler,
+		WalletHandler:          walletHandler,
 	}
 
 	return handlerMap

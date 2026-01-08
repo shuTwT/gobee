@@ -23,7 +23,7 @@ import 'tinymce/plugins/wordcount'
 import 'tinymce/skins/content/default/content.js'
 import 'tinymce/skins/ui/oxide/content.js'
 import { useRoute } from 'vue-router'
-import * as postApi from '@/api/post'
+import * as postApi from '@/api/content/post'
 import { usePostHook } from '../utils/hook'
 
 const { settingPost, savePost, publishPost, unpublishPost, importPost } = usePostHook()

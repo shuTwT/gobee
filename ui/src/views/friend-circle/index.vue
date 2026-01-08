@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as friendCircleRecordApi from '@/api/friendCircle/friendCircleRecord'
+import * as friendCircleRecordApi from '@/api/friend-circle/friendCircle'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 

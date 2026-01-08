@@ -2,7 +2,7 @@ import { usePermissionStore, usePermissionStoreHook } from "@/stores/modules/per
 import type { RouteComponent, Router,RouteRecordRaw } from "vue-router";
 import { cloneDeep, intersection, isEmpty } from "lodash-es"
 import router from ".";
-import { getAsyncRoutes } from "@/api/routes";
+import { getAsyncRoutes } from "@/api/system/routes";
 import { useStorageLocal } from "@/utils/utils";
 import { userKey, type DataInfo } from "@/utils/auth";
 import { buildHierarchyTree } from "@/utils/tree";

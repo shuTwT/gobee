@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
 import type { FlinkFormProps } from './utils/types'
-import * as FriendCircleRuleApi from "@/api/friendCircle/friendCircleRule"
+import * as FriendCircleRuleApi from "@/api/friend-circle/friendCircleRule"
 import { apiClient, useApi } from '@/api';
 
 const props = defineProps<FlinkFormProps>()

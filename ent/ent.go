@@ -17,7 +17,6 @@ import (
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
 	"gobee/ent/friendcirclerecord"
-	"gobee/ent/friendcirclerule"
 	"gobee/ent/member"
 	"gobee/ent/memberlevel"
 	"gobee/ent/oauth2accesstoken"
@@ -112,7 +111,6 @@ func checkColumn(t, c string) error {
 			flinkgroup.Table:          flinkgroup.ValidColumn,
 			file.Table:                file.ValidColumn,
 			friendcirclerecord.Table:  friendcirclerecord.ValidColumn,
-			friendcirclerule.Table:    friendcirclerule.ValidColumn,
 			member.Table:              member.ValidColumn,
 			memberlevel.Table:         memberlevel.ValidColumn,
 			oauth2accesstoken.Table:   oauth2accesstoken.ValidColumn,

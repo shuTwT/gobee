@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { BASE_URL, type ApiResponse, type TableResponse } from "./utils";
+import { BASE_URL, type ApiResponse, type TableResponse } from "../utils";
 
 export const getAlbumPhotoList =(params:any)=>{
   return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/album-photo/list`,{params});

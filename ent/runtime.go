@@ -14,7 +14,6 @@ import (
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
 	"gobee/ent/friendcirclerecord"
-	"gobee/ent/friendcirclerule"
 	"gobee/ent/member"
 	"gobee/ent/memberlevel"
 	"gobee/ent/oauth2accesstoken"
@@ -471,21 +470,6 @@ func init() {
 	friendcirclerecord.DefaultUpdatedAt = friendcirclerecordDescUpdatedAt.Default.(func() time.Time)
 	// friendcirclerecord.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	friendcirclerecord.UpdateDefaultUpdatedAt = friendcirclerecordDescUpdatedAt.UpdateDefault.(func() time.Time)
-	friendcircleruleMixin := schema.FriendCircleRule{}.Mixin()
-	friendcircleruleMixinFields0 := friendcircleruleMixin[0].Fields()
-	_ = friendcircleruleMixinFields0
-	friendcircleruleFields := schema.FriendCircleRule{}.Fields()
-	_ = friendcircleruleFields
-	// friendcircleruleDescCreatedAt is the schema descriptor for created_at field.
-	friendcircleruleDescCreatedAt := friendcircleruleMixinFields0[1].Descriptor()
-	// friendcirclerule.DefaultCreatedAt holds the default value on creation for the created_at field.
-	friendcirclerule.DefaultCreatedAt = friendcircleruleDescCreatedAt.Default.(func() time.Time)
-	// friendcircleruleDescUpdatedAt is the schema descriptor for updated_at field.
-	friendcircleruleDescUpdatedAt := friendcircleruleMixinFields0[2].Descriptor()
-	// friendcirclerule.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	friendcirclerule.DefaultUpdatedAt = friendcircleruleDescUpdatedAt.Default.(func() time.Time)
-	// friendcirclerule.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	friendcirclerule.UpdateDefaultUpdatedAt = friendcircleruleDescUpdatedAt.UpdateDefault.(func() time.Time)
 	memberMixin := schema.Member{}.Mixin()
 	memberMixinFields0 := memberMixin[0].Fields()
 	_ = memberMixinFields0

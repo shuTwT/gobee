@@ -239,23 +239,6 @@ var (
 		Columns:    FriendCircleRecordsColumns,
 		PrimaryKey: []*schema.Column{FriendCircleRecordsColumns[0]},
 	}
-	// FriendCircleRulesColumns holds the columns for the "friend_circle_rules" table.
-	FriendCircleRulesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString},
-		{Name: "title_selector", Type: field.TypeString, Nullable: true},
-		{Name: "link_selector", Type: field.TypeString, Nullable: true},
-		{Name: "created_selector", Type: field.TypeString, Nullable: true},
-		{Name: "updated_selector", Type: field.TypeString, Nullable: true},
-	}
-	// FriendCircleRulesTable holds the schema information for the "friend_circle_rules" table.
-	FriendCircleRulesTable = &schema.Table{
-		Name:       "friend_circle_rules",
-		Columns:    FriendCircleRulesColumns,
-		PrimaryKey: []*schema.Column{FriendCircleRulesColumns[0]},
-	}
 	// MembersColumns holds the columns for the "members" table.
 	MembersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -660,7 +643,6 @@ var (
 		FlinkGroupsTable,
 		FilesTable,
 		FriendCircleRecordsTable,
-		FriendCircleRulesTable,
 		MembersTable,
 		MemberLevelsTable,
 		Oauth2accessTokensTable,

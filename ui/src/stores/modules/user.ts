@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { store } from '..'
 import { useStorageLocal } from '@/utils/utils'
 import { removeToken, setToken, userKey, type DataInfo } from '@/utils/auth'
-import { passwordLogin } from '@/api/auth'
+import { passwordLogin } from '@/api/system/auth'
 import router, { resetRouter } from '@/router'
 
 export const useUserStore = defineStore('user', () => {

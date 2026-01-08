@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm, NCheckbox } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline, CloudUploadOutline, CloudDownloadOutline } from '@vicons/ionicons5'
-import * as productApi from '@/api/product'
+import * as productApi from '@/api/mall/product'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 
