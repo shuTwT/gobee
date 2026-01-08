@@ -19,7 +19,7 @@ type EssayHandlerImpl struct {
 	service essay.EssayService
 }
 
-func NewEssayHandler(service essay.EssayService) EssayHandler {
+func NewEssayHandlerImpl(service essay.EssayService) EssayHandler {
 	return &EssayHandlerImpl{service: service}
 }
 

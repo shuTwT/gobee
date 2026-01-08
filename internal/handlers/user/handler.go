@@ -167,14 +167,42 @@ func (h *UserHandlerImpl) CreateUser(c *fiber.Ctx) error {
 		))
 	}
 
+	// 使用事务创建用户和钱包
+	tx, err := client.Tx(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		}
+	}()
+
 	// 创建用户
-	newUser, err := client.User.Create().
+	newUser, err := tx.User.Create().
 		SetEmail(userData.Email).
 		SetName(userData.Name).
 		SetPassword(string(hashedPassword)).
 		SetPhoneNumber(userData.PhoneNumber).
 		Save(c.Context())
 	if err != nil {
+		_ = tx.Rollback()
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	// 为用户创建钱包
+	_, err = tx.Wallet.Create().
+		SetUserID(newUser.ID).
+		Save(c.Context())
+	if err != nil {
+		_ = tx.Rollback()
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	// 提交事务
+	if err = tx.Commit(); err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 

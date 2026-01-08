@@ -88,6 +88,12 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 				userApi.Get("/query/:id", handlerMap.UserHandler.QueryUser).Name("userQuery")
 				userApi.Delete("/delete/:id", handlerMap.UserHandler.DeleteUser).Name("userDelete")
 			}
+			walletApi := apiV1.Group("/wallet")
+			{
+				walletApi.Get("/query/:user_id", handlerMap.WalletHandler.QueryWallet).Name("walletQuery")
+				walletApi.Get("/page", handlerMap.WalletHandler.QueryWalletPage).Name("walletPage")
+				walletApi.Put("/update/:id", handlerMap.WalletHandler.UpdateWallet).Name("walletUpdate")
+			}
 			postApi := apiV1.Group("/post")
 			{
 				postApi.Get("/list", handlerMap.PostHandler.ListPost).Name("postList")

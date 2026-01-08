@@ -22,8 +22,8 @@ import (
 	setting_service "gobee/internal/services/setting"
 	storagestrategy_service "gobee/internal/services/storagestrategy"
 	user_service "gobee/internal/services/user"
-	"gobee/internal/services/visit"
 	visit_service "gobee/internal/services/visit"
+	wallet_service "gobee/internal/services/wallet"
 	"gobee/pkg/config"
 )
 
@@ -50,6 +50,7 @@ type ServiceMap struct {
 	FriendCircleRecordService friendcirclerecord_service.FriendCircleRecordService
 	FriendCircleRuleService   friendcirclerule_service.FriendCircleRuleService
 	StorageStrategyService    storagestrategy_service.StorageStrategyService
+	WalletService             wallet_service.WalletService
 }
 
 func InitializeServices(moduleDefs embed.FS) ServiceMap {
@@ -76,7 +77,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	userService := user_service.NewUserServiceImpl(db)
 	essayService := essay_service.NewEssayServiceImpl(db)
 	flinkService := flink_service.NewFlinkServiceImpl(db)
-	visitService := visit.NewVisitServiceImpl(db)
+	visitService := visit_service.NewVisitServiceImpl(db)
 	payOderService := payorder.NewPayOrderServiceImpl(db)
 	albumService := album_service.NewAlbumServiceImpl(db)
 	authService := auth_service.NewAuthServiceImpl(db)
@@ -85,6 +86,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	friendCircleRecordService := friendcirclerecord_service.NewFriendCircleRecordServiceImpl(db)
 	friendCircleRuleService := friendcirclerule_service.NewFriendCircleRuleServiceImpl(db)
 	storageStrategyService := storagestrategy_service.NewStorageStrategyServiceImpl(db)
+	walletService := wallet_service.NewWalletServiceImpl(db)
 
 	//执行
 	permissionService.LoadPermissionsFromDef(moduleDefs)
@@ -110,6 +112,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		FriendCircleRecordService: friendCircleRecordService,
 		FriendCircleRuleService:   friendCircleRuleService,
 		StorageStrategyService:    storageStrategyService,
+		WalletService:             walletService,
 	}
 
 	return serviceMap
