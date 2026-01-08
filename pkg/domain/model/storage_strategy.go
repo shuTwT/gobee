@@ -24,6 +24,7 @@ type StorageStrategy struct {
 type StorageStrategyCreateReq struct {
 	Name      string `json:"name" validate:"required"`
 	Type      string `json:"type" validate:"required,oneof=local s3"`
+	NodeID    string `json:"node_id"`
 	Endpoint  string `json:"endpoint" validate:"required_if=Type s3"`
 	Region    string `json:"region"`
 	Bucket    string `json:"bucket" validate:"required_if=Type s3"`

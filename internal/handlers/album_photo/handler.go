@@ -2,7 +2,7 @@ package albumphoto
 
 import (
 	"gobee/ent"
-	"gobee/ent/albumphoto"
+	albumphotoservice "gobee/internal/services/albumphoto"
 	"gobee/pkg/domain/model"
 	"strconv"
 
@@ -19,12 +19,12 @@ type AlbumPhotoHandler interface {
 }
 
 type AlbumPhotoHandlerImpl struct {
-	client *ent.Client
+	albumPhotoService albumphotoservice.AlbumPhotoService
 }
 
-func NewAlbumPhotoHandlerImpl(client *ent.Client) *AlbumPhotoHandlerImpl {
+func NewAlbumPhotoHandlerImpl(albumPhotoService albumphotoservice.AlbumPhotoService) *AlbumPhotoHandlerImpl {
 	return &AlbumPhotoHandlerImpl{
-		client: client,
+		albumPhotoService: albumPhotoService,
 	}
 }
 
@@ -38,8 +38,7 @@ func NewAlbumPhotoHandlerImpl(client *ent.Client) *AlbumPhotoHandlerImpl {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/album-photo/list [get]
 func (h *AlbumPhotoHandlerImpl) ListAlbumPhoto(c *fiber.Ctx) error {
-	albumPhotos, err := h.client.AlbumPhoto.Query().
-		All(c.Context())
+	albumPhotos, err := h.albumPhotoService.ListAlbumPhoto(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -62,18 +61,12 @@ func (h *AlbumPhotoHandlerImpl) ListAlbumPhotoPage(c *fiber.Ctx) error {
 	if err := c.QueryParser(&pageQuery); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	count, err := h.client.AlbumPhoto.Query().
-		Count(c.Context())
+
+	count, albumPhotos, err := h.albumPhotoService.ListAlbumPhotoPage(c.Context(), pageQuery.Page, pageQuery.Size)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	albumPhotos, err := h.client.AlbumPhoto.Query().
-		Offset((pageQuery.Page - 1) * pageQuery.Size).
-		Limit(pageQuery.Size).
-		All(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
-	}
+
 	pageResult := model.PageResult[*ent.AlbumPhoto]{
 		Total:   int64(count),
 		Records: albumPhotos,
@@ -96,15 +89,13 @@ func (h *AlbumPhotoHandlerImpl) CreateAlbumPhoto(c *fiber.Ctx) error {
 	if err := c.BodyParser(&albumPhoto); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	if err := h.client.AlbumPhoto.Create().
-		SetAlbumID(albumPhoto.AlbumID).
-		SetName(albumPhoto.Name).
-		SetDescription(albumPhoto.Description).
-		SetImageURL(albumPhoto.ImageURL).
-		Exec(c.Context()); err != nil {
+
+	newAlbumPhoto, err := h.albumPhotoService.CreateAlbumPhoto(c.Context(), albumPhoto.AlbumID, albumPhoto.Name, albumPhoto.ImageURL, albumPhoto.Description)
+	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("success", albumPhoto))
+
+	return c.JSON(model.NewSuccess("success", newAlbumPhoto))
 }
 
 // @Summary 更新相册照片
@@ -124,18 +115,18 @@ func (h *AlbumPhotoHandlerImpl) UpdateAlbumPhoto(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
+
 	var albumPhoto *model.AlbumPhotoUpdateReq
 	if err := c.BodyParser(&albumPhoto); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	if err := h.client.AlbumPhoto.UpdateOneID(id).
-		SetImageURL(albumPhoto.ImageURL).
-		SetName(albumPhoto.Name).
-		SetDescription(albumPhoto.Description).
-		Exec(c.Context()); err != nil {
+
+	updatedAlbumPhoto, err := h.albumPhotoService.UpdateAlbumPhoto(c.Context(), id, albumPhoto.Name, albumPhoto.ImageURL, albumPhoto.Description)
+	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("success", albumPhoto))
+
+	return c.JSON(model.NewSuccess("success", updatedAlbumPhoto))
 }
 
 // @Summary 查询相册照片
@@ -154,12 +145,12 @@ func (h *AlbumPhotoHandlerImpl) QueryAlbumPhoto(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	albumPhoto, err := h.client.AlbumPhoto.Query().
-		Where(albumphoto.ID(id)).
-		First(c.Context())
+
+	albumPhoto, err := h.albumPhotoService.QueryAlbumPhoto(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
+
 	return c.JSON(model.NewSuccess("success", albumPhoto))
 }
 
@@ -179,9 +170,11 @@ func (h *AlbumPhotoHandlerImpl) DeleteAlbumPhoto(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	if err := h.client.AlbumPhoto.DeleteOneID(id).
-		Exec(c.Context()); err != nil {
+
+	err = h.albumPhotoService.DeleteAlbumPhoto(c.Context(), id)
+	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
+
 	return c.JSON(model.NewSuccess("success", nil))
 }

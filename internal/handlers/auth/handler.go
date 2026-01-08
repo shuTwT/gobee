@@ -1,16 +1,10 @@
 package auth_handler
 
 import (
-	"time"
+	"gobee/internal/services/auth"
+	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
-	"golang.org/x/crypto/bcrypt"
-
-	"gobee/ent"
-	"gobee/ent/user"
-	"gobee/pkg/config"
-	"gobee/pkg/domain/model"
 )
 
 type AuthHandler interface {
@@ -18,11 +12,11 @@ type AuthHandler interface {
 }
 
 type AuthHandlerImpl struct {
-	client *ent.Client
+	authService auth.AuthService
 }
 
-func NewAuthHandlerImpl(client *ent.Client) *AuthHandlerImpl {
-	return &AuthHandlerImpl{client: client}
+func NewAuthHandlerImpl(authService auth.AuthService) *AuthHandlerImpl {
+	return &AuthHandlerImpl{authService: authService}
 }
 
 // @Summary 用户登录
@@ -45,59 +39,13 @@ func (h *AuthHandlerImpl) Login(c *fiber.Ctx) error {
 		))
 	}
 
-	// 获取数据库客户端
-	client := h.client
-
-	// 查找用户
-	u, err := client.User.Query().
-		Where(user.EmailEQ(req.Email)).
-		Only(c.Context())
+	loginResp, err := h.authService.Login(c.Context(), req)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return c.JSON(model.NewError(
-				fiber.StatusUnauthorized,
-				"找不到该用户",
-			))
-		}
 		return c.JSON(model.NewError(
-			fiber.StatusInternalServerError,
+			fiber.StatusUnauthorized,
 			err.Error(),
 		))
 	}
 
-	// 验证密码
-	if err = bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(req.Password)); err != nil {
-		return c.JSON(model.NewError(
-			fiber.StatusUnauthorized,
-			"Invalid credentials",
-		))
-	}
-
-	expires := time.Now().Add(time.Hour * 24).UnixMilli()
-	// 生成JWT令牌
-	claims := jwt.MapClaims{
-		"id":    u.ID,
-		"email": u.Email,
-		"name":  u.Name,
-		"exp":   expires, // 24小时过期
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	secret := config.GetString(config.AUTH_TOKEN_SECRET)
-
-	// 使用密钥签名令牌
-	t, err := token.SignedString([]byte(secret)) // 注意：在生产环境中应该使用环境变量存储密钥
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(
-			fiber.StatusBadRequest, "Could not generate token",
-		))
-	}
-
-	// 返回令牌
-	return c.JSON(model.NewSuccess("Login successful", model.LoginResp{
-		AccessToken: t,
-		Expires:     expires,
-		Username:    u.Name,
-		Roles:       []string{"admin"},
-	}))
+	return c.JSON(model.NewSuccess("Login successful", loginResp))
 }

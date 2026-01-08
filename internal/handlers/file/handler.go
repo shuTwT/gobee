@@ -2,8 +2,7 @@ package file
 
 import (
 	"gobee/ent"
-	"gobee/ent/file"
-	"gobee/internal/database"
+	"gobee/internal/services/file"
 	"gobee/internal/services/storage"
 	"gobee/pkg/domain/model"
 	"strconv"
@@ -20,15 +19,15 @@ type FileHandler interface {
 }
 
 type FileHandlerImpl struct {
-	client *ent.Client
+	fileService file.FileService
 }
 
-func NewFileHandlerImpl(client *ent.Client) *FileHandlerImpl {
-	return &FileHandlerImpl{client: client}
+func NewFileHandlerImpl(fileService file.FileService) *FileHandlerImpl {
+	return &FileHandlerImpl{fileService: fileService}
 }
 
 func (h *FileHandlerImpl) ListFile(c *fiber.Ctx) error {
-	files, err := h.client.File.Query().All(c.Context())
+	files, err := h.fileService.ListFile(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -40,19 +39,13 @@ func (h *FileHandlerImpl) ListFilePage(c *fiber.Ctx) error {
 	if err := c.QueryParser(&pageQuery); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	count, err := h.client.File.Query().Count(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-	files, err := h.client.File.Query().
-		Offset((pageQuery.Page - 1) * pageQuery.Size).
-		Limit(pageQuery.Size).
-		All(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-	pageResult := model.PageResult[*ent.File]{
 
+	count, files, err := h.fileService.ListFilePage(c.Context(), pageQuery.Page, pageQuery.Size)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	pageResult := model.PageResult[*ent.File]{
 		Total:   int64(count),
 		Records: files,
 	}
@@ -64,7 +57,8 @@ func (h *FileHandlerImpl) QueryFile(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	file, err := h.client.File.Query().Where(file.ID(id)).First(c.Context())
+
+	file, err := h.fileService.QueryFile(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -76,7 +70,8 @@ func (h *FileHandlerImpl) DeleteFile(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	err = h.client.File.DeleteOneID(id).Exec(c.Context())
+
+	err = h.fileService.DeleteFile(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -142,15 +137,8 @@ func (h *FileHandlerImpl) Upload(c *fiber.Ctx) error {
 			fullUrl = strategy.Endpoint + "/" + url
 		}
 
-		client := database.DB
 		// 保存到数据库
-		newFile, err := client.File.Create().
-			SetName(file.Filename).
-			SetPath(strategy.BasePath).
-			SetURL(fullUrl).
-			SetType(file.Header.Get("Content-Type")).
-			SetSize(strconv.FormatInt(file.Size, 10)).
-			Save(c.Context())
+		newFile, err := h.fileService.CreateFile(c.Context(), file.Filename, strategy.BasePath, fullUrl, file.Header.Get("Content-Type"), strconv.FormatInt(file.Size, 10))
 		if err != nil {
 			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 		}

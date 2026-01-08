@@ -2,8 +2,7 @@ package album
 
 import (
 	"gobee/ent"
-	"gobee/ent/album"
-	"gobee/internal/database"
+	"gobee/internal/services/album"
 	"gobee/pkg/domain/model"
 	"strconv"
 
@@ -20,12 +19,12 @@ type AlbumHandler interface {
 }
 
 type AlbumHandlerImpl struct {
-	client *ent.Client
+	albumService album.AlbumService
 }
 
-func NewAlbumHandlerImpl(client *ent.Client) *AlbumHandlerImpl {
+func NewAlbumHandlerImpl(albumService album.AlbumService) *AlbumHandlerImpl {
 	return &AlbumHandlerImpl{
-		client: client,
+		albumService: albumService,
 	}
 }
 
@@ -39,10 +38,7 @@ func NewAlbumHandlerImpl(client *ent.Client) *AlbumHandlerImpl {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/album/list [get]
 func (h *AlbumHandlerImpl) ListAlbum(c *fiber.Ctx) error {
-	client := h.client
-
-	albums, err := client.Album.Query().
-		All(c.Context())
+	albums, err := h.albumService.ListAlbum(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -65,19 +61,12 @@ func (h *AlbumHandlerImpl) ListAlbumPage(c *fiber.Ctx) error {
 	if err := c.QueryParser(&pageQuery); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	client := database.DB
-	count, err := client.Album.Query().Count(c.Context())
+	
+	count, albums, err := h.albumService.ListAlbumPage(c.Context(), pageQuery.Page, pageQuery.Size)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-
-	albums, err := client.Album.Query().
-		Limit(pageQuery.Size).
-		Offset((pageQuery.Page - 1) * pageQuery.Size).
-		All(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
-	}
+	
 	pageResult := model.PageResult[*ent.Album]{
 		Total:   int64(count),
 		Records: albums,
@@ -100,15 +89,13 @@ func (h *AlbumHandlerImpl) CreateAlbum(c *fiber.Ctx) error {
 	if err := c.BodyParser(&album); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	client := h.client
-	if err := client.Album.Create().
-		SetName(album.Name).
-		SetDescription(album.Description).
-		SetSort(album.Sort).
-		Exec(c.Context()); err != nil {
+	
+	newAlbum, err := h.albumService.CreateAlbum(c.Context(), album)
+	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("success", album))
+	
+	return c.JSON(model.NewSuccess("success", newAlbum))
 }
 
 // @Summary 更新相册
@@ -128,19 +115,18 @@ func (h *AlbumHandlerImpl) UpdateAlbum(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
+	
 	var album *model.AlbumUpdateReq
 	if err := c.BodyParser(&album); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	client := h.client
-	if err := client.Album.UpdateOneID(id).
-		SetName(album.Name).
-		SetDescription(album.Description).
-		SetSort(album.Sort).
-		Exec(c.Context()); err != nil {
+	
+	updatedAlbum, err := h.albumService.UpdateAlbum(c.Context(), id, album)
+	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("success", album))
+	
+	return c.JSON(model.NewSuccess("success", updatedAlbum))
 }
 
 // @Summary 查询相册
@@ -159,13 +145,12 @@ func (h *AlbumHandlerImpl) QueryAlbum(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	client := h.client
-	album, err := client.Album.Query().
-		Where(album.ID(id)).
-		First(c.Context())
+	
+	album, err := h.albumService.QueryAlbum(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
+	
 	return c.JSON(model.NewSuccess("success", album))
 }
 
@@ -185,9 +170,11 @@ func (h *AlbumHandlerImpl) DeleteAlbum(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	client := h.client
-	if err := client.Album.DeleteOneID(id).Exec(c.Context()); err != nil {
+	
+	err = h.albumService.DeleteAlbum(c.Context(), id)
+	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
+	
 	return c.JSON(model.NewSuccess("success", nil))
 }

@@ -1,9 +1,8 @@
 package storagestrategy
 
 import (
-	"gobee/ent"
-	"gobee/ent/storagestrategy"
 	"gobee/internal/services/storage"
+	storagestrategy_service "gobee/internal/services/storagestrategy"
 	"gobee/pkg/domain/model"
 	"strconv"
 
@@ -21,12 +20,12 @@ type StorageStrategyHandler interface {
 }
 
 type StorageStrategyHandlerImpl struct {
-	client *ent.Client
+	storageStrategyService storagestrategy_service.StorageStrategyService
 }
 
-func NewStorageStrategyHandlerImpl(client *ent.Client) *StorageStrategyHandlerImpl {
+func NewStorageStrategyHandlerImpl(storageStrategyService storagestrategy_service.StorageStrategyService) *StorageStrategyHandlerImpl {
 	return &StorageStrategyHandlerImpl{
-		client: client,
+		storageStrategyService: storageStrategyService,
 	}
 }
 
@@ -39,7 +38,7 @@ func NewStorageStrategyHandlerImpl(client *ent.Client) *StorageStrategyHandlerIm
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/storage-strategy/list [get]
 func (h *StorageStrategyHandlerImpl) ListStorageStrategy(c *fiber.Ctx) error {
-	strategies, err := h.client.StorageStrategy.Query().All(c.Context())
+	strategies, err := h.storageStrategyService.ListStorageStrategy(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -55,10 +54,11 @@ func (h *StorageStrategyHandlerImpl) ListStorageStrategy(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/storage-strategy/list-all [get]
 func (h *StorageStrategyHandlerImpl) ListStorageStrategyAll(c *fiber.Ctx) error {
-	strategies, err := h.client.StorageStrategy.Query().All(c.Context())
+	strategies, err := h.storageStrategyService.ListStorageStrategy(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
+
 	var strategyList []model.StorageStrategyListResp
 	for _, strategy := range strategies {
 		strategyList = append(strategyList, model.StorageStrategyListResp{
@@ -82,22 +82,12 @@ func (h *StorageStrategyHandlerImpl) ListStorageStrategyAll(c *fiber.Ctx) error 
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/storage-strategy/create [post]
 func (h *StorageStrategyHandlerImpl) CreateStorageStrategy(c *fiber.Ctx) error {
-	var strategy *ent.StorageStrategy
+	var strategy *model.StorageStrategyCreateReq
 	if err := c.BodyParser(&strategy); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	newStrategy, err := h.client.StorageStrategy.Create().
-		SetName(strategy.Name).
-		SetType(strategy.Type).
-		SetNodeID(strategy.NodeID).
-		SetBucket(strategy.Bucket).
-		SetAccessKey(strategy.AccessKey).
-		SetSecretKey(strategy.SecretKey).
-		SetBasePath(strategy.BasePath).
-		SetDomain(strategy.Domain).
-		SetRegion(strategy.Region).
-		SetEndpoint(strategy.Endpoint).
-		Save(c.Context())
+
+	newStrategy, err := h.storageStrategyService.CreateStorageStrategy(c.Context(), strategy.Name, strategy.Type, strategy.NodeID, strategy.Endpoint, strategy.Region, strategy.Bucket, strategy.AccessKey, strategy.SecretKey, strategy.BasePath, strategy.Domain, strategy.Master)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -118,29 +108,18 @@ func (h *StorageStrategyHandlerImpl) CreateStorageStrategy(c *fiber.Ctx) error {
 func (h *StorageStrategyHandlerImpl) UpdateStorageStrategy(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusBadRequest,
-			"Invalid ID format"))
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
 	}
+
 	var strategy *model.StorageStrategyUpdateReq
 	if err = c.BodyParser(&strategy); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	newStrategy, err := h.client.StorageStrategy.UpdateOneID(id).
-		SetName(strategy.Name).
-		SetType(storagestrategy.Type(strategy.Type)).
-		SetNodeID(strategy.NodeID).
-		SetBucket(strategy.Bucket).
-		SetAccessKey(strategy.AccessKey).
-		SetSecretKey(strategy.SecretKey).
-		SetBasePath(strategy.BasePath).
-		SetDomain(strategy.Domain).
-		SetRegion(strategy.Region).
-		SetEndpoint(strategy.Endpoint).
-		Save(c.Context())
+
+	newStrategy, err := h.storageStrategyService.UpdateStorageStrategy(c.Context(), id, strategy.Name, strategy.Type, strategy.NodeID, strategy.Endpoint, strategy.Region, strategy.Bucket, strategy.AccessKey, strategy.SecretKey, strategy.BasePath, strategy.Domain, strategy.Master)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	// 清除缓存
 	storage.ClearCache()
 	return c.JSON(model.NewSuccess("success", newStrategy))
 }
@@ -158,12 +137,10 @@ func (h *StorageStrategyHandlerImpl) UpdateStorageStrategy(c *fiber.Ctx) error {
 func (h *StorageStrategyHandlerImpl) QueryStorageStrategy(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusBadRequest,
-			"Invalid ID format"))
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
 	}
-	strategy, err := h.client.StorageStrategy.Query().
-		Where(storagestrategy.ID(id)).
-		First(c.Context())
+
+	strategy, err := h.storageStrategyService.QueryStorageStrategy(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -183,13 +160,13 @@ func (h *StorageStrategyHandlerImpl) QueryStorageStrategy(c *fiber.Ctx) error {
 func (h *StorageStrategyHandlerImpl) DeleteStorageStrategy(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusBadRequest,
-			"Invalid ID format"))
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
 	}
-	if err := h.client.StorageStrategy.DeleteOneID(id).Exec(c.Context()); err != nil {
+
+	err = h.storageStrategyService.DeleteStorageStrategy(c.Context(), id)
+	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	// 清除缓存
 	storage.ClearCache()
 	return c.JSON(model.NewSuccess("success", nil))
 }
@@ -207,18 +184,13 @@ func (h *StorageStrategyHandlerImpl) DeleteStorageStrategy(c *fiber.Ctx) error {
 func (h *StorageStrategyHandlerImpl) SetDefaultStorageStrategy(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusBadRequest,
-			"Invalid ID format"))
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
 	}
-	// 先将所有策略的 master 字段设置为 false
-	if err := h.client.StorageStrategy.Update().SetMaster(false).Exec(c.Context()); err != nil {
+
+	err = h.storageStrategyService.SetDefaultStorageStrategy(c.Context(), id)
+	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	// 将指定 ID 的策略的 master 字段设置为 true
-	if err := h.client.StorageStrategy.UpdateOneID(id).SetMaster(true).Exec(c.Context()); err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-	// 清除缓存
 	storage.ClearCache()
 	return c.JSON(model.NewSuccess("success", nil))
 }

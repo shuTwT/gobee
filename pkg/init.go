@@ -3,38 +3,53 @@ package pkg
 import (
 	"embed"
 	"gobee/internal/database"
+	album_service "gobee/internal/services/album"
+	albumphoto_service "gobee/internal/services/albumphoto"
 	api_interface_service "gobee/internal/services/api_interface"
+	auth_service "gobee/internal/services/auth"
 	comment_service "gobee/internal/services/comment"
 	common_service "gobee/internal/services/common"
 	essay_service "gobee/internal/services/essay"
+	file_service "gobee/internal/services/file"
 	flink_service "gobee/internal/services/flink"
 	friend_circle_service "gobee/internal/services/friend_circle"
+	friendcirclerecord_service "gobee/internal/services/friendcirclerecord"
+	friendcirclerule_service "gobee/internal/services/friendcirclerule"
 	payorder "gobee/internal/services/pay_order"
 	permission_service "gobee/internal/services/permission"
 	post_service "gobee/internal/services/post"
 	role_service "gobee/internal/services/role"
 	setting_service "gobee/internal/services/setting"
+	storagestrategy_service "gobee/internal/services/storagestrategy"
 	user_service "gobee/internal/services/user"
 	"gobee/internal/services/visit"
+	visit_service "gobee/internal/services/visit"
 	"gobee/pkg/config"
 )
 
 const autoMigrate = true
 
 type ServiceMap struct {
-	ApiInterfaceService api_interface_service.ApiInterfaceService
-	CommentService      comment_service.CommentService
-	CommonService       common_service.CommonService
-	FriendCircleService friend_circle_service.FriendCircleService
-	PermissionService   permission_service.PermissionService
-	PostService         post_service.PostService
-	RoleService         role_service.RoleService
-	SettingService      setting_service.SettingService
-	UserService         user_service.UserService
-	EssayService        essay_service.EssayService
-	FlinkService        flink_service.FlinkService
-	VisitService        visit.VisitService
-	PayOrderService     payorder.PayOrderService
+	ApiInterfaceService       api_interface_service.ApiInterfaceService
+	CommentService            comment_service.CommentService
+	CommonService             common_service.CommonService
+	FriendCircleService       friend_circle_service.FriendCircleService
+	PermissionService         permission_service.PermissionService
+	PostService               post_service.PostService
+	RoleService               role_service.RoleService
+	SettingService            setting_service.SettingService
+	UserService               user_service.UserService
+	EssayService              essay_service.EssayService
+	FlinkService              flink_service.FlinkService
+	VisitService              visit_service.VisitService
+	PayOrderService           payorder.PayOrderService
+	AlbumService              album_service.AlbumService
+	AuthService               auth_service.AuthService
+	FileService               file_service.FileService
+	AlbumPhotoService         albumphoto_service.AlbumPhotoService
+	FriendCircleRecordService friendcirclerecord_service.FriendCircleRecordService
+	FriendCircleRuleService   friendcirclerule_service.FriendCircleRuleService
+	StorageStrategyService    storagestrategy_service.StorageStrategyService
 }
 
 func InitializeServices(moduleDefs embed.FS) ServiceMap {
@@ -63,24 +78,38 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	flinkService := flink_service.NewFlinkServiceImpl(db)
 	visitService := visit.NewVisitServiceImpl(db)
 	payOderService := payorder.NewPayOrderServiceImpl(db)
+	albumService := album_service.NewAlbumServiceImpl(db)
+	authService := auth_service.NewAuthServiceImpl(db)
+	fileService := file_service.NewFileServiceImpl(db)
+	albumPhotoService := albumphoto_service.NewAlbumPhotoServiceImpl(db)
+	friendCircleRecordService := friendcirclerecord_service.NewFriendCircleRecordServiceImpl(db)
+	friendCircleRuleService := friendcirclerule_service.NewFriendCircleRuleServiceImpl(db)
+	storageStrategyService := storagestrategy_service.NewStorageStrategyServiceImpl(db)
 
 	//执行
 	permissionService.LoadPermissionsFromDef(moduleDefs)
 
 	serviceMap := ServiceMap{
-		ApiInterfaceService: apiInterfaceService,
-		CommentService:      commentService,
-		CommonService:       commonService,
-		FriendCircleService: friendCircleService,
-		PermissionService:   permissionService,
-		PostService:         postService,
-		RoleService:         roleService,
-		SettingService:      settingService,
-		UserService:         userService,
-		EssayService:        essayService,
-		FlinkService:        flinkService,
-		VisitService:        visitService,
-		PayOrderService:     payOderService,
+		ApiInterfaceService:       apiInterfaceService,
+		CommentService:            commentService,
+		CommonService:             commonService,
+		FriendCircleService:       friendCircleService,
+		PermissionService:         permissionService,
+		PostService:               postService,
+		RoleService:               roleService,
+		SettingService:            settingService,
+		UserService:               userService,
+		EssayService:              essayService,
+		FlinkService:              flinkService,
+		VisitService:              visitService,
+		PayOrderService:           payOderService,
+		AlbumService:              albumService,
+		AuthService:               authService,
+		FileService:               fileService,
+		AlbumPhotoService:         albumPhotoService,
+		FriendCircleRecordService: friendCircleRecordService,
+		FriendCircleRuleService:   friendCircleRuleService,
+		StorageStrategyService:    storageStrategyService,
 	}
 
 	return serviceMap

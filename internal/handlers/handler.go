@@ -51,17 +51,17 @@ type HandlerMap struct {
 }
 
 func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
-	albumHandler := album.NewAlbumHandlerImpl(database.DB)
-	albnumPhotoHandler := albumphoto.NewAlbumPhotoHandlerImpl(database.DB)
+	albumHandler := album.NewAlbumHandlerImpl(serviceMap.AlbumService)
+	albnumPhotoHandler := albumphoto.NewAlbumPhotoHandlerImpl(serviceMap.AlbumPhotoService)
 	apiInterfaceHandler := apiinterface.NewApiInterfaceHandlerImpl(database.DB, serviceMap.ApiInterfaceService)
-	authHandler := auth.NewAuthHandlerImpl(database.DB)
+	authHandler := auth.NewAuthHandlerImpl(serviceMap.AuthService)
 	commentHandler := comment.NewCommentHandlerImpl(database.DB, serviceMap.CommentService)
 	commonHandler := common.NewCommonHandlerImpl(serviceMap.CommonService)
-	fileHandler := file.NewFileHandlerImpl(database.DB)
+	fileHandler := file.NewFileHandlerImpl(serviceMap.FileService)
 	flinkHandler := flink.NewFlinkHandlerImpl(database.DB, serviceMap.FlinkService)
 	flinkGroupHandler := flinkgroup.NewFlinkGroupHandlerImpl(database.DB, serviceMap.FlinkService)
-	friendCircleRecordHandler := friendcirclerecord.NewFriendCircleRecordHandlerImpl(database.DB)
-	friendCircleRuleHandler := friendcirclerule.NewFriendCircleRuleHandlerImpl(database.DB)
+	friendCircleRecordHandler := friendcirclerecord.NewFriendCircleRecordHandlerImpl(serviceMap.FriendCircleRecordService)
+	friendCircleRuleHandler := friendcirclerule.NewFriendCircleRuleHandlerImpl(serviceMap.FriendCircleRuleService)
 	initializeHandler := initialize.NewInitializeHandlerImpl(serviceMap.UserService, serviceMap.SettingService)
 	payOrderHandler := payorder.NewPayOrderHandlerImpl(database.DB, serviceMap.PayOrderService)
 	postHandler := post.NewPostHandlerImpl(serviceMap.PostService)
@@ -70,7 +70,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	settingHandler := setting_handler.NewSettingHandlerImpl(serviceMap.SettingService)
 	userHandler := user_handler.NewUserHandlerImpl(serviceMap.UserService, serviceMap.RoleService)
 	essayHandler := essay.NewEssayHandler(serviceMap.EssayService)
-	storageStrategyHandler := storagestrategy.NewStorageStrategyHandlerImpl(database.DB)
+	storageStrategyHandler := storagestrategy.NewStorageStrategyHandlerImpl(serviceMap.StorageStrategyService)
 	visitHandler := visit.NewVisitHandlerImpl(serviceMap.VisitService)
 
 	handlerMap := HandlerMap{
