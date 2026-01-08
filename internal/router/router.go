@@ -94,6 +94,22 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 				walletApi.Get("/page", handlerMap.WalletHandler.QueryWalletPage).Name("walletPage")
 				walletApi.Put("/update/:id", handlerMap.WalletHandler.UpdateWallet).Name("walletUpdate")
 			}
+			memberApi := apiV1.Group("/member")
+			{
+				memberApi.Get("/query/:user_id", handlerMap.MemberHandler.QueryMember).Name("memberQuery")
+				memberApi.Get("/page", handlerMap.MemberHandler.QueryMemberPage).Name("memberPage")
+				memberApi.Post("/create", handlerMap.MemberHandler.CreateMember).Name("memberCreate")
+				memberApi.Put("/update/:id", handlerMap.MemberHandler.UpdateMember).Name("memberUpdate")
+				memberApi.Delete("/delete/:id", handlerMap.MemberHandler.DeleteMember).Name("memberDelete")
+			}
+			memberLevelApi := apiV1.Group("/member-level")
+			{
+				memberLevelApi.Get("/query/:id", handlerMap.MemberLevelHandler.QueryMemberLevel).Name("memberLevelQuery")
+				memberLevelApi.Get("/page", handlerMap.MemberLevelHandler.QueryMemberLevelPage).Name("memberLevelPage")
+				memberLevelApi.Post("/create", handlerMap.MemberLevelHandler.CreateMemberLevel).Name("memberLevelCreate")
+				memberLevelApi.Put("/update/:id", handlerMap.MemberLevelHandler.UpdateMemberLevel).Name("memberLevelUpdate")
+				memberLevelApi.Delete("/delete/:id", handlerMap.MemberLevelHandler.DeleteMemberLevel).Name("memberLevelDelete")
+			}
 			postApi := apiV1.Group("/post")
 			{
 				postApi.Get("/list", handlerMap.PostHandler.ListPost).Name("postList")

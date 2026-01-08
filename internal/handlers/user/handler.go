@@ -1,6 +1,7 @@
 package user_handler
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -195,6 +196,18 @@ func (h *UserHandlerImpl) CreateUser(c *fiber.Ctx) error {
 	// 为用户创建钱包
 	_, err = tx.Wallet.Create().
 		SetUserID(newUser.ID).
+		Save(c.Context())
+	if err != nil {
+		_ = tx.Rollback()
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	// 为用户创建会员
+	memberNo := fmt.Sprintf("M%06d", newUser.ID)
+	_, err = tx.Member.Create().
+		SetUserID(newUser.ID).
+		SetMemberLevel(1).
+		SetMemberNo(memberNo).
 		Save(c.Context())
 	if err != nil {
 		_ = tx.Rollback()

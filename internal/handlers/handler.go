@@ -15,6 +15,8 @@ import (
 	friendcirclerecord_handler "gobee/internal/handlers/friend_circle_record"
 	friendcirclerule_handler "gobee/internal/handlers/friend_circle_rule"
 	initialize_handler "gobee/internal/handlers/initialize"
+	member_handler "gobee/internal/handlers/member"
+	memberlevel_handler "gobee/internal/handlers/memberlevel"
 	payorder_handler "gobee/internal/handlers/pay_order"
 	post_handler "gobee/internal/handlers/post"
 	product_handler "gobee/internal/handlers/product"
@@ -41,6 +43,8 @@ type HandlerMap struct {
 	FriendCircleRecordHandler friendcirclerecord_handler.FriendCircleRecordHandler
 	FriendCircleRuleHandler   friendcirclerule_handler.FriendCircleRuleHandler
 	InitializeHandler         initialize_handler.InitializeHandler
+	MemberHandler             member_handler.MemberHandler
+	MemberLevelHandler        memberlevel_handler.MemberLevelHandler
 	PayOrderHandler           payorder_handler.PayOrderHandler
 	PostHandler               post_handler.PostHandler
 	ProductHandler            product_handler.ProductHandler
@@ -78,6 +82,8 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	storageStrategyHandler := storagestrategy.NewStorageStrategyHandlerImpl(serviceMap.StorageStrategyService)
 	visitHandler := visit_handler.NewVisitHandlerImpl(serviceMap.VisitService)
 	walletHandler := wallet_handler.NewWalletHandlerImpl(serviceMap.WalletService)
+	memberHandler := member_handler.NewMemberHandlerImpl(serviceMap.MemberService)
+	memberLevelHandler := memberlevel_handler.NewMemberLevelHandlerImpl(serviceMap.MemberLevelService)
 
 	handlerMap := HandlerMap{
 		AlbumHandler:              albumHandler,
@@ -92,6 +98,8 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		FriendCircleRecordHandler: friendCircleRecordHandler,
 		FriendCircleRuleHandler:   friendCircleRuleHandler,
 		InitializeHandler:         initializeHandler,
+		MemberHandler:             memberHandler,
+		MemberLevelHandler:        memberLevelHandler,
 		PayOrderHandler:           payOrderHandler,
 		PostHandler:               postHandler,
 		ProductHandler:            productHandler,
