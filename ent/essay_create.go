@@ -48,6 +48,12 @@ func (_c *EssayCreate) SetNillableUpdatedAt(v *time.Time) *EssayCreate {
 	return _c
 }
 
+// SetUserID sets the "user_id" field.
+func (_c *EssayCreate) SetUserID(v int) *EssayCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
 // SetContent sets the "content" field.
 func (_c *EssayCreate) SetContent(v string) *EssayCreate {
 	_c.mutation.SetContent(v)
@@ -71,6 +77,82 @@ func (_c *EssayCreate) SetNillableDraft(v *bool) *EssayCreate {
 // SetImages sets the "images" field.
 func (_c *EssayCreate) SetImages(v []string) *EssayCreate {
 	_c.mutation.SetImages(v)
+	return _c
+}
+
+// SetLikeCount sets the "like_count" field.
+func (_c *EssayCreate) SetLikeCount(v int) *EssayCreate {
+	_c.mutation.SetLikeCount(v)
+	return _c
+}
+
+// SetNillableLikeCount sets the "like_count" field if the given value is not nil.
+func (_c *EssayCreate) SetNillableLikeCount(v *int) *EssayCreate {
+	if v != nil {
+		_c.SetLikeCount(*v)
+	}
+	return _c
+}
+
+// SetCommentCount sets the "comment_count" field.
+func (_c *EssayCreate) SetCommentCount(v int) *EssayCreate {
+	_c.mutation.SetCommentCount(v)
+	return _c
+}
+
+// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
+func (_c *EssayCreate) SetNillableCommentCount(v *int) *EssayCreate {
+	if v != nil {
+		_c.SetCommentCount(*v)
+	}
+	return _c
+}
+
+// SetShareCount sets the "share_count" field.
+func (_c *EssayCreate) SetShareCount(v int) *EssayCreate {
+	_c.mutation.SetShareCount(v)
+	return _c
+}
+
+// SetNillableShareCount sets the "share_count" field if the given value is not nil.
+func (_c *EssayCreate) SetNillableShareCount(v *int) *EssayCreate {
+	if v != nil {
+		_c.SetShareCount(*v)
+	}
+	return _c
+}
+
+// SetPublic sets the "public" field.
+func (_c *EssayCreate) SetPublic(v bool) *EssayCreate {
+	_c.mutation.SetPublic(v)
+	return _c
+}
+
+// SetNillablePublic sets the "public" field if the given value is not nil.
+func (_c *EssayCreate) SetNillablePublic(v *bool) *EssayCreate {
+	if v != nil {
+		_c.SetPublic(*v)
+	}
+	return _c
+}
+
+// SetLocation sets the "location" field.
+func (_c *EssayCreate) SetLocation(v string) *EssayCreate {
+	_c.mutation.SetLocation(v)
+	return _c
+}
+
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (_c *EssayCreate) SetNillableLocation(v *string) *EssayCreate {
+	if v != nil {
+		_c.SetLocation(*v)
+	}
+	return _c
+}
+
+// SetTags sets the "tags" field.
+func (_c *EssayCreate) SetTags(v []string) *EssayCreate {
+	_c.mutation.SetTags(v)
 	return _c
 }
 
@@ -127,6 +209,22 @@ func (_c *EssayCreate) defaults() {
 		v := essay.DefaultDraft
 		_c.mutation.SetDraft(v)
 	}
+	if _, ok := _c.mutation.LikeCount(); !ok {
+		v := essay.DefaultLikeCount
+		_c.mutation.SetLikeCount(v)
+	}
+	if _, ok := _c.mutation.CommentCount(); !ok {
+		v := essay.DefaultCommentCount
+		_c.mutation.SetCommentCount(v)
+	}
+	if _, ok := _c.mutation.ShareCount(); !ok {
+		v := essay.DefaultShareCount
+		_c.mutation.SetShareCount(v)
+	}
+	if _, ok := _c.mutation.Public(); !ok {
+		v := essay.DefaultPublic
+		_c.mutation.SetPublic(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -137,11 +235,36 @@ func (_c *EssayCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Essay.updated_at"`)}
 	}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Essay.user_id"`)}
+	}
 	if _, ok := _c.mutation.Content(); !ok {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Essay.content"`)}
 	}
+	if v, ok := _c.mutation.Content(); ok {
+		if err := essay.ContentValidator(v); err != nil {
+			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Essay.content": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.Draft(); !ok {
 		return &ValidationError{Name: "draft", err: errors.New(`ent: missing required field "Essay.draft"`)}
+	}
+	if _, ok := _c.mutation.LikeCount(); !ok {
+		return &ValidationError{Name: "like_count", err: errors.New(`ent: missing required field "Essay.like_count"`)}
+	}
+	if _, ok := _c.mutation.CommentCount(); !ok {
+		return &ValidationError{Name: "comment_count", err: errors.New(`ent: missing required field "Essay.comment_count"`)}
+	}
+	if _, ok := _c.mutation.ShareCount(); !ok {
+		return &ValidationError{Name: "share_count", err: errors.New(`ent: missing required field "Essay.share_count"`)}
+	}
+	if _, ok := _c.mutation.Public(); !ok {
+		return &ValidationError{Name: "public", err: errors.New(`ent: missing required field "Essay.public"`)}
+	}
+	if v, ok := _c.mutation.Location(); ok {
+		if err := essay.LocationValidator(v); err != nil {
+			return &ValidationError{Name: "location", err: fmt.Errorf(`ent: validator failed for field "Essay.location": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -183,6 +306,10 @@ func (_c *EssayCreate) createSpec() (*Essay, *sqlgraph.CreateSpec) {
 		_spec.SetField(essay.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := _c.mutation.UserID(); ok {
+		_spec.SetField(essay.FieldUserID, field.TypeInt, value)
+		_node.UserID = value
+	}
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(essay.FieldContent, field.TypeString, value)
 		_node.Content = value
@@ -194,6 +321,30 @@ func (_c *EssayCreate) createSpec() (*Essay, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Images(); ok {
 		_spec.SetField(essay.FieldImages, field.TypeJSON, value)
 		_node.Images = value
+	}
+	if value, ok := _c.mutation.LikeCount(); ok {
+		_spec.SetField(essay.FieldLikeCount, field.TypeInt, value)
+		_node.LikeCount = value
+	}
+	if value, ok := _c.mutation.CommentCount(); ok {
+		_spec.SetField(essay.FieldCommentCount, field.TypeInt, value)
+		_node.CommentCount = value
+	}
+	if value, ok := _c.mutation.ShareCount(); ok {
+		_spec.SetField(essay.FieldShareCount, field.TypeInt, value)
+		_node.ShareCount = value
+	}
+	if value, ok := _c.mutation.Public(); ok {
+		_spec.SetField(essay.FieldPublic, field.TypeBool, value)
+		_node.Public = value
+	}
+	if value, ok := _c.mutation.Location(); ok {
+		_spec.SetField(essay.FieldLocation, field.TypeString, value)
+		_node.Location = value
+	}
+	if value, ok := _c.mutation.Tags(); ok {
+		_spec.SetField(essay.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	return _node, _spec
 }

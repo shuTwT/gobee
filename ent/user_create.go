@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gobee/ent/member"
 	"gobee/ent/role"
 	"gobee/ent/user"
 	"time"
@@ -140,6 +141,25 @@ func (_c *UserCreate) SetID(v int) *UserCreate {
 // SetRole sets the "role" edge to the Role entity.
 func (_c *UserCreate) SetRole(v *Role) *UserCreate {
 	return _c.SetRoleID(v.ID)
+}
+
+// SetMemberID sets the "member" edge to the Member entity by ID.
+func (_c *UserCreate) SetMemberID(id int) *UserCreate {
+	_c.mutation.SetMemberID(id)
+	return _c
+}
+
+// SetNillableMemberID sets the "member" edge to the Member entity by ID if the given value is not nil.
+func (_c *UserCreate) SetNillableMemberID(id *int) *UserCreate {
+	if id != nil {
+		_c = _c.SetMemberID(*id)
+	}
+	return _c
+}
+
+// SetMember sets the "member" edge to the Member entity.
+func (_c *UserCreate) SetMember(v *Member) *UserCreate {
+	return _c.SetMemberID(v.ID)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -316,6 +336,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.RoleID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.MemberIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.MemberTable,
+			Columns: []string{user.MemberColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

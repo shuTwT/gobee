@@ -3,6 +3,8 @@
 package wallet
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -11,10 +13,26 @@ const (
 	Label = "wallet"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
 	// FieldBalance holds the string denoting the balance field in the database.
 	FieldBalance = "balance"
+	// FieldFrozenAmount holds the string denoting the frozen_amount field in the database.
+	FieldFrozenAmount = "frozen_amount"
+	// FieldTotalIncome holds the string denoting the total_income field in the database.
+	FieldTotalIncome = "total_income"
+	// FieldTotalExpense holds the string denoting the total_expense field in the database.
+	FieldTotalExpense = "total_expense"
+	// FieldPassword holds the string denoting the password field in the database.
+	FieldPassword = "password"
+	// FieldActive holds the string denoting the active field in the database.
+	FieldActive = "active"
+	// FieldRemark holds the string denoting the remark field in the database.
+	FieldRemark = "remark"
 	// Table holds the table name of the wallet in the database.
 	Table = "wallets"
 )
@@ -22,8 +40,16 @@ const (
 // Columns holds all SQL columns for wallet fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 	FieldUserID,
 	FieldBalance,
+	FieldFrozenAmount,
+	FieldTotalIncome,
+	FieldTotalExpense,
+	FieldPassword,
+	FieldActive,
+	FieldRemark,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -37,8 +63,26 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultBalance holds the default value on creation for the "balance" field.
 	DefaultBalance int
+	// DefaultFrozenAmount holds the default value on creation for the "frozen_amount" field.
+	DefaultFrozenAmount int
+	// DefaultTotalIncome holds the default value on creation for the "total_income" field.
+	DefaultTotalIncome int
+	// DefaultTotalExpense holds the default value on creation for the "total_expense" field.
+	DefaultTotalExpense int
+	// PasswordValidator is a validator for the "password" field. It is called by the builders before save.
+	PasswordValidator func(string) error
+	// DefaultActive holds the default value on creation for the "active" field.
+	DefaultActive bool
+	// RemarkValidator is a validator for the "remark" field. It is called by the builders before save.
+	RemarkValidator func(string) error
 )
 
 // OrderOption defines the ordering options for the Wallet queries.
@@ -49,6 +93,16 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
 // ByUserID orders the results by the user_id field.
 func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
@@ -57,4 +111,34 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByBalance orders the results by the balance field.
 func ByBalance(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBalance, opts...).ToFunc()
+}
+
+// ByFrozenAmount orders the results by the frozen_amount field.
+func ByFrozenAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFrozenAmount, opts...).ToFunc()
+}
+
+// ByTotalIncome orders the results by the total_income field.
+func ByTotalIncome(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotalIncome, opts...).ToFunc()
+}
+
+// ByTotalExpense orders the results by the total_expense field.
+func ByTotalExpense(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotalExpense, opts...).ToFunc()
+}
+
+// ByPassword orders the results by the password field.
+func ByPassword(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPassword, opts...).ToFunc()
+}
+
+// ByActive orders the results by the active field.
+func ByActive(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldActive, opts...).ToFunc()
+}
+
+// ByRemark orders the results by the remark field.
+func ByRemark(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRemark, opts...).ToFunc()
 }

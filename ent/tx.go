@@ -22,6 +22,8 @@ type Tx struct {
 	Comment *CommentClient
 	// Coupon is the client for interacting with the Coupon builders.
 	Coupon *CouponClient
+	// CouponUsage is the client for interacting with the CouponUsage builders.
+	CouponUsage *CouponUsageClient
 	// Essay is the client for interacting with the Essay builders.
 	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
@@ -50,6 +52,8 @@ type Tx struct {
 	PersonalAccessToken *PersonalAccessTokenClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
+	// Product is the client for interacting with the Product builders.
+	Product *ProductClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// ScheduleJob is the client for interacting with the ScheduleJob builders.
@@ -202,6 +206,7 @@ func (tx *Tx) init() {
 	tx.ApiPerms = NewApiPermsClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.Coupon = NewCouponClient(tx.config)
+	tx.CouponUsage = NewCouponUsageClient(tx.config)
 	tx.Essay = NewEssayClient(tx.config)
 	tx.FLink = NewFLinkClient(tx.config)
 	tx.FLinkGroup = NewFLinkGroupClient(tx.config)
@@ -216,6 +221,7 @@ func (tx *Tx) init() {
 	tx.PayOrder = NewPayOrderClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
+	tx.Product = NewProductClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.ScheduleJob = NewScheduleJobClient(tx.config)
 	tx.Setting = NewSettingClient(tx.config)

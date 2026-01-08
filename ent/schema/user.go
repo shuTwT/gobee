@@ -50,5 +50,7 @@ func (User) Edges() []ent.Edge {
 		edge.From("role", Role.Type).
 			Ref("users").
 			Unique().Field("role_id"),
+		edge.To("member", Member.Type).
+			Unique(),
 	}
 }

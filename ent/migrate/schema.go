@@ -92,6 +92,24 @@ var (
 	// CouponsColumns holds the columns for the "coupons" table.
 	CouponsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 100},
+		{Name: "code", Type: field.TypeString, Unique: true, Size: 50},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "type", Type: field.TypeInt, Default: 0},
+		{Name: "value", Type: field.TypeInt, Default: 0},
+		{Name: "min_amount", Type: field.TypeInt, Default: 0},
+		{Name: "max_discount", Type: field.TypeInt, Default: 0},
+		{Name: "total_count", Type: field.TypeInt, Default: 0},
+		{Name: "used_count", Type: field.TypeInt, Default: 0},
+		{Name: "per_user_limit", Type: field.TypeInt, Default: 1},
+		{Name: "start_time", Type: field.TypeTime},
+		{Name: "end_time", Type: field.TypeTime},
+		{Name: "active", Type: field.TypeBool, Default: true},
+		{Name: "image", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "product_ids", Type: field.TypeJSON, Nullable: true},
+		{Name: "category_ids", Type: field.TypeJSON, Nullable: true},
 	}
 	// CouponsTable holds the schema information for the "coupons" table.
 	CouponsTable = &schema.Table{
@@ -99,14 +117,41 @@ var (
 		Columns:    CouponsColumns,
 		PrimaryKey: []*schema.Column{CouponsColumns[0]},
 	}
+	// CouponUsagesColumns holds the columns for the "coupon_usages" table.
+	CouponUsagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "coupon_code", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "order_id", Type: field.TypeInt, Nullable: true},
+		{Name: "status", Type: field.TypeInt, Default: 0},
+		{Name: "used_at", Type: field.TypeTime, Nullable: true},
+		{Name: "discount_amount", Type: field.TypeInt, Default: 0},
+		{Name: "expire_at", Type: field.TypeTime},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 500},
+	}
+	// CouponUsagesTable holds the schema information for the "coupon_usages" table.
+	CouponUsagesTable = &schema.Table{
+		Name:       "coupon_usages",
+		Columns:    CouponUsagesColumns,
+		PrimaryKey: []*schema.Column{CouponUsagesColumns[0]},
+	}
 	// EssaysColumns holds the columns for the "essays" table.
 	EssaysColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "content", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "content", Type: field.TypeString, Size: 1000},
 		{Name: "draft", Type: field.TypeBool, Default: false},
 		{Name: "images", Type: field.TypeJSON, Nullable: true},
+		{Name: "like_count", Type: field.TypeInt, Default: 0},
+		{Name: "comment_count", Type: field.TypeInt, Default: 0},
+		{Name: "share_count", Type: field.TypeInt, Default: 0},
+		{Name: "public", Type: field.TypeBool, Default: true},
+		{Name: "location", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 	}
 	// EssaysTable holds the schema information for the "essays" table.
 	EssaysTable = &schema.Table{
@@ -214,16 +259,54 @@ var (
 	// MembersColumns holds the columns for the "members" table.
 	MembersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "member_level", Type: field.TypeInt},
+		{Name: "member_no", Type: field.TypeString, Unique: true},
+		{Name: "join_time", Type: field.TypeTime},
+		{Name: "expire_time", Type: field.TypeTime, Nullable: true},
+		{Name: "points", Type: field.TypeInt, Default: 0},
+		{Name: "total_spent", Type: field.TypeInt, Default: 0},
+		{Name: "order_count", Type: field.TypeInt, Default: 0},
+		{Name: "active", Type: field.TypeBool, Default: true},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "member_level_members", Type: field.TypeInt, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// MembersTable holds the schema information for the "members" table.
 	MembersTable = &schema.Table{
 		Name:       "members",
 		Columns:    MembersColumns,
 		PrimaryKey: []*schema.Column{MembersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "members_member_levels_members",
+				Columns:    []*schema.Column{MembersColumns[12]},
+				RefColumns: []*schema.Column{MemberLevelsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "members_users_member",
+				Columns:    []*schema.Column{MembersColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// MemberLevelsColumns holds the columns for the "member_levels" table.
 	MemberLevelsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 50},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "level", Type: field.TypeInt, Unique: true},
+		{Name: "min_points", Type: field.TypeInt, Default: 0},
+		{Name: "discount_rate", Type: field.TypeInt, Default: 100},
+		{Name: "privileges", Type: field.TypeJSON, Nullable: true},
+		{Name: "icon", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "active", Type: field.TypeBool, Default: true},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
 	}
 	// MemberLevelsTable holds the schema information for the "member_levels" table.
 	MemberLevelsTable = &schema.Table{
@@ -360,6 +443,43 @@ var (
 		Columns:    PostsColumns,
 		PrimaryKey: []*schema.Column{PostsColumns[0]},
 	}
+	// ProductsColumns holds the columns for the "products" table.
+	ProductsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "short_description", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "sku", Type: field.TypeString, Unique: true, Size: 100},
+		{Name: "price", Type: field.TypeInt, Default: 0},
+		{Name: "original_price", Type: field.TypeInt, Nullable: true},
+		{Name: "cost_price", Type: field.TypeInt, Nullable: true},
+		{Name: "stock", Type: field.TypeInt, Default: 0},
+		{Name: "min_stock", Type: field.TypeInt, Default: 0},
+		{Name: "sales", Type: field.TypeInt, Default: 0},
+		{Name: "category_id", Type: field.TypeInt, Nullable: true},
+		{Name: "brand", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "unit", Type: field.TypeString, Nullable: true, Size: 20},
+		{Name: "weight", Type: field.TypeFloat64, Nullable: true},
+		{Name: "volume", Type: field.TypeFloat64, Nullable: true},
+		{Name: "images", Type: field.TypeJSON, Nullable: true},
+		{Name: "attributes", Type: field.TypeJSON, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "active", Type: field.TypeBool, Default: true},
+		{Name: "featured", Type: field.TypeBool, Default: false},
+		{Name: "digital", Type: field.TypeBool, Default: false},
+		{Name: "meta_title", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "meta_description", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
+	}
+	// ProductsTable holds the schema information for the "products" table.
+	ProductsTable = &schema.Table{
+		Name:       "products",
+		Columns:    ProductsColumns,
+		PrimaryKey: []*schema.Column{ProductsColumns[0]},
+	}
 	// RolesColumns holds the columns for the "roles" table.
 	RolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -487,8 +607,16 @@ var (
 	// WalletsColumns holds the columns for the "wallets" table.
 	WalletsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "user_id", Type: field.TypeInt},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeInt, Nullable: true},
 		{Name: "balance", Type: field.TypeInt, Default: 0},
+		{Name: "frozen_amount", Type: field.TypeInt, Default: 0},
+		{Name: "total_income", Type: field.TypeInt, Default: 0},
+		{Name: "total_expense", Type: field.TypeInt, Default: 0},
+		{Name: "password", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "active", Type: field.TypeBool, Default: true},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 500},
 	}
 	// WalletsTable holds the schema information for the "wallets" table.
 	WalletsTable = &schema.Table{
@@ -518,6 +646,7 @@ var (
 		APIPermsTable,
 		CommentsTable,
 		CouponsTable,
+		CouponUsagesTable,
 		EssaysTable,
 		FlinksTable,
 		FlinkGroupsTable,
@@ -532,6 +661,7 @@ var (
 		PayOrdersTable,
 		PersonalAccessTokensTable,
 		PostsTable,
+		ProductsTable,
 		RolesTable,
 		ScheduleJobsTable,
 		SettingsTable,
@@ -545,5 +675,7 @@ var (
 
 func init() {
 	FlinksTable.ForeignKeys[0].RefTable = FlinkGroupsTable
+	MembersTable.ForeignKeys[0].RefTable = MemberLevelsTable
+	MembersTable.ForeignKeys[1].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = RolesTable
 }

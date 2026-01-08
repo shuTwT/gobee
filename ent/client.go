@@ -16,6 +16,7 @@ import (
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
 	"gobee/ent/coupon"
+	"gobee/ent/couponusage"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
@@ -30,6 +31,7 @@ import (
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
+	"gobee/ent/product"
 	"gobee/ent/role"
 	"gobee/ent/schedulejob"
 	"gobee/ent/setting"
@@ -60,6 +62,8 @@ type Client struct {
 	Comment *CommentClient
 	// Coupon is the client for interacting with the Coupon builders.
 	Coupon *CouponClient
+	// CouponUsage is the client for interacting with the CouponUsage builders.
+	CouponUsage *CouponUsageClient
 	// Essay is the client for interacting with the Essay builders.
 	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
@@ -88,6 +92,8 @@ type Client struct {
 	PersonalAccessToken *PersonalAccessTokenClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
+	// Product is the client for interacting with the Product builders.
+	Product *ProductClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// ScheduleJob is the client for interacting with the ScheduleJob builders.
@@ -120,6 +126,7 @@ func (c *Client) init() {
 	c.ApiPerms = NewApiPermsClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
+	c.CouponUsage = NewCouponUsageClient(c.config)
 	c.Essay = NewEssayClient(c.config)
 	c.FLink = NewFLinkClient(c.config)
 	c.FLinkGroup = NewFLinkGroupClient(c.config)
@@ -134,6 +141,7 @@ func (c *Client) init() {
 	c.PayOrder = NewPayOrderClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.Post = NewPostClient(c.config)
+	c.Product = NewProductClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.ScheduleJob = NewScheduleJobClient(c.config)
 	c.Setting = NewSettingClient(c.config)
@@ -239,6 +247,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ApiPerms:            NewApiPermsClient(cfg),
 		Comment:             NewCommentClient(cfg),
 		Coupon:              NewCouponClient(cfg),
+		CouponUsage:         NewCouponUsageClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
@@ -253,6 +262,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PayOrder:            NewPayOrderClient(cfg),
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
 		Post:                NewPostClient(cfg),
+		Product:             NewProductClient(cfg),
 		Role:                NewRoleClient(cfg),
 		ScheduleJob:         NewScheduleJobClient(cfg),
 		Setting:             NewSettingClient(cfg),
@@ -285,6 +295,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ApiPerms:            NewApiPermsClient(cfg),
 		Comment:             NewCommentClient(cfg),
 		Coupon:              NewCouponClient(cfg),
+		CouponUsage:         NewCouponUsageClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
@@ -299,6 +310,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PayOrder:            NewPayOrderClient(cfg),
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
 		Post:                NewPostClient(cfg),
+		Product:             NewProductClient(cfg),
 		Role:                NewRoleClient(cfg),
 		ScheduleJob:         NewScheduleJobClient(cfg),
 		Setting:             NewSettingClient(cfg),
@@ -336,11 +348,12 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Coupon, c.Essay, c.FLink,
-		c.FLinkGroup, c.File, c.FriendCircleRecord, c.FriendCircleRule, c.Member,
-		c.MemberLevel, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken,
-		c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Coupon, c.CouponUsage, c.Essay,
+		c.FLink, c.FLinkGroup, c.File, c.FriendCircleRecord, c.FriendCircleRule,
+		c.Member, c.MemberLevel, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Post, c.Product,
+		c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.User, c.VisitLog,
+		c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -350,11 +363,12 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Coupon, c.Essay, c.FLink,
-		c.FLinkGroup, c.File, c.FriendCircleRecord, c.FriendCircleRule, c.Member,
-		c.MemberLevel, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken,
-		c.PayOrder, c.PersonalAccessToken, c.Post, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Coupon, c.CouponUsage, c.Essay,
+		c.FLink, c.FLinkGroup, c.File, c.FriendCircleRecord, c.FriendCircleRule,
+		c.Member, c.MemberLevel, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Post, c.Product,
+		c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.User, c.VisitLog,
+		c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -373,6 +387,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Comment.mutate(ctx, m)
 	case *CouponMutation:
 		return c.Coupon.mutate(ctx, m)
+	case *CouponUsageMutation:
+		return c.CouponUsage.mutate(ctx, m)
 	case *EssayMutation:
 		return c.Essay.mutate(ctx, m)
 	case *FLinkMutation:
@@ -401,6 +417,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PersonalAccessToken.mutate(ctx, m)
 	case *PostMutation:
 		return c.Post.mutate(ctx, m)
+	case *ProductMutation:
+		return c.Product.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
 	case *ScheduleJobMutation:
@@ -1084,6 +1102,139 @@ func (c *CouponClient) mutate(ctx context.Context, m *CouponMutation) (Value, er
 		return (&CouponDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Coupon mutation op: %q", m.Op())
+	}
+}
+
+// CouponUsageClient is a client for the CouponUsage schema.
+type CouponUsageClient struct {
+	config
+}
+
+// NewCouponUsageClient returns a client for the CouponUsage from the given config.
+func NewCouponUsageClient(c config) *CouponUsageClient {
+	return &CouponUsageClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `couponusage.Hooks(f(g(h())))`.
+func (c *CouponUsageClient) Use(hooks ...Hook) {
+	c.hooks.CouponUsage = append(c.hooks.CouponUsage, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `couponusage.Intercept(f(g(h())))`.
+func (c *CouponUsageClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CouponUsage = append(c.inters.CouponUsage, interceptors...)
+}
+
+// Create returns a builder for creating a CouponUsage entity.
+func (c *CouponUsageClient) Create() *CouponUsageCreate {
+	mutation := newCouponUsageMutation(c.config, OpCreate)
+	return &CouponUsageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CouponUsage entities.
+func (c *CouponUsageClient) CreateBulk(builders ...*CouponUsageCreate) *CouponUsageCreateBulk {
+	return &CouponUsageCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CouponUsageClient) MapCreateBulk(slice any, setFunc func(*CouponUsageCreate, int)) *CouponUsageCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CouponUsageCreateBulk{err: fmt.Errorf("calling to CouponUsageClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CouponUsageCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CouponUsageCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CouponUsage.
+func (c *CouponUsageClient) Update() *CouponUsageUpdate {
+	mutation := newCouponUsageMutation(c.config, OpUpdate)
+	return &CouponUsageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CouponUsageClient) UpdateOne(_m *CouponUsage) *CouponUsageUpdateOne {
+	mutation := newCouponUsageMutation(c.config, OpUpdateOne, withCouponUsage(_m))
+	return &CouponUsageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CouponUsageClient) UpdateOneID(id int) *CouponUsageUpdateOne {
+	mutation := newCouponUsageMutation(c.config, OpUpdateOne, withCouponUsageID(id))
+	return &CouponUsageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CouponUsage.
+func (c *CouponUsageClient) Delete() *CouponUsageDelete {
+	mutation := newCouponUsageMutation(c.config, OpDelete)
+	return &CouponUsageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CouponUsageClient) DeleteOne(_m *CouponUsage) *CouponUsageDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CouponUsageClient) DeleteOneID(id int) *CouponUsageDeleteOne {
+	builder := c.Delete().Where(couponusage.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CouponUsageDeleteOne{builder}
+}
+
+// Query returns a query builder for CouponUsage.
+func (c *CouponUsageClient) Query() *CouponUsageQuery {
+	return &CouponUsageQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCouponUsage},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CouponUsage entity by its id.
+func (c *CouponUsageClient) Get(ctx context.Context, id int) (*CouponUsage, error) {
+	return c.Query().Where(couponusage.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CouponUsageClient) GetX(ctx context.Context, id int) *CouponUsage {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CouponUsageClient) Hooks() []Hook {
+	return c.hooks.CouponUsage
+}
+
+// Interceptors returns the client interceptors.
+func (c *CouponUsageClient) Interceptors() []Interceptor {
+	return c.inters.CouponUsage
+}
+
+func (c *CouponUsageClient) mutate(ctx context.Context, m *CouponUsageMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CouponUsageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CouponUsageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CouponUsageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CouponUsageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CouponUsage mutation op: %q", m.Op())
 	}
 }
 
@@ -2025,6 +2176,22 @@ func (c *MemberClient) GetX(ctx context.Context, id int) *Member {
 	return obj
 }
 
+// QueryUser queries the user edge of a Member.
+func (c *MemberClient) QueryUser(_m *Member) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(member.Table, member.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, member.UserTable, member.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *MemberClient) Hooks() []Hook {
 	return c.hooks.Member
@@ -2156,6 +2323,22 @@ func (c *MemberLevelClient) GetX(ctx context.Context, id int) *MemberLevel {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryMembers queries the members edge of a MemberLevel.
+func (c *MemberLevelClient) QueryMembers(_m *MemberLevel) *MemberQuery {
+	query := (&MemberClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(memberlevel.Table, memberlevel.FieldID, id),
+			sqlgraph.To(member.Table, member.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, memberlevel.MembersTable, memberlevel.MembersColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -2981,6 +3164,139 @@ func (c *PostClient) mutate(ctx context.Context, m *PostMutation) (Value, error)
 	}
 }
 
+// ProductClient is a client for the Product schema.
+type ProductClient struct {
+	config
+}
+
+// NewProductClient returns a client for the Product from the given config.
+func NewProductClient(c config) *ProductClient {
+	return &ProductClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `product.Hooks(f(g(h())))`.
+func (c *ProductClient) Use(hooks ...Hook) {
+	c.hooks.Product = append(c.hooks.Product, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `product.Intercept(f(g(h())))`.
+func (c *ProductClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Product = append(c.inters.Product, interceptors...)
+}
+
+// Create returns a builder for creating a Product entity.
+func (c *ProductClient) Create() *ProductCreate {
+	mutation := newProductMutation(c.config, OpCreate)
+	return &ProductCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Product entities.
+func (c *ProductClient) CreateBulk(builders ...*ProductCreate) *ProductCreateBulk {
+	return &ProductCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProductClient) MapCreateBulk(slice any, setFunc func(*ProductCreate, int)) *ProductCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProductCreateBulk{err: fmt.Errorf("calling to ProductClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProductCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProductCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Product.
+func (c *ProductClient) Update() *ProductUpdate {
+	mutation := newProductMutation(c.config, OpUpdate)
+	return &ProductUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProductClient) UpdateOne(_m *Product) *ProductUpdateOne {
+	mutation := newProductMutation(c.config, OpUpdateOne, withProduct(_m))
+	return &ProductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProductClient) UpdateOneID(id int) *ProductUpdateOne {
+	mutation := newProductMutation(c.config, OpUpdateOne, withProductID(id))
+	return &ProductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Product.
+func (c *ProductClient) Delete() *ProductDelete {
+	mutation := newProductMutation(c.config, OpDelete)
+	return &ProductDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProductClient) DeleteOne(_m *Product) *ProductDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProductClient) DeleteOneID(id int) *ProductDeleteOne {
+	builder := c.Delete().Where(product.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProductDeleteOne{builder}
+}
+
+// Query returns a query builder for Product.
+func (c *ProductClient) Query() *ProductQuery {
+	return &ProductQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProduct},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Product entity by its id.
+func (c *ProductClient) Get(ctx context.Context, id int) (*Product, error) {
+	return c.Query().Where(product.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProductClient) GetX(ctx context.Context, id int) *Product {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ProductClient) Hooks() []Hook {
+	return c.hooks.Product
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProductClient) Interceptors() []Interceptor {
+	return c.inters.Product
+}
+
+func (c *ProductClient) mutate(ctx context.Context, m *ProductMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProductCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProductUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProductDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Product mutation op: %q", m.Op())
+	}
+}
+
 // RoleClient is a client for the Role schema.
 type RoleClient struct {
 	config
@@ -3653,6 +3969,22 @@ func (c *UserClient) QueryRole(_m *User) *RoleQuery {
 	return query
 }
 
+// QueryMember queries the member edge of a User.
+func (c *UserClient) QueryMember(_m *User) *MemberQuery {
+	query := (&MemberClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(member.Table, member.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.MemberTable, user.MemberColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -4080,17 +4412,17 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, ApiPerms, Comment, Coupon, Essay, FLink, FLinkGroup, File,
-		FriendCircleRecord, FriendCircleRule, Member, MemberLevel, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, PayOrder, PersonalAccessToken, Post, Role,
-		ScheduleJob, Setting, StorageStrategy, User, VisitLog, Wallet,
-		WebHook []ent.Hook
+		Album, AlbumPhoto, ApiPerms, Comment, Coupon, CouponUsage, Essay, FLink,
+		FLinkGroup, File, FriendCircleRecord, FriendCircleRule, Member, MemberLevel,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
+		PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
+		StorageStrategy, User, VisitLog, Wallet, WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, ApiPerms, Comment, Coupon, Essay, FLink, FLinkGroup, File,
-		FriendCircleRecord, FriendCircleRule, Member, MemberLevel, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, PayOrder, PersonalAccessToken, Post, Role,
-		ScheduleJob, Setting, StorageStrategy, User, VisitLog, Wallet,
-		WebHook []ent.Interceptor
+		Album, AlbumPhoto, ApiPerms, Comment, Coupon, CouponUsage, Essay, FLink,
+		FLinkGroup, File, FriendCircleRecord, FriendCircleRule, Member, MemberLevel,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
+		PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
+		StorageStrategy, User, VisitLog, Wallet, WebHook []ent.Interceptor
 	}
 )

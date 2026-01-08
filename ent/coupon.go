@@ -3,9 +3,11 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"gobee/ent/coupon"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -13,9 +15,45 @@ import (
 
 // Coupon is the model entity for the Coupon schema.
 type Coupon struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 优惠券名称
+	Name string `json:"name,omitempty"`
+	// 优惠券代码
+	Code string `json:"code,omitempty"`
+	// 优惠券描述
+	Description string `json:"description,omitempty"`
+	// 优惠券类型: 0-满减 1-折扣 2-无门槛
+	Type int `json:"type,omitempty"`
+	// 优惠券值
+	Value int `json:"value,omitempty"`
+	// 最低消费金额(分)
+	MinAmount int `json:"min_amount,omitempty"`
+	// 最大优惠金额(分)
+	MaxDiscount int `json:"max_discount,omitempty"`
+	// 发放总数
+	TotalCount int `json:"total_count,omitempty"`
+	// 已使用数量
+	UsedCount int `json:"used_count,omitempty"`
+	// 每用户限领数量
+	PerUserLimit int `json:"per_user_limit,omitempty"`
+	// 开始时间
+	StartTime time.Time `json:"start_time,omitempty"`
+	// 结束时间
+	EndTime time.Time `json:"end_time,omitempty"`
+	// 是否启用
+	Active bool `json:"active,omitempty"`
+	// 优惠券图片
+	Image string `json:"image,omitempty"`
+	// 适用商品ID列表
+	ProductIds []int `json:"product_ids,omitempty"`
+	// 适用分类ID列表
+	CategoryIds  []int `json:"category_ids,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -24,8 +62,16 @@ func (*Coupon) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case coupon.FieldID:
+		case coupon.FieldProductIds, coupon.FieldCategoryIds:
+			values[i] = new([]byte)
+		case coupon.FieldActive:
+			values[i] = new(sql.NullBool)
+		case coupon.FieldID, coupon.FieldType, coupon.FieldValue, coupon.FieldMinAmount, coupon.FieldMaxDiscount, coupon.FieldTotalCount, coupon.FieldUsedCount, coupon.FieldPerUserLimit:
 			values[i] = new(sql.NullInt64)
+		case coupon.FieldName, coupon.FieldCode, coupon.FieldDescription, coupon.FieldImage:
+			values[i] = new(sql.NullString)
+		case coupon.FieldCreatedAt, coupon.FieldUpdatedAt, coupon.FieldStartTime, coupon.FieldEndTime:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -47,6 +93,118 @@ func (_m *Coupon) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
+		case coupon.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = value.Time
+			}
+		case coupon.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = value.Time
+			}
+		case coupon.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				_m.Name = value.String
+			}
+		case coupon.FieldCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field code", values[i])
+			} else if value.Valid {
+				_m.Code = value.String
+			}
+		case coupon.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				_m.Description = value.String
+			}
+		case coupon.FieldType:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				_m.Type = int(value.Int64)
+			}
+		case coupon.FieldValue:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field value", values[i])
+			} else if value.Valid {
+				_m.Value = int(value.Int64)
+			}
+		case coupon.FieldMinAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field min_amount", values[i])
+			} else if value.Valid {
+				_m.MinAmount = int(value.Int64)
+			}
+		case coupon.FieldMaxDiscount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field max_discount", values[i])
+			} else if value.Valid {
+				_m.MaxDiscount = int(value.Int64)
+			}
+		case coupon.FieldTotalCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field total_count", values[i])
+			} else if value.Valid {
+				_m.TotalCount = int(value.Int64)
+			}
+		case coupon.FieldUsedCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field used_count", values[i])
+			} else if value.Valid {
+				_m.UsedCount = int(value.Int64)
+			}
+		case coupon.FieldPerUserLimit:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field per_user_limit", values[i])
+			} else if value.Valid {
+				_m.PerUserLimit = int(value.Int64)
+			}
+		case coupon.FieldStartTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field start_time", values[i])
+			} else if value.Valid {
+				_m.StartTime = value.Time
+			}
+		case coupon.FieldEndTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field end_time", values[i])
+			} else if value.Valid {
+				_m.EndTime = value.Time
+			}
+		case coupon.FieldActive:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field active", values[i])
+			} else if value.Valid {
+				_m.Active = value.Bool
+			}
+		case coupon.FieldImage:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field image", values[i])
+			} else if value.Valid {
+				_m.Image = value.String
+			}
+		case coupon.FieldProductIds:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field product_ids", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.ProductIds); err != nil {
+					return fmt.Errorf("unmarshal field product_ids: %w", err)
+				}
+			}
+		case coupon.FieldCategoryIds:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field category_ids", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.CategoryIds); err != nil {
+					return fmt.Errorf("unmarshal field category_ids: %w", err)
+				}
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -54,9 +212,9 @@ func (_m *Coupon) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Coupon.
+// GetValue returns the ent.Value that was dynamically selected and assigned to the Coupon.
 // This includes values selected through modifiers, order, etc.
-func (_m *Coupon) Value(name string) (ent.Value, error) {
+func (_m *Coupon) GetValue(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
@@ -82,7 +240,60 @@ func (_m *Coupon) Unwrap() *Coupon {
 func (_m *Coupon) String() string {
 	var builder strings.Builder
 	builder.WriteString("Coupon(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(_m.Name)
+	builder.WriteString(", ")
+	builder.WriteString("code=")
+	builder.WriteString(_m.Code)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(_m.Description)
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Type))
+	builder.WriteString(", ")
+	builder.WriteString("value=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Value))
+	builder.WriteString(", ")
+	builder.WriteString("min_amount=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MinAmount))
+	builder.WriteString(", ")
+	builder.WriteString("max_discount=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MaxDiscount))
+	builder.WriteString(", ")
+	builder.WriteString("total_count=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TotalCount))
+	builder.WriteString(", ")
+	builder.WriteString("used_count=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UsedCount))
+	builder.WriteString(", ")
+	builder.WriteString("per_user_limit=")
+	builder.WriteString(fmt.Sprintf("%v", _m.PerUserLimit))
+	builder.WriteString(", ")
+	builder.WriteString("start_time=")
+	builder.WriteString(_m.StartTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("end_time=")
+	builder.WriteString(_m.EndTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("active=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Active))
+	builder.WriteString(", ")
+	builder.WriteString("image=")
+	builder.WriteString(_m.Image)
+	builder.WriteString(", ")
+	builder.WriteString("product_ids=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ProductIds))
+	builder.WriteString(", ")
+	builder.WriteString("category_ids=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CategoryIds))
 	builder.WriteByte(')')
 	return builder.String()
 }

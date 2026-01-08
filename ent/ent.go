@@ -11,6 +11,7 @@ import (
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
 	"gobee/ent/coupon"
+	"gobee/ent/couponusage"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
@@ -25,6 +26,7 @@ import (
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
+	"gobee/ent/product"
 	"gobee/ent/role"
 	"gobee/ent/schedulejob"
 	"gobee/ent/setting"
@@ -104,6 +106,7 @@ func checkColumn(t, c string) error {
 			apiperms.Table:            apiperms.ValidColumn,
 			comment.Table:             comment.ValidColumn,
 			coupon.Table:              coupon.ValidColumn,
+			couponusage.Table:         couponusage.ValidColumn,
 			essay.Table:               essay.ValidColumn,
 			flink.Table:               flink.ValidColumn,
 			flinkgroup.Table:          flinkgroup.ValidColumn,
@@ -118,6 +121,7 @@ func checkColumn(t, c string) error {
 			payorder.Table:            payorder.ValidColumn,
 			personalaccesstoken.Table: personalaccesstoken.ValidColumn,
 			post.Table:                post.ValidColumn,
+			product.Table:             product.ValidColumn,
 			role.Table:                role.ValidColumn,
 			schedulejob.Table:         schedulejob.ValidColumn,
 			setting.Table:             setting.ValidColumn,

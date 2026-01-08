@@ -64,6 +64,11 @@ func UpdatedAt(v time.Time) predicate.Essay {
 	return predicate.Essay(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldUserID, v))
+}
+
 // Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
 func Content(v string) predicate.Essay {
 	return predicate.Essay(sql.FieldEQ(FieldContent, v))
@@ -72,6 +77,31 @@ func Content(v string) predicate.Essay {
 // Draft applies equality check predicate on the "draft" field. It's identical to DraftEQ.
 func Draft(v bool) predicate.Essay {
 	return predicate.Essay(sql.FieldEQ(FieldDraft, v))
+}
+
+// LikeCount applies equality check predicate on the "like_count" field. It's identical to LikeCountEQ.
+func LikeCount(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldLikeCount, v))
+}
+
+// CommentCount applies equality check predicate on the "comment_count" field. It's identical to CommentCountEQ.
+func CommentCount(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldCommentCount, v))
+}
+
+// ShareCount applies equality check predicate on the "share_count" field. It's identical to ShareCountEQ.
+func ShareCount(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldShareCount, v))
+}
+
+// Public applies equality check predicate on the "public" field. It's identical to PublicEQ.
+func Public(v bool) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldPublic, v))
+}
+
+// Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
+func Location(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldLocation, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -152,6 +182,46 @@ func UpdatedAtLT(v time.Time) predicate.Essay {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.Essay {
 	return predicate.Essay(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int) predicate.Essay {
+	return predicate.Essay(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int) predicate.Essay {
+	return predicate.Essay(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// UserIDGT applies the GT predicate on the "user_id" field.
+func UserIDGT(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldGT(FieldUserID, v))
+}
+
+// UserIDGTE applies the GTE predicate on the "user_id" field.
+func UserIDGTE(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldGTE(FieldUserID, v))
+}
+
+// UserIDLT applies the LT predicate on the "user_id" field.
+func UserIDLT(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldLT(FieldUserID, v))
+}
+
+// UserIDLTE applies the LTE predicate on the "user_id" field.
+func UserIDLTE(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldLTE(FieldUserID, v))
 }
 
 // ContentEQ applies the EQ predicate on the "content" field.
@@ -237,6 +307,221 @@ func ImagesIsNil() predicate.Essay {
 // ImagesNotNil applies the NotNil predicate on the "images" field.
 func ImagesNotNil() predicate.Essay {
 	return predicate.Essay(sql.FieldNotNull(FieldImages))
+}
+
+// LikeCountEQ applies the EQ predicate on the "like_count" field.
+func LikeCountEQ(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldLikeCount, v))
+}
+
+// LikeCountNEQ applies the NEQ predicate on the "like_count" field.
+func LikeCountNEQ(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldNEQ(FieldLikeCount, v))
+}
+
+// LikeCountIn applies the In predicate on the "like_count" field.
+func LikeCountIn(vs ...int) predicate.Essay {
+	return predicate.Essay(sql.FieldIn(FieldLikeCount, vs...))
+}
+
+// LikeCountNotIn applies the NotIn predicate on the "like_count" field.
+func LikeCountNotIn(vs ...int) predicate.Essay {
+	return predicate.Essay(sql.FieldNotIn(FieldLikeCount, vs...))
+}
+
+// LikeCountGT applies the GT predicate on the "like_count" field.
+func LikeCountGT(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldGT(FieldLikeCount, v))
+}
+
+// LikeCountGTE applies the GTE predicate on the "like_count" field.
+func LikeCountGTE(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldGTE(FieldLikeCount, v))
+}
+
+// LikeCountLT applies the LT predicate on the "like_count" field.
+func LikeCountLT(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldLT(FieldLikeCount, v))
+}
+
+// LikeCountLTE applies the LTE predicate on the "like_count" field.
+func LikeCountLTE(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldLTE(FieldLikeCount, v))
+}
+
+// CommentCountEQ applies the EQ predicate on the "comment_count" field.
+func CommentCountEQ(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldCommentCount, v))
+}
+
+// CommentCountNEQ applies the NEQ predicate on the "comment_count" field.
+func CommentCountNEQ(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldNEQ(FieldCommentCount, v))
+}
+
+// CommentCountIn applies the In predicate on the "comment_count" field.
+func CommentCountIn(vs ...int) predicate.Essay {
+	return predicate.Essay(sql.FieldIn(FieldCommentCount, vs...))
+}
+
+// CommentCountNotIn applies the NotIn predicate on the "comment_count" field.
+func CommentCountNotIn(vs ...int) predicate.Essay {
+	return predicate.Essay(sql.FieldNotIn(FieldCommentCount, vs...))
+}
+
+// CommentCountGT applies the GT predicate on the "comment_count" field.
+func CommentCountGT(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldGT(FieldCommentCount, v))
+}
+
+// CommentCountGTE applies the GTE predicate on the "comment_count" field.
+func CommentCountGTE(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldGTE(FieldCommentCount, v))
+}
+
+// CommentCountLT applies the LT predicate on the "comment_count" field.
+func CommentCountLT(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldLT(FieldCommentCount, v))
+}
+
+// CommentCountLTE applies the LTE predicate on the "comment_count" field.
+func CommentCountLTE(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldLTE(FieldCommentCount, v))
+}
+
+// ShareCountEQ applies the EQ predicate on the "share_count" field.
+func ShareCountEQ(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldShareCount, v))
+}
+
+// ShareCountNEQ applies the NEQ predicate on the "share_count" field.
+func ShareCountNEQ(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldNEQ(FieldShareCount, v))
+}
+
+// ShareCountIn applies the In predicate on the "share_count" field.
+func ShareCountIn(vs ...int) predicate.Essay {
+	return predicate.Essay(sql.FieldIn(FieldShareCount, vs...))
+}
+
+// ShareCountNotIn applies the NotIn predicate on the "share_count" field.
+func ShareCountNotIn(vs ...int) predicate.Essay {
+	return predicate.Essay(sql.FieldNotIn(FieldShareCount, vs...))
+}
+
+// ShareCountGT applies the GT predicate on the "share_count" field.
+func ShareCountGT(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldGT(FieldShareCount, v))
+}
+
+// ShareCountGTE applies the GTE predicate on the "share_count" field.
+func ShareCountGTE(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldGTE(FieldShareCount, v))
+}
+
+// ShareCountLT applies the LT predicate on the "share_count" field.
+func ShareCountLT(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldLT(FieldShareCount, v))
+}
+
+// ShareCountLTE applies the LTE predicate on the "share_count" field.
+func ShareCountLTE(v int) predicate.Essay {
+	return predicate.Essay(sql.FieldLTE(FieldShareCount, v))
+}
+
+// PublicEQ applies the EQ predicate on the "public" field.
+func PublicEQ(v bool) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldPublic, v))
+}
+
+// PublicNEQ applies the NEQ predicate on the "public" field.
+func PublicNEQ(v bool) predicate.Essay {
+	return predicate.Essay(sql.FieldNEQ(FieldPublic, v))
+}
+
+// LocationEQ applies the EQ predicate on the "location" field.
+func LocationEQ(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldEQ(FieldLocation, v))
+}
+
+// LocationNEQ applies the NEQ predicate on the "location" field.
+func LocationNEQ(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldNEQ(FieldLocation, v))
+}
+
+// LocationIn applies the In predicate on the "location" field.
+func LocationIn(vs ...string) predicate.Essay {
+	return predicate.Essay(sql.FieldIn(FieldLocation, vs...))
+}
+
+// LocationNotIn applies the NotIn predicate on the "location" field.
+func LocationNotIn(vs ...string) predicate.Essay {
+	return predicate.Essay(sql.FieldNotIn(FieldLocation, vs...))
+}
+
+// LocationGT applies the GT predicate on the "location" field.
+func LocationGT(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldGT(FieldLocation, v))
+}
+
+// LocationGTE applies the GTE predicate on the "location" field.
+func LocationGTE(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldGTE(FieldLocation, v))
+}
+
+// LocationLT applies the LT predicate on the "location" field.
+func LocationLT(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldLT(FieldLocation, v))
+}
+
+// LocationLTE applies the LTE predicate on the "location" field.
+func LocationLTE(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldLTE(FieldLocation, v))
+}
+
+// LocationContains applies the Contains predicate on the "location" field.
+func LocationContains(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldContains(FieldLocation, v))
+}
+
+// LocationHasPrefix applies the HasPrefix predicate on the "location" field.
+func LocationHasPrefix(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldHasPrefix(FieldLocation, v))
+}
+
+// LocationHasSuffix applies the HasSuffix predicate on the "location" field.
+func LocationHasSuffix(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldHasSuffix(FieldLocation, v))
+}
+
+// LocationIsNil applies the IsNil predicate on the "location" field.
+func LocationIsNil() predicate.Essay {
+	return predicate.Essay(sql.FieldIsNull(FieldLocation))
+}
+
+// LocationNotNil applies the NotNil predicate on the "location" field.
+func LocationNotNil() predicate.Essay {
+	return predicate.Essay(sql.FieldNotNull(FieldLocation))
+}
+
+// LocationEqualFold applies the EqualFold predicate on the "location" field.
+func LocationEqualFold(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldEqualFold(FieldLocation, v))
+}
+
+// LocationContainsFold applies the ContainsFold predicate on the "location" field.
+func LocationContainsFold(v string) predicate.Essay {
+	return predicate.Essay(sql.FieldContainsFold(FieldLocation, v))
+}
+
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.Essay {
+	return predicate.Essay(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.Essay {
+	return predicate.Essay(sql.FieldNotNull(FieldTags))
 }
 
 // And groups predicates with the AND operator between them.

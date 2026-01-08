@@ -4,7 +4,9 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
+	"gobee/ent/member"
 	"gobee/ent/memberlevel"
 	"gobee/ent/predicate"
 	"math"
@@ -18,10 +20,11 @@ import (
 // MemberLevelQuery is the builder for querying MemberLevel entities.
 type MemberLevelQuery struct {
 	config
-	ctx        *QueryContext
-	order      []memberlevel.OrderOption
-	inters     []Interceptor
-	predicates []predicate.MemberLevel
+	ctx         *QueryContext
+	order       []memberlevel.OrderOption
+	inters      []Interceptor
+	predicates  []predicate.MemberLevel
+	withMembers *MemberQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -56,6 +59,28 @@ func (_q *MemberLevelQuery) Unique(unique bool) *MemberLevelQuery {
 func (_q *MemberLevelQuery) Order(o ...memberlevel.OrderOption) *MemberLevelQuery {
 	_q.order = append(_q.order, o...)
 	return _q
+}
+
+// QueryMembers chains the current query on the "members" edge.
+func (_q *MemberLevelQuery) QueryMembers() *MemberQuery {
+	query := (&MemberClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(memberlevel.Table, memberlevel.FieldID, selector),
+			sqlgraph.To(member.Table, member.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, memberlevel.MembersTable, memberlevel.MembersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first MemberLevel entity from the query.
@@ -245,19 +270,43 @@ func (_q *MemberLevelQuery) Clone() *MemberLevelQuery {
 		return nil
 	}
 	return &MemberLevelQuery{
-		config:     _q.config,
-		ctx:        _q.ctx.Clone(),
-		order:      append([]memberlevel.OrderOption{}, _q.order...),
-		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.MemberLevel{}, _q.predicates...),
+		config:      _q.config,
+		ctx:         _q.ctx.Clone(),
+		order:       append([]memberlevel.OrderOption{}, _q.order...),
+		inters:      append([]Interceptor{}, _q.inters...),
+		predicates:  append([]predicate.MemberLevel{}, _q.predicates...),
+		withMembers: _q.withMembers.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
 }
 
+// WithMembers tells the query-builder to eager-load the nodes that are connected to
+// the "members" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MemberLevelQuery) WithMembers(opts ...func(*MemberQuery)) *MemberLevelQuery {
+	query := (&MemberClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withMembers = query
+	return _q
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.MemberLevel.Query().
+//		GroupBy(memberlevel.FieldCreatedAt).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (_q *MemberLevelQuery) GroupBy(field string, fields ...string) *MemberLevelGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &MemberLevelGroupBy{build: _q}
@@ -269,6 +318,16 @@ func (_q *MemberLevelQuery) GroupBy(field string, fields ...string) *MemberLevel
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		CreatedAt time.Time `json:"created_at,omitempty"`
+//	}
+//
+//	client.MemberLevel.Query().
+//		Select(memberlevel.FieldCreatedAt).
+//		Scan(ctx, &v)
 func (_q *MemberLevelQuery) Select(fields ...string) *MemberLevelSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
 	sbuild := &MemberLevelSelect{MemberLevelQuery: _q}
@@ -310,8 +369,11 @@ func (_q *MemberLevelQuery) prepareQuery(ctx context.Context) error {
 
 func (_q *MemberLevelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*MemberLevel, error) {
 	var (
-		nodes = []*MemberLevel{}
-		_spec = _q.querySpec()
+		nodes       = []*MemberLevel{}
+		_spec       = _q.querySpec()
+		loadedTypes = [1]bool{
+			_q.withMembers != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*MemberLevel).scanValues(nil, columns)
@@ -319,6 +381,7 @@ func (_q *MemberLevelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &MemberLevel{config: _q.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -330,7 +393,46 @@ func (_q *MemberLevelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := _q.withMembers; query != nil {
+		if err := _q.loadMembers(ctx, query, nodes,
+			func(n *MemberLevel) { n.Edges.Members = []*Member{} },
+			func(n *MemberLevel, e *Member) { n.Edges.Members = append(n.Edges.Members, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (_q *MemberLevelQuery) loadMembers(ctx context.Context, query *MemberQuery, nodes []*MemberLevel, init func(*MemberLevel), assign func(*MemberLevel, *Member)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*MemberLevel)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Member(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(memberlevel.MembersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.member_level_members
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "member_level_members" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "member_level_members" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
 }
 
 func (_q *MemberLevelQuery) sqlCount(ctx context.Context) (int, error) {

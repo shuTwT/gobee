@@ -4,8 +4,10 @@ package member
 
 import (
 	"gobee/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -51,6 +53,599 @@ func IDLT(id int) predicate.Member {
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id int) predicate.Member {
 	return predicate.Member(sql.FieldLTE(FieldID, id))
+}
+
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldUserID, v))
+}
+
+// MemberLevel applies equality check predicate on the "member_level" field. It's identical to MemberLevelEQ.
+func MemberLevel(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldMemberLevel, v))
+}
+
+// MemberNo applies equality check predicate on the "member_no" field. It's identical to MemberNoEQ.
+func MemberNo(v string) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldMemberNo, v))
+}
+
+// JoinTime applies equality check predicate on the "join_time" field. It's identical to JoinTimeEQ.
+func JoinTime(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldJoinTime, v))
+}
+
+// ExpireTime applies equality check predicate on the "expire_time" field. It's identical to ExpireTimeEQ.
+func ExpireTime(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldExpireTime, v))
+}
+
+// Points applies equality check predicate on the "points" field. It's identical to PointsEQ.
+func Points(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldPoints, v))
+}
+
+// TotalSpent applies equality check predicate on the "total_spent" field. It's identical to TotalSpentEQ.
+func TotalSpent(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldTotalSpent, v))
+}
+
+// OrderCount applies equality check predicate on the "order_count" field. It's identical to OrderCountEQ.
+func OrderCount(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldOrderCount, v))
+}
+
+// Active applies equality check predicate on the "active" field. It's identical to ActiveEQ.
+func Active(v bool) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldActive, v))
+}
+
+// Remark applies equality check predicate on the "remark" field. It's identical to RemarkEQ.
+func Remark(v string) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldRemark, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// UserIDIsNil applies the IsNil predicate on the "user_id" field.
+func UserIDIsNil() predicate.Member {
+	return predicate.Member(sql.FieldIsNull(FieldUserID))
+}
+
+// UserIDNotNil applies the NotNil predicate on the "user_id" field.
+func UserIDNotNil() predicate.Member {
+	return predicate.Member(sql.FieldNotNull(FieldUserID))
+}
+
+// MemberLevelEQ applies the EQ predicate on the "member_level" field.
+func MemberLevelEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldMemberLevel, v))
+}
+
+// MemberLevelNEQ applies the NEQ predicate on the "member_level" field.
+func MemberLevelNEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldMemberLevel, v))
+}
+
+// MemberLevelIn applies the In predicate on the "member_level" field.
+func MemberLevelIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldMemberLevel, vs...))
+}
+
+// MemberLevelNotIn applies the NotIn predicate on the "member_level" field.
+func MemberLevelNotIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldMemberLevel, vs...))
+}
+
+// MemberLevelGT applies the GT predicate on the "member_level" field.
+func MemberLevelGT(v int) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldMemberLevel, v))
+}
+
+// MemberLevelGTE applies the GTE predicate on the "member_level" field.
+func MemberLevelGTE(v int) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldMemberLevel, v))
+}
+
+// MemberLevelLT applies the LT predicate on the "member_level" field.
+func MemberLevelLT(v int) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldMemberLevel, v))
+}
+
+// MemberLevelLTE applies the LTE predicate on the "member_level" field.
+func MemberLevelLTE(v int) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldMemberLevel, v))
+}
+
+// MemberNoEQ applies the EQ predicate on the "member_no" field.
+func MemberNoEQ(v string) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldMemberNo, v))
+}
+
+// MemberNoNEQ applies the NEQ predicate on the "member_no" field.
+func MemberNoNEQ(v string) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldMemberNo, v))
+}
+
+// MemberNoIn applies the In predicate on the "member_no" field.
+func MemberNoIn(vs ...string) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldMemberNo, vs...))
+}
+
+// MemberNoNotIn applies the NotIn predicate on the "member_no" field.
+func MemberNoNotIn(vs ...string) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldMemberNo, vs...))
+}
+
+// MemberNoGT applies the GT predicate on the "member_no" field.
+func MemberNoGT(v string) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldMemberNo, v))
+}
+
+// MemberNoGTE applies the GTE predicate on the "member_no" field.
+func MemberNoGTE(v string) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldMemberNo, v))
+}
+
+// MemberNoLT applies the LT predicate on the "member_no" field.
+func MemberNoLT(v string) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldMemberNo, v))
+}
+
+// MemberNoLTE applies the LTE predicate on the "member_no" field.
+func MemberNoLTE(v string) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldMemberNo, v))
+}
+
+// MemberNoContains applies the Contains predicate on the "member_no" field.
+func MemberNoContains(v string) predicate.Member {
+	return predicate.Member(sql.FieldContains(FieldMemberNo, v))
+}
+
+// MemberNoHasPrefix applies the HasPrefix predicate on the "member_no" field.
+func MemberNoHasPrefix(v string) predicate.Member {
+	return predicate.Member(sql.FieldHasPrefix(FieldMemberNo, v))
+}
+
+// MemberNoHasSuffix applies the HasSuffix predicate on the "member_no" field.
+func MemberNoHasSuffix(v string) predicate.Member {
+	return predicate.Member(sql.FieldHasSuffix(FieldMemberNo, v))
+}
+
+// MemberNoEqualFold applies the EqualFold predicate on the "member_no" field.
+func MemberNoEqualFold(v string) predicate.Member {
+	return predicate.Member(sql.FieldEqualFold(FieldMemberNo, v))
+}
+
+// MemberNoContainsFold applies the ContainsFold predicate on the "member_no" field.
+func MemberNoContainsFold(v string) predicate.Member {
+	return predicate.Member(sql.FieldContainsFold(FieldMemberNo, v))
+}
+
+// JoinTimeEQ applies the EQ predicate on the "join_time" field.
+func JoinTimeEQ(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldJoinTime, v))
+}
+
+// JoinTimeNEQ applies the NEQ predicate on the "join_time" field.
+func JoinTimeNEQ(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldJoinTime, v))
+}
+
+// JoinTimeIn applies the In predicate on the "join_time" field.
+func JoinTimeIn(vs ...time.Time) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldJoinTime, vs...))
+}
+
+// JoinTimeNotIn applies the NotIn predicate on the "join_time" field.
+func JoinTimeNotIn(vs ...time.Time) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldJoinTime, vs...))
+}
+
+// JoinTimeGT applies the GT predicate on the "join_time" field.
+func JoinTimeGT(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldJoinTime, v))
+}
+
+// JoinTimeGTE applies the GTE predicate on the "join_time" field.
+func JoinTimeGTE(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldJoinTime, v))
+}
+
+// JoinTimeLT applies the LT predicate on the "join_time" field.
+func JoinTimeLT(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldJoinTime, v))
+}
+
+// JoinTimeLTE applies the LTE predicate on the "join_time" field.
+func JoinTimeLTE(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldJoinTime, v))
+}
+
+// ExpireTimeEQ applies the EQ predicate on the "expire_time" field.
+func ExpireTimeEQ(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldExpireTime, v))
+}
+
+// ExpireTimeNEQ applies the NEQ predicate on the "expire_time" field.
+func ExpireTimeNEQ(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldExpireTime, v))
+}
+
+// ExpireTimeIn applies the In predicate on the "expire_time" field.
+func ExpireTimeIn(vs ...time.Time) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldExpireTime, vs...))
+}
+
+// ExpireTimeNotIn applies the NotIn predicate on the "expire_time" field.
+func ExpireTimeNotIn(vs ...time.Time) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldExpireTime, vs...))
+}
+
+// ExpireTimeGT applies the GT predicate on the "expire_time" field.
+func ExpireTimeGT(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldExpireTime, v))
+}
+
+// ExpireTimeGTE applies the GTE predicate on the "expire_time" field.
+func ExpireTimeGTE(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldExpireTime, v))
+}
+
+// ExpireTimeLT applies the LT predicate on the "expire_time" field.
+func ExpireTimeLT(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldExpireTime, v))
+}
+
+// ExpireTimeLTE applies the LTE predicate on the "expire_time" field.
+func ExpireTimeLTE(v time.Time) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldExpireTime, v))
+}
+
+// ExpireTimeIsNil applies the IsNil predicate on the "expire_time" field.
+func ExpireTimeIsNil() predicate.Member {
+	return predicate.Member(sql.FieldIsNull(FieldExpireTime))
+}
+
+// ExpireTimeNotNil applies the NotNil predicate on the "expire_time" field.
+func ExpireTimeNotNil() predicate.Member {
+	return predicate.Member(sql.FieldNotNull(FieldExpireTime))
+}
+
+// PointsEQ applies the EQ predicate on the "points" field.
+func PointsEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldPoints, v))
+}
+
+// PointsNEQ applies the NEQ predicate on the "points" field.
+func PointsNEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldPoints, v))
+}
+
+// PointsIn applies the In predicate on the "points" field.
+func PointsIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldPoints, vs...))
+}
+
+// PointsNotIn applies the NotIn predicate on the "points" field.
+func PointsNotIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldPoints, vs...))
+}
+
+// PointsGT applies the GT predicate on the "points" field.
+func PointsGT(v int) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldPoints, v))
+}
+
+// PointsGTE applies the GTE predicate on the "points" field.
+func PointsGTE(v int) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldPoints, v))
+}
+
+// PointsLT applies the LT predicate on the "points" field.
+func PointsLT(v int) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldPoints, v))
+}
+
+// PointsLTE applies the LTE predicate on the "points" field.
+func PointsLTE(v int) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldPoints, v))
+}
+
+// TotalSpentEQ applies the EQ predicate on the "total_spent" field.
+func TotalSpentEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldTotalSpent, v))
+}
+
+// TotalSpentNEQ applies the NEQ predicate on the "total_spent" field.
+func TotalSpentNEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldTotalSpent, v))
+}
+
+// TotalSpentIn applies the In predicate on the "total_spent" field.
+func TotalSpentIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldTotalSpent, vs...))
+}
+
+// TotalSpentNotIn applies the NotIn predicate on the "total_spent" field.
+func TotalSpentNotIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldTotalSpent, vs...))
+}
+
+// TotalSpentGT applies the GT predicate on the "total_spent" field.
+func TotalSpentGT(v int) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldTotalSpent, v))
+}
+
+// TotalSpentGTE applies the GTE predicate on the "total_spent" field.
+func TotalSpentGTE(v int) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldTotalSpent, v))
+}
+
+// TotalSpentLT applies the LT predicate on the "total_spent" field.
+func TotalSpentLT(v int) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldTotalSpent, v))
+}
+
+// TotalSpentLTE applies the LTE predicate on the "total_spent" field.
+func TotalSpentLTE(v int) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldTotalSpent, v))
+}
+
+// OrderCountEQ applies the EQ predicate on the "order_count" field.
+func OrderCountEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldOrderCount, v))
+}
+
+// OrderCountNEQ applies the NEQ predicate on the "order_count" field.
+func OrderCountNEQ(v int) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldOrderCount, v))
+}
+
+// OrderCountIn applies the In predicate on the "order_count" field.
+func OrderCountIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldOrderCount, vs...))
+}
+
+// OrderCountNotIn applies the NotIn predicate on the "order_count" field.
+func OrderCountNotIn(vs ...int) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldOrderCount, vs...))
+}
+
+// OrderCountGT applies the GT predicate on the "order_count" field.
+func OrderCountGT(v int) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldOrderCount, v))
+}
+
+// OrderCountGTE applies the GTE predicate on the "order_count" field.
+func OrderCountGTE(v int) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldOrderCount, v))
+}
+
+// OrderCountLT applies the LT predicate on the "order_count" field.
+func OrderCountLT(v int) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldOrderCount, v))
+}
+
+// OrderCountLTE applies the LTE predicate on the "order_count" field.
+func OrderCountLTE(v int) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldOrderCount, v))
+}
+
+// ActiveEQ applies the EQ predicate on the "active" field.
+func ActiveEQ(v bool) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldActive, v))
+}
+
+// ActiveNEQ applies the NEQ predicate on the "active" field.
+func ActiveNEQ(v bool) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldActive, v))
+}
+
+// RemarkEQ applies the EQ predicate on the "remark" field.
+func RemarkEQ(v string) predicate.Member {
+	return predicate.Member(sql.FieldEQ(FieldRemark, v))
+}
+
+// RemarkNEQ applies the NEQ predicate on the "remark" field.
+func RemarkNEQ(v string) predicate.Member {
+	return predicate.Member(sql.FieldNEQ(FieldRemark, v))
+}
+
+// RemarkIn applies the In predicate on the "remark" field.
+func RemarkIn(vs ...string) predicate.Member {
+	return predicate.Member(sql.FieldIn(FieldRemark, vs...))
+}
+
+// RemarkNotIn applies the NotIn predicate on the "remark" field.
+func RemarkNotIn(vs ...string) predicate.Member {
+	return predicate.Member(sql.FieldNotIn(FieldRemark, vs...))
+}
+
+// RemarkGT applies the GT predicate on the "remark" field.
+func RemarkGT(v string) predicate.Member {
+	return predicate.Member(sql.FieldGT(FieldRemark, v))
+}
+
+// RemarkGTE applies the GTE predicate on the "remark" field.
+func RemarkGTE(v string) predicate.Member {
+	return predicate.Member(sql.FieldGTE(FieldRemark, v))
+}
+
+// RemarkLT applies the LT predicate on the "remark" field.
+func RemarkLT(v string) predicate.Member {
+	return predicate.Member(sql.FieldLT(FieldRemark, v))
+}
+
+// RemarkLTE applies the LTE predicate on the "remark" field.
+func RemarkLTE(v string) predicate.Member {
+	return predicate.Member(sql.FieldLTE(FieldRemark, v))
+}
+
+// RemarkContains applies the Contains predicate on the "remark" field.
+func RemarkContains(v string) predicate.Member {
+	return predicate.Member(sql.FieldContains(FieldRemark, v))
+}
+
+// RemarkHasPrefix applies the HasPrefix predicate on the "remark" field.
+func RemarkHasPrefix(v string) predicate.Member {
+	return predicate.Member(sql.FieldHasPrefix(FieldRemark, v))
+}
+
+// RemarkHasSuffix applies the HasSuffix predicate on the "remark" field.
+func RemarkHasSuffix(v string) predicate.Member {
+	return predicate.Member(sql.FieldHasSuffix(FieldRemark, v))
+}
+
+// RemarkIsNil applies the IsNil predicate on the "remark" field.
+func RemarkIsNil() predicate.Member {
+	return predicate.Member(sql.FieldIsNull(FieldRemark))
+}
+
+// RemarkNotNil applies the NotNil predicate on the "remark" field.
+func RemarkNotNil() predicate.Member {
+	return predicate.Member(sql.FieldNotNull(FieldRemark))
+}
+
+// RemarkEqualFold applies the EqualFold predicate on the "remark" field.
+func RemarkEqualFold(v string) predicate.Member {
+	return predicate.Member(sql.FieldEqualFold(FieldRemark, v))
+}
+
+// RemarkContainsFold applies the ContainsFold predicate on the "remark" field.
+func RemarkContainsFold(v string) predicate.Member {
+	return predicate.Member(sql.FieldContainsFold(FieldRemark, v))
+}
+
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.Member {
+	return predicate.Member(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, UserTable, UserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.Member {
+	return predicate.Member(func(s *sql.Selector) {
+		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

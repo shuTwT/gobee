@@ -4,6 +4,7 @@ package wallet
 
 import (
 	"gobee/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 )
@@ -53,6 +54,16 @@ func IDLTE(id int) predicate.Wallet {
 	return predicate.Wallet(sql.FieldLTE(FieldID, id))
 }
 
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
 func UserID(v int) predicate.Wallet {
 	return predicate.Wallet(sql.FieldEQ(FieldUserID, v))
@@ -61,6 +72,116 @@ func UserID(v int) predicate.Wallet {
 // Balance applies equality check predicate on the "balance" field. It's identical to BalanceEQ.
 func Balance(v int) predicate.Wallet {
 	return predicate.Wallet(sql.FieldEQ(FieldBalance, v))
+}
+
+// FrozenAmount applies equality check predicate on the "frozen_amount" field. It's identical to FrozenAmountEQ.
+func FrozenAmount(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldFrozenAmount, v))
+}
+
+// TotalIncome applies equality check predicate on the "total_income" field. It's identical to TotalIncomeEQ.
+func TotalIncome(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldTotalIncome, v))
+}
+
+// TotalExpense applies equality check predicate on the "total_expense" field. It's identical to TotalExpenseEQ.
+func TotalExpense(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldTotalExpense, v))
+}
+
+// Password applies equality check predicate on the "password" field. It's identical to PasswordEQ.
+func Password(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldPassword, v))
+}
+
+// Active applies equality check predicate on the "active" field. It's identical to ActiveEQ.
+func Active(v bool) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldActive, v))
+}
+
+// Remark applies equality check predicate on the "remark" field. It's identical to RemarkEQ.
+func Remark(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldRemark, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
@@ -103,6 +224,16 @@ func UserIDLTE(v int) predicate.Wallet {
 	return predicate.Wallet(sql.FieldLTE(FieldUserID, v))
 }
 
+// UserIDIsNil applies the IsNil predicate on the "user_id" field.
+func UserIDIsNil() predicate.Wallet {
+	return predicate.Wallet(sql.FieldIsNull(FieldUserID))
+}
+
+// UserIDNotNil applies the NotNil predicate on the "user_id" field.
+func UserIDNotNil() predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotNull(FieldUserID))
+}
+
 // BalanceEQ applies the EQ predicate on the "balance" field.
 func BalanceEQ(v int) predicate.Wallet {
 	return predicate.Wallet(sql.FieldEQ(FieldBalance, v))
@@ -141,6 +272,286 @@ func BalanceLT(v int) predicate.Wallet {
 // BalanceLTE applies the LTE predicate on the "balance" field.
 func BalanceLTE(v int) predicate.Wallet {
 	return predicate.Wallet(sql.FieldLTE(FieldBalance, v))
+}
+
+// FrozenAmountEQ applies the EQ predicate on the "frozen_amount" field.
+func FrozenAmountEQ(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldFrozenAmount, v))
+}
+
+// FrozenAmountNEQ applies the NEQ predicate on the "frozen_amount" field.
+func FrozenAmountNEQ(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldFrozenAmount, v))
+}
+
+// FrozenAmountIn applies the In predicate on the "frozen_amount" field.
+func FrozenAmountIn(vs ...int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldIn(FieldFrozenAmount, vs...))
+}
+
+// FrozenAmountNotIn applies the NotIn predicate on the "frozen_amount" field.
+func FrozenAmountNotIn(vs ...int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotIn(FieldFrozenAmount, vs...))
+}
+
+// FrozenAmountGT applies the GT predicate on the "frozen_amount" field.
+func FrozenAmountGT(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGT(FieldFrozenAmount, v))
+}
+
+// FrozenAmountGTE applies the GTE predicate on the "frozen_amount" field.
+func FrozenAmountGTE(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGTE(FieldFrozenAmount, v))
+}
+
+// FrozenAmountLT applies the LT predicate on the "frozen_amount" field.
+func FrozenAmountLT(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLT(FieldFrozenAmount, v))
+}
+
+// FrozenAmountLTE applies the LTE predicate on the "frozen_amount" field.
+func FrozenAmountLTE(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLTE(FieldFrozenAmount, v))
+}
+
+// TotalIncomeEQ applies the EQ predicate on the "total_income" field.
+func TotalIncomeEQ(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldTotalIncome, v))
+}
+
+// TotalIncomeNEQ applies the NEQ predicate on the "total_income" field.
+func TotalIncomeNEQ(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldTotalIncome, v))
+}
+
+// TotalIncomeIn applies the In predicate on the "total_income" field.
+func TotalIncomeIn(vs ...int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldIn(FieldTotalIncome, vs...))
+}
+
+// TotalIncomeNotIn applies the NotIn predicate on the "total_income" field.
+func TotalIncomeNotIn(vs ...int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotIn(FieldTotalIncome, vs...))
+}
+
+// TotalIncomeGT applies the GT predicate on the "total_income" field.
+func TotalIncomeGT(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGT(FieldTotalIncome, v))
+}
+
+// TotalIncomeGTE applies the GTE predicate on the "total_income" field.
+func TotalIncomeGTE(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGTE(FieldTotalIncome, v))
+}
+
+// TotalIncomeLT applies the LT predicate on the "total_income" field.
+func TotalIncomeLT(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLT(FieldTotalIncome, v))
+}
+
+// TotalIncomeLTE applies the LTE predicate on the "total_income" field.
+func TotalIncomeLTE(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLTE(FieldTotalIncome, v))
+}
+
+// TotalExpenseEQ applies the EQ predicate on the "total_expense" field.
+func TotalExpenseEQ(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldTotalExpense, v))
+}
+
+// TotalExpenseNEQ applies the NEQ predicate on the "total_expense" field.
+func TotalExpenseNEQ(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldTotalExpense, v))
+}
+
+// TotalExpenseIn applies the In predicate on the "total_expense" field.
+func TotalExpenseIn(vs ...int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldIn(FieldTotalExpense, vs...))
+}
+
+// TotalExpenseNotIn applies the NotIn predicate on the "total_expense" field.
+func TotalExpenseNotIn(vs ...int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotIn(FieldTotalExpense, vs...))
+}
+
+// TotalExpenseGT applies the GT predicate on the "total_expense" field.
+func TotalExpenseGT(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGT(FieldTotalExpense, v))
+}
+
+// TotalExpenseGTE applies the GTE predicate on the "total_expense" field.
+func TotalExpenseGTE(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGTE(FieldTotalExpense, v))
+}
+
+// TotalExpenseLT applies the LT predicate on the "total_expense" field.
+func TotalExpenseLT(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLT(FieldTotalExpense, v))
+}
+
+// TotalExpenseLTE applies the LTE predicate on the "total_expense" field.
+func TotalExpenseLTE(v int) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLTE(FieldTotalExpense, v))
+}
+
+// PasswordEQ applies the EQ predicate on the "password" field.
+func PasswordEQ(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldPassword, v))
+}
+
+// PasswordNEQ applies the NEQ predicate on the "password" field.
+func PasswordNEQ(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldPassword, v))
+}
+
+// PasswordIn applies the In predicate on the "password" field.
+func PasswordIn(vs ...string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldIn(FieldPassword, vs...))
+}
+
+// PasswordNotIn applies the NotIn predicate on the "password" field.
+func PasswordNotIn(vs ...string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotIn(FieldPassword, vs...))
+}
+
+// PasswordGT applies the GT predicate on the "password" field.
+func PasswordGT(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGT(FieldPassword, v))
+}
+
+// PasswordGTE applies the GTE predicate on the "password" field.
+func PasswordGTE(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGTE(FieldPassword, v))
+}
+
+// PasswordLT applies the LT predicate on the "password" field.
+func PasswordLT(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLT(FieldPassword, v))
+}
+
+// PasswordLTE applies the LTE predicate on the "password" field.
+func PasswordLTE(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLTE(FieldPassword, v))
+}
+
+// PasswordContains applies the Contains predicate on the "password" field.
+func PasswordContains(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldContains(FieldPassword, v))
+}
+
+// PasswordHasPrefix applies the HasPrefix predicate on the "password" field.
+func PasswordHasPrefix(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldHasPrefix(FieldPassword, v))
+}
+
+// PasswordHasSuffix applies the HasSuffix predicate on the "password" field.
+func PasswordHasSuffix(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldHasSuffix(FieldPassword, v))
+}
+
+// PasswordIsNil applies the IsNil predicate on the "password" field.
+func PasswordIsNil() predicate.Wallet {
+	return predicate.Wallet(sql.FieldIsNull(FieldPassword))
+}
+
+// PasswordNotNil applies the NotNil predicate on the "password" field.
+func PasswordNotNil() predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotNull(FieldPassword))
+}
+
+// PasswordEqualFold applies the EqualFold predicate on the "password" field.
+func PasswordEqualFold(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEqualFold(FieldPassword, v))
+}
+
+// PasswordContainsFold applies the ContainsFold predicate on the "password" field.
+func PasswordContainsFold(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldContainsFold(FieldPassword, v))
+}
+
+// ActiveEQ applies the EQ predicate on the "active" field.
+func ActiveEQ(v bool) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldActive, v))
+}
+
+// ActiveNEQ applies the NEQ predicate on the "active" field.
+func ActiveNEQ(v bool) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldActive, v))
+}
+
+// RemarkEQ applies the EQ predicate on the "remark" field.
+func RemarkEQ(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldRemark, v))
+}
+
+// RemarkNEQ applies the NEQ predicate on the "remark" field.
+func RemarkNEQ(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldRemark, v))
+}
+
+// RemarkIn applies the In predicate on the "remark" field.
+func RemarkIn(vs ...string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldIn(FieldRemark, vs...))
+}
+
+// RemarkNotIn applies the NotIn predicate on the "remark" field.
+func RemarkNotIn(vs ...string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotIn(FieldRemark, vs...))
+}
+
+// RemarkGT applies the GT predicate on the "remark" field.
+func RemarkGT(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGT(FieldRemark, v))
+}
+
+// RemarkGTE applies the GTE predicate on the "remark" field.
+func RemarkGTE(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGTE(FieldRemark, v))
+}
+
+// RemarkLT applies the LT predicate on the "remark" field.
+func RemarkLT(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLT(FieldRemark, v))
+}
+
+// RemarkLTE applies the LTE predicate on the "remark" field.
+func RemarkLTE(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLTE(FieldRemark, v))
+}
+
+// RemarkContains applies the Contains predicate on the "remark" field.
+func RemarkContains(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldContains(FieldRemark, v))
+}
+
+// RemarkHasPrefix applies the HasPrefix predicate on the "remark" field.
+func RemarkHasPrefix(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldHasPrefix(FieldRemark, v))
+}
+
+// RemarkHasSuffix applies the HasSuffix predicate on the "remark" field.
+func RemarkHasSuffix(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldHasSuffix(FieldRemark, v))
+}
+
+// RemarkIsNil applies the IsNil predicate on the "remark" field.
+func RemarkIsNil() predicate.Wallet {
+	return predicate.Wallet(sql.FieldIsNull(FieldRemark))
+}
+
+// RemarkNotNil applies the NotNil predicate on the "remark" field.
+func RemarkNotNil() predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotNull(FieldRemark))
+}
+
+// RemarkEqualFold applies the EqualFold predicate on the "remark" field.
+func RemarkEqualFold(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEqualFold(FieldRemark, v))
+}
+
+// RemarkContainsFold applies the ContainsFold predicate on the "remark" field.
+func RemarkContainsFold(v string) predicate.Wallet {
+	return predicate.Wallet(sql.FieldContainsFold(FieldRemark, v))
 }
 
 // And groups predicates with the AND operator between them.

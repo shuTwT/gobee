@@ -5,8 +5,8 @@ package ent
 import (
 	"context"
 	"fmt"
+	"gobee/ent/couponusage"
 	"gobee/ent/predicate"
-	"gobee/ent/wallet"
 	"math"
 
 	"entgo.io/ent"
@@ -15,64 +15,64 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// WalletQuery is the builder for querying Wallet entities.
-type WalletQuery struct {
+// CouponUsageQuery is the builder for querying CouponUsage entities.
+type CouponUsageQuery struct {
 	config
 	ctx        *QueryContext
-	order      []wallet.OrderOption
+	order      []couponusage.OrderOption
 	inters     []Interceptor
-	predicates []predicate.Wallet
+	predicates []predicate.CouponUsage
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the WalletQuery builder.
-func (_q *WalletQuery) Where(ps ...predicate.Wallet) *WalletQuery {
+// Where adds a new predicate for the CouponUsageQuery builder.
+func (_q *CouponUsageQuery) Where(ps ...predicate.CouponUsage) *CouponUsageQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *WalletQuery) Limit(limit int) *WalletQuery {
+func (_q *CouponUsageQuery) Limit(limit int) *CouponUsageQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *WalletQuery) Offset(offset int) *WalletQuery {
+func (_q *CouponUsageQuery) Offset(offset int) *CouponUsageQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *WalletQuery) Unique(unique bool) *WalletQuery {
+func (_q *CouponUsageQuery) Unique(unique bool) *CouponUsageQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *WalletQuery) Order(o ...wallet.OrderOption) *WalletQuery {
+func (_q *CouponUsageQuery) Order(o ...couponusage.OrderOption) *CouponUsageQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
-// First returns the first Wallet entity from the query.
-// Returns a *NotFoundError when no Wallet was found.
-func (_q *WalletQuery) First(ctx context.Context) (*Wallet, error) {
+// First returns the first CouponUsage entity from the query.
+// Returns a *NotFoundError when no CouponUsage was found.
+func (_q *CouponUsageQuery) First(ctx context.Context) (*CouponUsage, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{wallet.Label}
+		return nil, &NotFoundError{couponusage.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *WalletQuery) FirstX(ctx context.Context) *Wallet {
+func (_q *CouponUsageQuery) FirstX(ctx context.Context) *CouponUsage {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -80,22 +80,22 @@ func (_q *WalletQuery) FirstX(ctx context.Context) *Wallet {
 	return node
 }
 
-// FirstID returns the first Wallet ID from the query.
-// Returns a *NotFoundError when no Wallet ID was found.
-func (_q *WalletQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first CouponUsage ID from the query.
+// Returns a *NotFoundError when no CouponUsage ID was found.
+func (_q *CouponUsageQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{wallet.Label}
+		err = &NotFoundError{couponusage.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *WalletQuery) FirstIDX(ctx context.Context) int {
+func (_q *CouponUsageQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -103,10 +103,10 @@ func (_q *WalletQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single Wallet entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one Wallet entity is found.
-// Returns a *NotFoundError when no Wallet entities are found.
-func (_q *WalletQuery) Only(ctx context.Context) (*Wallet, error) {
+// Only returns a single CouponUsage entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one CouponUsage entity is found.
+// Returns a *NotFoundError when no CouponUsage entities are found.
+func (_q *CouponUsageQuery) Only(ctx context.Context) (*CouponUsage, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -115,14 +115,14 @@ func (_q *WalletQuery) Only(ctx context.Context) (*Wallet, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{wallet.Label}
+		return nil, &NotFoundError{couponusage.Label}
 	default:
-		return nil, &NotSingularError{wallet.Label}
+		return nil, &NotSingularError{couponusage.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *WalletQuery) OnlyX(ctx context.Context) *Wallet {
+func (_q *CouponUsageQuery) OnlyX(ctx context.Context) *CouponUsage {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -130,10 +130,10 @@ func (_q *WalletQuery) OnlyX(ctx context.Context) *Wallet {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Wallet ID in the query.
-// Returns a *NotSingularError when more than one Wallet ID is found.
+// OnlyID is like Only, but returns the only CouponUsage ID in the query.
+// Returns a *NotSingularError when more than one CouponUsage ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *WalletQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *CouponUsageQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
@@ -142,15 +142,15 @@ func (_q *WalletQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{wallet.Label}
+		err = &NotFoundError{couponusage.Label}
 	default:
-		err = &NotSingularError{wallet.Label}
+		err = &NotSingularError{couponusage.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *WalletQuery) OnlyIDX(ctx context.Context) int {
+func (_q *CouponUsageQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -158,18 +158,18 @@ func (_q *WalletQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of Wallets.
-func (_q *WalletQuery) All(ctx context.Context) ([]*Wallet, error) {
+// All executes the query and returns a list of CouponUsages.
+func (_q *CouponUsageQuery) All(ctx context.Context) ([]*CouponUsage, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*Wallet, *WalletQuery]()
-	return withInterceptors[[]*Wallet](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*CouponUsage, *CouponUsageQuery]()
+	return withInterceptors[[]*CouponUsage](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *WalletQuery) AllX(ctx context.Context) []*Wallet {
+func (_q *CouponUsageQuery) AllX(ctx context.Context) []*CouponUsage {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -177,20 +177,20 @@ func (_q *WalletQuery) AllX(ctx context.Context) []*Wallet {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Wallet IDs.
-func (_q *WalletQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of CouponUsage IDs.
+func (_q *CouponUsageQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(wallet.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(couponusage.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *WalletQuery) IDsX(ctx context.Context) []int {
+func (_q *CouponUsageQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -199,16 +199,16 @@ func (_q *WalletQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (_q *WalletQuery) Count(ctx context.Context) (int, error) {
+func (_q *CouponUsageQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*WalletQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*CouponUsageQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *WalletQuery) CountX(ctx context.Context) int {
+func (_q *CouponUsageQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -217,7 +217,7 @@ func (_q *WalletQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *WalletQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *CouponUsageQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -230,7 +230,7 @@ func (_q *WalletQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *WalletQuery) ExistX(ctx context.Context) bool {
+func (_q *CouponUsageQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -238,18 +238,18 @@ func (_q *WalletQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the WalletQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the CouponUsageQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *WalletQuery) Clone() *WalletQuery {
+func (_q *CouponUsageQuery) Clone() *CouponUsageQuery {
 	if _q == nil {
 		return nil
 	}
-	return &WalletQuery{
+	return &CouponUsageQuery{
 		config:     _q.config,
 		ctx:        _q.ctx.Clone(),
-		order:      append([]wallet.OrderOption{}, _q.order...),
+		order:      append([]couponusage.OrderOption{}, _q.order...),
 		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.Wallet{}, _q.predicates...),
+		predicates: append([]predicate.CouponUsage{}, _q.predicates...),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -266,15 +266,15 @@ func (_q *WalletQuery) Clone() *WalletQuery {
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.Wallet.Query().
-//		GroupBy(wallet.FieldCreatedAt).
+//	client.CouponUsage.Query().
+//		GroupBy(couponusage.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *WalletQuery) GroupBy(field string, fields ...string) *WalletGroupBy {
+func (_q *CouponUsageQuery) GroupBy(field string, fields ...string) *CouponUsageGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &WalletGroupBy{build: _q}
+	grbuild := &CouponUsageGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = wallet.Label
+	grbuild.label = couponusage.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -288,23 +288,23 @@ func (_q *WalletQuery) GroupBy(field string, fields ...string) *WalletGroupBy {
 //		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
-//	client.Wallet.Query().
-//		Select(wallet.FieldCreatedAt).
+//	client.CouponUsage.Query().
+//		Select(couponusage.FieldCreatedAt).
 //		Scan(ctx, &v)
-func (_q *WalletQuery) Select(fields ...string) *WalletSelect {
+func (_q *CouponUsageQuery) Select(fields ...string) *CouponUsageSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &WalletSelect{WalletQuery: _q}
-	sbuild.label = wallet.Label
+	sbuild := &CouponUsageSelect{CouponUsageQuery: _q}
+	sbuild.label = couponusage.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a WalletSelect configured with the given aggregations.
-func (_q *WalletQuery) Aggregate(fns ...AggregateFunc) *WalletSelect {
+// Aggregate returns a CouponUsageSelect configured with the given aggregations.
+func (_q *CouponUsageQuery) Aggregate(fns ...AggregateFunc) *CouponUsageSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *WalletQuery) prepareQuery(ctx context.Context) error {
+func (_q *CouponUsageQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -316,7 +316,7 @@ func (_q *WalletQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !wallet.ValidColumn(f) {
+		if !couponusage.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -330,16 +330,16 @@ func (_q *WalletQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *WalletQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Wallet, error) {
+func (_q *CouponUsageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*CouponUsage, error) {
 	var (
-		nodes = []*Wallet{}
+		nodes = []*CouponUsage{}
 		_spec = _q.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*Wallet).scanValues(nil, columns)
+		return (*CouponUsage).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &Wallet{config: _q.config}
+		node := &CouponUsage{config: _q.config}
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
@@ -355,7 +355,7 @@ func (_q *WalletQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Walle
 	return nodes, nil
 }
 
-func (_q *WalletQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *CouponUsageQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -364,8 +364,8 @@ func (_q *WalletQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *WalletQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(wallet.Table, wallet.Columns, sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt))
+func (_q *CouponUsageQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(couponusage.Table, couponusage.Columns, sqlgraph.NewFieldSpec(couponusage.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -374,9 +374,9 @@ func (_q *WalletQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, wallet.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, couponusage.FieldID)
 		for i := range fields {
-			if fields[i] != wallet.FieldID {
+			if fields[i] != couponusage.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -404,12 +404,12 @@ func (_q *WalletQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *WalletQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *CouponUsageQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(wallet.Table)
+	t1 := builder.Table(couponusage.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = wallet.Columns
+		columns = couponusage.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -436,28 +436,28 @@ func (_q *WalletQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// WalletGroupBy is the group-by builder for Wallet entities.
-type WalletGroupBy struct {
+// CouponUsageGroupBy is the group-by builder for CouponUsage entities.
+type CouponUsageGroupBy struct {
 	selector
-	build *WalletQuery
+	build *CouponUsageQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *WalletGroupBy) Aggregate(fns ...AggregateFunc) *WalletGroupBy {
+func (_g *CouponUsageGroupBy) Aggregate(fns ...AggregateFunc) *CouponUsageGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *WalletGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *CouponUsageGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*WalletQuery, *WalletGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*CouponUsageQuery, *CouponUsageGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *WalletGroupBy) sqlScan(ctx context.Context, root *WalletQuery, v any) error {
+func (_g *CouponUsageGroupBy) sqlScan(ctx context.Context, root *CouponUsageQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -484,28 +484,28 @@ func (_g *WalletGroupBy) sqlScan(ctx context.Context, root *WalletQuery, v any) 
 	return sql.ScanSlice(rows, v)
 }
 
-// WalletSelect is the builder for selecting fields of Wallet entities.
-type WalletSelect struct {
-	*WalletQuery
+// CouponUsageSelect is the builder for selecting fields of CouponUsage entities.
+type CouponUsageSelect struct {
+	*CouponUsageQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *WalletSelect) Aggregate(fns ...AggregateFunc) *WalletSelect {
+func (_s *CouponUsageSelect) Aggregate(fns ...AggregateFunc) *CouponUsageSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *WalletSelect) Scan(ctx context.Context, v any) error {
+func (_s *CouponUsageSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*WalletQuery, *WalletSelect](ctx, _s.WalletQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*CouponUsageQuery, *CouponUsageSelect](ctx, _s.CouponUsageQuery, _s, _s.inters, v)
 }
 
-func (_s *WalletSelect) sqlScan(ctx context.Context, root *WalletQuery, v any) error {
+func (_s *CouponUsageSelect) sqlScan(ctx context.Context, root *CouponUsageQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {

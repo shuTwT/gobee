@@ -22,12 +22,26 @@ type Essay struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 用户ID
+	UserID int `json:"user_id,omitempty"`
 	// 说说内容
 	Content string `json:"content,omitempty"`
 	// 是否草稿
 	Draft bool `json:"draft,omitempty"`
-	// Images holds the value of the "images" field.
-	Images       []string `json:"images,omitempty"`
+	// 图片列表
+	Images []string `json:"images,omitempty"`
+	// 点赞数
+	LikeCount int `json:"like_count,omitempty"`
+	// 评论数
+	CommentCount int `json:"comment_count,omitempty"`
+	// 分享数
+	ShareCount int `json:"share_count,omitempty"`
+	// 是否公开
+	Public bool `json:"public,omitempty"`
+	// 位置信息
+	Location string `json:"location,omitempty"`
+	// 标签
+	Tags         []string `json:"tags,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -36,13 +50,13 @@ func (*Essay) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case essay.FieldImages:
+		case essay.FieldImages, essay.FieldTags:
 			values[i] = new([]byte)
-		case essay.FieldDraft:
+		case essay.FieldDraft, essay.FieldPublic:
 			values[i] = new(sql.NullBool)
-		case essay.FieldID:
+		case essay.FieldID, essay.FieldUserID, essay.FieldLikeCount, essay.FieldCommentCount, essay.FieldShareCount:
 			values[i] = new(sql.NullInt64)
-		case essay.FieldContent:
+		case essay.FieldContent, essay.FieldLocation:
 			values[i] = new(sql.NullString)
 		case essay.FieldCreatedAt, essay.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -79,6 +93,12 @@ func (_m *Essay) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
+		case essay.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				_m.UserID = int(value.Int64)
+			}
 		case essay.FieldContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field content", values[i])
@@ -97,6 +117,44 @@ func (_m *Essay) assignValues(columns []string, values []any) error {
 			} else if value != nil && len(*value) > 0 {
 				if err := json.Unmarshal(*value, &_m.Images); err != nil {
 					return fmt.Errorf("unmarshal field images: %w", err)
+				}
+			}
+		case essay.FieldLikeCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field like_count", values[i])
+			} else if value.Valid {
+				_m.LikeCount = int(value.Int64)
+			}
+		case essay.FieldCommentCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field comment_count", values[i])
+			} else if value.Valid {
+				_m.CommentCount = int(value.Int64)
+			}
+		case essay.FieldShareCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field share_count", values[i])
+			} else if value.Valid {
+				_m.ShareCount = int(value.Int64)
+			}
+		case essay.FieldPublic:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field public", values[i])
+			} else if value.Valid {
+				_m.Public = value.Bool
+			}
+		case essay.FieldLocation:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field location", values[i])
+			} else if value.Valid {
+				_m.Location = value.String
+			}
+		case essay.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
 				}
 			}
 		default:
@@ -141,6 +199,9 @@ func (_m *Essay) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
+	builder.WriteString(", ")
 	builder.WriteString("content=")
 	builder.WriteString(_m.Content)
 	builder.WriteString(", ")
@@ -149,6 +210,24 @@ func (_m *Essay) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("images=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Images))
+	builder.WriteString(", ")
+	builder.WriteString("like_count=")
+	builder.WriteString(fmt.Sprintf("%v", _m.LikeCount))
+	builder.WriteString(", ")
+	builder.WriteString("comment_count=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CommentCount))
+	builder.WriteString(", ")
+	builder.WriteString("share_count=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ShareCount))
+	builder.WriteString(", ")
+	builder.WriteString("public=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Public))
+	builder.WriteString(", ")
+	builder.WriteString("location=")
+	builder.WriteString(_m.Location)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Tags))
 	builder.WriteByte(')')
 	return builder.String()
 }

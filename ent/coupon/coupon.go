@@ -3,6 +3,8 @@
 package coupon
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -11,6 +13,42 @@ const (
 	Label = "coupon"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
+	// FieldCode holds the string denoting the code field in the database.
+	FieldCode = "code"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
+	// FieldValue holds the string denoting the value field in the database.
+	FieldValue = "value"
+	// FieldMinAmount holds the string denoting the min_amount field in the database.
+	FieldMinAmount = "min_amount"
+	// FieldMaxDiscount holds the string denoting the max_discount field in the database.
+	FieldMaxDiscount = "max_discount"
+	// FieldTotalCount holds the string denoting the total_count field in the database.
+	FieldTotalCount = "total_count"
+	// FieldUsedCount holds the string denoting the used_count field in the database.
+	FieldUsedCount = "used_count"
+	// FieldPerUserLimit holds the string denoting the per_user_limit field in the database.
+	FieldPerUserLimit = "per_user_limit"
+	// FieldStartTime holds the string denoting the start_time field in the database.
+	FieldStartTime = "start_time"
+	// FieldEndTime holds the string denoting the end_time field in the database.
+	FieldEndTime = "end_time"
+	// FieldActive holds the string denoting the active field in the database.
+	FieldActive = "active"
+	// FieldImage holds the string denoting the image field in the database.
+	FieldImage = "image"
+	// FieldProductIds holds the string denoting the product_ids field in the database.
+	FieldProductIds = "product_ids"
+	// FieldCategoryIds holds the string denoting the category_ids field in the database.
+	FieldCategoryIds = "category_ids"
 	// Table holds the table name of the coupon in the database.
 	Table = "coupons"
 )
@@ -18,6 +56,24 @@ const (
 // Columns holds all SQL columns for coupon fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldName,
+	FieldCode,
+	FieldDescription,
+	FieldType,
+	FieldValue,
+	FieldMinAmount,
+	FieldMaxDiscount,
+	FieldTotalCount,
+	FieldUsedCount,
+	FieldPerUserLimit,
+	FieldStartTime,
+	FieldEndTime,
+	FieldActive,
+	FieldImage,
+	FieldProductIds,
+	FieldCategoryIds,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -30,10 +86,127 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// NameValidator is a validator for the "name" field. It is called by the builders before save.
+	NameValidator func(string) error
+	// CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	CodeValidator func(string) error
+	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	DescriptionValidator func(string) error
+	// DefaultType holds the default value on creation for the "type" field.
+	DefaultType int
+	// DefaultValue holds the default value on creation for the "value" field.
+	DefaultValue int
+	// DefaultMinAmount holds the default value on creation for the "min_amount" field.
+	DefaultMinAmount int
+	// DefaultMaxDiscount holds the default value on creation for the "max_discount" field.
+	DefaultMaxDiscount int
+	// DefaultTotalCount holds the default value on creation for the "total_count" field.
+	DefaultTotalCount int
+	// DefaultUsedCount holds the default value on creation for the "used_count" field.
+	DefaultUsedCount int
+	// DefaultPerUserLimit holds the default value on creation for the "per_user_limit" field.
+	DefaultPerUserLimit int
+	// DefaultStartTime holds the default value on creation for the "start_time" field.
+	DefaultStartTime func() time.Time
+	// DefaultEndTime holds the default value on creation for the "end_time" field.
+	DefaultEndTime func() time.Time
+	// DefaultActive holds the default value on creation for the "active" field.
+	DefaultActive bool
+	// ImageValidator is a validator for the "image" field. It is called by the builders before save.
+	ImageValidator func(string) error
+)
+
 // OrderOption defines the ordering options for the Coupon queries.
 type OrderOption func(*sql.Selector)
 
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByCode orders the results by the code field.
+func ByCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCode, opts...).ToFunc()
+}
+
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByValue orders the results by the value field.
+func ByValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldValue, opts...).ToFunc()
+}
+
+// ByMinAmount orders the results by the min_amount field.
+func ByMinAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMinAmount, opts...).ToFunc()
+}
+
+// ByMaxDiscount orders the results by the max_discount field.
+func ByMaxDiscount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMaxDiscount, opts...).ToFunc()
+}
+
+// ByTotalCount orders the results by the total_count field.
+func ByTotalCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotalCount, opts...).ToFunc()
+}
+
+// ByUsedCount orders the results by the used_count field.
+func ByUsedCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUsedCount, opts...).ToFunc()
+}
+
+// ByPerUserLimit orders the results by the per_user_limit field.
+func ByPerUserLimit(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPerUserLimit, opts...).ToFunc()
+}
+
+// ByStartTime orders the results by the start_time field.
+func ByStartTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartTime, opts...).ToFunc()
+}
+
+// ByEndTime orders the results by the end_time field.
+func ByEndTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEndTime, opts...).ToFunc()
+}
+
+// ByActive orders the results by the active field.
+func ByActive(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldActive, opts...).ToFunc()
+}
+
+// ByImage orders the results by the image field.
+func ByImage(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldImage, opts...).ToFunc()
 }

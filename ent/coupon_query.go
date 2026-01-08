@@ -258,6 +258,18 @@ func (_q *CouponQuery) Clone() *CouponQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Coupon.Query().
+//		GroupBy(coupon.FieldCreatedAt).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (_q *CouponQuery) GroupBy(field string, fields ...string) *CouponGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &CouponGroupBy{build: _q}
@@ -269,6 +281,16 @@ func (_q *CouponQuery) GroupBy(field string, fields ...string) *CouponGroupBy {
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		CreatedAt time.Time `json:"created_at,omitempty"`
+//	}
+//
+//	client.Coupon.Query().
+//		Select(coupon.FieldCreatedAt).
+//		Scan(ctx, &v)
 func (_q *CouponQuery) Select(fields ...string) *CouponSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
 	sbuild := &CouponSelect{CouponQuery: _q}

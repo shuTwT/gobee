@@ -21,6 +21,9 @@ type Comment func(*sql.Selector)
 // Coupon is the predicate function for coupon builders.
 type Coupon func(*sql.Selector)
 
+// CouponUsage is the predicate function for couponusage builders.
+type CouponUsage func(*sql.Selector)
+
 // Essay is the predicate function for essay builders.
 type Essay func(*sql.Selector)
 
@@ -62,6 +65,9 @@ type PersonalAccessToken func(*sql.Selector)
 
 // Post is the predicate function for post builders.
 type Post func(*sql.Selector)
+
+// Product is the predicate function for product builders.
+type Product func(*sql.Selector)
 
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)

@@ -4,8 +4,11 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"gobee/ent/member"
+	"gobee/ent/user"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -18,6 +21,169 @@ type MemberCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (_c *MemberCreate) SetCreatedAt(v time.Time) *MemberCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *MemberCreate) SetNillableCreatedAt(v *time.Time) *MemberCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *MemberCreate) SetUpdatedAt(v time.Time) *MemberCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *MemberCreate) SetNillableUpdatedAt(v *time.Time) *MemberCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
+// SetUserID sets the "user_id" field.
+func (_c *MemberCreate) SetUserID(v int) *MemberCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_c *MemberCreate) SetNillableUserID(v *int) *MemberCreate {
+	if v != nil {
+		_c.SetUserID(*v)
+	}
+	return _c
+}
+
+// SetMemberLevel sets the "member_level" field.
+func (_c *MemberCreate) SetMemberLevel(v int) *MemberCreate {
+	_c.mutation.SetMemberLevel(v)
+	return _c
+}
+
+// SetMemberNo sets the "member_no" field.
+func (_c *MemberCreate) SetMemberNo(v string) *MemberCreate {
+	_c.mutation.SetMemberNo(v)
+	return _c
+}
+
+// SetJoinTime sets the "join_time" field.
+func (_c *MemberCreate) SetJoinTime(v time.Time) *MemberCreate {
+	_c.mutation.SetJoinTime(v)
+	return _c
+}
+
+// SetNillableJoinTime sets the "join_time" field if the given value is not nil.
+func (_c *MemberCreate) SetNillableJoinTime(v *time.Time) *MemberCreate {
+	if v != nil {
+		_c.SetJoinTime(*v)
+	}
+	return _c
+}
+
+// SetExpireTime sets the "expire_time" field.
+func (_c *MemberCreate) SetExpireTime(v time.Time) *MemberCreate {
+	_c.mutation.SetExpireTime(v)
+	return _c
+}
+
+// SetNillableExpireTime sets the "expire_time" field if the given value is not nil.
+func (_c *MemberCreate) SetNillableExpireTime(v *time.Time) *MemberCreate {
+	if v != nil {
+		_c.SetExpireTime(*v)
+	}
+	return _c
+}
+
+// SetPoints sets the "points" field.
+func (_c *MemberCreate) SetPoints(v int) *MemberCreate {
+	_c.mutation.SetPoints(v)
+	return _c
+}
+
+// SetNillablePoints sets the "points" field if the given value is not nil.
+func (_c *MemberCreate) SetNillablePoints(v *int) *MemberCreate {
+	if v != nil {
+		_c.SetPoints(*v)
+	}
+	return _c
+}
+
+// SetTotalSpent sets the "total_spent" field.
+func (_c *MemberCreate) SetTotalSpent(v int) *MemberCreate {
+	_c.mutation.SetTotalSpent(v)
+	return _c
+}
+
+// SetNillableTotalSpent sets the "total_spent" field if the given value is not nil.
+func (_c *MemberCreate) SetNillableTotalSpent(v *int) *MemberCreate {
+	if v != nil {
+		_c.SetTotalSpent(*v)
+	}
+	return _c
+}
+
+// SetOrderCount sets the "order_count" field.
+func (_c *MemberCreate) SetOrderCount(v int) *MemberCreate {
+	_c.mutation.SetOrderCount(v)
+	return _c
+}
+
+// SetNillableOrderCount sets the "order_count" field if the given value is not nil.
+func (_c *MemberCreate) SetNillableOrderCount(v *int) *MemberCreate {
+	if v != nil {
+		_c.SetOrderCount(*v)
+	}
+	return _c
+}
+
+// SetActive sets the "active" field.
+func (_c *MemberCreate) SetActive(v bool) *MemberCreate {
+	_c.mutation.SetActive(v)
+	return _c
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (_c *MemberCreate) SetNillableActive(v *bool) *MemberCreate {
+	if v != nil {
+		_c.SetActive(*v)
+	}
+	return _c
+}
+
+// SetRemark sets the "remark" field.
+func (_c *MemberCreate) SetRemark(v string) *MemberCreate {
+	_c.mutation.SetRemark(v)
+	return _c
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (_c *MemberCreate) SetNillableRemark(v *string) *MemberCreate {
+	if v != nil {
+		_c.SetRemark(*v)
+	}
+	return _c
+}
+
+// SetID sets the "id" field.
+func (_c *MemberCreate) SetID(v int) *MemberCreate {
+	_c.mutation.SetID(v)
+	return _c
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_c *MemberCreate) SetUser(v *User) *MemberCreate {
+	return _c.SetUserID(v.ID)
+}
+
 // Mutation returns the MemberMutation object of the builder.
 func (_c *MemberCreate) Mutation() *MemberMutation {
 	return _c.mutation
@@ -25,6 +191,7 @@ func (_c *MemberCreate) Mutation() *MemberMutation {
 
 // Save creates the Member in the database.
 func (_c *MemberCreate) Save(ctx context.Context) (*Member, error) {
+	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -50,8 +217,77 @@ func (_c *MemberCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_c *MemberCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := member.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := member.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := _c.mutation.JoinTime(); !ok {
+		v := member.DefaultJoinTime()
+		_c.mutation.SetJoinTime(v)
+	}
+	if _, ok := _c.mutation.Points(); !ok {
+		v := member.DefaultPoints
+		_c.mutation.SetPoints(v)
+	}
+	if _, ok := _c.mutation.TotalSpent(); !ok {
+		v := member.DefaultTotalSpent
+		_c.mutation.SetTotalSpent(v)
+	}
+	if _, ok := _c.mutation.OrderCount(); !ok {
+		v := member.DefaultOrderCount
+		_c.mutation.SetOrderCount(v)
+	}
+	if _, ok := _c.mutation.Active(); !ok {
+		v := member.DefaultActive
+		_c.mutation.SetActive(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (_c *MemberCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Member.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Member.updated_at"`)}
+	}
+	if _, ok := _c.mutation.MemberLevel(); !ok {
+		return &ValidationError{Name: "member_level", err: errors.New(`ent: missing required field "Member.member_level"`)}
+	}
+	if _, ok := _c.mutation.MemberNo(); !ok {
+		return &ValidationError{Name: "member_no", err: errors.New(`ent: missing required field "Member.member_no"`)}
+	}
+	if v, ok := _c.mutation.MemberNo(); ok {
+		if err := member.MemberNoValidator(v); err != nil {
+			return &ValidationError{Name: "member_no", err: fmt.Errorf(`ent: validator failed for field "Member.member_no": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.JoinTime(); !ok {
+		return &ValidationError{Name: "join_time", err: errors.New(`ent: missing required field "Member.join_time"`)}
+	}
+	if _, ok := _c.mutation.Points(); !ok {
+		return &ValidationError{Name: "points", err: errors.New(`ent: missing required field "Member.points"`)}
+	}
+	if _, ok := _c.mutation.TotalSpent(); !ok {
+		return &ValidationError{Name: "total_spent", err: errors.New(`ent: missing required field "Member.total_spent"`)}
+	}
+	if _, ok := _c.mutation.OrderCount(); !ok {
+		return &ValidationError{Name: "order_count", err: errors.New(`ent: missing required field "Member.order_count"`)}
+	}
+	if _, ok := _c.mutation.Active(); !ok {
+		return &ValidationError{Name: "active", err: errors.New(`ent: missing required field "Member.active"`)}
+	}
+	if v, ok := _c.mutation.Remark(); ok {
+		if err := member.RemarkValidator(v); err != nil {
+			return &ValidationError{Name: "remark", err: fmt.Errorf(`ent: validator failed for field "Member.remark": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -66,8 +302,10 @@ func (_c *MemberCreate) sqlSave(ctx context.Context) (*Member, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -78,6 +316,71 @@ func (_c *MemberCreate) createSpec() (*Member, *sqlgraph.CreateSpec) {
 		_node = &Member{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(member.Table, sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt))
 	)
+	if id, ok := _c.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(member.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(member.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := _c.mutation.MemberLevel(); ok {
+		_spec.SetField(member.FieldMemberLevel, field.TypeInt, value)
+		_node.MemberLevel = value
+	}
+	if value, ok := _c.mutation.MemberNo(); ok {
+		_spec.SetField(member.FieldMemberNo, field.TypeString, value)
+		_node.MemberNo = value
+	}
+	if value, ok := _c.mutation.JoinTime(); ok {
+		_spec.SetField(member.FieldJoinTime, field.TypeTime, value)
+		_node.JoinTime = value
+	}
+	if value, ok := _c.mutation.ExpireTime(); ok {
+		_spec.SetField(member.FieldExpireTime, field.TypeTime, value)
+		_node.ExpireTime = value
+	}
+	if value, ok := _c.mutation.Points(); ok {
+		_spec.SetField(member.FieldPoints, field.TypeInt, value)
+		_node.Points = value
+	}
+	if value, ok := _c.mutation.TotalSpent(); ok {
+		_spec.SetField(member.FieldTotalSpent, field.TypeInt, value)
+		_node.TotalSpent = value
+	}
+	if value, ok := _c.mutation.OrderCount(); ok {
+		_spec.SetField(member.FieldOrderCount, field.TypeInt, value)
+		_node.OrderCount = value
+	}
+	if value, ok := _c.mutation.Active(); ok {
+		_spec.SetField(member.FieldActive, field.TypeBool, value)
+		_node.Active = value
+	}
+	if value, ok := _c.mutation.Remark(); ok {
+		_spec.SetField(member.FieldRemark, field.TypeString, value)
+		_node.Remark = value
+	}
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   member.UserTable,
+			Columns: []string{member.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -99,6 +402,7 @@ func (_c *MemberCreateBulk) Save(ctx context.Context) ([]*Member, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*MemberMutation)
 				if !ok {
@@ -125,7 +429,7 @@ func (_c *MemberCreateBulk) Save(ctx context.Context) ([]*Member, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

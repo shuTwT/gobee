@@ -7,18 +7,23 @@ import (
 	"gobee/ent/albumphoto"
 	"gobee/ent/apiperms"
 	"gobee/ent/comment"
+	"gobee/ent/coupon"
+	"gobee/ent/couponusage"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
 	"gobee/ent/friendcirclerecord"
 	"gobee/ent/friendcirclerule"
+	"gobee/ent/member"
+	"gobee/ent/memberlevel"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/post"
+	"gobee/ent/product"
 	"gobee/ent/role"
 	"gobee/ent/schedulejob"
 	"gobee/ent/schema"
@@ -157,6 +162,136 @@ func init() {
 	commentDescPinned := commentFields[10].Descriptor()
 	// comment.DefaultPinned holds the default value on creation for the pinned field.
 	comment.DefaultPinned = commentDescPinned.Default.(bool)
+	couponMixin := schema.Coupon{}.Mixin()
+	couponMixinFields0 := couponMixin[0].Fields()
+	_ = couponMixinFields0
+	couponFields := schema.Coupon{}.Fields()
+	_ = couponFields
+	// couponDescCreatedAt is the schema descriptor for created_at field.
+	couponDescCreatedAt := couponMixinFields0[1].Descriptor()
+	// coupon.DefaultCreatedAt holds the default value on creation for the created_at field.
+	coupon.DefaultCreatedAt = couponDescCreatedAt.Default.(func() time.Time)
+	// couponDescUpdatedAt is the schema descriptor for updated_at field.
+	couponDescUpdatedAt := couponMixinFields0[2].Descriptor()
+	// coupon.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	coupon.DefaultUpdatedAt = couponDescUpdatedAt.Default.(func() time.Time)
+	// coupon.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	coupon.UpdateDefaultUpdatedAt = couponDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// couponDescName is the schema descriptor for name field.
+	couponDescName := couponFields[0].Descriptor()
+	// coupon.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	coupon.NameValidator = func() func(string) error {
+		validators := couponDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// couponDescCode is the schema descriptor for code field.
+	couponDescCode := couponFields[1].Descriptor()
+	// coupon.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	coupon.CodeValidator = func() func(string) error {
+		validators := couponDescCode.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(code string) error {
+			for _, fn := range fns {
+				if err := fn(code); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// couponDescDescription is the schema descriptor for description field.
+	couponDescDescription := couponFields[2].Descriptor()
+	// coupon.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	coupon.DescriptionValidator = couponDescDescription.Validators[0].(func(string) error)
+	// couponDescType is the schema descriptor for type field.
+	couponDescType := couponFields[3].Descriptor()
+	// coupon.DefaultType holds the default value on creation for the type field.
+	coupon.DefaultType = couponDescType.Default.(int)
+	// couponDescValue is the schema descriptor for value field.
+	couponDescValue := couponFields[4].Descriptor()
+	// coupon.DefaultValue holds the default value on creation for the value field.
+	coupon.DefaultValue = couponDescValue.Default.(int)
+	// couponDescMinAmount is the schema descriptor for min_amount field.
+	couponDescMinAmount := couponFields[5].Descriptor()
+	// coupon.DefaultMinAmount holds the default value on creation for the min_amount field.
+	coupon.DefaultMinAmount = couponDescMinAmount.Default.(int)
+	// couponDescMaxDiscount is the schema descriptor for max_discount field.
+	couponDescMaxDiscount := couponFields[6].Descriptor()
+	// coupon.DefaultMaxDiscount holds the default value on creation for the max_discount field.
+	coupon.DefaultMaxDiscount = couponDescMaxDiscount.Default.(int)
+	// couponDescTotalCount is the schema descriptor for total_count field.
+	couponDescTotalCount := couponFields[7].Descriptor()
+	// coupon.DefaultTotalCount holds the default value on creation for the total_count field.
+	coupon.DefaultTotalCount = couponDescTotalCount.Default.(int)
+	// couponDescUsedCount is the schema descriptor for used_count field.
+	couponDescUsedCount := couponFields[8].Descriptor()
+	// coupon.DefaultUsedCount holds the default value on creation for the used_count field.
+	coupon.DefaultUsedCount = couponDescUsedCount.Default.(int)
+	// couponDescPerUserLimit is the schema descriptor for per_user_limit field.
+	couponDescPerUserLimit := couponFields[9].Descriptor()
+	// coupon.DefaultPerUserLimit holds the default value on creation for the per_user_limit field.
+	coupon.DefaultPerUserLimit = couponDescPerUserLimit.Default.(int)
+	// couponDescStartTime is the schema descriptor for start_time field.
+	couponDescStartTime := couponFields[10].Descriptor()
+	// coupon.DefaultStartTime holds the default value on creation for the start_time field.
+	coupon.DefaultStartTime = couponDescStartTime.Default.(func() time.Time)
+	// couponDescEndTime is the schema descriptor for end_time field.
+	couponDescEndTime := couponFields[11].Descriptor()
+	// coupon.DefaultEndTime holds the default value on creation for the end_time field.
+	coupon.DefaultEndTime = couponDescEndTime.Default.(func() time.Time)
+	// couponDescActive is the schema descriptor for active field.
+	couponDescActive := couponFields[12].Descriptor()
+	// coupon.DefaultActive holds the default value on creation for the active field.
+	coupon.DefaultActive = couponDescActive.Default.(bool)
+	// couponDescImage is the schema descriptor for image field.
+	couponDescImage := couponFields[13].Descriptor()
+	// coupon.ImageValidator is a validator for the "image" field. It is called by the builders before save.
+	coupon.ImageValidator = couponDescImage.Validators[0].(func(string) error)
+	couponusageMixin := schema.CouponUsage{}.Mixin()
+	couponusageMixinFields0 := couponusageMixin[0].Fields()
+	_ = couponusageMixinFields0
+	couponusageFields := schema.CouponUsage{}.Fields()
+	_ = couponusageFields
+	// couponusageDescCreatedAt is the schema descriptor for created_at field.
+	couponusageDescCreatedAt := couponusageMixinFields0[1].Descriptor()
+	// couponusage.DefaultCreatedAt holds the default value on creation for the created_at field.
+	couponusage.DefaultCreatedAt = couponusageDescCreatedAt.Default.(func() time.Time)
+	// couponusageDescUpdatedAt is the schema descriptor for updated_at field.
+	couponusageDescUpdatedAt := couponusageMixinFields0[2].Descriptor()
+	// couponusage.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	couponusage.DefaultUpdatedAt = couponusageDescUpdatedAt.Default.(func() time.Time)
+	// couponusage.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	couponusage.UpdateDefaultUpdatedAt = couponusageDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// couponusageDescStatus is the schema descriptor for status field.
+	couponusageDescStatus := couponusageFields[3].Descriptor()
+	// couponusage.DefaultStatus holds the default value on creation for the status field.
+	couponusage.DefaultStatus = couponusageDescStatus.Default.(int)
+	// couponusageDescDiscountAmount is the schema descriptor for discount_amount field.
+	couponusageDescDiscountAmount := couponusageFields[5].Descriptor()
+	// couponusage.DefaultDiscountAmount holds the default value on creation for the discount_amount field.
+	couponusage.DefaultDiscountAmount = couponusageDescDiscountAmount.Default.(int)
+	// couponusageDescExpireAt is the schema descriptor for expire_at field.
+	couponusageDescExpireAt := couponusageFields[6].Descriptor()
+	// couponusage.DefaultExpireAt holds the default value on creation for the expire_at field.
+	couponusage.DefaultExpireAt = couponusageDescExpireAt.Default.(func() time.Time)
+	// couponusageDescRemark is the schema descriptor for remark field.
+	couponusageDescRemark := couponusageFields[7].Descriptor()
+	// couponusage.RemarkValidator is a validator for the "remark" field. It is called by the builders before save.
+	couponusage.RemarkValidator = couponusageDescRemark.Validators[0].(func(string) error)
 	essayMixin := schema.Essay{}.Mixin()
 	essayMixinFields0 := essayMixin[0].Fields()
 	_ = essayMixinFields0
@@ -172,10 +307,48 @@ func init() {
 	essay.DefaultUpdatedAt = essayDescUpdatedAt.Default.(func() time.Time)
 	// essay.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	essay.UpdateDefaultUpdatedAt = essayDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// essayDescContent is the schema descriptor for content field.
+	essayDescContent := essayFields[1].Descriptor()
+	// essay.ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	essay.ContentValidator = func() func(string) error {
+		validators := essayDescContent.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(content string) error {
+			for _, fn := range fns {
+				if err := fn(content); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// essayDescDraft is the schema descriptor for draft field.
-	essayDescDraft := essayFields[1].Descriptor()
+	essayDescDraft := essayFields[2].Descriptor()
 	// essay.DefaultDraft holds the default value on creation for the draft field.
 	essay.DefaultDraft = essayDescDraft.Default.(bool)
+	// essayDescLikeCount is the schema descriptor for like_count field.
+	essayDescLikeCount := essayFields[4].Descriptor()
+	// essay.DefaultLikeCount holds the default value on creation for the like_count field.
+	essay.DefaultLikeCount = essayDescLikeCount.Default.(int)
+	// essayDescCommentCount is the schema descriptor for comment_count field.
+	essayDescCommentCount := essayFields[5].Descriptor()
+	// essay.DefaultCommentCount holds the default value on creation for the comment_count field.
+	essay.DefaultCommentCount = essayDescCommentCount.Default.(int)
+	// essayDescShareCount is the schema descriptor for share_count field.
+	essayDescShareCount := essayFields[6].Descriptor()
+	// essay.DefaultShareCount holds the default value on creation for the share_count field.
+	essay.DefaultShareCount = essayDescShareCount.Default.(int)
+	// essayDescPublic is the schema descriptor for public field.
+	essayDescPublic := essayFields[7].Descriptor()
+	// essay.DefaultPublic holds the default value on creation for the public field.
+	essay.DefaultPublic = essayDescPublic.Default.(bool)
+	// essayDescLocation is the schema descriptor for location field.
+	essayDescLocation := essayFields[8].Descriptor()
+	// essay.LocationValidator is a validator for the "location" field. It is called by the builders before save.
+	essay.LocationValidator = essayDescLocation.Validators[0].(func(string) error)
 	flinkMixin := schema.FLink{}.Mixin()
 	flinkMixinFields0 := flinkMixin[0].Fields()
 	_ = flinkMixinFields0
@@ -313,6 +486,106 @@ func init() {
 	friendcirclerule.DefaultUpdatedAt = friendcircleruleDescUpdatedAt.Default.(func() time.Time)
 	// friendcirclerule.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	friendcirclerule.UpdateDefaultUpdatedAt = friendcircleruleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	memberMixin := schema.Member{}.Mixin()
+	memberMixinFields0 := memberMixin[0].Fields()
+	_ = memberMixinFields0
+	memberFields := schema.Member{}.Fields()
+	_ = memberFields
+	// memberDescCreatedAt is the schema descriptor for created_at field.
+	memberDescCreatedAt := memberMixinFields0[1].Descriptor()
+	// member.DefaultCreatedAt holds the default value on creation for the created_at field.
+	member.DefaultCreatedAt = memberDescCreatedAt.Default.(func() time.Time)
+	// memberDescUpdatedAt is the schema descriptor for updated_at field.
+	memberDescUpdatedAt := memberMixinFields0[2].Descriptor()
+	// member.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	member.DefaultUpdatedAt = memberDescUpdatedAt.Default.(func() time.Time)
+	// member.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	member.UpdateDefaultUpdatedAt = memberDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// memberDescMemberNo is the schema descriptor for member_no field.
+	memberDescMemberNo := memberFields[2].Descriptor()
+	// member.MemberNoValidator is a validator for the "member_no" field. It is called by the builders before save.
+	member.MemberNoValidator = memberDescMemberNo.Validators[0].(func(string) error)
+	// memberDescJoinTime is the schema descriptor for join_time field.
+	memberDescJoinTime := memberFields[3].Descriptor()
+	// member.DefaultJoinTime holds the default value on creation for the join_time field.
+	member.DefaultJoinTime = memberDescJoinTime.Default.(func() time.Time)
+	// memberDescPoints is the schema descriptor for points field.
+	memberDescPoints := memberFields[5].Descriptor()
+	// member.DefaultPoints holds the default value on creation for the points field.
+	member.DefaultPoints = memberDescPoints.Default.(int)
+	// memberDescTotalSpent is the schema descriptor for total_spent field.
+	memberDescTotalSpent := memberFields[6].Descriptor()
+	// member.DefaultTotalSpent holds the default value on creation for the total_spent field.
+	member.DefaultTotalSpent = memberDescTotalSpent.Default.(int)
+	// memberDescOrderCount is the schema descriptor for order_count field.
+	memberDescOrderCount := memberFields[7].Descriptor()
+	// member.DefaultOrderCount holds the default value on creation for the order_count field.
+	member.DefaultOrderCount = memberDescOrderCount.Default.(int)
+	// memberDescActive is the schema descriptor for active field.
+	memberDescActive := memberFields[8].Descriptor()
+	// member.DefaultActive holds the default value on creation for the active field.
+	member.DefaultActive = memberDescActive.Default.(bool)
+	// memberDescRemark is the schema descriptor for remark field.
+	memberDescRemark := memberFields[9].Descriptor()
+	// member.RemarkValidator is a validator for the "remark" field. It is called by the builders before save.
+	member.RemarkValidator = memberDescRemark.Validators[0].(func(string) error)
+	memberlevelMixin := schema.MemberLevel{}.Mixin()
+	memberlevelMixinFields0 := memberlevelMixin[0].Fields()
+	_ = memberlevelMixinFields0
+	memberlevelFields := schema.MemberLevel{}.Fields()
+	_ = memberlevelFields
+	// memberlevelDescCreatedAt is the schema descriptor for created_at field.
+	memberlevelDescCreatedAt := memberlevelMixinFields0[1].Descriptor()
+	// memberlevel.DefaultCreatedAt holds the default value on creation for the created_at field.
+	memberlevel.DefaultCreatedAt = memberlevelDescCreatedAt.Default.(func() time.Time)
+	// memberlevelDescUpdatedAt is the schema descriptor for updated_at field.
+	memberlevelDescUpdatedAt := memberlevelMixinFields0[2].Descriptor()
+	// memberlevel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	memberlevel.DefaultUpdatedAt = memberlevelDescUpdatedAt.Default.(func() time.Time)
+	// memberlevel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	memberlevel.UpdateDefaultUpdatedAt = memberlevelDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// memberlevelDescName is the schema descriptor for name field.
+	memberlevelDescName := memberlevelFields[0].Descriptor()
+	// memberlevel.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	memberlevel.NameValidator = func() func(string) error {
+		validators := memberlevelDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// memberlevelDescDescription is the schema descriptor for description field.
+	memberlevelDescDescription := memberlevelFields[1].Descriptor()
+	// memberlevel.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	memberlevel.DescriptionValidator = memberlevelDescDescription.Validators[0].(func(string) error)
+	// memberlevelDescMinPoints is the schema descriptor for min_points field.
+	memberlevelDescMinPoints := memberlevelFields[3].Descriptor()
+	// memberlevel.DefaultMinPoints holds the default value on creation for the min_points field.
+	memberlevel.DefaultMinPoints = memberlevelDescMinPoints.Default.(int)
+	// memberlevelDescDiscountRate is the schema descriptor for discount_rate field.
+	memberlevelDescDiscountRate := memberlevelFields[4].Descriptor()
+	// memberlevel.DefaultDiscountRate holds the default value on creation for the discount_rate field.
+	memberlevel.DefaultDiscountRate = memberlevelDescDiscountRate.Default.(int)
+	// memberlevelDescIcon is the schema descriptor for icon field.
+	memberlevelDescIcon := memberlevelFields[6].Descriptor()
+	// memberlevel.IconValidator is a validator for the "icon" field. It is called by the builders before save.
+	memberlevel.IconValidator = memberlevelDescIcon.Validators[0].(func(string) error)
+	// memberlevelDescActive is the schema descriptor for active field.
+	memberlevelDescActive := memberlevelFields[7].Descriptor()
+	// memberlevel.DefaultActive holds the default value on creation for the active field.
+	memberlevel.DefaultActive = memberlevelDescActive.Default.(bool)
+	// memberlevelDescSortOrder is the schema descriptor for sort_order field.
+	memberlevelDescSortOrder := memberlevelFields[8].Descriptor()
+	// memberlevel.DefaultSortOrder holds the default value on creation for the sort_order field.
+	memberlevel.DefaultSortOrder = memberlevelDescSortOrder.Default.(int)
 	oauth2accesstokenMixin := schema.Oauth2AccessToken{}.Mixin()
 	oauth2accesstokenMixinFields0 := oauth2accesstokenMixin[0].Fields()
 	_ = oauth2accesstokenMixinFields0
@@ -711,6 +984,117 @@ func init() {
 	postDescSummary := postFields[21].Descriptor()
 	// post.SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
 	post.SummaryValidator = postDescSummary.Validators[0].(func(string) error)
+	productMixin := schema.Product{}.Mixin()
+	productMixinFields0 := productMixin[0].Fields()
+	_ = productMixinFields0
+	productFields := schema.Product{}.Fields()
+	_ = productFields
+	// productDescCreatedAt is the schema descriptor for created_at field.
+	productDescCreatedAt := productMixinFields0[1].Descriptor()
+	// product.DefaultCreatedAt holds the default value on creation for the created_at field.
+	product.DefaultCreatedAt = productDescCreatedAt.Default.(func() time.Time)
+	// productDescUpdatedAt is the schema descriptor for updated_at field.
+	productDescUpdatedAt := productMixinFields0[2].Descriptor()
+	// product.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	product.DefaultUpdatedAt = productDescUpdatedAt.Default.(func() time.Time)
+	// product.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	product.UpdateDefaultUpdatedAt = productDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// productDescName is the schema descriptor for name field.
+	productDescName := productFields[0].Descriptor()
+	// product.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	product.NameValidator = func() func(string) error {
+		validators := productDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// productDescDescription is the schema descriptor for description field.
+	productDescDescription := productFields[1].Descriptor()
+	// product.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	product.DescriptionValidator = productDescDescription.Validators[0].(func(string) error)
+	// productDescShortDescription is the schema descriptor for short_description field.
+	productDescShortDescription := productFields[2].Descriptor()
+	// product.ShortDescriptionValidator is a validator for the "short_description" field. It is called by the builders before save.
+	product.ShortDescriptionValidator = productDescShortDescription.Validators[0].(func(string) error)
+	// productDescSku is the schema descriptor for sku field.
+	productDescSku := productFields[3].Descriptor()
+	// product.SkuValidator is a validator for the "sku" field. It is called by the builders before save.
+	product.SkuValidator = func() func(string) error {
+		validators := productDescSku.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(sku string) error {
+			for _, fn := range fns {
+				if err := fn(sku); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// productDescPrice is the schema descriptor for price field.
+	productDescPrice := productFields[4].Descriptor()
+	// product.DefaultPrice holds the default value on creation for the price field.
+	product.DefaultPrice = productDescPrice.Default.(int)
+	// productDescStock is the schema descriptor for stock field.
+	productDescStock := productFields[7].Descriptor()
+	// product.DefaultStock holds the default value on creation for the stock field.
+	product.DefaultStock = productDescStock.Default.(int)
+	// productDescMinStock is the schema descriptor for min_stock field.
+	productDescMinStock := productFields[8].Descriptor()
+	// product.DefaultMinStock holds the default value on creation for the min_stock field.
+	product.DefaultMinStock = productDescMinStock.Default.(int)
+	// productDescSales is the schema descriptor for sales field.
+	productDescSales := productFields[9].Descriptor()
+	// product.DefaultSales holds the default value on creation for the sales field.
+	product.DefaultSales = productDescSales.Default.(int)
+	// productDescBrand is the schema descriptor for brand field.
+	productDescBrand := productFields[11].Descriptor()
+	// product.BrandValidator is a validator for the "brand" field. It is called by the builders before save.
+	product.BrandValidator = productDescBrand.Validators[0].(func(string) error)
+	// productDescUnit is the schema descriptor for unit field.
+	productDescUnit := productFields[12].Descriptor()
+	// product.UnitValidator is a validator for the "unit" field. It is called by the builders before save.
+	product.UnitValidator = productDescUnit.Validators[0].(func(string) error)
+	// productDescActive is the schema descriptor for active field.
+	productDescActive := productFields[18].Descriptor()
+	// product.DefaultActive holds the default value on creation for the active field.
+	product.DefaultActive = productDescActive.Default.(bool)
+	// productDescFeatured is the schema descriptor for featured field.
+	productDescFeatured := productFields[19].Descriptor()
+	// product.DefaultFeatured holds the default value on creation for the featured field.
+	product.DefaultFeatured = productDescFeatured.Default.(bool)
+	// productDescDigital is the schema descriptor for digital field.
+	productDescDigital := productFields[20].Descriptor()
+	// product.DefaultDigital holds the default value on creation for the digital field.
+	product.DefaultDigital = productDescDigital.Default.(bool)
+	// productDescMetaTitle is the schema descriptor for meta_title field.
+	productDescMetaTitle := productFields[21].Descriptor()
+	// product.MetaTitleValidator is a validator for the "meta_title" field. It is called by the builders before save.
+	product.MetaTitleValidator = productDescMetaTitle.Validators[0].(func(string) error)
+	// productDescMetaDescription is the schema descriptor for meta_description field.
+	productDescMetaDescription := productFields[22].Descriptor()
+	// product.MetaDescriptionValidator is a validator for the "meta_description" field. It is called by the builders before save.
+	product.MetaDescriptionValidator = productDescMetaDescription.Validators[0].(func(string) error)
+	// productDescMetaKeywords is the schema descriptor for meta_keywords field.
+	productDescMetaKeywords := productFields[23].Descriptor()
+	// product.MetaKeywordsValidator is a validator for the "meta_keywords" field. It is called by the builders before save.
+	product.MetaKeywordsValidator = productDescMetaKeywords.Validators[0].(func(string) error)
+	// productDescSortOrder is the schema descriptor for sort_order field.
+	productDescSortOrder := productFields[24].Descriptor()
+	// product.DefaultSortOrder holds the default value on creation for the sort_order field.
+	product.DefaultSortOrder = productDescSortOrder.Default.(int)
 	roleMixin := schema.Role{}.Mixin()
 	roleMixinFields0 := roleMixin[0].Fields()
 	_ = roleMixinFields0
@@ -959,12 +1343,49 @@ func init() {
 	visitlog.DefaultUpdatedAt = visitlogDescUpdatedAt.Default.(func() time.Time)
 	// visitlog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	visitlog.UpdateDefaultUpdatedAt = visitlogDescUpdatedAt.UpdateDefault.(func() time.Time)
+	walletMixin := schema.Wallet{}.Mixin()
+	walletMixinFields0 := walletMixin[0].Fields()
+	_ = walletMixinFields0
 	walletFields := schema.Wallet{}.Fields()
 	_ = walletFields
+	// walletDescCreatedAt is the schema descriptor for created_at field.
+	walletDescCreatedAt := walletMixinFields0[1].Descriptor()
+	// wallet.DefaultCreatedAt holds the default value on creation for the created_at field.
+	wallet.DefaultCreatedAt = walletDescCreatedAt.Default.(func() time.Time)
+	// walletDescUpdatedAt is the schema descriptor for updated_at field.
+	walletDescUpdatedAt := walletMixinFields0[2].Descriptor()
+	// wallet.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	wallet.DefaultUpdatedAt = walletDescUpdatedAt.Default.(func() time.Time)
+	// wallet.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	wallet.UpdateDefaultUpdatedAt = walletDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// walletDescBalance is the schema descriptor for balance field.
 	walletDescBalance := walletFields[1].Descriptor()
 	// wallet.DefaultBalance holds the default value on creation for the balance field.
 	wallet.DefaultBalance = walletDescBalance.Default.(int)
+	// walletDescFrozenAmount is the schema descriptor for frozen_amount field.
+	walletDescFrozenAmount := walletFields[2].Descriptor()
+	// wallet.DefaultFrozenAmount holds the default value on creation for the frozen_amount field.
+	wallet.DefaultFrozenAmount = walletDescFrozenAmount.Default.(int)
+	// walletDescTotalIncome is the schema descriptor for total_income field.
+	walletDescTotalIncome := walletFields[3].Descriptor()
+	// wallet.DefaultTotalIncome holds the default value on creation for the total_income field.
+	wallet.DefaultTotalIncome = walletDescTotalIncome.Default.(int)
+	// walletDescTotalExpense is the schema descriptor for total_expense field.
+	walletDescTotalExpense := walletFields[4].Descriptor()
+	// wallet.DefaultTotalExpense holds the default value on creation for the total_expense field.
+	wallet.DefaultTotalExpense = walletDescTotalExpense.Default.(int)
+	// walletDescPassword is the schema descriptor for password field.
+	walletDescPassword := walletFields[5].Descriptor()
+	// wallet.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
+	wallet.PasswordValidator = walletDescPassword.Validators[0].(func(string) error)
+	// walletDescActive is the schema descriptor for active field.
+	walletDescActive := walletFields[6].Descriptor()
+	// wallet.DefaultActive holds the default value on creation for the active field.
+	wallet.DefaultActive = walletDescActive.Default.(bool)
+	// walletDescRemark is the schema descriptor for remark field.
+	walletDescRemark := walletFields[7].Descriptor()
+	// wallet.RemarkValidator is a validator for the "remark" field. It is called by the builders before save.
+	wallet.RemarkValidator = walletDescRemark.Validators[0].(func(string) error)
 	webhookMixin := schema.WebHook{}.Mixin()
 	webhookMixinFields0 := webhookMixin[0].Fields()
 	_ = webhookMixinFields0

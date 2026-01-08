@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"gobee/ent/predicate"
 	"gobee/ent/wallet"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -24,6 +25,12 @@ type WalletUpdate struct {
 // Where appends a list predicates to the WalletUpdate builder.
 func (_u *WalletUpdate) Where(ps ...predicate.Wallet) *WalletUpdate {
 	_u.mutation.Where(ps...)
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *WalletUpdate) SetUpdatedAt(v time.Time) *WalletUpdate {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -48,6 +55,12 @@ func (_u *WalletUpdate) AddUserID(v int) *WalletUpdate {
 	return _u
 }
 
+// ClearUserID clears the value of the "user_id" field.
+func (_u *WalletUpdate) ClearUserID() *WalletUpdate {
+	_u.mutation.ClearUserID()
+	return _u
+}
+
 // SetBalance sets the "balance" field.
 func (_u *WalletUpdate) SetBalance(v int) *WalletUpdate {
 	_u.mutation.ResetBalance()
@@ -69,6 +82,123 @@ func (_u *WalletUpdate) AddBalance(v int) *WalletUpdate {
 	return _u
 }
 
+// SetFrozenAmount sets the "frozen_amount" field.
+func (_u *WalletUpdate) SetFrozenAmount(v int) *WalletUpdate {
+	_u.mutation.ResetFrozenAmount()
+	_u.mutation.SetFrozenAmount(v)
+	return _u
+}
+
+// SetNillableFrozenAmount sets the "frozen_amount" field if the given value is not nil.
+func (_u *WalletUpdate) SetNillableFrozenAmount(v *int) *WalletUpdate {
+	if v != nil {
+		_u.SetFrozenAmount(*v)
+	}
+	return _u
+}
+
+// AddFrozenAmount adds value to the "frozen_amount" field.
+func (_u *WalletUpdate) AddFrozenAmount(v int) *WalletUpdate {
+	_u.mutation.AddFrozenAmount(v)
+	return _u
+}
+
+// SetTotalIncome sets the "total_income" field.
+func (_u *WalletUpdate) SetTotalIncome(v int) *WalletUpdate {
+	_u.mutation.ResetTotalIncome()
+	_u.mutation.SetTotalIncome(v)
+	return _u
+}
+
+// SetNillableTotalIncome sets the "total_income" field if the given value is not nil.
+func (_u *WalletUpdate) SetNillableTotalIncome(v *int) *WalletUpdate {
+	if v != nil {
+		_u.SetTotalIncome(*v)
+	}
+	return _u
+}
+
+// AddTotalIncome adds value to the "total_income" field.
+func (_u *WalletUpdate) AddTotalIncome(v int) *WalletUpdate {
+	_u.mutation.AddTotalIncome(v)
+	return _u
+}
+
+// SetTotalExpense sets the "total_expense" field.
+func (_u *WalletUpdate) SetTotalExpense(v int) *WalletUpdate {
+	_u.mutation.ResetTotalExpense()
+	_u.mutation.SetTotalExpense(v)
+	return _u
+}
+
+// SetNillableTotalExpense sets the "total_expense" field if the given value is not nil.
+func (_u *WalletUpdate) SetNillableTotalExpense(v *int) *WalletUpdate {
+	if v != nil {
+		_u.SetTotalExpense(*v)
+	}
+	return _u
+}
+
+// AddTotalExpense adds value to the "total_expense" field.
+func (_u *WalletUpdate) AddTotalExpense(v int) *WalletUpdate {
+	_u.mutation.AddTotalExpense(v)
+	return _u
+}
+
+// SetPassword sets the "password" field.
+func (_u *WalletUpdate) SetPassword(v string) *WalletUpdate {
+	_u.mutation.SetPassword(v)
+	return _u
+}
+
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (_u *WalletUpdate) SetNillablePassword(v *string) *WalletUpdate {
+	if v != nil {
+		_u.SetPassword(*v)
+	}
+	return _u
+}
+
+// ClearPassword clears the value of the "password" field.
+func (_u *WalletUpdate) ClearPassword() *WalletUpdate {
+	_u.mutation.ClearPassword()
+	return _u
+}
+
+// SetActive sets the "active" field.
+func (_u *WalletUpdate) SetActive(v bool) *WalletUpdate {
+	_u.mutation.SetActive(v)
+	return _u
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (_u *WalletUpdate) SetNillableActive(v *bool) *WalletUpdate {
+	if v != nil {
+		_u.SetActive(*v)
+	}
+	return _u
+}
+
+// SetRemark sets the "remark" field.
+func (_u *WalletUpdate) SetRemark(v string) *WalletUpdate {
+	_u.mutation.SetRemark(v)
+	return _u
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (_u *WalletUpdate) SetNillableRemark(v *string) *WalletUpdate {
+	if v != nil {
+		_u.SetRemark(*v)
+	}
+	return _u
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (_u *WalletUpdate) ClearRemark() *WalletUpdate {
+	_u.mutation.ClearRemark()
+	return _u
+}
+
 // Mutation returns the WalletMutation object of the builder.
 func (_u *WalletUpdate) Mutation() *WalletMutation {
 	return _u.mutation
@@ -76,6 +206,7 @@ func (_u *WalletUpdate) Mutation() *WalletMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *WalletUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -101,7 +232,33 @@ func (_u *WalletUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *WalletUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := wallet.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (_u *WalletUpdate) check() error {
+	if v, ok := _u.mutation.Password(); ok {
+		if err := wallet.PasswordValidator(v); err != nil {
+			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "Wallet.password": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Remark(); ok {
+		if err := wallet.RemarkValidator(v); err != nil {
+			return &ValidationError{Name: "remark", err: fmt.Errorf(`ent: validator failed for field "Wallet.remark": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *WalletUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(wallet.Table, wallet.Columns, sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -110,17 +267,56 @@ func (_u *WalletUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(wallet.FieldUpdatedAt, field.TypeTime, value)
+	}
 	if value, ok := _u.mutation.UserID(); ok {
 		_spec.SetField(wallet.FieldUserID, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
 		_spec.AddField(wallet.FieldUserID, field.TypeInt, value)
 	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(wallet.FieldUserID, field.TypeInt)
+	}
 	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(wallet.FieldBalance, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(wallet.FieldBalance, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.FrozenAmount(); ok {
+		_spec.SetField(wallet.FieldFrozenAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFrozenAmount(); ok {
+		_spec.AddField(wallet.FieldFrozenAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.TotalIncome(); ok {
+		_spec.SetField(wallet.FieldTotalIncome, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTotalIncome(); ok {
+		_spec.AddField(wallet.FieldTotalIncome, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.TotalExpense(); ok {
+		_spec.SetField(wallet.FieldTotalExpense, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTotalExpense(); ok {
+		_spec.AddField(wallet.FieldTotalExpense, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Password(); ok {
+		_spec.SetField(wallet.FieldPassword, field.TypeString, value)
+	}
+	if _u.mutation.PasswordCleared() {
+		_spec.ClearField(wallet.FieldPassword, field.TypeString)
+	}
+	if value, ok := _u.mutation.Active(); ok {
+		_spec.SetField(wallet.FieldActive, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Remark(); ok {
+		_spec.SetField(wallet.FieldRemark, field.TypeString, value)
+	}
+	if _u.mutation.RemarkCleared() {
+		_spec.ClearField(wallet.FieldRemark, field.TypeString)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -142,6 +338,12 @@ type WalletUpdateOne struct {
 	mutation *WalletMutation
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *WalletUpdateOne) SetUpdatedAt(v time.Time) *WalletUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUserID sets the "user_id" field.
 func (_u *WalletUpdateOne) SetUserID(v int) *WalletUpdateOne {
 	_u.mutation.ResetUserID()
@@ -160,6 +362,12 @@ func (_u *WalletUpdateOne) SetNillableUserID(v *int) *WalletUpdateOne {
 // AddUserID adds value to the "user_id" field.
 func (_u *WalletUpdateOne) AddUserID(v int) *WalletUpdateOne {
 	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *WalletUpdateOne) ClearUserID() *WalletUpdateOne {
+	_u.mutation.ClearUserID()
 	return _u
 }
 
@@ -184,6 +392,123 @@ func (_u *WalletUpdateOne) AddBalance(v int) *WalletUpdateOne {
 	return _u
 }
 
+// SetFrozenAmount sets the "frozen_amount" field.
+func (_u *WalletUpdateOne) SetFrozenAmount(v int) *WalletUpdateOne {
+	_u.mutation.ResetFrozenAmount()
+	_u.mutation.SetFrozenAmount(v)
+	return _u
+}
+
+// SetNillableFrozenAmount sets the "frozen_amount" field if the given value is not nil.
+func (_u *WalletUpdateOne) SetNillableFrozenAmount(v *int) *WalletUpdateOne {
+	if v != nil {
+		_u.SetFrozenAmount(*v)
+	}
+	return _u
+}
+
+// AddFrozenAmount adds value to the "frozen_amount" field.
+func (_u *WalletUpdateOne) AddFrozenAmount(v int) *WalletUpdateOne {
+	_u.mutation.AddFrozenAmount(v)
+	return _u
+}
+
+// SetTotalIncome sets the "total_income" field.
+func (_u *WalletUpdateOne) SetTotalIncome(v int) *WalletUpdateOne {
+	_u.mutation.ResetTotalIncome()
+	_u.mutation.SetTotalIncome(v)
+	return _u
+}
+
+// SetNillableTotalIncome sets the "total_income" field if the given value is not nil.
+func (_u *WalletUpdateOne) SetNillableTotalIncome(v *int) *WalletUpdateOne {
+	if v != nil {
+		_u.SetTotalIncome(*v)
+	}
+	return _u
+}
+
+// AddTotalIncome adds value to the "total_income" field.
+func (_u *WalletUpdateOne) AddTotalIncome(v int) *WalletUpdateOne {
+	_u.mutation.AddTotalIncome(v)
+	return _u
+}
+
+// SetTotalExpense sets the "total_expense" field.
+func (_u *WalletUpdateOne) SetTotalExpense(v int) *WalletUpdateOne {
+	_u.mutation.ResetTotalExpense()
+	_u.mutation.SetTotalExpense(v)
+	return _u
+}
+
+// SetNillableTotalExpense sets the "total_expense" field if the given value is not nil.
+func (_u *WalletUpdateOne) SetNillableTotalExpense(v *int) *WalletUpdateOne {
+	if v != nil {
+		_u.SetTotalExpense(*v)
+	}
+	return _u
+}
+
+// AddTotalExpense adds value to the "total_expense" field.
+func (_u *WalletUpdateOne) AddTotalExpense(v int) *WalletUpdateOne {
+	_u.mutation.AddTotalExpense(v)
+	return _u
+}
+
+// SetPassword sets the "password" field.
+func (_u *WalletUpdateOne) SetPassword(v string) *WalletUpdateOne {
+	_u.mutation.SetPassword(v)
+	return _u
+}
+
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (_u *WalletUpdateOne) SetNillablePassword(v *string) *WalletUpdateOne {
+	if v != nil {
+		_u.SetPassword(*v)
+	}
+	return _u
+}
+
+// ClearPassword clears the value of the "password" field.
+func (_u *WalletUpdateOne) ClearPassword() *WalletUpdateOne {
+	_u.mutation.ClearPassword()
+	return _u
+}
+
+// SetActive sets the "active" field.
+func (_u *WalletUpdateOne) SetActive(v bool) *WalletUpdateOne {
+	_u.mutation.SetActive(v)
+	return _u
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (_u *WalletUpdateOne) SetNillableActive(v *bool) *WalletUpdateOne {
+	if v != nil {
+		_u.SetActive(*v)
+	}
+	return _u
+}
+
+// SetRemark sets the "remark" field.
+func (_u *WalletUpdateOne) SetRemark(v string) *WalletUpdateOne {
+	_u.mutation.SetRemark(v)
+	return _u
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (_u *WalletUpdateOne) SetNillableRemark(v *string) *WalletUpdateOne {
+	if v != nil {
+		_u.SetRemark(*v)
+	}
+	return _u
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (_u *WalletUpdateOne) ClearRemark() *WalletUpdateOne {
+	_u.mutation.ClearRemark()
+	return _u
+}
+
 // Mutation returns the WalletMutation object of the builder.
 func (_u *WalletUpdateOne) Mutation() *WalletMutation {
 	return _u.mutation
@@ -204,6 +529,7 @@ func (_u *WalletUpdateOne) Select(field string, fields ...string) *WalletUpdateO
 
 // Save executes the query and returns the updated Wallet entity.
 func (_u *WalletUpdateOne) Save(ctx context.Context) (*Wallet, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -229,7 +555,33 @@ func (_u *WalletUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *WalletUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := wallet.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (_u *WalletUpdateOne) check() error {
+	if v, ok := _u.mutation.Password(); ok {
+		if err := wallet.PasswordValidator(v); err != nil {
+			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "Wallet.password": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Remark(); ok {
+		if err := wallet.RemarkValidator(v); err != nil {
+			return &ValidationError{Name: "remark", err: fmt.Errorf(`ent: validator failed for field "Wallet.remark": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(wallet.Table, wallet.Columns, sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -255,17 +607,56 @@ func (_u *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err erro
 			}
 		}
 	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(wallet.FieldUpdatedAt, field.TypeTime, value)
+	}
 	if value, ok := _u.mutation.UserID(); ok {
 		_spec.SetField(wallet.FieldUserID, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
 		_spec.AddField(wallet.FieldUserID, field.TypeInt, value)
 	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(wallet.FieldUserID, field.TypeInt)
+	}
 	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(wallet.FieldBalance, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(wallet.FieldBalance, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.FrozenAmount(); ok {
+		_spec.SetField(wallet.FieldFrozenAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFrozenAmount(); ok {
+		_spec.AddField(wallet.FieldFrozenAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.TotalIncome(); ok {
+		_spec.SetField(wallet.FieldTotalIncome, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTotalIncome(); ok {
+		_spec.AddField(wallet.FieldTotalIncome, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.TotalExpense(); ok {
+		_spec.SetField(wallet.FieldTotalExpense, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTotalExpense(); ok {
+		_spec.AddField(wallet.FieldTotalExpense, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Password(); ok {
+		_spec.SetField(wallet.FieldPassword, field.TypeString, value)
+	}
+	if _u.mutation.PasswordCleared() {
+		_spec.ClearField(wallet.FieldPassword, field.TypeString)
+	}
+	if value, ok := _u.mutation.Active(); ok {
+		_spec.SetField(wallet.FieldActive, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Remark(); ok {
+		_spec.SetField(wallet.FieldRemark, field.TypeString, value)
+	}
+	if _u.mutation.RemarkCleared() {
+		_spec.ClearField(wallet.FieldRemark, field.TypeString)
 	}
 	_node = &Wallet{config: _u.config}
 	_spec.Assign = _node.assignValues

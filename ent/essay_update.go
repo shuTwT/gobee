@@ -35,6 +35,27 @@ func (_u *EssayUpdate) SetUpdatedAt(v time.Time) *EssayUpdate {
 	return _u
 }
 
+// SetUserID sets the "user_id" field.
+func (_u *EssayUpdate) SetUserID(v int) *EssayUpdate {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *EssayUpdate) SetNillableUserID(v *int) *EssayUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *EssayUpdate) AddUserID(v int) *EssayUpdate {
+	_u.mutation.AddUserID(v)
+	return _u
+}
+
 // SetContent sets the "content" field.
 func (_u *EssayUpdate) SetContent(v string) *EssayUpdate {
 	_u.mutation.SetContent(v)
@@ -81,6 +102,121 @@ func (_u *EssayUpdate) ClearImages() *EssayUpdate {
 	return _u
 }
 
+// SetLikeCount sets the "like_count" field.
+func (_u *EssayUpdate) SetLikeCount(v int) *EssayUpdate {
+	_u.mutation.ResetLikeCount()
+	_u.mutation.SetLikeCount(v)
+	return _u
+}
+
+// SetNillableLikeCount sets the "like_count" field if the given value is not nil.
+func (_u *EssayUpdate) SetNillableLikeCount(v *int) *EssayUpdate {
+	if v != nil {
+		_u.SetLikeCount(*v)
+	}
+	return _u
+}
+
+// AddLikeCount adds value to the "like_count" field.
+func (_u *EssayUpdate) AddLikeCount(v int) *EssayUpdate {
+	_u.mutation.AddLikeCount(v)
+	return _u
+}
+
+// SetCommentCount sets the "comment_count" field.
+func (_u *EssayUpdate) SetCommentCount(v int) *EssayUpdate {
+	_u.mutation.ResetCommentCount()
+	_u.mutation.SetCommentCount(v)
+	return _u
+}
+
+// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
+func (_u *EssayUpdate) SetNillableCommentCount(v *int) *EssayUpdate {
+	if v != nil {
+		_u.SetCommentCount(*v)
+	}
+	return _u
+}
+
+// AddCommentCount adds value to the "comment_count" field.
+func (_u *EssayUpdate) AddCommentCount(v int) *EssayUpdate {
+	_u.mutation.AddCommentCount(v)
+	return _u
+}
+
+// SetShareCount sets the "share_count" field.
+func (_u *EssayUpdate) SetShareCount(v int) *EssayUpdate {
+	_u.mutation.ResetShareCount()
+	_u.mutation.SetShareCount(v)
+	return _u
+}
+
+// SetNillableShareCount sets the "share_count" field if the given value is not nil.
+func (_u *EssayUpdate) SetNillableShareCount(v *int) *EssayUpdate {
+	if v != nil {
+		_u.SetShareCount(*v)
+	}
+	return _u
+}
+
+// AddShareCount adds value to the "share_count" field.
+func (_u *EssayUpdate) AddShareCount(v int) *EssayUpdate {
+	_u.mutation.AddShareCount(v)
+	return _u
+}
+
+// SetPublic sets the "public" field.
+func (_u *EssayUpdate) SetPublic(v bool) *EssayUpdate {
+	_u.mutation.SetPublic(v)
+	return _u
+}
+
+// SetNillablePublic sets the "public" field if the given value is not nil.
+func (_u *EssayUpdate) SetNillablePublic(v *bool) *EssayUpdate {
+	if v != nil {
+		_u.SetPublic(*v)
+	}
+	return _u
+}
+
+// SetLocation sets the "location" field.
+func (_u *EssayUpdate) SetLocation(v string) *EssayUpdate {
+	_u.mutation.SetLocation(v)
+	return _u
+}
+
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (_u *EssayUpdate) SetNillableLocation(v *string) *EssayUpdate {
+	if v != nil {
+		_u.SetLocation(*v)
+	}
+	return _u
+}
+
+// ClearLocation clears the value of the "location" field.
+func (_u *EssayUpdate) ClearLocation() *EssayUpdate {
+	_u.mutation.ClearLocation()
+	return _u
+}
+
+// SetTags sets the "tags" field.
+func (_u *EssayUpdate) SetTags(v []string) *EssayUpdate {
+	_u.mutation.SetTags(v)
+	return _u
+}
+
+// AppendTags appends value to the "tags" field.
+func (_u *EssayUpdate) AppendTags(v []string) *EssayUpdate {
+	_u.mutation.AppendTags(v)
+	return _u
+}
+
+// ClearTags clears the value of the "tags" field.
+func (_u *EssayUpdate) ClearTags() *EssayUpdate {
+	_u.mutation.ClearTags()
+	return _u
+}
+
 // Mutation returns the EssayMutation object of the builder.
 func (_u *EssayUpdate) Mutation() *EssayMutation {
 	return _u.mutation
@@ -122,7 +258,25 @@ func (_u *EssayUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *EssayUpdate) check() error {
+	if v, ok := _u.mutation.Content(); ok {
+		if err := essay.ContentValidator(v); err != nil {
+			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Essay.content": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Location(); ok {
+		if err := essay.LocationValidator(v); err != nil {
+			return &ValidationError{Name: "location", err: fmt.Errorf(`ent: validator failed for field "Essay.location": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *EssayUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(essay.Table, essay.Columns, sqlgraph.NewFieldSpec(essay.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -133,6 +287,12 @@ func (_u *EssayUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(essay.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(essay.FieldUserID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(essay.FieldUserID, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(essay.FieldContent, field.TypeString, value)
@@ -150,6 +310,44 @@ func (_u *EssayUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ImagesCleared() {
 		_spec.ClearField(essay.FieldImages, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.LikeCount(); ok {
+		_spec.SetField(essay.FieldLikeCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedLikeCount(); ok {
+		_spec.AddField(essay.FieldLikeCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.CommentCount(); ok {
+		_spec.SetField(essay.FieldCommentCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedCommentCount(); ok {
+		_spec.AddField(essay.FieldCommentCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.ShareCount(); ok {
+		_spec.SetField(essay.FieldShareCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedShareCount(); ok {
+		_spec.AddField(essay.FieldShareCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Public(); ok {
+		_spec.SetField(essay.FieldPublic, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Location(); ok {
+		_spec.SetField(essay.FieldLocation, field.TypeString, value)
+	}
+	if _u.mutation.LocationCleared() {
+		_spec.ClearField(essay.FieldLocation, field.TypeString)
+	}
+	if value, ok := _u.mutation.Tags(); ok {
+		_spec.SetField(essay.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, essay.FieldTags, value)
+		})
+	}
+	if _u.mutation.TagsCleared() {
+		_spec.ClearField(essay.FieldTags, field.TypeJSON)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -174,6 +372,27 @@ type EssayUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *EssayUpdateOne) SetUpdatedAt(v time.Time) *EssayUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *EssayUpdateOne) SetUserID(v int) *EssayUpdateOne {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *EssayUpdateOne) SetNillableUserID(v *int) *EssayUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *EssayUpdateOne) AddUserID(v int) *EssayUpdateOne {
+	_u.mutation.AddUserID(v)
 	return _u
 }
 
@@ -220,6 +439,121 @@ func (_u *EssayUpdateOne) AppendImages(v []string) *EssayUpdateOne {
 // ClearImages clears the value of the "images" field.
 func (_u *EssayUpdateOne) ClearImages() *EssayUpdateOne {
 	_u.mutation.ClearImages()
+	return _u
+}
+
+// SetLikeCount sets the "like_count" field.
+func (_u *EssayUpdateOne) SetLikeCount(v int) *EssayUpdateOne {
+	_u.mutation.ResetLikeCount()
+	_u.mutation.SetLikeCount(v)
+	return _u
+}
+
+// SetNillableLikeCount sets the "like_count" field if the given value is not nil.
+func (_u *EssayUpdateOne) SetNillableLikeCount(v *int) *EssayUpdateOne {
+	if v != nil {
+		_u.SetLikeCount(*v)
+	}
+	return _u
+}
+
+// AddLikeCount adds value to the "like_count" field.
+func (_u *EssayUpdateOne) AddLikeCount(v int) *EssayUpdateOne {
+	_u.mutation.AddLikeCount(v)
+	return _u
+}
+
+// SetCommentCount sets the "comment_count" field.
+func (_u *EssayUpdateOne) SetCommentCount(v int) *EssayUpdateOne {
+	_u.mutation.ResetCommentCount()
+	_u.mutation.SetCommentCount(v)
+	return _u
+}
+
+// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
+func (_u *EssayUpdateOne) SetNillableCommentCount(v *int) *EssayUpdateOne {
+	if v != nil {
+		_u.SetCommentCount(*v)
+	}
+	return _u
+}
+
+// AddCommentCount adds value to the "comment_count" field.
+func (_u *EssayUpdateOne) AddCommentCount(v int) *EssayUpdateOne {
+	_u.mutation.AddCommentCount(v)
+	return _u
+}
+
+// SetShareCount sets the "share_count" field.
+func (_u *EssayUpdateOne) SetShareCount(v int) *EssayUpdateOne {
+	_u.mutation.ResetShareCount()
+	_u.mutation.SetShareCount(v)
+	return _u
+}
+
+// SetNillableShareCount sets the "share_count" field if the given value is not nil.
+func (_u *EssayUpdateOne) SetNillableShareCount(v *int) *EssayUpdateOne {
+	if v != nil {
+		_u.SetShareCount(*v)
+	}
+	return _u
+}
+
+// AddShareCount adds value to the "share_count" field.
+func (_u *EssayUpdateOne) AddShareCount(v int) *EssayUpdateOne {
+	_u.mutation.AddShareCount(v)
+	return _u
+}
+
+// SetPublic sets the "public" field.
+func (_u *EssayUpdateOne) SetPublic(v bool) *EssayUpdateOne {
+	_u.mutation.SetPublic(v)
+	return _u
+}
+
+// SetNillablePublic sets the "public" field if the given value is not nil.
+func (_u *EssayUpdateOne) SetNillablePublic(v *bool) *EssayUpdateOne {
+	if v != nil {
+		_u.SetPublic(*v)
+	}
+	return _u
+}
+
+// SetLocation sets the "location" field.
+func (_u *EssayUpdateOne) SetLocation(v string) *EssayUpdateOne {
+	_u.mutation.SetLocation(v)
+	return _u
+}
+
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (_u *EssayUpdateOne) SetNillableLocation(v *string) *EssayUpdateOne {
+	if v != nil {
+		_u.SetLocation(*v)
+	}
+	return _u
+}
+
+// ClearLocation clears the value of the "location" field.
+func (_u *EssayUpdateOne) ClearLocation() *EssayUpdateOne {
+	_u.mutation.ClearLocation()
+	return _u
+}
+
+// SetTags sets the "tags" field.
+func (_u *EssayUpdateOne) SetTags(v []string) *EssayUpdateOne {
+	_u.mutation.SetTags(v)
+	return _u
+}
+
+// AppendTags appends value to the "tags" field.
+func (_u *EssayUpdateOne) AppendTags(v []string) *EssayUpdateOne {
+	_u.mutation.AppendTags(v)
+	return _u
+}
+
+// ClearTags clears the value of the "tags" field.
+func (_u *EssayUpdateOne) ClearTags() *EssayUpdateOne {
+	_u.mutation.ClearTags()
 	return _u
 }
 
@@ -277,7 +611,25 @@ func (_u *EssayUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *EssayUpdateOne) check() error {
+	if v, ok := _u.mutation.Content(); ok {
+		if err := essay.ContentValidator(v); err != nil {
+			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Essay.content": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Location(); ok {
+		if err := essay.LocationValidator(v); err != nil {
+			return &ValidationError{Name: "location", err: fmt.Errorf(`ent: validator failed for field "Essay.location": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *EssayUpdateOne) sqlSave(ctx context.Context) (_node *Essay, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(essay.Table, essay.Columns, sqlgraph.NewFieldSpec(essay.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -306,6 +658,12 @@ func (_u *EssayUpdateOne) sqlSave(ctx context.Context) (_node *Essay, err error)
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(essay.FieldUpdatedAt, field.TypeTime, value)
 	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(essay.FieldUserID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(essay.FieldUserID, field.TypeInt, value)
+	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(essay.FieldContent, field.TypeString, value)
 	}
@@ -322,6 +680,44 @@ func (_u *EssayUpdateOne) sqlSave(ctx context.Context) (_node *Essay, err error)
 	}
 	if _u.mutation.ImagesCleared() {
 		_spec.ClearField(essay.FieldImages, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.LikeCount(); ok {
+		_spec.SetField(essay.FieldLikeCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedLikeCount(); ok {
+		_spec.AddField(essay.FieldLikeCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.CommentCount(); ok {
+		_spec.SetField(essay.FieldCommentCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedCommentCount(); ok {
+		_spec.AddField(essay.FieldCommentCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.ShareCount(); ok {
+		_spec.SetField(essay.FieldShareCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedShareCount(); ok {
+		_spec.AddField(essay.FieldShareCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Public(); ok {
+		_spec.SetField(essay.FieldPublic, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Location(); ok {
+		_spec.SetField(essay.FieldLocation, field.TypeString, value)
+	}
+	if _u.mutation.LocationCleared() {
+		_spec.ClearField(essay.FieldLocation, field.TypeString)
+	}
+	if value, ok := _u.mutation.Tags(); ok {
+		_spec.SetField(essay.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, essay.FieldTags, value)
+		})
+	}
+	if _u.mutation.TagsCleared() {
+		_spec.ClearField(essay.FieldTags, field.TypeJSON)
 	}
 	_node = &Essay{config: _u.config}
 	_spec.Assign = _node.assignValues

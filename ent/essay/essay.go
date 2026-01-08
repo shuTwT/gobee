@@ -17,12 +17,26 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
 	// FieldDraft holds the string denoting the draft field in the database.
 	FieldDraft = "draft"
 	// FieldImages holds the string denoting the images field in the database.
 	FieldImages = "images"
+	// FieldLikeCount holds the string denoting the like_count field in the database.
+	FieldLikeCount = "like_count"
+	// FieldCommentCount holds the string denoting the comment_count field in the database.
+	FieldCommentCount = "comment_count"
+	// FieldShareCount holds the string denoting the share_count field in the database.
+	FieldShareCount = "share_count"
+	// FieldPublic holds the string denoting the public field in the database.
+	FieldPublic = "public"
+	// FieldLocation holds the string denoting the location field in the database.
+	FieldLocation = "location"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
 	// Table holds the table name of the essay in the database.
 	Table = "essays"
 )
@@ -32,9 +46,16 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldUserID,
 	FieldContent,
 	FieldDraft,
 	FieldImages,
+	FieldLikeCount,
+	FieldCommentCount,
+	FieldShareCount,
+	FieldPublic,
+	FieldLocation,
+	FieldTags,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -54,8 +75,20 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	ContentValidator func(string) error
 	// DefaultDraft holds the default value on creation for the "draft" field.
 	DefaultDraft bool
+	// DefaultLikeCount holds the default value on creation for the "like_count" field.
+	DefaultLikeCount int
+	// DefaultCommentCount holds the default value on creation for the "comment_count" field.
+	DefaultCommentCount int
+	// DefaultShareCount holds the default value on creation for the "share_count" field.
+	DefaultShareCount int
+	// DefaultPublic holds the default value on creation for the "public" field.
+	DefaultPublic bool
+	// LocationValidator is a validator for the "location" field. It is called by the builders before save.
+	LocationValidator func(string) error
 )
 
 // OrderOption defines the ordering options for the Essay queries.
@@ -76,6 +109,11 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
 // ByContent orders the results by the content field.
 func ByContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContent, opts...).ToFunc()
@@ -84,4 +122,29 @@ func ByContent(opts ...sql.OrderTermOption) OrderOption {
 // ByDraft orders the results by the draft field.
 func ByDraft(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDraft, opts...).ToFunc()
+}
+
+// ByLikeCount orders the results by the like_count field.
+func ByLikeCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLikeCount, opts...).ToFunc()
+}
+
+// ByCommentCount orders the results by the comment_count field.
+func ByCommentCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCommentCount, opts...).ToFunc()
+}
+
+// ByShareCount orders the results by the share_count field.
+func ByShareCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldShareCount, opts...).ToFunc()
+}
+
+// ByPublic orders the results by the public field.
+func ByPublic(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPublic, opts...).ToFunc()
+}
+
+// ByLocation orders the results by the location field.
+func ByLocation(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLocation, opts...).ToFunc()
 }

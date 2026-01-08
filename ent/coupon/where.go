@@ -4,6 +4,7 @@ package coupon
 
 import (
 	"gobee/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 )
@@ -51,6 +52,836 @@ func IDLT(id int) predicate.Coupon {
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id int) predicate.Coupon {
 	return predicate.Coupon(sql.FieldLTE(FieldID, id))
+}
+
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldName, v))
+}
+
+// Code applies equality check predicate on the "code" field. It's identical to CodeEQ.
+func Code(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldCode, v))
+}
+
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldDescription, v))
+}
+
+// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
+func Type(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldType, v))
+}
+
+// Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
+func Value(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldValue, v))
+}
+
+// MinAmount applies equality check predicate on the "min_amount" field. It's identical to MinAmountEQ.
+func MinAmount(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldMinAmount, v))
+}
+
+// MaxDiscount applies equality check predicate on the "max_discount" field. It's identical to MaxDiscountEQ.
+func MaxDiscount(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldMaxDiscount, v))
+}
+
+// TotalCount applies equality check predicate on the "total_count" field. It's identical to TotalCountEQ.
+func TotalCount(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldTotalCount, v))
+}
+
+// UsedCount applies equality check predicate on the "used_count" field. It's identical to UsedCountEQ.
+func UsedCount(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldUsedCount, v))
+}
+
+// PerUserLimit applies equality check predicate on the "per_user_limit" field. It's identical to PerUserLimitEQ.
+func PerUserLimit(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldPerUserLimit, v))
+}
+
+// StartTime applies equality check predicate on the "start_time" field. It's identical to StartTimeEQ.
+func StartTime(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldStartTime, v))
+}
+
+// EndTime applies equality check predicate on the "end_time" field. It's identical to EndTimeEQ.
+func EndTime(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldEndTime, v))
+}
+
+// Active applies equality check predicate on the "active" field. It's identical to ActiveEQ.
+func Active(v bool) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldActive, v))
+}
+
+// Image applies equality check predicate on the "image" field. It's identical to ImageEQ.
+func Image(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldImage, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldContainsFold(FieldName, v))
+}
+
+// CodeEQ applies the EQ predicate on the "code" field.
+func CodeEQ(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldCode, v))
+}
+
+// CodeNEQ applies the NEQ predicate on the "code" field.
+func CodeNEQ(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldCode, v))
+}
+
+// CodeIn applies the In predicate on the "code" field.
+func CodeIn(vs ...string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldCode, vs...))
+}
+
+// CodeNotIn applies the NotIn predicate on the "code" field.
+func CodeNotIn(vs ...string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldCode, vs...))
+}
+
+// CodeGT applies the GT predicate on the "code" field.
+func CodeGT(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldCode, v))
+}
+
+// CodeGTE applies the GTE predicate on the "code" field.
+func CodeGTE(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldCode, v))
+}
+
+// CodeLT applies the LT predicate on the "code" field.
+func CodeLT(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldCode, v))
+}
+
+// CodeLTE applies the LTE predicate on the "code" field.
+func CodeLTE(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldCode, v))
+}
+
+// CodeContains applies the Contains predicate on the "code" field.
+func CodeContains(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldContains(FieldCode, v))
+}
+
+// CodeHasPrefix applies the HasPrefix predicate on the "code" field.
+func CodeHasPrefix(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldHasPrefix(FieldCode, v))
+}
+
+// CodeHasSuffix applies the HasSuffix predicate on the "code" field.
+func CodeHasSuffix(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldHasSuffix(FieldCode, v))
+}
+
+// CodeEqualFold applies the EqualFold predicate on the "code" field.
+func CodeEqualFold(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEqualFold(FieldCode, v))
+}
+
+// CodeContainsFold applies the ContainsFold predicate on the "code" field.
+func CodeContainsFold(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldContainsFold(FieldCode, v))
+}
+
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.Coupon {
+	return predicate.Coupon(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotNull(FieldDescription))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldType, v))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldType, v))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldType, vs...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldType, vs...))
+}
+
+// TypeGT applies the GT predicate on the "type" field.
+func TypeGT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldType, v))
+}
+
+// TypeGTE applies the GTE predicate on the "type" field.
+func TypeGTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldType, v))
+}
+
+// TypeLT applies the LT predicate on the "type" field.
+func TypeLT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldType, v))
+}
+
+// TypeLTE applies the LTE predicate on the "type" field.
+func TypeLTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldType, v))
+}
+
+// ValueEQ applies the EQ predicate on the "value" field.
+func ValueEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldValue, v))
+}
+
+// ValueNEQ applies the NEQ predicate on the "value" field.
+func ValueNEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldValue, v))
+}
+
+// ValueIn applies the In predicate on the "value" field.
+func ValueIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldValue, vs...))
+}
+
+// ValueNotIn applies the NotIn predicate on the "value" field.
+func ValueNotIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldValue, vs...))
+}
+
+// ValueGT applies the GT predicate on the "value" field.
+func ValueGT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldValue, v))
+}
+
+// ValueGTE applies the GTE predicate on the "value" field.
+func ValueGTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldValue, v))
+}
+
+// ValueLT applies the LT predicate on the "value" field.
+func ValueLT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldValue, v))
+}
+
+// ValueLTE applies the LTE predicate on the "value" field.
+func ValueLTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldValue, v))
+}
+
+// MinAmountEQ applies the EQ predicate on the "min_amount" field.
+func MinAmountEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldMinAmount, v))
+}
+
+// MinAmountNEQ applies the NEQ predicate on the "min_amount" field.
+func MinAmountNEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldMinAmount, v))
+}
+
+// MinAmountIn applies the In predicate on the "min_amount" field.
+func MinAmountIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldMinAmount, vs...))
+}
+
+// MinAmountNotIn applies the NotIn predicate on the "min_amount" field.
+func MinAmountNotIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldMinAmount, vs...))
+}
+
+// MinAmountGT applies the GT predicate on the "min_amount" field.
+func MinAmountGT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldMinAmount, v))
+}
+
+// MinAmountGTE applies the GTE predicate on the "min_amount" field.
+func MinAmountGTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldMinAmount, v))
+}
+
+// MinAmountLT applies the LT predicate on the "min_amount" field.
+func MinAmountLT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldMinAmount, v))
+}
+
+// MinAmountLTE applies the LTE predicate on the "min_amount" field.
+func MinAmountLTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldMinAmount, v))
+}
+
+// MaxDiscountEQ applies the EQ predicate on the "max_discount" field.
+func MaxDiscountEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldMaxDiscount, v))
+}
+
+// MaxDiscountNEQ applies the NEQ predicate on the "max_discount" field.
+func MaxDiscountNEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldMaxDiscount, v))
+}
+
+// MaxDiscountIn applies the In predicate on the "max_discount" field.
+func MaxDiscountIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldMaxDiscount, vs...))
+}
+
+// MaxDiscountNotIn applies the NotIn predicate on the "max_discount" field.
+func MaxDiscountNotIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldMaxDiscount, vs...))
+}
+
+// MaxDiscountGT applies the GT predicate on the "max_discount" field.
+func MaxDiscountGT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldMaxDiscount, v))
+}
+
+// MaxDiscountGTE applies the GTE predicate on the "max_discount" field.
+func MaxDiscountGTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldMaxDiscount, v))
+}
+
+// MaxDiscountLT applies the LT predicate on the "max_discount" field.
+func MaxDiscountLT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldMaxDiscount, v))
+}
+
+// MaxDiscountLTE applies the LTE predicate on the "max_discount" field.
+func MaxDiscountLTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldMaxDiscount, v))
+}
+
+// TotalCountEQ applies the EQ predicate on the "total_count" field.
+func TotalCountEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldTotalCount, v))
+}
+
+// TotalCountNEQ applies the NEQ predicate on the "total_count" field.
+func TotalCountNEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldTotalCount, v))
+}
+
+// TotalCountIn applies the In predicate on the "total_count" field.
+func TotalCountIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldTotalCount, vs...))
+}
+
+// TotalCountNotIn applies the NotIn predicate on the "total_count" field.
+func TotalCountNotIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldTotalCount, vs...))
+}
+
+// TotalCountGT applies the GT predicate on the "total_count" field.
+func TotalCountGT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldTotalCount, v))
+}
+
+// TotalCountGTE applies the GTE predicate on the "total_count" field.
+func TotalCountGTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldTotalCount, v))
+}
+
+// TotalCountLT applies the LT predicate on the "total_count" field.
+func TotalCountLT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldTotalCount, v))
+}
+
+// TotalCountLTE applies the LTE predicate on the "total_count" field.
+func TotalCountLTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldTotalCount, v))
+}
+
+// UsedCountEQ applies the EQ predicate on the "used_count" field.
+func UsedCountEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldUsedCount, v))
+}
+
+// UsedCountNEQ applies the NEQ predicate on the "used_count" field.
+func UsedCountNEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldUsedCount, v))
+}
+
+// UsedCountIn applies the In predicate on the "used_count" field.
+func UsedCountIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldUsedCount, vs...))
+}
+
+// UsedCountNotIn applies the NotIn predicate on the "used_count" field.
+func UsedCountNotIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldUsedCount, vs...))
+}
+
+// UsedCountGT applies the GT predicate on the "used_count" field.
+func UsedCountGT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldUsedCount, v))
+}
+
+// UsedCountGTE applies the GTE predicate on the "used_count" field.
+func UsedCountGTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldUsedCount, v))
+}
+
+// UsedCountLT applies the LT predicate on the "used_count" field.
+func UsedCountLT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldUsedCount, v))
+}
+
+// UsedCountLTE applies the LTE predicate on the "used_count" field.
+func UsedCountLTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldUsedCount, v))
+}
+
+// PerUserLimitEQ applies the EQ predicate on the "per_user_limit" field.
+func PerUserLimitEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldPerUserLimit, v))
+}
+
+// PerUserLimitNEQ applies the NEQ predicate on the "per_user_limit" field.
+func PerUserLimitNEQ(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldPerUserLimit, v))
+}
+
+// PerUserLimitIn applies the In predicate on the "per_user_limit" field.
+func PerUserLimitIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldPerUserLimit, vs...))
+}
+
+// PerUserLimitNotIn applies the NotIn predicate on the "per_user_limit" field.
+func PerUserLimitNotIn(vs ...int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldPerUserLimit, vs...))
+}
+
+// PerUserLimitGT applies the GT predicate on the "per_user_limit" field.
+func PerUserLimitGT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldPerUserLimit, v))
+}
+
+// PerUserLimitGTE applies the GTE predicate on the "per_user_limit" field.
+func PerUserLimitGTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldPerUserLimit, v))
+}
+
+// PerUserLimitLT applies the LT predicate on the "per_user_limit" field.
+func PerUserLimitLT(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldPerUserLimit, v))
+}
+
+// PerUserLimitLTE applies the LTE predicate on the "per_user_limit" field.
+func PerUserLimitLTE(v int) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldPerUserLimit, v))
+}
+
+// StartTimeEQ applies the EQ predicate on the "start_time" field.
+func StartTimeEQ(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldStartTime, v))
+}
+
+// StartTimeNEQ applies the NEQ predicate on the "start_time" field.
+func StartTimeNEQ(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldStartTime, v))
+}
+
+// StartTimeIn applies the In predicate on the "start_time" field.
+func StartTimeIn(vs ...time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldStartTime, vs...))
+}
+
+// StartTimeNotIn applies the NotIn predicate on the "start_time" field.
+func StartTimeNotIn(vs ...time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldStartTime, vs...))
+}
+
+// StartTimeGT applies the GT predicate on the "start_time" field.
+func StartTimeGT(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldStartTime, v))
+}
+
+// StartTimeGTE applies the GTE predicate on the "start_time" field.
+func StartTimeGTE(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldStartTime, v))
+}
+
+// StartTimeLT applies the LT predicate on the "start_time" field.
+func StartTimeLT(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldStartTime, v))
+}
+
+// StartTimeLTE applies the LTE predicate on the "start_time" field.
+func StartTimeLTE(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldStartTime, v))
+}
+
+// EndTimeEQ applies the EQ predicate on the "end_time" field.
+func EndTimeEQ(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldEndTime, v))
+}
+
+// EndTimeNEQ applies the NEQ predicate on the "end_time" field.
+func EndTimeNEQ(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldEndTime, v))
+}
+
+// EndTimeIn applies the In predicate on the "end_time" field.
+func EndTimeIn(vs ...time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldEndTime, vs...))
+}
+
+// EndTimeNotIn applies the NotIn predicate on the "end_time" field.
+func EndTimeNotIn(vs ...time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldEndTime, vs...))
+}
+
+// EndTimeGT applies the GT predicate on the "end_time" field.
+func EndTimeGT(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldEndTime, v))
+}
+
+// EndTimeGTE applies the GTE predicate on the "end_time" field.
+func EndTimeGTE(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldEndTime, v))
+}
+
+// EndTimeLT applies the LT predicate on the "end_time" field.
+func EndTimeLT(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldEndTime, v))
+}
+
+// EndTimeLTE applies the LTE predicate on the "end_time" field.
+func EndTimeLTE(v time.Time) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldEndTime, v))
+}
+
+// ActiveEQ applies the EQ predicate on the "active" field.
+func ActiveEQ(v bool) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldActive, v))
+}
+
+// ActiveNEQ applies the NEQ predicate on the "active" field.
+func ActiveNEQ(v bool) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldActive, v))
+}
+
+// ImageEQ applies the EQ predicate on the "image" field.
+func ImageEQ(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEQ(FieldImage, v))
+}
+
+// ImageNEQ applies the NEQ predicate on the "image" field.
+func ImageNEQ(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNEQ(FieldImage, v))
+}
+
+// ImageIn applies the In predicate on the "image" field.
+func ImageIn(vs ...string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldIn(FieldImage, vs...))
+}
+
+// ImageNotIn applies the NotIn predicate on the "image" field.
+func ImageNotIn(vs ...string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotIn(FieldImage, vs...))
+}
+
+// ImageGT applies the GT predicate on the "image" field.
+func ImageGT(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGT(FieldImage, v))
+}
+
+// ImageGTE applies the GTE predicate on the "image" field.
+func ImageGTE(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldGTE(FieldImage, v))
+}
+
+// ImageLT applies the LT predicate on the "image" field.
+func ImageLT(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLT(FieldImage, v))
+}
+
+// ImageLTE applies the LTE predicate on the "image" field.
+func ImageLTE(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldLTE(FieldImage, v))
+}
+
+// ImageContains applies the Contains predicate on the "image" field.
+func ImageContains(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldContains(FieldImage, v))
+}
+
+// ImageHasPrefix applies the HasPrefix predicate on the "image" field.
+func ImageHasPrefix(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldHasPrefix(FieldImage, v))
+}
+
+// ImageHasSuffix applies the HasSuffix predicate on the "image" field.
+func ImageHasSuffix(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldHasSuffix(FieldImage, v))
+}
+
+// ImageIsNil applies the IsNil predicate on the "image" field.
+func ImageIsNil() predicate.Coupon {
+	return predicate.Coupon(sql.FieldIsNull(FieldImage))
+}
+
+// ImageNotNil applies the NotNil predicate on the "image" field.
+func ImageNotNil() predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotNull(FieldImage))
+}
+
+// ImageEqualFold applies the EqualFold predicate on the "image" field.
+func ImageEqualFold(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldEqualFold(FieldImage, v))
+}
+
+// ImageContainsFold applies the ContainsFold predicate on the "image" field.
+func ImageContainsFold(v string) predicate.Coupon {
+	return predicate.Coupon(sql.FieldContainsFold(FieldImage, v))
+}
+
+// ProductIdsIsNil applies the IsNil predicate on the "product_ids" field.
+func ProductIdsIsNil() predicate.Coupon {
+	return predicate.Coupon(sql.FieldIsNull(FieldProductIds))
+}
+
+// ProductIdsNotNil applies the NotNil predicate on the "product_ids" field.
+func ProductIdsNotNil() predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotNull(FieldProductIds))
+}
+
+// CategoryIdsIsNil applies the IsNil predicate on the "category_ids" field.
+func CategoryIdsIsNil() predicate.Coupon {
+	return predicate.Coupon(sql.FieldIsNull(FieldCategoryIds))
+}
+
+// CategoryIdsNotNil applies the NotNil predicate on the "category_ids" field.
+func CategoryIdsNotNil() predicate.Coupon {
+	return predicate.Coupon(sql.FieldNotNull(FieldCategoryIds))
 }
 
 // And groups predicates with the AND operator between them.

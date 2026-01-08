@@ -8,9 +8,11 @@ import (
 	"fmt"
 	"gobee/ent/coupon"
 	"gobee/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -27,6 +29,305 @@ func (_u *CouponUpdate) Where(ps ...predicate.Coupon) *CouponUpdate {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *CouponUpdate) SetUpdatedAt(v time.Time) *CouponUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetName sets the "name" field.
+func (_u *CouponUpdate) SetName(v string) *CouponUpdate {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableName(v *string) *CouponUpdate {
+	if v != nil {
+		_u.SetName(*v)
+	}
+	return _u
+}
+
+// SetCode sets the "code" field.
+func (_u *CouponUpdate) SetCode(v string) *CouponUpdate {
+	_u.mutation.SetCode(v)
+	return _u
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableCode(v *string) *CouponUpdate {
+	if v != nil {
+		_u.SetCode(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *CouponUpdate) SetDescription(v string) *CouponUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableDescription(v *string) *CouponUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *CouponUpdate) ClearDescription() *CouponUpdate {
+	_u.mutation.ClearDescription()
+	return _u
+}
+
+// SetType sets the "type" field.
+func (_u *CouponUpdate) SetType(v int) *CouponUpdate {
+	_u.mutation.ResetType()
+	_u.mutation.SetType(v)
+	return _u
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableType(v *int) *CouponUpdate {
+	if v != nil {
+		_u.SetType(*v)
+	}
+	return _u
+}
+
+// AddType adds value to the "type" field.
+func (_u *CouponUpdate) AddType(v int) *CouponUpdate {
+	_u.mutation.AddType(v)
+	return _u
+}
+
+// SetValue sets the "value" field.
+func (_u *CouponUpdate) SetValue(v int) *CouponUpdate {
+	_u.mutation.ResetValue()
+	_u.mutation.SetValue(v)
+	return _u
+}
+
+// SetNillableValue sets the "value" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableValue(v *int) *CouponUpdate {
+	if v != nil {
+		_u.SetValue(*v)
+	}
+	return _u
+}
+
+// AddValue adds value to the "value" field.
+func (_u *CouponUpdate) AddValue(v int) *CouponUpdate {
+	_u.mutation.AddValue(v)
+	return _u
+}
+
+// SetMinAmount sets the "min_amount" field.
+func (_u *CouponUpdate) SetMinAmount(v int) *CouponUpdate {
+	_u.mutation.ResetMinAmount()
+	_u.mutation.SetMinAmount(v)
+	return _u
+}
+
+// SetNillableMinAmount sets the "min_amount" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableMinAmount(v *int) *CouponUpdate {
+	if v != nil {
+		_u.SetMinAmount(*v)
+	}
+	return _u
+}
+
+// AddMinAmount adds value to the "min_amount" field.
+func (_u *CouponUpdate) AddMinAmount(v int) *CouponUpdate {
+	_u.mutation.AddMinAmount(v)
+	return _u
+}
+
+// SetMaxDiscount sets the "max_discount" field.
+func (_u *CouponUpdate) SetMaxDiscount(v int) *CouponUpdate {
+	_u.mutation.ResetMaxDiscount()
+	_u.mutation.SetMaxDiscount(v)
+	return _u
+}
+
+// SetNillableMaxDiscount sets the "max_discount" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableMaxDiscount(v *int) *CouponUpdate {
+	if v != nil {
+		_u.SetMaxDiscount(*v)
+	}
+	return _u
+}
+
+// AddMaxDiscount adds value to the "max_discount" field.
+func (_u *CouponUpdate) AddMaxDiscount(v int) *CouponUpdate {
+	_u.mutation.AddMaxDiscount(v)
+	return _u
+}
+
+// SetTotalCount sets the "total_count" field.
+func (_u *CouponUpdate) SetTotalCount(v int) *CouponUpdate {
+	_u.mutation.ResetTotalCount()
+	_u.mutation.SetTotalCount(v)
+	return _u
+}
+
+// SetNillableTotalCount sets the "total_count" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableTotalCount(v *int) *CouponUpdate {
+	if v != nil {
+		_u.SetTotalCount(*v)
+	}
+	return _u
+}
+
+// AddTotalCount adds value to the "total_count" field.
+func (_u *CouponUpdate) AddTotalCount(v int) *CouponUpdate {
+	_u.mutation.AddTotalCount(v)
+	return _u
+}
+
+// SetUsedCount sets the "used_count" field.
+func (_u *CouponUpdate) SetUsedCount(v int) *CouponUpdate {
+	_u.mutation.ResetUsedCount()
+	_u.mutation.SetUsedCount(v)
+	return _u
+}
+
+// SetNillableUsedCount sets the "used_count" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableUsedCount(v *int) *CouponUpdate {
+	if v != nil {
+		_u.SetUsedCount(*v)
+	}
+	return _u
+}
+
+// AddUsedCount adds value to the "used_count" field.
+func (_u *CouponUpdate) AddUsedCount(v int) *CouponUpdate {
+	_u.mutation.AddUsedCount(v)
+	return _u
+}
+
+// SetPerUserLimit sets the "per_user_limit" field.
+func (_u *CouponUpdate) SetPerUserLimit(v int) *CouponUpdate {
+	_u.mutation.ResetPerUserLimit()
+	_u.mutation.SetPerUserLimit(v)
+	return _u
+}
+
+// SetNillablePerUserLimit sets the "per_user_limit" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillablePerUserLimit(v *int) *CouponUpdate {
+	if v != nil {
+		_u.SetPerUserLimit(*v)
+	}
+	return _u
+}
+
+// AddPerUserLimit adds value to the "per_user_limit" field.
+func (_u *CouponUpdate) AddPerUserLimit(v int) *CouponUpdate {
+	_u.mutation.AddPerUserLimit(v)
+	return _u
+}
+
+// SetStartTime sets the "start_time" field.
+func (_u *CouponUpdate) SetStartTime(v time.Time) *CouponUpdate {
+	_u.mutation.SetStartTime(v)
+	return _u
+}
+
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableStartTime(v *time.Time) *CouponUpdate {
+	if v != nil {
+		_u.SetStartTime(*v)
+	}
+	return _u
+}
+
+// SetEndTime sets the "end_time" field.
+func (_u *CouponUpdate) SetEndTime(v time.Time) *CouponUpdate {
+	_u.mutation.SetEndTime(v)
+	return _u
+}
+
+// SetNillableEndTime sets the "end_time" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableEndTime(v *time.Time) *CouponUpdate {
+	if v != nil {
+		_u.SetEndTime(*v)
+	}
+	return _u
+}
+
+// SetActive sets the "active" field.
+func (_u *CouponUpdate) SetActive(v bool) *CouponUpdate {
+	_u.mutation.SetActive(v)
+	return _u
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableActive(v *bool) *CouponUpdate {
+	if v != nil {
+		_u.SetActive(*v)
+	}
+	return _u
+}
+
+// SetImage sets the "image" field.
+func (_u *CouponUpdate) SetImage(v string) *CouponUpdate {
+	_u.mutation.SetImage(v)
+	return _u
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (_u *CouponUpdate) SetNillableImage(v *string) *CouponUpdate {
+	if v != nil {
+		_u.SetImage(*v)
+	}
+	return _u
+}
+
+// ClearImage clears the value of the "image" field.
+func (_u *CouponUpdate) ClearImage() *CouponUpdate {
+	_u.mutation.ClearImage()
+	return _u
+}
+
+// SetProductIds sets the "product_ids" field.
+func (_u *CouponUpdate) SetProductIds(v []int) *CouponUpdate {
+	_u.mutation.SetProductIds(v)
+	return _u
+}
+
+// AppendProductIds appends value to the "product_ids" field.
+func (_u *CouponUpdate) AppendProductIds(v []int) *CouponUpdate {
+	_u.mutation.AppendProductIds(v)
+	return _u
+}
+
+// ClearProductIds clears the value of the "product_ids" field.
+func (_u *CouponUpdate) ClearProductIds() *CouponUpdate {
+	_u.mutation.ClearProductIds()
+	return _u
+}
+
+// SetCategoryIds sets the "category_ids" field.
+func (_u *CouponUpdate) SetCategoryIds(v []int) *CouponUpdate {
+	_u.mutation.SetCategoryIds(v)
+	return _u
+}
+
+// AppendCategoryIds appends value to the "category_ids" field.
+func (_u *CouponUpdate) AppendCategoryIds(v []int) *CouponUpdate {
+	_u.mutation.AppendCategoryIds(v)
+	return _u
+}
+
+// ClearCategoryIds clears the value of the "category_ids" field.
+func (_u *CouponUpdate) ClearCategoryIds() *CouponUpdate {
+	_u.mutation.ClearCategoryIds()
+	return _u
+}
+
 // Mutation returns the CouponMutation object of the builder.
 func (_u *CouponUpdate) Mutation() *CouponMutation {
 	return _u.mutation
@@ -34,6 +335,7 @@ func (_u *CouponUpdate) Mutation() *CouponMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *CouponUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -59,7 +361,43 @@ func (_u *CouponUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *CouponUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := coupon.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (_u *CouponUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
+		if err := coupon.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Coupon.name": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Code(); ok {
+		if err := coupon.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Coupon.code": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Description(); ok {
+		if err := coupon.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Coupon.description": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Image(); ok {
+		if err := coupon.ImageValidator(v); err != nil {
+			return &ValidationError{Name: "image", err: fmt.Errorf(`ent: validator failed for field "Coupon.image": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *CouponUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(coupon.Table, coupon.Columns, sqlgraph.NewFieldSpec(coupon.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -67,6 +405,100 @@ func (_u *CouponUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(coupon.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(coupon.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Code(); ok {
+		_spec.SetField(coupon.FieldCode, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(coupon.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(coupon.FieldDescription, field.TypeString)
+	}
+	if value, ok := _u.mutation.GetType(); ok {
+		_spec.SetField(coupon.FieldType, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedType(); ok {
+		_spec.AddField(coupon.FieldType, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Value(); ok {
+		_spec.SetField(coupon.FieldValue, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedValue(); ok {
+		_spec.AddField(coupon.FieldValue, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.MinAmount(); ok {
+		_spec.SetField(coupon.FieldMinAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMinAmount(); ok {
+		_spec.AddField(coupon.FieldMinAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.MaxDiscount(); ok {
+		_spec.SetField(coupon.FieldMaxDiscount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMaxDiscount(); ok {
+		_spec.AddField(coupon.FieldMaxDiscount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.TotalCount(); ok {
+		_spec.SetField(coupon.FieldTotalCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTotalCount(); ok {
+		_spec.AddField(coupon.FieldTotalCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.UsedCount(); ok {
+		_spec.SetField(coupon.FieldUsedCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUsedCount(); ok {
+		_spec.AddField(coupon.FieldUsedCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.PerUserLimit(); ok {
+		_spec.SetField(coupon.FieldPerUserLimit, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedPerUserLimit(); ok {
+		_spec.AddField(coupon.FieldPerUserLimit, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.StartTime(); ok {
+		_spec.SetField(coupon.FieldStartTime, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.EndTime(); ok {
+		_spec.SetField(coupon.FieldEndTime, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Active(); ok {
+		_spec.SetField(coupon.FieldActive, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Image(); ok {
+		_spec.SetField(coupon.FieldImage, field.TypeString, value)
+	}
+	if _u.mutation.ImageCleared() {
+		_spec.ClearField(coupon.FieldImage, field.TypeString)
+	}
+	if value, ok := _u.mutation.ProductIds(); ok {
+		_spec.SetField(coupon.FieldProductIds, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedProductIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, coupon.FieldProductIds, value)
+		})
+	}
+	if _u.mutation.ProductIdsCleared() {
+		_spec.ClearField(coupon.FieldProductIds, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.CategoryIds(); ok {
+		_spec.SetField(coupon.FieldCategoryIds, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedCategoryIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, coupon.FieldCategoryIds, value)
+		})
+	}
+	if _u.mutation.CategoryIdsCleared() {
+		_spec.ClearField(coupon.FieldCategoryIds, field.TypeJSON)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -86,6 +518,305 @@ type CouponUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *CouponMutation
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *CouponUpdateOne) SetUpdatedAt(v time.Time) *CouponUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetName sets the "name" field.
+func (_u *CouponUpdateOne) SetName(v string) *CouponUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableName(v *string) *CouponUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
+	}
+	return _u
+}
+
+// SetCode sets the "code" field.
+func (_u *CouponUpdateOne) SetCode(v string) *CouponUpdateOne {
+	_u.mutation.SetCode(v)
+	return _u
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableCode(v *string) *CouponUpdateOne {
+	if v != nil {
+		_u.SetCode(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *CouponUpdateOne) SetDescription(v string) *CouponUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableDescription(v *string) *CouponUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *CouponUpdateOne) ClearDescription() *CouponUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
+}
+
+// SetType sets the "type" field.
+func (_u *CouponUpdateOne) SetType(v int) *CouponUpdateOne {
+	_u.mutation.ResetType()
+	_u.mutation.SetType(v)
+	return _u
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableType(v *int) *CouponUpdateOne {
+	if v != nil {
+		_u.SetType(*v)
+	}
+	return _u
+}
+
+// AddType adds value to the "type" field.
+func (_u *CouponUpdateOne) AddType(v int) *CouponUpdateOne {
+	_u.mutation.AddType(v)
+	return _u
+}
+
+// SetValue sets the "value" field.
+func (_u *CouponUpdateOne) SetValue(v int) *CouponUpdateOne {
+	_u.mutation.ResetValue()
+	_u.mutation.SetValue(v)
+	return _u
+}
+
+// SetNillableValue sets the "value" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableValue(v *int) *CouponUpdateOne {
+	if v != nil {
+		_u.SetValue(*v)
+	}
+	return _u
+}
+
+// AddValue adds value to the "value" field.
+func (_u *CouponUpdateOne) AddValue(v int) *CouponUpdateOne {
+	_u.mutation.AddValue(v)
+	return _u
+}
+
+// SetMinAmount sets the "min_amount" field.
+func (_u *CouponUpdateOne) SetMinAmount(v int) *CouponUpdateOne {
+	_u.mutation.ResetMinAmount()
+	_u.mutation.SetMinAmount(v)
+	return _u
+}
+
+// SetNillableMinAmount sets the "min_amount" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableMinAmount(v *int) *CouponUpdateOne {
+	if v != nil {
+		_u.SetMinAmount(*v)
+	}
+	return _u
+}
+
+// AddMinAmount adds value to the "min_amount" field.
+func (_u *CouponUpdateOne) AddMinAmount(v int) *CouponUpdateOne {
+	_u.mutation.AddMinAmount(v)
+	return _u
+}
+
+// SetMaxDiscount sets the "max_discount" field.
+func (_u *CouponUpdateOne) SetMaxDiscount(v int) *CouponUpdateOne {
+	_u.mutation.ResetMaxDiscount()
+	_u.mutation.SetMaxDiscount(v)
+	return _u
+}
+
+// SetNillableMaxDiscount sets the "max_discount" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableMaxDiscount(v *int) *CouponUpdateOne {
+	if v != nil {
+		_u.SetMaxDiscount(*v)
+	}
+	return _u
+}
+
+// AddMaxDiscount adds value to the "max_discount" field.
+func (_u *CouponUpdateOne) AddMaxDiscount(v int) *CouponUpdateOne {
+	_u.mutation.AddMaxDiscount(v)
+	return _u
+}
+
+// SetTotalCount sets the "total_count" field.
+func (_u *CouponUpdateOne) SetTotalCount(v int) *CouponUpdateOne {
+	_u.mutation.ResetTotalCount()
+	_u.mutation.SetTotalCount(v)
+	return _u
+}
+
+// SetNillableTotalCount sets the "total_count" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableTotalCount(v *int) *CouponUpdateOne {
+	if v != nil {
+		_u.SetTotalCount(*v)
+	}
+	return _u
+}
+
+// AddTotalCount adds value to the "total_count" field.
+func (_u *CouponUpdateOne) AddTotalCount(v int) *CouponUpdateOne {
+	_u.mutation.AddTotalCount(v)
+	return _u
+}
+
+// SetUsedCount sets the "used_count" field.
+func (_u *CouponUpdateOne) SetUsedCount(v int) *CouponUpdateOne {
+	_u.mutation.ResetUsedCount()
+	_u.mutation.SetUsedCount(v)
+	return _u
+}
+
+// SetNillableUsedCount sets the "used_count" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableUsedCount(v *int) *CouponUpdateOne {
+	if v != nil {
+		_u.SetUsedCount(*v)
+	}
+	return _u
+}
+
+// AddUsedCount adds value to the "used_count" field.
+func (_u *CouponUpdateOne) AddUsedCount(v int) *CouponUpdateOne {
+	_u.mutation.AddUsedCount(v)
+	return _u
+}
+
+// SetPerUserLimit sets the "per_user_limit" field.
+func (_u *CouponUpdateOne) SetPerUserLimit(v int) *CouponUpdateOne {
+	_u.mutation.ResetPerUserLimit()
+	_u.mutation.SetPerUserLimit(v)
+	return _u
+}
+
+// SetNillablePerUserLimit sets the "per_user_limit" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillablePerUserLimit(v *int) *CouponUpdateOne {
+	if v != nil {
+		_u.SetPerUserLimit(*v)
+	}
+	return _u
+}
+
+// AddPerUserLimit adds value to the "per_user_limit" field.
+func (_u *CouponUpdateOne) AddPerUserLimit(v int) *CouponUpdateOne {
+	_u.mutation.AddPerUserLimit(v)
+	return _u
+}
+
+// SetStartTime sets the "start_time" field.
+func (_u *CouponUpdateOne) SetStartTime(v time.Time) *CouponUpdateOne {
+	_u.mutation.SetStartTime(v)
+	return _u
+}
+
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableStartTime(v *time.Time) *CouponUpdateOne {
+	if v != nil {
+		_u.SetStartTime(*v)
+	}
+	return _u
+}
+
+// SetEndTime sets the "end_time" field.
+func (_u *CouponUpdateOne) SetEndTime(v time.Time) *CouponUpdateOne {
+	_u.mutation.SetEndTime(v)
+	return _u
+}
+
+// SetNillableEndTime sets the "end_time" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableEndTime(v *time.Time) *CouponUpdateOne {
+	if v != nil {
+		_u.SetEndTime(*v)
+	}
+	return _u
+}
+
+// SetActive sets the "active" field.
+func (_u *CouponUpdateOne) SetActive(v bool) *CouponUpdateOne {
+	_u.mutation.SetActive(v)
+	return _u
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableActive(v *bool) *CouponUpdateOne {
+	if v != nil {
+		_u.SetActive(*v)
+	}
+	return _u
+}
+
+// SetImage sets the "image" field.
+func (_u *CouponUpdateOne) SetImage(v string) *CouponUpdateOne {
+	_u.mutation.SetImage(v)
+	return _u
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (_u *CouponUpdateOne) SetNillableImage(v *string) *CouponUpdateOne {
+	if v != nil {
+		_u.SetImage(*v)
+	}
+	return _u
+}
+
+// ClearImage clears the value of the "image" field.
+func (_u *CouponUpdateOne) ClearImage() *CouponUpdateOne {
+	_u.mutation.ClearImage()
+	return _u
+}
+
+// SetProductIds sets the "product_ids" field.
+func (_u *CouponUpdateOne) SetProductIds(v []int) *CouponUpdateOne {
+	_u.mutation.SetProductIds(v)
+	return _u
+}
+
+// AppendProductIds appends value to the "product_ids" field.
+func (_u *CouponUpdateOne) AppendProductIds(v []int) *CouponUpdateOne {
+	_u.mutation.AppendProductIds(v)
+	return _u
+}
+
+// ClearProductIds clears the value of the "product_ids" field.
+func (_u *CouponUpdateOne) ClearProductIds() *CouponUpdateOne {
+	_u.mutation.ClearProductIds()
+	return _u
+}
+
+// SetCategoryIds sets the "category_ids" field.
+func (_u *CouponUpdateOne) SetCategoryIds(v []int) *CouponUpdateOne {
+	_u.mutation.SetCategoryIds(v)
+	return _u
+}
+
+// AppendCategoryIds appends value to the "category_ids" field.
+func (_u *CouponUpdateOne) AppendCategoryIds(v []int) *CouponUpdateOne {
+	_u.mutation.AppendCategoryIds(v)
+	return _u
+}
+
+// ClearCategoryIds clears the value of the "category_ids" field.
+func (_u *CouponUpdateOne) ClearCategoryIds() *CouponUpdateOne {
+	_u.mutation.ClearCategoryIds()
+	return _u
 }
 
 // Mutation returns the CouponMutation object of the builder.
@@ -108,6 +839,7 @@ func (_u *CouponUpdateOne) Select(field string, fields ...string) *CouponUpdateO
 
 // Save executes the query and returns the updated Coupon entity.
 func (_u *CouponUpdateOne) Save(ctx context.Context) (*Coupon, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -133,7 +865,43 @@ func (_u *CouponUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *CouponUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := coupon.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (_u *CouponUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
+		if err := coupon.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Coupon.name": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Code(); ok {
+		if err := coupon.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Coupon.code": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Description(); ok {
+		if err := coupon.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Coupon.description": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Image(); ok {
+		if err := coupon.ImageValidator(v); err != nil {
+			return &ValidationError{Name: "image", err: fmt.Errorf(`ent: validator failed for field "Coupon.image": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(coupon.Table, coupon.Columns, sqlgraph.NewFieldSpec(coupon.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -158,6 +926,100 @@ func (_u *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err erro
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(coupon.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(coupon.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Code(); ok {
+		_spec.SetField(coupon.FieldCode, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(coupon.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(coupon.FieldDescription, field.TypeString)
+	}
+	if value, ok := _u.mutation.GetType(); ok {
+		_spec.SetField(coupon.FieldType, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedType(); ok {
+		_spec.AddField(coupon.FieldType, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Value(); ok {
+		_spec.SetField(coupon.FieldValue, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedValue(); ok {
+		_spec.AddField(coupon.FieldValue, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.MinAmount(); ok {
+		_spec.SetField(coupon.FieldMinAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMinAmount(); ok {
+		_spec.AddField(coupon.FieldMinAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.MaxDiscount(); ok {
+		_spec.SetField(coupon.FieldMaxDiscount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMaxDiscount(); ok {
+		_spec.AddField(coupon.FieldMaxDiscount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.TotalCount(); ok {
+		_spec.SetField(coupon.FieldTotalCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTotalCount(); ok {
+		_spec.AddField(coupon.FieldTotalCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.UsedCount(); ok {
+		_spec.SetField(coupon.FieldUsedCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUsedCount(); ok {
+		_spec.AddField(coupon.FieldUsedCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.PerUserLimit(); ok {
+		_spec.SetField(coupon.FieldPerUserLimit, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedPerUserLimit(); ok {
+		_spec.AddField(coupon.FieldPerUserLimit, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.StartTime(); ok {
+		_spec.SetField(coupon.FieldStartTime, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.EndTime(); ok {
+		_spec.SetField(coupon.FieldEndTime, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Active(); ok {
+		_spec.SetField(coupon.FieldActive, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Image(); ok {
+		_spec.SetField(coupon.FieldImage, field.TypeString, value)
+	}
+	if _u.mutation.ImageCleared() {
+		_spec.ClearField(coupon.FieldImage, field.TypeString)
+	}
+	if value, ok := _u.mutation.ProductIds(); ok {
+		_spec.SetField(coupon.FieldProductIds, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedProductIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, coupon.FieldProductIds, value)
+		})
+	}
+	if _u.mutation.ProductIdsCleared() {
+		_spec.ClearField(coupon.FieldProductIds, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.CategoryIds(); ok {
+		_spec.SetField(coupon.FieldCategoryIds, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedCategoryIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, coupon.FieldCategoryIds, value)
+		})
+	}
+	if _u.mutation.CategoryIdsCleared() {
+		_spec.ClearField(coupon.FieldCategoryIds, field.TypeJSON)
 	}
 	_node = &Coupon{config: _u.config}
 	_spec.Assign = _node.assignValues

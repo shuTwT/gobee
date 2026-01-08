@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fmt"
+	"gobee/ent/member"
 	"gobee/ent/role"
 	"gobee/ent/user"
 	"strings"
@@ -46,9 +47,11 @@ type User struct {
 type UserEdges struct {
 	// Role holds the value of the role edge.
 	Role *Role `json:"role,omitempty"`
+	// Member holds the value of the member edge.
+	Member *Member `json:"member,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // RoleOrErr returns the Role value or an error if the edge
@@ -60,6 +63,17 @@ func (e UserEdges) RoleOrErr() (*Role, error) {
 		return nil, &NotFoundError{label: role.Label}
 	}
 	return nil, &NotLoadedError{edge: "role"}
+}
+
+// MemberOrErr returns the Member value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) MemberOrErr() (*Member, error) {
+	if e.Member != nil {
+		return e.Member, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: member.Label}
+	}
+	return nil, &NotLoadedError{edge: "member"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -166,6 +180,11 @@ func (_m *User) Value(name string) (ent.Value, error) {
 // QueryRole queries the "role" edge of the User entity.
 func (_m *User) QueryRole() *RoleQuery {
 	return NewUserClient(_m.config).QueryRole(_m)
+}
+
+// QueryMember queries the "member" edge of the User entity.
+func (_m *User) QueryMember() *MemberQuery {
+	return NewUserClient(_m.config).QueryMember(_m)
 }
 
 // Update returns a builder for updating this User.

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"gobee/ent/wallet"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -19,9 +20,45 @@ type WalletCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (_c *WalletCreate) SetCreatedAt(v time.Time) *WalletCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *WalletCreate) SetNillableCreatedAt(v *time.Time) *WalletCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *WalletCreate) SetUpdatedAt(v time.Time) *WalletCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *WalletCreate) SetNillableUpdatedAt(v *time.Time) *WalletCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
 // SetUserID sets the "user_id" field.
 func (_c *WalletCreate) SetUserID(v int) *WalletCreate {
 	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_c *WalletCreate) SetNillableUserID(v *int) *WalletCreate {
+	if v != nil {
+		_c.SetUserID(*v)
+	}
 	return _c
 }
 
@@ -36,6 +73,96 @@ func (_c *WalletCreate) SetNillableBalance(v *int) *WalletCreate {
 	if v != nil {
 		_c.SetBalance(*v)
 	}
+	return _c
+}
+
+// SetFrozenAmount sets the "frozen_amount" field.
+func (_c *WalletCreate) SetFrozenAmount(v int) *WalletCreate {
+	_c.mutation.SetFrozenAmount(v)
+	return _c
+}
+
+// SetNillableFrozenAmount sets the "frozen_amount" field if the given value is not nil.
+func (_c *WalletCreate) SetNillableFrozenAmount(v *int) *WalletCreate {
+	if v != nil {
+		_c.SetFrozenAmount(*v)
+	}
+	return _c
+}
+
+// SetTotalIncome sets the "total_income" field.
+func (_c *WalletCreate) SetTotalIncome(v int) *WalletCreate {
+	_c.mutation.SetTotalIncome(v)
+	return _c
+}
+
+// SetNillableTotalIncome sets the "total_income" field if the given value is not nil.
+func (_c *WalletCreate) SetNillableTotalIncome(v *int) *WalletCreate {
+	if v != nil {
+		_c.SetTotalIncome(*v)
+	}
+	return _c
+}
+
+// SetTotalExpense sets the "total_expense" field.
+func (_c *WalletCreate) SetTotalExpense(v int) *WalletCreate {
+	_c.mutation.SetTotalExpense(v)
+	return _c
+}
+
+// SetNillableTotalExpense sets the "total_expense" field if the given value is not nil.
+func (_c *WalletCreate) SetNillableTotalExpense(v *int) *WalletCreate {
+	if v != nil {
+		_c.SetTotalExpense(*v)
+	}
+	return _c
+}
+
+// SetPassword sets the "password" field.
+func (_c *WalletCreate) SetPassword(v string) *WalletCreate {
+	_c.mutation.SetPassword(v)
+	return _c
+}
+
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (_c *WalletCreate) SetNillablePassword(v *string) *WalletCreate {
+	if v != nil {
+		_c.SetPassword(*v)
+	}
+	return _c
+}
+
+// SetActive sets the "active" field.
+func (_c *WalletCreate) SetActive(v bool) *WalletCreate {
+	_c.mutation.SetActive(v)
+	return _c
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (_c *WalletCreate) SetNillableActive(v *bool) *WalletCreate {
+	if v != nil {
+		_c.SetActive(*v)
+	}
+	return _c
+}
+
+// SetRemark sets the "remark" field.
+func (_c *WalletCreate) SetRemark(v string) *WalletCreate {
+	_c.mutation.SetRemark(v)
+	return _c
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (_c *WalletCreate) SetNillableRemark(v *string) *WalletCreate {
+	if v != nil {
+		_c.SetRemark(*v)
+	}
+	return _c
+}
+
+// SetID sets the "id" field.
+func (_c *WalletCreate) SetID(v int) *WalletCreate {
+	_c.mutation.SetID(v)
 	return _c
 }
 
@@ -74,19 +201,68 @@ func (_c *WalletCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *WalletCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := wallet.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := wallet.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := _c.mutation.Balance(); !ok {
 		v := wallet.DefaultBalance
 		_c.mutation.SetBalance(v)
+	}
+	if _, ok := _c.mutation.FrozenAmount(); !ok {
+		v := wallet.DefaultFrozenAmount
+		_c.mutation.SetFrozenAmount(v)
+	}
+	if _, ok := _c.mutation.TotalIncome(); !ok {
+		v := wallet.DefaultTotalIncome
+		_c.mutation.SetTotalIncome(v)
+	}
+	if _, ok := _c.mutation.TotalExpense(); !ok {
+		v := wallet.DefaultTotalExpense
+		_c.mutation.SetTotalExpense(v)
+	}
+	if _, ok := _c.mutation.Active(); !ok {
+		v := wallet.DefaultActive
+		_c.mutation.SetActive(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *WalletCreate) check() error {
-	if _, ok := _c.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Wallet.user_id"`)}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Wallet.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Wallet.updated_at"`)}
 	}
 	if _, ok := _c.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Wallet.balance"`)}
+	}
+	if _, ok := _c.mutation.FrozenAmount(); !ok {
+		return &ValidationError{Name: "frozen_amount", err: errors.New(`ent: missing required field "Wallet.frozen_amount"`)}
+	}
+	if _, ok := _c.mutation.TotalIncome(); !ok {
+		return &ValidationError{Name: "total_income", err: errors.New(`ent: missing required field "Wallet.total_income"`)}
+	}
+	if _, ok := _c.mutation.TotalExpense(); !ok {
+		return &ValidationError{Name: "total_expense", err: errors.New(`ent: missing required field "Wallet.total_expense"`)}
+	}
+	if v, ok := _c.mutation.Password(); ok {
+		if err := wallet.PasswordValidator(v); err != nil {
+			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "Wallet.password": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.Active(); !ok {
+		return &ValidationError{Name: "active", err: errors.New(`ent: missing required field "Wallet.active"`)}
+	}
+	if v, ok := _c.mutation.Remark(); ok {
+		if err := wallet.RemarkValidator(v); err != nil {
+			return &ValidationError{Name: "remark", err: fmt.Errorf(`ent: validator failed for field "Wallet.remark": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -102,8 +278,10 @@ func (_c *WalletCreate) sqlSave(ctx context.Context) (*Wallet, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -114,6 +292,18 @@ func (_c *WalletCreate) createSpec() (*Wallet, *sqlgraph.CreateSpec) {
 		_node = &Wallet{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(wallet.Table, sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt))
 	)
+	if id, ok := _c.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(wallet.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(wallet.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
 	if value, ok := _c.mutation.UserID(); ok {
 		_spec.SetField(wallet.FieldUserID, field.TypeInt, value)
 		_node.UserID = value
@@ -121,6 +311,30 @@ func (_c *WalletCreate) createSpec() (*Wallet, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Balance(); ok {
 		_spec.SetField(wallet.FieldBalance, field.TypeInt, value)
 		_node.Balance = value
+	}
+	if value, ok := _c.mutation.FrozenAmount(); ok {
+		_spec.SetField(wallet.FieldFrozenAmount, field.TypeInt, value)
+		_node.FrozenAmount = value
+	}
+	if value, ok := _c.mutation.TotalIncome(); ok {
+		_spec.SetField(wallet.FieldTotalIncome, field.TypeInt, value)
+		_node.TotalIncome = value
+	}
+	if value, ok := _c.mutation.TotalExpense(); ok {
+		_spec.SetField(wallet.FieldTotalExpense, field.TypeInt, value)
+		_node.TotalExpense = value
+	}
+	if value, ok := _c.mutation.Password(); ok {
+		_spec.SetField(wallet.FieldPassword, field.TypeString, value)
+		_node.Password = value
+	}
+	if value, ok := _c.mutation.Active(); ok {
+		_spec.SetField(wallet.FieldActive, field.TypeBool, value)
+		_node.Active = value
+	}
+	if value, ok := _c.mutation.Remark(); ok {
+		_spec.SetField(wallet.FieldRemark, field.TypeString, value)
+		_node.Remark = value
 	}
 	return _node, _spec
 }
@@ -170,7 +384,7 @@ func (_c *WalletCreateBulk) Save(ctx context.Context) ([]*Wallet, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

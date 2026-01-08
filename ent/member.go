@@ -5,7 +5,9 @@ package ent
 import (
 	"fmt"
 	"gobee/ent/member"
+	"gobee/ent/user"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -13,10 +15,58 @@ import (
 
 // Member is the model entity for the Member schema.
 type Member struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
-	selectValues sql.SelectValues
+	ID int `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 用户ID
+	UserID int `json:"user_id,omitempty"`
+	// 会员等级ID
+	MemberLevel int `json:"member_level,omitempty"`
+	// 会员编号
+	MemberNo string `json:"member_no,omitempty"`
+	// 入会时间
+	JoinTime time.Time `json:"join_time,omitempty"`
+	// 会员到期时间
+	ExpireTime time.Time `json:"expire_time,omitempty"`
+	// 会员积分
+	Points int `json:"points,omitempty"`
+	// 累计消费金额(分)
+	TotalSpent int `json:"total_spent,omitempty"`
+	// 订单数量
+	OrderCount int `json:"order_count,omitempty"`
+	// 是否激活
+	Active bool `json:"active,omitempty"`
+	// 备注
+	Remark string `json:"remark,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the MemberQuery when eager-loading is set.
+	Edges                MemberEdges `json:"edges"`
+	member_level_members *int
+	selectValues         sql.SelectValues
+}
+
+// MemberEdges holds the relations/edges for other nodes in the graph.
+type MemberEdges struct {
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MemberEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,7 +74,15 @@ func (*Member) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case member.FieldID:
+		case member.FieldActive:
+			values[i] = new(sql.NullBool)
+		case member.FieldID, member.FieldUserID, member.FieldMemberLevel, member.FieldPoints, member.FieldTotalSpent, member.FieldOrderCount:
+			values[i] = new(sql.NullInt64)
+		case member.FieldMemberNo, member.FieldRemark:
+			values[i] = new(sql.NullString)
+		case member.FieldCreatedAt, member.FieldUpdatedAt, member.FieldJoinTime, member.FieldExpireTime:
+			values[i] = new(sql.NullTime)
+		case member.ForeignKeys[0]: // member_level_members
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -47,6 +105,85 @@ func (_m *Member) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
+		case member.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = value.Time
+			}
+		case member.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = value.Time
+			}
+		case member.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				_m.UserID = int(value.Int64)
+			}
+		case member.FieldMemberLevel:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field member_level", values[i])
+			} else if value.Valid {
+				_m.MemberLevel = int(value.Int64)
+			}
+		case member.FieldMemberNo:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field member_no", values[i])
+			} else if value.Valid {
+				_m.MemberNo = value.String
+			}
+		case member.FieldJoinTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field join_time", values[i])
+			} else if value.Valid {
+				_m.JoinTime = value.Time
+			}
+		case member.FieldExpireTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field expire_time", values[i])
+			} else if value.Valid {
+				_m.ExpireTime = value.Time
+			}
+		case member.FieldPoints:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field points", values[i])
+			} else if value.Valid {
+				_m.Points = int(value.Int64)
+			}
+		case member.FieldTotalSpent:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field total_spent", values[i])
+			} else if value.Valid {
+				_m.TotalSpent = int(value.Int64)
+			}
+		case member.FieldOrderCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field order_count", values[i])
+			} else if value.Valid {
+				_m.OrderCount = int(value.Int64)
+			}
+		case member.FieldActive:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field active", values[i])
+			} else if value.Valid {
+				_m.Active = value.Bool
+			}
+		case member.FieldRemark:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field remark", values[i])
+			} else if value.Valid {
+				_m.Remark = value.String
+			}
+		case member.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field member_level_members", value)
+			} else if value.Valid {
+				_m.member_level_members = new(int)
+				*_m.member_level_members = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -58,6 +195,11 @@ func (_m *Member) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *Member) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryUser queries the "user" edge of the Member entity.
+func (_m *Member) QueryUser() *UserQuery {
+	return NewMemberClient(_m.config).QueryUser(_m)
 }
 
 // Update returns a builder for updating this Member.
@@ -82,7 +224,42 @@ func (_m *Member) Unwrap() *Member {
 func (_m *Member) String() string {
 	var builder strings.Builder
 	builder.WriteString("Member(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("member_level=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MemberLevel))
+	builder.WriteString(", ")
+	builder.WriteString("member_no=")
+	builder.WriteString(_m.MemberNo)
+	builder.WriteString(", ")
+	builder.WriteString("join_time=")
+	builder.WriteString(_m.JoinTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("expire_time=")
+	builder.WriteString(_m.ExpireTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("points=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Points))
+	builder.WriteString(", ")
+	builder.WriteString("total_spent=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TotalSpent))
+	builder.WriteString(", ")
+	builder.WriteString("order_count=")
+	builder.WriteString(fmt.Sprintf("%v", _m.OrderCount))
+	builder.WriteString(", ")
+	builder.WriteString("active=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Active))
+	builder.WriteString(", ")
+	builder.WriteString("remark=")
+	builder.WriteString(_m.Remark)
 	builder.WriteByte(')')
 	return builder.String()
 }

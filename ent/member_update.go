@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"gobee/ent/member"
 	"gobee/ent/predicate"
+	"gobee/ent/user"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -27,13 +29,217 @@ func (_u *MemberUpdate) Where(ps ...predicate.Member) *MemberUpdate {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *MemberUpdate) SetUpdatedAt(v time.Time) *MemberUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *MemberUpdate) SetUserID(v int) *MemberUpdate {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillableUserID(v *int) *MemberUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *MemberUpdate) ClearUserID() *MemberUpdate {
+	_u.mutation.ClearUserID()
+	return _u
+}
+
+// SetMemberLevel sets the "member_level" field.
+func (_u *MemberUpdate) SetMemberLevel(v int) *MemberUpdate {
+	_u.mutation.ResetMemberLevel()
+	_u.mutation.SetMemberLevel(v)
+	return _u
+}
+
+// SetNillableMemberLevel sets the "member_level" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillableMemberLevel(v *int) *MemberUpdate {
+	if v != nil {
+		_u.SetMemberLevel(*v)
+	}
+	return _u
+}
+
+// AddMemberLevel adds value to the "member_level" field.
+func (_u *MemberUpdate) AddMemberLevel(v int) *MemberUpdate {
+	_u.mutation.AddMemberLevel(v)
+	return _u
+}
+
+// SetMemberNo sets the "member_no" field.
+func (_u *MemberUpdate) SetMemberNo(v string) *MemberUpdate {
+	_u.mutation.SetMemberNo(v)
+	return _u
+}
+
+// SetNillableMemberNo sets the "member_no" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillableMemberNo(v *string) *MemberUpdate {
+	if v != nil {
+		_u.SetMemberNo(*v)
+	}
+	return _u
+}
+
+// SetJoinTime sets the "join_time" field.
+func (_u *MemberUpdate) SetJoinTime(v time.Time) *MemberUpdate {
+	_u.mutation.SetJoinTime(v)
+	return _u
+}
+
+// SetNillableJoinTime sets the "join_time" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillableJoinTime(v *time.Time) *MemberUpdate {
+	if v != nil {
+		_u.SetJoinTime(*v)
+	}
+	return _u
+}
+
+// SetExpireTime sets the "expire_time" field.
+func (_u *MemberUpdate) SetExpireTime(v time.Time) *MemberUpdate {
+	_u.mutation.SetExpireTime(v)
+	return _u
+}
+
+// SetNillableExpireTime sets the "expire_time" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillableExpireTime(v *time.Time) *MemberUpdate {
+	if v != nil {
+		_u.SetExpireTime(*v)
+	}
+	return _u
+}
+
+// ClearExpireTime clears the value of the "expire_time" field.
+func (_u *MemberUpdate) ClearExpireTime() *MemberUpdate {
+	_u.mutation.ClearExpireTime()
+	return _u
+}
+
+// SetPoints sets the "points" field.
+func (_u *MemberUpdate) SetPoints(v int) *MemberUpdate {
+	_u.mutation.ResetPoints()
+	_u.mutation.SetPoints(v)
+	return _u
+}
+
+// SetNillablePoints sets the "points" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillablePoints(v *int) *MemberUpdate {
+	if v != nil {
+		_u.SetPoints(*v)
+	}
+	return _u
+}
+
+// AddPoints adds value to the "points" field.
+func (_u *MemberUpdate) AddPoints(v int) *MemberUpdate {
+	_u.mutation.AddPoints(v)
+	return _u
+}
+
+// SetTotalSpent sets the "total_spent" field.
+func (_u *MemberUpdate) SetTotalSpent(v int) *MemberUpdate {
+	_u.mutation.ResetTotalSpent()
+	_u.mutation.SetTotalSpent(v)
+	return _u
+}
+
+// SetNillableTotalSpent sets the "total_spent" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillableTotalSpent(v *int) *MemberUpdate {
+	if v != nil {
+		_u.SetTotalSpent(*v)
+	}
+	return _u
+}
+
+// AddTotalSpent adds value to the "total_spent" field.
+func (_u *MemberUpdate) AddTotalSpent(v int) *MemberUpdate {
+	_u.mutation.AddTotalSpent(v)
+	return _u
+}
+
+// SetOrderCount sets the "order_count" field.
+func (_u *MemberUpdate) SetOrderCount(v int) *MemberUpdate {
+	_u.mutation.ResetOrderCount()
+	_u.mutation.SetOrderCount(v)
+	return _u
+}
+
+// SetNillableOrderCount sets the "order_count" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillableOrderCount(v *int) *MemberUpdate {
+	if v != nil {
+		_u.SetOrderCount(*v)
+	}
+	return _u
+}
+
+// AddOrderCount adds value to the "order_count" field.
+func (_u *MemberUpdate) AddOrderCount(v int) *MemberUpdate {
+	_u.mutation.AddOrderCount(v)
+	return _u
+}
+
+// SetActive sets the "active" field.
+func (_u *MemberUpdate) SetActive(v bool) *MemberUpdate {
+	_u.mutation.SetActive(v)
+	return _u
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillableActive(v *bool) *MemberUpdate {
+	if v != nil {
+		_u.SetActive(*v)
+	}
+	return _u
+}
+
+// SetRemark sets the "remark" field.
+func (_u *MemberUpdate) SetRemark(v string) *MemberUpdate {
+	_u.mutation.SetRemark(v)
+	return _u
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (_u *MemberUpdate) SetNillableRemark(v *string) *MemberUpdate {
+	if v != nil {
+		_u.SetRemark(*v)
+	}
+	return _u
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (_u *MemberUpdate) ClearRemark() *MemberUpdate {
+	_u.mutation.ClearRemark()
+	return _u
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_u *MemberUpdate) SetUser(v *User) *MemberUpdate {
+	return _u.SetUserID(v.ID)
+}
+
 // Mutation returns the MemberMutation object of the builder.
 func (_u *MemberUpdate) Mutation() *MemberMutation {
 	return _u.mutation
 }
 
+// ClearUser clears the "user" edge to the User entity.
+func (_u *MemberUpdate) ClearUser() *MemberUpdate {
+	_u.mutation.ClearUser()
+	return _u
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *MemberUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -59,7 +265,33 @@ func (_u *MemberUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *MemberUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := member.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (_u *MemberUpdate) check() error {
+	if v, ok := _u.mutation.MemberNo(); ok {
+		if err := member.MemberNoValidator(v); err != nil {
+			return &ValidationError{Name: "member_no", err: fmt.Errorf(`ent: validator failed for field "Member.member_no": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Remark(); ok {
+		if err := member.RemarkValidator(v); err != nil {
+			return &ValidationError{Name: "remark", err: fmt.Errorf(`ent: validator failed for field "Member.remark": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *MemberUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(member.Table, member.Columns, sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -67,6 +299,83 @@ func (_u *MemberUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(member.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.MemberLevel(); ok {
+		_spec.SetField(member.FieldMemberLevel, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMemberLevel(); ok {
+		_spec.AddField(member.FieldMemberLevel, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.MemberNo(); ok {
+		_spec.SetField(member.FieldMemberNo, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.JoinTime(); ok {
+		_spec.SetField(member.FieldJoinTime, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.ExpireTime(); ok {
+		_spec.SetField(member.FieldExpireTime, field.TypeTime, value)
+	}
+	if _u.mutation.ExpireTimeCleared() {
+		_spec.ClearField(member.FieldExpireTime, field.TypeTime)
+	}
+	if value, ok := _u.mutation.Points(); ok {
+		_spec.SetField(member.FieldPoints, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedPoints(); ok {
+		_spec.AddField(member.FieldPoints, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.TotalSpent(); ok {
+		_spec.SetField(member.FieldTotalSpent, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTotalSpent(); ok {
+		_spec.AddField(member.FieldTotalSpent, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.OrderCount(); ok {
+		_spec.SetField(member.FieldOrderCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedOrderCount(); ok {
+		_spec.AddField(member.FieldOrderCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Active(); ok {
+		_spec.SetField(member.FieldActive, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Remark(); ok {
+		_spec.SetField(member.FieldRemark, field.TypeString, value)
+	}
+	if _u.mutation.RemarkCleared() {
+		_spec.ClearField(member.FieldRemark, field.TypeString)
+	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   member.UserTable,
+			Columns: []string{member.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   member.UserTable,
+			Columns: []string{member.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -88,9 +397,212 @@ type MemberUpdateOne struct {
 	mutation *MemberMutation
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *MemberUpdateOne) SetUpdatedAt(v time.Time) *MemberUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *MemberUpdateOne) SetUserID(v int) *MemberUpdateOne {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillableUserID(v *int) *MemberUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *MemberUpdateOne) ClearUserID() *MemberUpdateOne {
+	_u.mutation.ClearUserID()
+	return _u
+}
+
+// SetMemberLevel sets the "member_level" field.
+func (_u *MemberUpdateOne) SetMemberLevel(v int) *MemberUpdateOne {
+	_u.mutation.ResetMemberLevel()
+	_u.mutation.SetMemberLevel(v)
+	return _u
+}
+
+// SetNillableMemberLevel sets the "member_level" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillableMemberLevel(v *int) *MemberUpdateOne {
+	if v != nil {
+		_u.SetMemberLevel(*v)
+	}
+	return _u
+}
+
+// AddMemberLevel adds value to the "member_level" field.
+func (_u *MemberUpdateOne) AddMemberLevel(v int) *MemberUpdateOne {
+	_u.mutation.AddMemberLevel(v)
+	return _u
+}
+
+// SetMemberNo sets the "member_no" field.
+func (_u *MemberUpdateOne) SetMemberNo(v string) *MemberUpdateOne {
+	_u.mutation.SetMemberNo(v)
+	return _u
+}
+
+// SetNillableMemberNo sets the "member_no" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillableMemberNo(v *string) *MemberUpdateOne {
+	if v != nil {
+		_u.SetMemberNo(*v)
+	}
+	return _u
+}
+
+// SetJoinTime sets the "join_time" field.
+func (_u *MemberUpdateOne) SetJoinTime(v time.Time) *MemberUpdateOne {
+	_u.mutation.SetJoinTime(v)
+	return _u
+}
+
+// SetNillableJoinTime sets the "join_time" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillableJoinTime(v *time.Time) *MemberUpdateOne {
+	if v != nil {
+		_u.SetJoinTime(*v)
+	}
+	return _u
+}
+
+// SetExpireTime sets the "expire_time" field.
+func (_u *MemberUpdateOne) SetExpireTime(v time.Time) *MemberUpdateOne {
+	_u.mutation.SetExpireTime(v)
+	return _u
+}
+
+// SetNillableExpireTime sets the "expire_time" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillableExpireTime(v *time.Time) *MemberUpdateOne {
+	if v != nil {
+		_u.SetExpireTime(*v)
+	}
+	return _u
+}
+
+// ClearExpireTime clears the value of the "expire_time" field.
+func (_u *MemberUpdateOne) ClearExpireTime() *MemberUpdateOne {
+	_u.mutation.ClearExpireTime()
+	return _u
+}
+
+// SetPoints sets the "points" field.
+func (_u *MemberUpdateOne) SetPoints(v int) *MemberUpdateOne {
+	_u.mutation.ResetPoints()
+	_u.mutation.SetPoints(v)
+	return _u
+}
+
+// SetNillablePoints sets the "points" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillablePoints(v *int) *MemberUpdateOne {
+	if v != nil {
+		_u.SetPoints(*v)
+	}
+	return _u
+}
+
+// AddPoints adds value to the "points" field.
+func (_u *MemberUpdateOne) AddPoints(v int) *MemberUpdateOne {
+	_u.mutation.AddPoints(v)
+	return _u
+}
+
+// SetTotalSpent sets the "total_spent" field.
+func (_u *MemberUpdateOne) SetTotalSpent(v int) *MemberUpdateOne {
+	_u.mutation.ResetTotalSpent()
+	_u.mutation.SetTotalSpent(v)
+	return _u
+}
+
+// SetNillableTotalSpent sets the "total_spent" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillableTotalSpent(v *int) *MemberUpdateOne {
+	if v != nil {
+		_u.SetTotalSpent(*v)
+	}
+	return _u
+}
+
+// AddTotalSpent adds value to the "total_spent" field.
+func (_u *MemberUpdateOne) AddTotalSpent(v int) *MemberUpdateOne {
+	_u.mutation.AddTotalSpent(v)
+	return _u
+}
+
+// SetOrderCount sets the "order_count" field.
+func (_u *MemberUpdateOne) SetOrderCount(v int) *MemberUpdateOne {
+	_u.mutation.ResetOrderCount()
+	_u.mutation.SetOrderCount(v)
+	return _u
+}
+
+// SetNillableOrderCount sets the "order_count" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillableOrderCount(v *int) *MemberUpdateOne {
+	if v != nil {
+		_u.SetOrderCount(*v)
+	}
+	return _u
+}
+
+// AddOrderCount adds value to the "order_count" field.
+func (_u *MemberUpdateOne) AddOrderCount(v int) *MemberUpdateOne {
+	_u.mutation.AddOrderCount(v)
+	return _u
+}
+
+// SetActive sets the "active" field.
+func (_u *MemberUpdateOne) SetActive(v bool) *MemberUpdateOne {
+	_u.mutation.SetActive(v)
+	return _u
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillableActive(v *bool) *MemberUpdateOne {
+	if v != nil {
+		_u.SetActive(*v)
+	}
+	return _u
+}
+
+// SetRemark sets the "remark" field.
+func (_u *MemberUpdateOne) SetRemark(v string) *MemberUpdateOne {
+	_u.mutation.SetRemark(v)
+	return _u
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (_u *MemberUpdateOne) SetNillableRemark(v *string) *MemberUpdateOne {
+	if v != nil {
+		_u.SetRemark(*v)
+	}
+	return _u
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (_u *MemberUpdateOne) ClearRemark() *MemberUpdateOne {
+	_u.mutation.ClearRemark()
+	return _u
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_u *MemberUpdateOne) SetUser(v *User) *MemberUpdateOne {
+	return _u.SetUserID(v.ID)
+}
+
 // Mutation returns the MemberMutation object of the builder.
 func (_u *MemberUpdateOne) Mutation() *MemberMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *MemberUpdateOne) ClearUser() *MemberUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // Where appends a list predicates to the MemberUpdate builder.
@@ -108,6 +620,7 @@ func (_u *MemberUpdateOne) Select(field string, fields ...string) *MemberUpdateO
 
 // Save executes the query and returns the updated Member entity.
 func (_u *MemberUpdateOne) Save(ctx context.Context) (*Member, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -133,7 +646,33 @@ func (_u *MemberUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *MemberUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := member.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (_u *MemberUpdateOne) check() error {
+	if v, ok := _u.mutation.MemberNo(); ok {
+		if err := member.MemberNoValidator(v); err != nil {
+			return &ValidationError{Name: "member_no", err: fmt.Errorf(`ent: validator failed for field "Member.member_no": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Remark(); ok {
+		if err := member.RemarkValidator(v); err != nil {
+			return &ValidationError{Name: "remark", err: fmt.Errorf(`ent: validator failed for field "Member.remark": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(member.Table, member.Columns, sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -158,6 +697,83 @@ func (_u *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err erro
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(member.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.MemberLevel(); ok {
+		_spec.SetField(member.FieldMemberLevel, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMemberLevel(); ok {
+		_spec.AddField(member.FieldMemberLevel, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.MemberNo(); ok {
+		_spec.SetField(member.FieldMemberNo, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.JoinTime(); ok {
+		_spec.SetField(member.FieldJoinTime, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.ExpireTime(); ok {
+		_spec.SetField(member.FieldExpireTime, field.TypeTime, value)
+	}
+	if _u.mutation.ExpireTimeCleared() {
+		_spec.ClearField(member.FieldExpireTime, field.TypeTime)
+	}
+	if value, ok := _u.mutation.Points(); ok {
+		_spec.SetField(member.FieldPoints, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedPoints(); ok {
+		_spec.AddField(member.FieldPoints, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.TotalSpent(); ok {
+		_spec.SetField(member.FieldTotalSpent, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTotalSpent(); ok {
+		_spec.AddField(member.FieldTotalSpent, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.OrderCount(); ok {
+		_spec.SetField(member.FieldOrderCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedOrderCount(); ok {
+		_spec.AddField(member.FieldOrderCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Active(); ok {
+		_spec.SetField(member.FieldActive, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Remark(); ok {
+		_spec.SetField(member.FieldRemark, field.TypeString, value)
+	}
+	if _u.mutation.RemarkCleared() {
+		_spec.ClearField(member.FieldRemark, field.TypeString)
+	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   member.UserTable,
+			Columns: []string{member.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   member.UserTable,
+			Columns: []string{member.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Member{config: _u.config}
 	_spec.Assign = _node.assignValues

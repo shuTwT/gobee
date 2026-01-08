@@ -4,7 +4,7 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/wallet"
+	"gobee/ent/couponusage"
 	"strings"
 	"time"
 
@@ -12,8 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Wallet is the model entity for the Wallet schema.
-type Wallet struct {
+// CouponUsage is the model entity for the CouponUsage schema.
+type CouponUsage struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -21,37 +21,35 @@ type Wallet struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 优惠券代码
+	CouponCode string `json:"coupon_code,omitempty"`
 	// 用户ID
 	UserID int `json:"user_id,omitempty"`
-	// 余额(分)
-	Balance int `json:"balance,omitempty"`
-	// 冻结金额(分)
-	FrozenAmount int `json:"frozen_amount,omitempty"`
-	// 总收入(分)
-	TotalIncome int `json:"total_income,omitempty"`
-	// 总支出(分)
-	TotalExpense int `json:"total_expense,omitempty"`
-	// 支付密码
-	Password string `json:"-"`
-	// 是否激活
-	Active bool `json:"active,omitempty"`
+	// 订单ID
+	OrderID int `json:"order_id,omitempty"`
+	// 状态: 0-未使用 1-已使用 2-已过期
+	Status int `json:"status,omitempty"`
+	// 使用时间
+	UsedAt time.Time `json:"used_at,omitempty"`
+	// 优惠金额(分)
+	DiscountAmount int `json:"discount_amount,omitempty"`
+	// 过期时间
+	ExpireAt time.Time `json:"expire_at,omitempty"`
 	// 备注
 	Remark       string `json:"remark,omitempty"`
 	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Wallet) scanValues(columns []string) ([]any, error) {
+func (*CouponUsage) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case wallet.FieldActive:
-			values[i] = new(sql.NullBool)
-		case wallet.FieldID, wallet.FieldUserID, wallet.FieldBalance, wallet.FieldFrozenAmount, wallet.FieldTotalIncome, wallet.FieldTotalExpense:
+		case couponusage.FieldID, couponusage.FieldUserID, couponusage.FieldOrderID, couponusage.FieldStatus, couponusage.FieldDiscountAmount:
 			values[i] = new(sql.NullInt64)
-		case wallet.FieldPassword, wallet.FieldRemark:
+		case couponusage.FieldCouponCode, couponusage.FieldRemark:
 			values[i] = new(sql.NullString)
-		case wallet.FieldCreatedAt, wallet.FieldUpdatedAt:
+		case couponusage.FieldCreatedAt, couponusage.FieldUpdatedAt, couponusage.FieldUsedAt, couponusage.FieldExpireAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -61,74 +59,74 @@ func (*Wallet) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Wallet fields.
-func (_m *Wallet) assignValues(columns []string, values []any) error {
+// to the CouponUsage fields.
+func (_m *CouponUsage) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case wallet.FieldID:
+		case couponusage.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case wallet.FieldCreatedAt:
+		case couponusage.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				_m.CreatedAt = value.Time
 			}
-		case wallet.FieldUpdatedAt:
+		case couponusage.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
-		case wallet.FieldUserID:
+		case couponusage.FieldCouponCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field coupon_code", values[i])
+			} else if value.Valid {
+				_m.CouponCode = value.String
+			}
+		case couponusage.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
 				_m.UserID = int(value.Int64)
 			}
-		case wallet.FieldBalance:
+		case couponusage.FieldOrderID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field balance", values[i])
+				return fmt.Errorf("unexpected type %T for field order_id", values[i])
 			} else if value.Valid {
-				_m.Balance = int(value.Int64)
+				_m.OrderID = int(value.Int64)
 			}
-		case wallet.FieldFrozenAmount:
+		case couponusage.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field frozen_amount", values[i])
+				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				_m.FrozenAmount = int(value.Int64)
+				_m.Status = int(value.Int64)
 			}
-		case wallet.FieldTotalIncome:
+		case couponusage.FieldUsedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field used_at", values[i])
+			} else if value.Valid {
+				_m.UsedAt = value.Time
+			}
+		case couponusage.FieldDiscountAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field total_income", values[i])
+				return fmt.Errorf("unexpected type %T for field discount_amount", values[i])
 			} else if value.Valid {
-				_m.TotalIncome = int(value.Int64)
+				_m.DiscountAmount = int(value.Int64)
 			}
-		case wallet.FieldTotalExpense:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field total_expense", values[i])
+		case couponusage.FieldExpireAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field expire_at", values[i])
 			} else if value.Valid {
-				_m.TotalExpense = int(value.Int64)
+				_m.ExpireAt = value.Time
 			}
-		case wallet.FieldPassword:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field password", values[i])
-			} else if value.Valid {
-				_m.Password = value.String
-			}
-		case wallet.FieldActive:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field active", values[i])
-			} else if value.Valid {
-				_m.Active = value.Bool
-			}
-		case wallet.FieldRemark:
+		case couponusage.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field remark", values[i])
 			} else if value.Valid {
@@ -141,34 +139,34 @@ func (_m *Wallet) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Wallet.
+// Value returns the ent.Value that was dynamically selected and assigned to the CouponUsage.
 // This includes values selected through modifiers, order, etc.
-func (_m *Wallet) Value(name string) (ent.Value, error) {
+func (_m *CouponUsage) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// Update returns a builder for updating this Wallet.
-// Note that you need to call Wallet.Unwrap() before calling this method if this Wallet
+// Update returns a builder for updating this CouponUsage.
+// Note that you need to call CouponUsage.Unwrap() before calling this method if this CouponUsage
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *Wallet) Update() *WalletUpdateOne {
-	return NewWalletClient(_m.config).UpdateOne(_m)
+func (_m *CouponUsage) Update() *CouponUsageUpdateOne {
+	return NewCouponUsageClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the Wallet entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the CouponUsage entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *Wallet) Unwrap() *Wallet {
+func (_m *CouponUsage) Unwrap() *CouponUsage {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Wallet is not a transactional entity")
+		panic("ent: CouponUsage is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *Wallet) String() string {
+func (_m *CouponUsage) String() string {
 	var builder strings.Builder
-	builder.WriteString("Wallet(")
+	builder.WriteString("CouponUsage(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
@@ -176,25 +174,26 @@ func (_m *Wallet) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("coupon_code=")
+	builder.WriteString(_m.CouponCode)
+	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
 	builder.WriteString(", ")
-	builder.WriteString("balance=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Balance))
+	builder.WriteString("order_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.OrderID))
 	builder.WriteString(", ")
-	builder.WriteString("frozen_amount=")
-	builder.WriteString(fmt.Sprintf("%v", _m.FrozenAmount))
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Status))
 	builder.WriteString(", ")
-	builder.WriteString("total_income=")
-	builder.WriteString(fmt.Sprintf("%v", _m.TotalIncome))
+	builder.WriteString("used_at=")
+	builder.WriteString(_m.UsedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("total_expense=")
-	builder.WriteString(fmt.Sprintf("%v", _m.TotalExpense))
+	builder.WriteString("discount_amount=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DiscountAmount))
 	builder.WriteString(", ")
-	builder.WriteString("password=<sensitive>")
-	builder.WriteString(", ")
-	builder.WriteString("active=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Active))
+	builder.WriteString("expire_at=")
+	builder.WriteString(_m.ExpireAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("remark=")
 	builder.WriteString(_m.Remark)
@@ -202,5 +201,5 @@ func (_m *Wallet) String() string {
 	return builder.String()
 }
 
-// Wallets is a parsable slice of Wallet.
-type Wallets []*Wallet
+// CouponUsages is a parsable slice of CouponUsage.
+type CouponUsages []*CouponUsage

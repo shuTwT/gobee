@@ -3,9 +3,11 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"gobee/ent/memberlevel"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -13,10 +15,53 @@ import (
 
 // MemberLevel is the model entity for the MemberLevel schema.
 type MemberLevel struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 等级名称
+	Name string `json:"name,omitempty"`
+	// 等级描述
+	Description string `json:"description,omitempty"`
+	// 等级级别
+	Level int `json:"level,omitempty"`
+	// 最低积分要求
+	MinPoints int `json:"min_points,omitempty"`
+	// 折扣率(百分比)
+	DiscountRate int `json:"discount_rate,omitempty"`
+	// 会员特权
+	Privileges []string `json:"privileges,omitempty"`
+	// 等级图标
+	Icon string `json:"icon,omitempty"`
+	// 是否启用
+	Active bool `json:"active,omitempty"`
+	// 排序
+	SortOrder int `json:"sort_order,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the MemberLevelQuery when eager-loading is set.
+	Edges        MemberLevelEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// MemberLevelEdges holds the relations/edges for other nodes in the graph.
+type MemberLevelEdges struct {
+	// Members holds the value of the members edge.
+	Members []*Member `json:"members,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// MembersOrErr returns the Members value or an error if the edge
+// was not loaded in eager-loading.
+func (e MemberLevelEdges) MembersOrErr() ([]*Member, error) {
+	if e.loadedTypes[0] {
+		return e.Members, nil
+	}
+	return nil, &NotLoadedError{edge: "members"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,8 +69,16 @@ func (*MemberLevel) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case memberlevel.FieldID:
+		case memberlevel.FieldPrivileges:
+			values[i] = new([]byte)
+		case memberlevel.FieldActive:
+			values[i] = new(sql.NullBool)
+		case memberlevel.FieldID, memberlevel.FieldLevel, memberlevel.FieldMinPoints, memberlevel.FieldDiscountRate, memberlevel.FieldSortOrder:
 			values[i] = new(sql.NullInt64)
+		case memberlevel.FieldName, memberlevel.FieldDescription, memberlevel.FieldIcon:
+			values[i] = new(sql.NullString)
+		case memberlevel.FieldCreatedAt, memberlevel.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -47,6 +100,74 @@ func (_m *MemberLevel) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
+		case memberlevel.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = value.Time
+			}
+		case memberlevel.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = value.Time
+			}
+		case memberlevel.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				_m.Name = value.String
+			}
+		case memberlevel.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				_m.Description = value.String
+			}
+		case memberlevel.FieldLevel:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field level", values[i])
+			} else if value.Valid {
+				_m.Level = int(value.Int64)
+			}
+		case memberlevel.FieldMinPoints:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field min_points", values[i])
+			} else if value.Valid {
+				_m.MinPoints = int(value.Int64)
+			}
+		case memberlevel.FieldDiscountRate:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field discount_rate", values[i])
+			} else if value.Valid {
+				_m.DiscountRate = int(value.Int64)
+			}
+		case memberlevel.FieldPrivileges:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field privileges", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Privileges); err != nil {
+					return fmt.Errorf("unmarshal field privileges: %w", err)
+				}
+			}
+		case memberlevel.FieldIcon:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field icon", values[i])
+			} else if value.Valid {
+				_m.Icon = value.String
+			}
+		case memberlevel.FieldActive:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field active", values[i])
+			} else if value.Valid {
+				_m.Active = value.Bool
+			}
+		case memberlevel.FieldSortOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field sort_order", values[i])
+			} else if value.Valid {
+				_m.SortOrder = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -58,6 +179,11 @@ func (_m *MemberLevel) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *MemberLevel) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryMembers queries the "members" edge of the MemberLevel entity.
+func (_m *MemberLevel) QueryMembers() *MemberQuery {
+	return NewMemberLevelClient(_m.config).QueryMembers(_m)
 }
 
 // Update returns a builder for updating this MemberLevel.
@@ -82,7 +208,39 @@ func (_m *MemberLevel) Unwrap() *MemberLevel {
 func (_m *MemberLevel) String() string {
 	var builder strings.Builder
 	builder.WriteString("MemberLevel(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(_m.Name)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(_m.Description)
+	builder.WriteString(", ")
+	builder.WriteString("level=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Level))
+	builder.WriteString(", ")
+	builder.WriteString("min_points=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MinPoints))
+	builder.WriteString(", ")
+	builder.WriteString("discount_rate=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DiscountRate))
+	builder.WriteString(", ")
+	builder.WriteString("privileges=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Privileges))
+	builder.WriteString(", ")
+	builder.WriteString("icon=")
+	builder.WriteString(_m.Icon)
+	builder.WriteString(", ")
+	builder.WriteString("active=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Active))
+	builder.WriteString(", ")
+	builder.WriteString("sort_order=")
+	builder.WriteString(fmt.Sprintf("%v", _m.SortOrder))
 	builder.WriteByte(')')
 	return builder.String()
 }
