@@ -451,7 +451,7 @@ onMounted(() => {
         :data="dataList"
         :loading="loading"
         :pagination="pagination"
-        remote
+        :remote="true"
         :row-key="(row) => row.id"
       />
     </n-card>

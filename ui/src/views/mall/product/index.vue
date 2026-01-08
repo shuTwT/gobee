@@ -296,6 +296,7 @@ onMounted(() => {
         :loading="loading"
         :pagination="pagination"
         :row-key="(row) => row.id"
+        :remote="true"
       />
     </n-card>
   </div>

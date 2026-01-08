@@ -26,15 +26,15 @@ export const deleteUser = () => {
 }
 
 export const getPersonalAccessTokenList = ()=>{
-  return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/user/personal-access-token`)
+  return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/user/personal-access-token/list`)
 }
 
 export const getPersonalAccessToken = (id:number)=>{
-  return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/user/personal-access-token/${id}`)
+  return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/user/personal-access-token/query/${id}`)
 }
 
 export const createPat = (data:any)=>{
-  return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/user/personal-access-token`,{data})
+  return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/user/personal-access-token/create`,{data})
 }
 
 export const getUserProfile = ()=>{

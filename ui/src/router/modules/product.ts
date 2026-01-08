@@ -4,7 +4,7 @@ export default [
   {
     path: '/product',
     name: 'ProductManagement',
-    component: () => import('@/views/product/index.vue'),
+    component: () => import('@/views/mall/product/index.vue'),
     meta: {
       title: '商品管理',
       showLink: true,

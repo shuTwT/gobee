@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { BASE_URL, type ApiResponse, type TableResponse } from "./utils";
+import { BASE_URL, type ApiResponse, type TableResponse } from "@/api/utils";
 
 // 评论状态
 export enum CommentStatus {

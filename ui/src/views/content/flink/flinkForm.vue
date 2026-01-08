@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
 import type { FlinkFormProps } from './utils/types'
-import * as FriendCircleRuleApi from "@/api/friend-circle/friendCircleRule"
 import { apiClient, useApi } from '@/api';
 
 const props = defineProps<FlinkFormProps>()
@@ -17,8 +16,6 @@ const rules: FormRules = {
 }
 
 const flinkGroups = ref<any[]>([])
-
-const friendCircleRuleOptions = ref([])
 
 const getData = () => {
   return new Promise((resolve, reject) => {
@@ -39,14 +36,9 @@ const getData = () => {
 onMounted(async ()=>{
   try{
     const res1 = await useApi(apiClient.api.v1FlinkGroupListList)
-    flinkGroups.value = res1.data.map((item)=>({
+    flinkGroups.value = res1.data.map((item:any)=>({
       label: item.name,
       value: item.id
-    }))
-    const res2= await FriendCircleRuleApi.getFriendCircleRuleList()
-    friendCircleRuleOptions.value = res2.data.map((item:any)=>({
-      value: item.id,
-      label: item.name
     }))
   }catch{
 
@@ -78,9 +70,6 @@ defineExpose({ getData })
     </n-form-item>
     <n-form-item label="开启友链朋友圈" path="enable_friend_circle">
       <n-checkbox v-model:checked="formData.enable_friend_circle"/>
-    </n-form-item>
-    <n-form-item label="朋友圈解析规则" path="friend_circle_rule_id">
-      <n-select v-model:value="formData.friend_circle_rule_id" :options="friendCircleRuleOptions"/>
     </n-form-item>
     <n-form-item label="分组" path="group_id">
       <n-select v-model:value="formData.group_id" :options="flinkGroups"/>

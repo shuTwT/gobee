@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from "vue-router";
 export default [
     {
         path: "/infra",
+        name:"InfrastructureManagement",
         redirect: "/infra/file",
         meta: {
             title: "基础设施",

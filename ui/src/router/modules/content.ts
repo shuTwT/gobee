@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 export default [
     {
         path: "/content",
+        name:"ContentManagement",
         redirect: "/content/post",
         meta: {
             title: '内容管理',
@@ -34,7 +35,7 @@ export default [
             {
                 path: '/album',
                 name: 'AlbumManagement',
-                component: () => import('@/views/album/index.vue'),
+                component: () => import('@/views/content/album/index.vue'),
                 meta: {
                     title: '相册管理',
                     showLink: true,

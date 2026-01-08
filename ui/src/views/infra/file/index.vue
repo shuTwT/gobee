@@ -4,7 +4,7 @@ import { RefreshOutline, Link } from '@vicons/ionicons5'
 import type { DataTableColumns } from 'naive-ui'
 import { addDialog } from '@/components/dialog'
 import uploadForm from './uploadForm.vue'
-import * as fileApi from '@/api/file'
+import * as fileApi from '@/api/infra/file'
 
 // 分页配置
 const pagination = reactive({
@@ -155,6 +155,7 @@ onMounted(() => {
         :loading="loading"
         :pagination="pagination"
         :row-key="(row) => row.id"
+        :remote="true"
       />
     </n-card>
   </div>

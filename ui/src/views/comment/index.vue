@@ -228,6 +228,7 @@ onMounted(() => {
         :pagination="pagination"
         @update:page="handlePageChange"
         @update:page-size="handlePageSizeChange"
+        :remote="true"
       />
     </n-card>
 

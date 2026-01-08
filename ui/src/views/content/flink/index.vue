@@ -147,7 +147,7 @@ const openGroupEditDialog = (title = '新增', row?: FlinkGroupFormItemProps) =>
           await useApi(apiClient.api.v1FlinkGroupUpdateUpdate, row?.id!, curData)
           chores()
         }
-      } catch {}
+      } catch { }
     },
   })
 }
@@ -213,7 +213,7 @@ const handleDeleteGroup = async (row: any) => {
     await useApi(apiClient.api.v1FlinkGroupDeleteDelete, row.id!)
     message.success('删除成功喵~')
     await onSearchCategory()
-  } catch {}
+  } catch { }
 }
 
 const handleDelete = async (row: any) => {
@@ -222,7 +222,7 @@ const handleDelete = async (row: any) => {
     await useApi(apiClient.api.v1FlinkDelete, row.id!)
     message.success('删除成功喵~')
     await onSearchFlink()
-  } catch {}
+  } catch { }
 }
 
 const handleSubmit = async () => {
@@ -241,7 +241,7 @@ const onSearchFlink = async () => {
       group_id: currentFlinkGroup.value,
     })
     dataList.value = res.data.records
-  } catch {}
+  } catch { }
 }
 
 const handleContextMenuClickoutside = async () => {
@@ -287,39 +287,23 @@ onMounted(async () => {
         <n-gi span="1">
           <n-card title="友链分类">
             <template #header-extra>
-              <n-button
-                type="primary"
-                style="margin-right: 5px"
-                @click="openGroupEditDialog('新增')"
-              >
+              <n-button type="primary" style="margin-right: 5px" @click="openGroupEditDialog('新增')">
                 <i class="fas fa-plus mr-2"></i>新增分类
               </n-button>
               <n-button @click="onSearchCategory()">刷新</n-button>
             </template>
             <ul class="space-y-2">
               <!-- 示例相册 -->
-              <li
-                v-for="(item, index) in flinkGroups"
-                :key="index"
-                :class="{ active: item.id == currentFlinkGroup }"
+              <li v-for="(item, index) in flinkGroups" :key="index" :class="{ active: item.id == currentFlinkGroup }"
                 class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 flink-group-item"
-                @click="switchCurrentFlinkGroup(item.id!)"
-                @contextmenu="(e) => handleFlinkGroupContextMenu(e, item)"
-              >
+                @click="switchCurrentFlinkGroup(item.id!)" @contextmenu="(e) => handleFlinkGroupContextMenu(e, item)">
                 <span class="text-gray-800 dark:text-gray-200">{{ item.name }}</span>
                 <span class="text-sm text-gray-500 dark:text-gray-400">{{ item.count }} 个</span>
               </li>
             </ul>
-            <n-dropdown
-              placement="bottom-start"
-              trigger="manual"
-              :x="contextMenuX"
-              :y="contextMenuY"
-              :options="dropdownOptions"
-              :show="showDropdownRef"
-              :on-clickoutside="handleContextMenuClickoutside"
-              @select="handleContextMenuSelect"
-            />
+            <n-dropdown placement="bottom-start" trigger="manual" :x="contextMenuX" :y="contextMenuY"
+              :options="dropdownOptions" :show="showDropdownRef" :on-clickoutside="handleContextMenuClickoutside"
+              @select="handleContextMenuSelect" />
           </n-card>
         </n-gi>
         <n-gi span="2">
@@ -328,19 +312,13 @@ onMounted(async () => {
               <div class="header-section">
                 <div class="title">友链管理</div>
                 <div>
-                  <n-button type="primary" @click="openEditDialog('新增')" style="margin-right: 5px"
-                    >添加友链</n-button
-                  >
+                  <n-button type="primary" @click="openEditDialog('新增')" style="margin-right: 5px">添加友链</n-button>
                   <n-button @click="onSearchFlink()">刷新</n-button>
                 </div>
               </div>
             </template>
-            <n-data-table
-              :loading="loading"
-              :columns="columns"
-              :data="dataList"
-              :pagination="{ pageSize: 10 }"
-            />
+            <n-data-table :loading="loading" :columns="columns" :data="dataList" :pagination="{ pageSize: 10 }"
+              :remote="true" />
           </n-card>
         </n-gi>
       </n-grid>
@@ -349,10 +327,11 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-  .flink-card{
+.flink-card {
   max-width: 1600px;
   margin: 0 auto;
 }
+
 .header-section {
   display: flex;
   justify-content: space-between;
@@ -363,6 +342,7 @@ onMounted(async () => {
   font-size: 16px;
   font-weight: 500;
 }
+
 .flink-group-item.active {
   background-color: var(--color-gray-100);
 }

@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { BASE_URL, type ApiResponse } from "../utils";
+import { BASE_URL, type ApiResponse } from "@/api/utils";
 
 export const getPayOrderList = ()=>{
   return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/pay-order/page`);

@@ -209,6 +209,7 @@ onMounted(() => {
         :columns="columns"
         :data="data"
         :pagination="{ pageSize: 10 }"
+        :remote="true"
       />
     </n-card>
   </div>

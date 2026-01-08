@@ -112,6 +112,7 @@ const openEditDialog=(title="新增",row?:any)=>{
         :loading="loading"
         :pagination="pagination"
         :row-key="(row) => row.id"
+        :remote="true"
       />
     </n-card>
 

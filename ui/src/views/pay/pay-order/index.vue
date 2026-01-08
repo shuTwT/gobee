@@ -100,6 +100,7 @@
         :pagination="pagination"
         :row-key="(row) => row.id"
         :scroll-x="1500"
+        :remote="true"
         class="order-table"
       />
     </n-card>

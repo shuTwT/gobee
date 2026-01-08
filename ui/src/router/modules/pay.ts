@@ -15,7 +15,7 @@ export default [
             {
                 path: '/pay-order',
                 name: 'PayOrderManagement',
-                component: () => import('@/views/pay-order/index.vue'),
+                component: () => import('@/views/pay/pay-order/index.vue'),
                 meta: {
                     title: '支付订单管理',
                     showLink: true,
