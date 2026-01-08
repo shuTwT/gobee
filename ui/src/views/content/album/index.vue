@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as albumApi from '@/api/album'
+import * as albumApi from '@/api/content/album'
 import * as albumPhotoApi from '@/api/content/albumPhoto'
 import { addDialog } from '@/components/dialog'
 import albumForm from "./albumForm.vue"

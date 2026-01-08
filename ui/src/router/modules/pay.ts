@@ -9,6 +9,7 @@ export default [
             title: '支付订单管理',
             showLink: true,
             roles: ['admin', 'common'],
+            rank: 40
         },
         children: [
             {

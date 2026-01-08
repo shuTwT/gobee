@@ -14,7 +14,7 @@ export default [
             {
                 path: '/post',
                 name: 'PostManagement',
-                component: () => import('@/views/post/index.vue'),
+                component: () => import('@/views/content/post/index.vue'),
                 meta: {
                     title: '文章管理',
                     showLink: true,
@@ -24,7 +24,7 @@ export default [
             {
                 path: '/post/edit',
                 name: 'PostEditor',
-                component: () => import('@/views/post/editor/index.vue'),
+                component: () => import('@/views/content/post/editor/index.vue'),
                 meta: {
                     title: '文章编辑',
                     showLink: false,
@@ -54,7 +54,7 @@ export default [
             {
                 path: '/flink',
                 name: 'FlinkManagement',
-                component: () => import('@/views/flink/index.vue'),
+                component: () => import('@/views/content/flink/index.vue'),
                 meta: {
                     title: '友链管理',
                     showLink: true,

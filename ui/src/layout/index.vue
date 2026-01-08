@@ -10,7 +10,7 @@ import { remainingPaths } from '@/router'
 import { findRouteByPath, getParentPaths } from '@/router/utils'
 
 defineOptions({
-  name:"AdminLayout"
+  name: "AdminLayout"
 })
 
 const route = useRoute()
@@ -118,8 +118,8 @@ function logout() {
     type: 'info',
     title: '提示',
     content: '确定要登出吗',
-    positiveText:'确定',
-    negativeText:'不确定',
+    positiveText: '确定',
+    negativeText: '不确定',
     onPositiveClick: () => {
       // 发送登出请求
       userStore.logOut().then(() => {
@@ -128,7 +128,7 @@ function logout() {
         })
       })
     },
-    onNegativeClick: () => {},
+    onNegativeClick: () => { },
   })
 }
 
@@ -198,34 +198,27 @@ onMounted(() => {
 </script>
 <template>
   <div class="app-wrapper h-dvh w-dvw">
-    <pro-layout
-      v-model:collapsed="collapsed"
-      :mode="layoutMode"
-      :show-nav="showNav"
-      :show-logo="showLogo"
-      :is-mobile="isMobile"
-      :nav-fixed="navFixed"
-      :nav-height="navHeight"
-      :show-footer="showFooter"
-      :show-tabbar="showTabbar"
-      :show-sidebar="showSidebar"
-      :footer-fixed="footerFixed"
-      :footer-height="footerHeight"
-      :sidebar-width="sidebarWidth"
-      :tabbar-height="tabbarHeight"
-      :sidebar-collapsed-width="sidebarCollapsedWidth"
-      :builtin-theme-overrides="layoutThemeOverrides"
-      logo-class="flex justify-center"
-    >
+    <pro-layout v-model:collapsed="collapsed" :mode="layoutMode" :show-nav="showNav" :show-logo="showLogo"
+      :is-mobile="isMobile" :nav-fixed="navFixed" :nav-height="navHeight" :show-footer="showFooter"
+      :show-tabbar="showTabbar" :show-sidebar="showSidebar" :footer-fixed="footerFixed" :footer-height="footerHeight"
+      :sidebar-width="sidebarWidth" :tabbar-height="tabbarHeight" :sidebar-collapsed-width="sidebarCollapsedWidth"
+      :builtin-theme-overrides="layoutThemeOverrides" logo-class="flex justify-center">
       <template #logo>
         <n-image src="/console/logo.png" :preview-disabled="true" width="64" />
       </template>
       <template #nav-left>
         <template v-if="!isMobile">
           <div class="flex items-center h-full pl-6">
-            <span v-for="(item, index) in levelList" :key="index">
-              {{ item.meta?.title }}
-            </span>
+            <template v-for="(item, index) in levelList" :key="index">
+
+              <span>
+                {{ item.meta?.title }}
+              </span>
+              <template v-if="index == 0">
+                <n-divider vertical />
+              </template>
+            </template>
+
           </div>
         </template>
         <n-popover v-if="isMobile" trigger="click" style="padding: 0">
@@ -242,9 +235,7 @@ onMounted(() => {
         <n-menu v-if="hasHorizontalMenu" v-bind="layout.horizontalMenuProps" />
       </template>
       <template #footer>
-        <div
-          class="w-full h-full text-center leading-[var(--pro-layout-footer-height)] text-gray-500"
-        >
+        <div class="w-full h-full text-center leading-[var(--pro-layout-footer-height)] text-gray-500">
           <span>Copyright ©2025</span>
         </div>
       </template>
@@ -258,38 +249,27 @@ onMounted(() => {
         <div class="p-2">
           <div class="bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-2 shadow-sm">
             <div class="flex items-center space-x-3">
-              <n-avatar
-                class="cursor-pointer"
-                :style="{
-                  color: 'yellow',
-                  backgroundColor: 'red',
-                }"
-                @click="gotoUserCenter"
-              >
+              <n-avatar class="cursor-pointer" :style="{
+                color: 'yellow',
+                backgroundColor: 'red',
+              }" @click="gotoUserCenter">
                 M
               </n-avatar>
               <div class="flex-1 min-w-0">
-                <p
-                  class="text-sm font-medium text-gray-900 dark:text-white truncate cursor-pointer"
-                  @click="gotoUserCenter"
-                >
+                <p class="text-sm font-medium text-gray-900 dark:text-white truncate cursor-pointer"
+                  @click="gotoUserCenter">
                   {{ userStore.username }}
                 </p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {{ userStore.username }}
                 </p>
               </div>
-              <button
-                @click="logout()"
-                class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              >
+              <button @click="logout()"
+                class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                  </path>
                 </svg>
               </button>
             </div>
@@ -310,6 +290,7 @@ onMounted(() => {
   overflow-x: hidden;
   /* background-color: #f5f7fa; */
 }
+
 .app-main--vertical {
   display: flex;
   flex-direction: column;

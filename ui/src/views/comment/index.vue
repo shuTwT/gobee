@@ -19,7 +19,7 @@ import {
   deleteComment,
   type Comment,
   CommentStatus,
-} from '@/api/comment'
+} from '@/api/content/comment'
 import {apiClient,useApi} from "@/api"
 
 const message = useMessage()

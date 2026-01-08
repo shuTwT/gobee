@@ -9,6 +9,7 @@ export default [
       title: '会员管理',
       showLink: true,
       roles: ['admin'],
+      rank: 30
     },
   },
 ] satisfies RouteRecordRaw[]

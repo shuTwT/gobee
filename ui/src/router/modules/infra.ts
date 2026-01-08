@@ -14,7 +14,7 @@ export default [
             {
                 path: '/file',
                 name: 'FileManagement',
-                component: () => import('@/views/file/index.vue'),
+                component: () => import('@/views/infra/file/index.vue'),
                 meta: {
                     title: '文件管理',
                     showLink: true,
@@ -24,7 +24,7 @@ export default [
             {
                 path: '/storage-strategy',
                 name: 'StorageStrategyManagement',
-                component: () => import('@/views/storage-strategy/index.vue'),
+                component: () => import('@/views/infra/storage-strategy/index.vue'),
                 meta: {
                     title: '存储策略管理',
                     showLink: true,
