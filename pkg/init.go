@@ -18,6 +18,7 @@ import (
 	payorder "gobee/internal/services/pay_order"
 	permission_service "gobee/internal/services/permission"
 	post_service "gobee/internal/services/post"
+	product_service "gobee/internal/services/product"
 	role_service "gobee/internal/services/role"
 	setting_service "gobee/internal/services/setting"
 	storagestrategy_service "gobee/internal/services/storagestrategy"
@@ -36,6 +37,7 @@ type ServiceMap struct {
 	FriendCircleService       friend_circle_service.FriendCircleService
 	PermissionService         permission_service.PermissionService
 	PostService               post_service.PostService
+	ProductService            product_service.ProductService
 	RoleService               role_service.RoleService
 	SettingService            setting_service.SettingService
 	UserService               user_service.UserService
@@ -72,6 +74,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	friendCircleService := friend_circle_service.NewFriendCircleServiceImpl(db)
 	permissionService := permission_service.NewPermissionServiceImpl(db)
 	postService := post_service.NewPostServiceImpl(db)
+	productService := product_service.NewProductServiceImpl(db)
 	roleService := role_service.NewRoleServiceImpl(db)
 	settingService := setting_service.NewSettingServiceImpl(db)
 	userService := user_service.NewUserServiceImpl(db)
@@ -98,6 +101,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		FriendCircleService:       friendCircleService,
 		PermissionService:         permissionService,
 		PostService:               postService,
+		ProductService:            productService,
 		RoleService:               roleService,
 		SettingService:            settingService,
 		UserService:               userService,

@@ -17,6 +17,7 @@ import (
 	initialize_handler "gobee/internal/handlers/initialize"
 	payorder_handler "gobee/internal/handlers/pay_order"
 	post_handler "gobee/internal/handlers/post"
+	product_handler "gobee/internal/handlers/product"
 	role_handler "gobee/internal/handlers/role"
 	route_handler "gobee/internal/handlers/route"
 	setting_handler "gobee/internal/handlers/setting"
@@ -42,6 +43,7 @@ type HandlerMap struct {
 	InitializeHandler         initialize_handler.InitializeHandler
 	PayOrderHandler           payorder_handler.PayOrderHandler
 	PostHandler               post_handler.PostHandler
+	ProductHandler            product_handler.ProductHandler
 	RoleHandler               role_handler.RoleHandler
 	RouteHandler              route_handler.RouteHandler
 	SettingHandler            setting_handler.SettingHandler
@@ -67,6 +69,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	initializeHandler := initialize_handler.NewInitializeHandlerImpl(serviceMap.UserService, serviceMap.SettingService)
 	payOrderHandler := payorder_handler.NewPayOrderHandlerImpl(database.DB, serviceMap.PayOrderService)
 	postHandler := post_handler.NewPostHandlerImpl(serviceMap.PostService)
+	productHandler := product_handler.NewProductHandlerImpl(serviceMap.ProductService)
 	roleHandler := role_handler.NewRoleHandlerImpl(serviceMap.RoleService)
 	routeHandler := route_handler.NewRouteHandlerImpl()
 	settingHandler := setting_handler.NewSettingHandlerImpl(serviceMap.SettingService)
@@ -91,6 +94,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		InitializeHandler:         initializeHandler,
 		PayOrderHandler:           payOrderHandler,
 		PostHandler:               postHandler,
+		ProductHandler:            productHandler,
 		RoleHandler:               roleHandler,
 		RouteHandler:              routeHandler,
 		SettingHandler:            settingHandler,

@@ -106,6 +106,14 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 				postApi.Delete("/delete/:id", handlerMap.PostHandler.DeletePost).Name("postDelete")
 				postApi.Get("/summary/stream/:id", handlerMap.PostHandler.GetSummaryForStream).Name("postSummaryStream")
 			}
+			productApi := apiV1.Group("/products")
+			{
+				productApi.Get("/list", handlerMap.ProductHandler.ListProducts).Name("productList")
+				productApi.Post("/create", handlerMap.ProductHandler.CreateProduct).Name("productCreate")
+				productApi.Put("/update/:id", handlerMap.ProductHandler.UpdateProduct).Name("productUpdate")
+				productApi.Get("/query/:id", handlerMap.ProductHandler.QueryProduct).Name("productQuery")
+				productApi.Delete("/delete/:id", handlerMap.ProductHandler.DeleteProduct).Name("productDelete")
+			}
 			commentApi := apiV1.Group("/comment")
 			{
 				commentApi.Get("/page", handlerMap.CommentHandler.ListCommentPage).Name("commentPage")
