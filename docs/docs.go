@@ -1801,6 +1801,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/flink/random": {
+            "get": {
+                "description": "随机查询Flink",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flink"
+                ],
+                "summary": "随机查询Flink",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ent.FLink"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/flink/update/{id}": {
             "put": {
                 "description": "更新Flink",
@@ -2415,237 +2462,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/paychannels": {
-            "get": {
-                "description": "获取所有支付渠道的列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "paychannels"
-                ],
-                "summary": "获取支付渠道列表",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ent.PayChannel"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "创建一个新的支付渠道",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "paychannels"
-                ],
-                "summary": "创建支付渠道",
-                "parameters": [
-                    {
-                        "description": "支付渠道信息",
-                        "name": "paychannel",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ent.PayChannel"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ent.PayChannel"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/paychannels/{id}": {
-            "get": {
-                "description": "查询指定支付渠道的详细信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "paychannels"
-                ],
-                "summary": "查询支付渠道",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "支付渠道ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ent.PayChannel"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "更新指定支付渠道的信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "paychannels"
-                ],
-                "summary": "更新支付渠道",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "支付渠道ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "支付渠道信息",
-                        "name": "paychannel",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ent.PayChannel"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ent.PayChannel"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "删除指定支付渠道",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "paychannels"
-                ],
-                "summary": "删除支付渠道",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "支付渠道ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpSuccess"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
@@ -3381,6 +3197,285 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/ent.Post"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products/create": {
+            "post": {
+                "description": "创建一个新商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "创建商品",
+                "parameters": [
+                    {
+                        "description": "商品创建请求",
+                        "name": "product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ProductCreateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ent.Product"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products/delete/{id}": {
+            "delete": {
+                "description": "删除指定商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "删除商品",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "商品ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products/list": {
+            "get": {
+                "description": "查询所有商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "查询所有商品",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ent.Product"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products/query/{id}": {
+            "get": {
+                "description": "查询指定商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "查询商品",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "商品ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ent.Product"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products/update/{id}": {
+            "put": {
+                "description": "更新指定商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "更新商品",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "商品ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "商品更新请求",
+                        "name": "product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ProductUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ent.Product"
                                         }
                                     }
                                 }
@@ -4979,6 +5074,172 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/wallet/page": {
+            "get": {
+                "description": "查询所有钱包的分页列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallet"
+                ],
+                "summary": "查询钱包分页列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "每页数量",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PageResult-ent_Wallet"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/wallet/query/{user_id}": {
+            "get": {
+                "description": "查询指定用户的钱包信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallet"
+                ],
+                "summary": "查询钱包",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ent.Wallet"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/wallet/update/{id}": {
+            "put": {
+                "description": "更新指定钱包的信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallet"
+                ],
+                "summary": "更新钱包",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "钱包ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "钱包更新请求",
+                        "name": "wallet",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.WalletUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ent.Wallet"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -5245,6 +5506,10 @@ const docTemplate = `{
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
                     "type": "string"
                 },
+                "description": {
+                    "description": "描述",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the FLinkGroupQuery when eager-loading is set.",
                     "allOf": [
@@ -5357,36 +5622,81 @@ const docTemplate = `{
                 }
             }
         },
-        "ent.PayChannel": {
+        "ent.Member": {
             "type": "object",
             "properties": {
-                "code": {
-                    "description": "支付渠道代码",
-                    "type": "string"
-                },
-                "config": {
-                    "description": "支付渠道配置",
-                    "type": "string"
+                "active": {
+                    "description": "是否激活",
+                    "type": "boolean"
                 },
                 "created_at": {
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the MemberQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.MemberEdges"
+                        }
+                    ]
+                },
+                "expire_time": {
+                    "description": "会员到期时间",
                     "type": "string"
                 },
                 "id": {
                     "description": "ID of the ent.",
                     "type": "integer"
                 },
-                "name": {
-                    "description": "支付渠道名称",
+                "join_time": {
+                    "description": "入会时间",
                     "type": "string"
                 },
-                "type": {
-                    "description": "支付渠道类型",
+                "member_level": {
+                    "description": "会员等级ID",
+                    "type": "integer"
+                },
+                "member_no": {
+                    "description": "会员编号",
                     "type": "string"
+                },
+                "order_count": {
+                    "description": "订单数量",
+                    "type": "integer"
+                },
+                "points": {
+                    "description": "会员积分",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "total_spent": {
+                    "description": "累计消费金额(分)",
+                    "type": "integer"
                 },
                 "updated_at": {
                     "description": "UpdatedAt holds the value of the \"updated_at\" field.",
                     "type": "string"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "ent.MemberEdges": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
                 }
             }
         },
@@ -5397,7 +5707,7 @@ const docTemplate = `{
                     "description": "订单描述",
                     "type": "string"
                 },
-                "channel_id": {
+                "channel_type": {
                     "description": "支付渠道ID",
                     "type": "string"
                 },
@@ -5478,6 +5788,14 @@ const docTemplate = `{
                     "description": "文章内容",
                     "type": "string"
                 },
+                "content_type": {
+                    "description": "内容类型",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/post.ContentType"
+                        }
+                    ]
+                },
                 "copyright": {
                     "description": "文章版权",
                     "type": "string"
@@ -5488,6 +5806,10 @@ const docTemplate = `{
                 },
                 "created_at": {
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "html_content": {
+                    "description": "html文章内容",
                     "type": "string"
                 },
                 "id": {
@@ -5510,9 +5832,25 @@ const docTemplate = `{
                     "description": "是否可见",
                     "type": "boolean"
                 },
+                "is_visible_after_comment": {
+                    "description": "是否评论后可见",
+                    "type": "boolean"
+                },
+                "is_visible_after_pay": {
+                    "description": "是否支付后可见",
+                    "type": "boolean"
+                },
                 "keywords": {
                     "description": "文章关键词",
                     "type": "string"
+                },
+                "md_content": {
+                    "description": "md文章内容",
+                    "type": "string"
+                },
+                "money": {
+                    "description": "支付金额",
+                    "type": "integer"
                 },
                 "published_at": {
                     "description": "发布时间",
@@ -5541,6 +5879,130 @@ const docTemplate = `{
                 "view_count": {
                     "description": "浏览次数",
                     "type": "integer"
+                }
+            }
+        },
+        "ent.Product": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "description": "是否上架",
+                    "type": "boolean"
+                },
+                "attributes": {
+                    "description": "商品属性",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "brand": {
+                    "description": "品牌",
+                    "type": "string"
+                },
+                "category_id": {
+                    "description": "分类ID",
+                    "type": "integer"
+                },
+                "cost_price": {
+                    "description": "成本价(分)",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "商品描述",
+                    "type": "string"
+                },
+                "digital": {
+                    "description": "是否数字商品",
+                    "type": "boolean"
+                },
+                "featured": {
+                    "description": "是否推荐",
+                    "type": "boolean"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "images": {
+                    "description": "商品图片列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "meta_description": {
+                    "description": "SEO描述",
+                    "type": "string"
+                },
+                "meta_keywords": {
+                    "description": "SEO关键词",
+                    "type": "string"
+                },
+                "meta_title": {
+                    "description": "SEO标题",
+                    "type": "string"
+                },
+                "min_stock": {
+                    "description": "最低库存预警",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "商品名称",
+                    "type": "string"
+                },
+                "original_price": {
+                    "description": "原价(分)",
+                    "type": "integer"
+                },
+                "price": {
+                    "description": "商品价格(分)",
+                    "type": "integer"
+                },
+                "sales": {
+                    "description": "销售数量",
+                    "type": "integer"
+                },
+                "short_description": {
+                    "description": "简短描述",
+                    "type": "string"
+                },
+                "sku": {
+                    "description": "商品SKU",
+                    "type": "string"
+                },
+                "sort_order": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "stock": {
+                    "description": "库存数量",
+                    "type": "integer"
+                },
+                "tags": {
+                    "description": "商品标签",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
+                    "description": "单位",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "volume": {
+                    "description": "体积(立方米)",
+                    "type": "number"
+                },
+                "weight": {
+                    "description": "重量(kg)",
+                    "type": "number"
                 }
             }
         },
@@ -5714,11 +6176,93 @@ const docTemplate = `{
         "ent.UserEdges": {
             "type": "object",
             "properties": {
+                "member": {
+                    "description": "Member holds the value of the member edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Member"
+                        }
+                    ]
+                },
                 "role": {
                     "description": "Role holds the value of the role edge.",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ent.Role"
+                        }
+                    ]
+                },
+                "wallet": {
+                    "description": "Wallet holds the value of the wallet edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Wallet"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.Wallet": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "description": "是否激活",
+                    "type": "boolean"
+                },
+                "balance": {
+                    "description": "余额(分)",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the WalletQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.WalletEdges"
+                        }
+                    ]
+                },
+                "frozen_amount": {
+                    "description": "冻结金额(分)",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "total_expense": {
+                    "description": "总支出(分)",
+                    "type": "integer"
+                },
+                "total_income": {
+                    "description": "总收入(分)",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "ent.WalletEdges": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
                         }
                     ]
                 }
@@ -5908,6 +6452,9 @@ const docTemplate = `{
         },
         "model.FlinkCreateReq": {
             "type": "object",
+            "required": [
+                "group_id"
+            ],
             "properties": {
                 "avatar_url": {
                     "description": "logo",
@@ -5932,6 +6479,9 @@ const docTemplate = `{
                     "description": "朋友圈解析规则",
                     "type": "integer"
                 },
+                "group_id": {
+                    "type": "integer"
+                },
                 "name": {
                     "description": "名称",
                     "type": "string"
@@ -5942,6 +6492,23 @@ const docTemplate = `{
                 },
                 "url": {
                     "description": "链接",
+                    "type": "string"
+                }
+            }
+        },
+        "model.FlinkGroupResp": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -5976,6 +6543,9 @@ const docTemplate = `{
                     "description": "朋友圈解析规则",
                     "type": "integer"
                 },
+                "group": {
+                    "$ref": "#/definitions/model.FlinkGroupResp"
+                },
                 "id": {
                     "description": "ID of the ent.",
                     "type": "integer"
@@ -6004,6 +6574,9 @@ const docTemplate = `{
         },
         "model.FlinkUpdateReq": {
             "type": "object",
+            "required": [
+                "group_id"
+            ],
             "properties": {
                 "avatar_url": {
                     "description": "logo",
@@ -6026,6 +6599,9 @@ const docTemplate = `{
                 },
                 "friend_circle_rule_id": {
                     "description": "朋友圈解析规则",
+                    "type": "integer"
+                },
+                "group_id": {
                     "type": "integer"
                 },
                 "id": {
@@ -6308,6 +6884,20 @@ const docTemplate = `{
                 }
             }
         },
+        "model.PageResult-ent_Wallet": {
+            "type": "object",
+            "properties": {
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Wallet"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.PageResult-model_ApiRoute": {
             "type": "object",
             "properties": {
@@ -6546,6 +7136,183 @@ const docTemplate = `{
                 }
             }
         },
+        "model.ProductCreateReq": {
+            "type": "object",
+            "required": [
+                "name",
+                "price",
+                "sku",
+                "stock"
+            ],
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "attributes": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "brand": {
+                    "type": "string"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "cost_price": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "digital": {
+                    "type": "boolean"
+                },
+                "featured": {
+                    "type": "boolean"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "meta_description": {
+                    "type": "string"
+                },
+                "meta_keywords": {
+                    "type": "string"
+                },
+                "meta_title": {
+                    "type": "string"
+                },
+                "min_stock": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "original_price": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "short_description": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "volume": {
+                    "type": "number"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "model.ProductUpdateReq": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "attributes": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "brand": {
+                    "type": "string"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "cost_price": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "digital": {
+                    "type": "boolean"
+                },
+                "featured": {
+                    "type": "boolean"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "meta_description": {
+                    "type": "string"
+                },
+                "meta_keywords": {
+                    "type": "string"
+                },
+                "meta_title": {
+                    "type": "string"
+                },
+                "min_stock": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "original_price": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "sales": {
+                    "type": "integer"
+                },
+                "short_description": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "volume": {
+                    "type": "number"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
         "model.RoleCreateReq": {
             "type": "object",
             "required": [
@@ -6611,6 +7378,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "node_id": {
                     "type": "string"
                 },
                 "region": {
@@ -6751,6 +7521,34 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        },
+        "model.WalletUpdateReq": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "remark": {
+                    "type": "string"
+                }
+            }
+        },
+        "post.ContentType": {
+            "type": "string",
+            "enum": [
+                "html",
+                "markdown",
+                "html"
+            ],
+            "x-enum-varnames": [
+                "DefaultContentType",
+                "ContentTypeMarkdown",
+                "ContentTypeHTML"
+            ]
         },
         "post.Status": {
             "type": "string",

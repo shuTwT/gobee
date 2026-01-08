@@ -187,6 +187,9 @@ definitions:
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
+      description:
+        description: 描述
+        type: string
       edges:
         allOf:
         - $ref: '#/definitions/ent.FLinkGroupEdges'
@@ -268,36 +271,67 @@ definitions:
         description: 更新时间选择器
         type: string
     type: object
-  ent.PayChannel:
+  ent.Member:
     properties:
-      code:
-        description: 支付渠道代码
-        type: string
-      config:
-        description: 支付渠道配置
-        type: string
+      active:
+        description: 是否激活
+        type: boolean
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.MemberEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the MemberQuery when eager-loading is set.
+      expire_time:
+        description: 会员到期时间
         type: string
       id:
         description: ID of the ent.
         type: integer
-      name:
-        description: 支付渠道名称
+      join_time:
+        description: 入会时间
         type: string
-      type:
-        description: 支付渠道类型
+      member_level:
+        description: 会员等级ID
+        type: integer
+      member_no:
+        description: 会员编号
         type: string
+      order_count:
+        description: 订单数量
+        type: integer
+      points:
+        description: 会员积分
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      total_spent:
+        description: 累计消费金额(分)
+        type: integer
       updated_at:
         description: UpdatedAt holds the value of the "updated_at" field.
         type: string
+      user_id:
+        description: 用户ID
+        type: integer
+    type: object
+  ent.MemberEdges:
+    properties:
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
     type: object
   ent.PayOrder:
     properties:
       body:
         description: 订单描述
         type: string
-      channel_id:
+      channel_type:
         description: 支付渠道ID
         type: string
       created_at:
@@ -357,6 +391,10 @@ definitions:
       content:
         description: 文章内容
         type: string
+      content_type:
+        allOf:
+        - $ref: '#/definitions/post.ContentType'
+        description: 内容类型
       copyright:
         description: 文章版权
         type: string
@@ -365,6 +403,9 @@ definitions:
         type: string
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      html_content:
+        description: html文章内容
         type: string
       id:
         description: ID of the ent.
@@ -381,9 +422,21 @@ definitions:
       is_visible:
         description: 是否可见
         type: boolean
+      is_visible_after_comment:
+        description: 是否评论后可见
+        type: boolean
+      is_visible_after_pay:
+        description: 是否支付后可见
+        type: boolean
       keywords:
         description: 文章关键词
         type: string
+      md_content:
+        description: md文章内容
+        type: string
+      money:
+        description: 支付金额
+        type: integer
       published_at:
         description: 发布时间
         type: string
@@ -403,6 +456,98 @@ definitions:
       view_count:
         description: 浏览次数
         type: integer
+    type: object
+  ent.Product:
+    properties:
+      active:
+        description: 是否上架
+        type: boolean
+      attributes:
+        additionalProperties: true
+        description: 商品属性
+        type: object
+      brand:
+        description: 品牌
+        type: string
+      category_id:
+        description: 分类ID
+        type: integer
+      cost_price:
+        description: 成本价(分)
+        type: integer
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: 商品描述
+        type: string
+      digital:
+        description: 是否数字商品
+        type: boolean
+      featured:
+        description: 是否推荐
+        type: boolean
+      id:
+        description: ID of the ent.
+        type: integer
+      images:
+        description: 商品图片列表
+        items:
+          type: string
+        type: array
+      meta_description:
+        description: SEO描述
+        type: string
+      meta_keywords:
+        description: SEO关键词
+        type: string
+      meta_title:
+        description: SEO标题
+        type: string
+      min_stock:
+        description: 最低库存预警
+        type: integer
+      name:
+        description: 商品名称
+        type: string
+      original_price:
+        description: 原价(分)
+        type: integer
+      price:
+        description: 商品价格(分)
+        type: integer
+      sales:
+        description: 销售数量
+        type: integer
+      short_description:
+        description: 简短描述
+        type: string
+      sku:
+        description: 商品SKU
+        type: string
+      sort_order:
+        description: 排序
+        type: integer
+      stock:
+        description: 库存数量
+        type: integer
+      tags:
+        description: 商品标签
+        items:
+          type: string
+        type: array
+      unit:
+        description: 单位
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      volume:
+        description: 体积(立方米)
+        type: number
+      weight:
+        description: 重量(kg)
+        type: number
     type: object
   ent.Role:
     properties:
@@ -527,10 +672,64 @@ definitions:
     type: object
   ent.UserEdges:
     properties:
+      member:
+        allOf:
+        - $ref: '#/definitions/ent.Member'
+        description: Member holds the value of the member edge.
       role:
         allOf:
         - $ref: '#/definitions/ent.Role'
         description: Role holds the value of the role edge.
+      wallet:
+        allOf:
+        - $ref: '#/definitions/ent.Wallet'
+        description: Wallet holds the value of the wallet edge.
+    type: object
+  ent.Wallet:
+    properties:
+      active:
+        description: 是否激活
+        type: boolean
+      balance:
+        description: 余额(分)
+        type: integer
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.WalletEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the WalletQuery when eager-loading is set.
+      frozen_amount:
+        description: 冻结金额(分)
+        type: integer
+      id:
+        description: ID of the ent.
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      total_expense:
+        description: 总支出(分)
+        type: integer
+      total_income:
+        description: 总收入(分)
+        type: integer
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      user_id:
+        description: 用户ID
+        type: integer
+    type: object
+  ent.WalletEdges:
+    properties:
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
     type: object
   model.AIResponse:
     properties:
@@ -672,6 +871,8 @@ definitions:
       friend_circle_rule_id:
         description: 朋友圈解析规则
         type: integer
+      group_id:
+        type: integer
       name:
         description: 名称
         type: string
@@ -680,6 +881,19 @@ definitions:
         type: string
       url:
         description: 链接
+        type: string
+    required:
+    - group_id
+    type: object
+  model.FlinkGroupResp:
+    properties:
+      count:
+        type: integer
+      description:
+        type: string
+      id:
+        type: integer
+      name:
         type: string
     type: object
   model.FlinkResp:
@@ -704,6 +918,8 @@ definitions:
       friend_circle_rule_id:
         description: 朋友圈解析规则
         type: integer
+      group:
+        $ref: '#/definitions/model.FlinkGroupResp'
       id:
         description: ID of the ent.
         type: integer
@@ -742,6 +958,8 @@ definitions:
       friend_circle_rule_id:
         description: 朋友圈解析规则
         type: integer
+      group_id:
+        type: integer
       id:
         description: ID of the ent.
         type: integer
@@ -754,6 +972,8 @@ definitions:
       url:
         description: 链接
         type: string
+    required:
+    - group_id
     type: object
   model.FriendCircleRecordResp:
     properties:
@@ -936,6 +1156,15 @@ definitions:
       total:
         type: integer
     type: object
+  model.PageResult-ent_Wallet:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/ent.Wallet'
+        type: array
+      total:
+        type: integer
+    type: object
   model.PageResult-model_ApiRoute:
     properties:
       records:
@@ -1095,6 +1324,125 @@ definitions:
       title:
         type: string
     type: object
+  model.ProductCreateReq:
+    properties:
+      active:
+        type: boolean
+      attributes:
+        additionalProperties: true
+        type: object
+      brand:
+        type: string
+      category_id:
+        type: integer
+      cost_price:
+        type: integer
+      description:
+        type: string
+      digital:
+        type: boolean
+      featured:
+        type: boolean
+      images:
+        items:
+          type: string
+        type: array
+      meta_description:
+        type: string
+      meta_keywords:
+        type: string
+      meta_title:
+        type: string
+      min_stock:
+        type: integer
+      name:
+        type: string
+      original_price:
+        type: integer
+      price:
+        type: integer
+      short_description:
+        type: string
+      sku:
+        type: string
+      sort_order:
+        type: integer
+      stock:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      unit:
+        type: string
+      volume:
+        type: number
+      weight:
+        type: number
+    required:
+    - name
+    - price
+    - sku
+    - stock
+    type: object
+  model.ProductUpdateReq:
+    properties:
+      active:
+        type: boolean
+      attributes:
+        additionalProperties: true
+        type: object
+      brand:
+        type: string
+      category_id:
+        type: integer
+      cost_price:
+        type: integer
+      description:
+        type: string
+      digital:
+        type: boolean
+      featured:
+        type: boolean
+      images:
+        items:
+          type: string
+        type: array
+      meta_description:
+        type: string
+      meta_keywords:
+        type: string
+      meta_title:
+        type: string
+      min_stock:
+        type: integer
+      name:
+        type: string
+      original_price:
+        type: integer
+      price:
+        type: integer
+      sales:
+        type: integer
+      short_description:
+        type: string
+      sku:
+        type: string
+      sort_order:
+        type: integer
+      stock:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      unit:
+        type: string
+      volume:
+        type: number
+      weight:
+        type: number
+    type: object
   model.RoleCreateReq:
     properties:
       code:
@@ -1135,6 +1483,8 @@ definitions:
       master:
         type: boolean
       name:
+        type: string
+      node_id:
         type: string
       region:
         type: string
@@ -1232,6 +1582,26 @@ definitions:
       role_id:
         type: integer
     type: object
+  model.WalletUpdateReq:
+    properties:
+      active:
+        type: boolean
+      password:
+        minLength: 6
+        type: string
+      remark:
+        type: string
+    type: object
+  post.ContentType:
+    enum:
+    - html
+    - markdown
+    - html
+    type: string
+    x-enum-varnames:
+    - DefaultContentType
+    - ContentTypeMarkdown
+    - ContentTypeHTML
   post.Status:
     enum:
     - draft
@@ -2389,6 +2759,34 @@ paths:
       summary: 查询Flink
       tags:
       - flink
+  /api/v1/flink/random:
+    get:
+      consumes:
+      - application/json
+      description: 随机查询Flink
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.FLink'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 随机查询Flink
+      tags:
+      - flink
   /api/v1/flink/update/{id}:
     put:
       consumes:
@@ -2738,159 +3136,6 @@ paths:
       summary: 获取朋友圈规则分页列表
       tags:
       - friend_circle_rules
-  /api/v1/paychannels:
-    get:
-      consumes:
-      - application/json
-      description: 获取所有支付渠道的列表
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/ent.PayChannel'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 获取支付渠道列表
-      tags:
-      - paychannels
-    post:
-      consumes:
-      - application/json
-      description: 创建一个新的支付渠道
-      parameters:
-      - description: 支付渠道信息
-        in: body
-        name: paychannel
-        required: true
-        schema:
-          $ref: '#/definitions/ent.PayChannel'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/ent.PayChannel'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 创建支付渠道
-      tags:
-      - paychannels
-  /api/v1/paychannels/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: 删除指定支付渠道
-      parameters:
-      - description: 支付渠道ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.HttpSuccess'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 删除支付渠道
-      tags:
-      - paychannels
-    get:
-      consumes:
-      - application/json
-      description: 查询指定支付渠道的详细信息
-      parameters:
-      - description: 支付渠道ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/ent.PayChannel'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 查询支付渠道
-      tags:
-      - paychannels
-    put:
-      consumes:
-      - application/json
-      description: 更新指定支付渠道的信息
-      parameters:
-      - description: 支付渠道ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: 支付渠道信息
-        in: body
-        name: paychannel
-        required: true
-        schema:
-          $ref: '#/definitions/ent.PayChannel'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/ent.PayChannel'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 更新支付渠道
-      tags:
-      - paychannels
   /api/v1/payorders:
     get:
       consumes:
@@ -3353,6 +3598,175 @@ paths:
       summary: 取消发布文章
       tags:
       - posts
+  /api/v1/products/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新商品
+      parameters:
+      - description: 商品创建请求
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProductCreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建商品
+      tags:
+      - products
+  /api/v1/products/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定商品
+      parameters:
+      - description: 商品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除商品
+      tags:
+      - products
+  /api/v1/products/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询所有商品
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/ent.Product'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询所有商品
+      tags:
+      - products
+  /api/v1/products/query/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 查询指定商品
+      parameters:
+      - description: 商品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询商品
+      tags:
+      - products
+  /api/v1/products/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 更新指定商品
+      parameters:
+      - description: 商品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 商品更新请求
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProductUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新商品
+      tags:
+      - products
   /api/v1/roles:
     get:
       consumes:
@@ -4334,4 +4748,111 @@ paths:
       summary: 更新用户
       tags:
       - user
+  /api/v1/wallet/page:
+    get:
+      consumes:
+      - application/json
+      description: 查询所有钱包的分页列表
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-ent_Wallet'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询钱包分页列表
+      tags:
+      - wallet
+  /api/v1/wallet/query/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: 查询指定用户的钱包信息
+      parameters:
+      - description: 用户ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.Wallet'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询钱包
+      tags:
+      - wallet
+  /api/v1/wallet/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 更新指定钱包的信息
+      parameters:
+      - description: 钱包ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 钱包更新请求
+        in: body
+        name: wallet
+        required: true
+        schema:
+          $ref: '#/definitions/model.WalletUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.Wallet'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新钱包
+      tags:
+      - wallet
 swagger: "2.0"

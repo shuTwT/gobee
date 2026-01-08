@@ -26,3 +26,5 @@
   - `/query/:id`：查询指定 ID 的资源 GET
   - `/delete/:id`：删除指定 ID 的资源 DELETE
 - 在未经说明的情况下，`/list`的路由无需被生成
+
+- 后端运行在`localhost:13000`，前端运行在`localhost:5732`
