@@ -12,24 +12,24 @@ const aiModelOptions = [
 ]
 const aiFormRef = ref<FormInst|null>(null)
 const defaultForm = {
-  openaiApiKey: '',
-  openaiApiUrl: 'https://api.openai.com/v1',
-  aiModel: 'gpt-3.5-turbo',
-  aiTemperature: 0.7,
-  aiMaxTokens: 2048,
-  aiTopP: 1.0,
-  aiFrequencyPenalty: 0,
-  aiPresencePenalty: 0,
+  openai_api_key: '',
+  openai_api_url: 'https://api.openai.com/v1',
+  ai_model: 'gpt-3.5-turbo',
+  ai_memperature: 0.7,
+  ai_maxTokens: 2048,
+  ai_topP: 1.0,
+  ai_frequency_penalty: 0,
+  ai_presence_penalty: 0,
 }
 const aiForm = ref<AiSetting>({
-  openaiApiKey: '',
-  openaiApiUrl: 'https://api.openai.com/v1',
-  aiModel: 'gpt-3.5-turbo',
-  aiTemperature: 0.7,
-  aiMaxTokens: 2048,
-  aiTopP: 1.0,
-  aiFrequencyPenalty: 0,
-  aiPresencePenalty: 0,
+  openai_api_key: '',
+  openai_api_url: 'https://api.openai.com/v1',
+  ai_model: 'gpt-3.5-turbo',
+  ai_memperature: 0.7,
+  ai_maxTokens: 2048,
+  ai_topP: 1.0,
+  ai_frequency_penalty: 0,
+  ai_presence_penalty: 0,
 })
 
 
@@ -79,36 +79,40 @@ onMounted(()=>{
   >
     <n-form-item label="OpenAI API Key" path="openaiApiKey">
       <n-input
-        v-model:value="aiForm.openaiApiKey"
+        v-model:value="aiForm.openai_api_key"
         type="password"
         placeholder="请输入OpenAI API密钥"
         show-password-on="mousedown"
       />
     </n-form-item>
     <n-form-item label="OpenAI API地址" path="openaiApiUrl">
-      <n-input v-model:value="aiForm.openaiApiUrl" placeholder="https://api.openai.com/v1" />
+      <n-input v-model:value="aiForm.openai_api_url" placeholder="https://api.openai.com/v1" />
     </n-form-item>
     <n-form-item label="AI模型" path="aiModel">
-      <n-select v-model:value="aiForm.aiModel" :options="aiModelOptions" />
+      <div class="w-full flex">
+       <n-select v-model:value="aiForm.ai_model" :options="aiModelOptions" /> 
+       <n-button>刷新</n-button>
+      </div>
+      
     </n-form-item>
     <n-form-item label="AI温度" path="aiTemperature">
-      <n-slider v-model:value="aiForm.aiTemperature" :min="0" :max="2" :step="0.1" />
-      <span class="slider-value">{{ aiForm.aiTemperature }}</span>
+      <n-slider v-model:value="aiForm.ai_memperature" :min="0" :max="2" :step="0.1" />
+      <span class="slider-value">{{ aiForm.ai_memperature }}</span>
     </n-form-item>
     <n-form-item label="AI最大令牌数" path="aiMaxTokens">
-      <n-input-number v-model:value="aiForm.aiMaxTokens" :min="1" :max="8192" />
+      <n-input-number v-model:value="aiForm.ai_maxTokens" :min="1" :max="8192" />
     </n-form-item>
     <n-form-item label="AI Top P" path="aiTopP">
-      <n-slider v-model:value="aiForm.aiTopP" :min="0" :max="1" :step="0.1" />
-      <span class="slider-value">{{ aiForm.aiTopP }}</span>
+      <n-slider v-model:value="aiForm.ai_topP" :min="0" :max="1" :step="0.1" />
+      <span class="slider-value">{{ aiForm.ai_topP }}</span>
     </n-form-item>
     <n-form-item label="AI频率惩罚" path="aiFrequencyPenalty">
-      <n-slider v-model:value="aiForm.aiFrequencyPenalty" :min="-2" :max="2" :step="0.1" />
-      <span class="slider-value">{{ aiForm.aiFrequencyPenalty }}</span>
+      <n-slider v-model:value="aiForm.ai_frequency_penalty" :min="-2" :max="2" :step="0.1" />
+      <span class="slider-value">{{ aiForm.ai_frequency_penalty }}</span>
     </n-form-item>
     <n-form-item label="AI存在惩罚" path="aiPresencePenalty">
-      <n-slider v-model:value="aiForm.aiPresencePenalty" :min="-2" :max="2" :step="0.1" />
-      <span class="slider-value">{{ aiForm.aiPresencePenalty }}</span>
+      <n-slider v-model:value="aiForm.ai_presence_penalty" :min="-2" :max="2" :step="0.1" />
+      <span class="slider-value">{{ aiForm.ai_presence_penalty }}</span>
     </n-form-item>
     <n-form-item>
       <n-button type="primary" @click="saveAISettings" :loading="aiLoading"> 保存AI设置 </n-button>
