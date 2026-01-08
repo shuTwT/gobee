@@ -2,18 +2,6 @@ package model
 
 import "time"
 
-// File represents the file domain model.
-type File struct {
-	ID        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Name      string    `json:"name"`
-	Path      string    `json:"path"`
-	URL       string    `json:"url"`
-	Type      string    `json:"type"`
-	Size      string    `json:"size"`
-}
-
 // FileCreateReq represents the request body for creating a file.
 
 type FileCreateReq struct {

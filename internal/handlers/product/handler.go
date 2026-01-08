@@ -1,6 +1,7 @@
 package product
 
 import (
+	"gobee/ent"
 	"gobee/pkg/domain/model"
 	"strconv"
 
@@ -11,10 +12,13 @@ import (
 
 type ProductHandler interface {
 	ListProducts(c *fiber.Ctx) error
+	ListProductsPage(c *fiber.Ctx) error
 	CreateProduct(c *fiber.Ctx) error
 	UpdateProduct(c *fiber.Ctx) error
 	QueryProduct(c *fiber.Ctx) error
 	DeleteProduct(c *fiber.Ctx) error
+	BatchUpdateProducts(c *fiber.Ctx) error
+	BatchDeleteProducts(c *fiber.Ctx) error
 }
 
 type ProductHandlerImpl struct {
@@ -42,6 +46,42 @@ func (h *ProductHandlerImpl) ListProducts(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(model.NewSuccess("success", products))
+}
+
+// @Summary 分页查询商品
+// @Description 分页查询商品
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param page query int false "页码"
+// @Param size query int false "每页数量"
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult}
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/products/page [get]
+func (h *ProductHandlerImpl) ListProductsPage(c *fiber.Ctx) error {
+	var pageQuery model.PageQuery
+
+	if err := c.QueryParser(&pageQuery); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+
+	if pageQuery.Page < 1 {
+		pageQuery.Page = 1
+	}
+	if pageQuery.Size < 1 {
+		pageQuery.Size = 10
+	}
+
+	products, total, err := h.productService.ListProducts(c.Context(), pageQuery.Page, pageQuery.Size)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	pageResult := model.PageResult[*ent.Product]{
+		Total:   int64(total),
+		Records: products,
+	}
+	return c.JSON(model.NewSuccess("success", pageResult))
 }
 
 // @Summary 创建商品
@@ -139,6 +179,32 @@ func (h *ProductHandlerImpl) DeleteProduct(c *fiber.Ctx) error {
 	}
 
 	if err := h.productService.DeleteProduct(c.Context(), id); err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	return c.JSON(model.NewSuccess("success", nil))
+}
+
+func (h *ProductHandlerImpl) BatchUpdateProducts(c *fiber.Ctx) error {
+	var req *model.ProductBatchUpdateReq
+	if err := c.BodyParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+
+	if err := h.productService.BatchUpdateProducts(c.Context(), req.IDs, req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	return c.JSON(model.NewSuccess("success", nil))
+}
+
+func (h *ProductHandlerImpl) BatchDeleteProducts(c *fiber.Ctx) error {
+	var req *model.ProductBatchDeleteReq
+	if err := c.BodyParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+
+	if err := h.productService.BatchDeleteProducts(c.Context(), req.IDs); err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 

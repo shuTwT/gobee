@@ -125,10 +125,13 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			productApi := apiV1.Group("/products")
 			{
 				productApi.Get("/list", handlerMap.ProductHandler.ListProducts).Name("productList")
+				productApi.Get("/page", handlerMap.ProductHandler.ListProductsPage).Name("productPage")
 				productApi.Post("/create", handlerMap.ProductHandler.CreateProduct).Name("productCreate")
 				productApi.Put("/update/:id", handlerMap.ProductHandler.UpdateProduct).Name("productUpdate")
 				productApi.Get("/query/:id", handlerMap.ProductHandler.QueryProduct).Name("productQuery")
 				productApi.Delete("/delete/:id", handlerMap.ProductHandler.DeleteProduct).Name("productDelete")
+				productApi.Put("/batch", handlerMap.ProductHandler.BatchUpdateProducts).Name("productBatchUpdate")
+				productApi.Post("/batch/delete", handlerMap.ProductHandler.BatchDeleteProducts).Name("productBatchDelete")
 			}
 			commentApi := apiV1.Group("/comment")
 			{

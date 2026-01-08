@@ -2,23 +2,6 @@ package model
 
 import "time"
 
-// Comment represents the comment domain model.
-type Comment struct {
-	ID         int       `json:"id"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
-	PostID     int       `json:"post_id"`
-	PageID     int       `json:"page_id"`
-	URL        string    `json:"url"`
-	Content    string    `json:"content"`
-	UserID     int       `json:"user_id"`
-	Status     int       `json:"status"`
-	UserAgent  *string   `json:"user_agent,omitempty"`
-	IPAddress  string    `json:"ip_address"`
-	IPLocation *string   `json:"ip_location,omitempty"`
-	Pinned     bool      `json:"pinned"`
-}
-
 // CommentCreateReq represents the request body for creating a comment.
 
 type CommentCreateReq struct {

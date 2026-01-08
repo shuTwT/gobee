@@ -2,16 +2,6 @@ package model
 
 import "time"
 
-// Setting represents the setting domain model.
-type Setting struct {
-	ID        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Key       string    `json:"key"`
-	Value     string    `json:"value"`
-	Comment   *string   `json:"comment,omitempty"`
-}
-
 // SettingCreateReq represents the request body for creating a setting.
 type SettingCreateReq struct {
 	Key     string  `json:"key" validate:"required"`

@@ -2,18 +2,6 @@ package model
 
 import "time"
 
-// Role represents the role domain model.
-type Role struct {
-	ID          int       `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	Name        string    `json:"name"`
-	Code        string    `json:"code"`
-	Description *string   `json:"description,omitempty"`
-	IsDefault   bool      `json:"is_default"`
-	Users       []*User   `json:"users,omitempty"`
-}
-
 // RoleCreateReq represents the request body for creating a role.
 
 type RoleCreateReq struct {

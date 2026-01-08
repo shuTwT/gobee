@@ -27,6 +27,15 @@ type ProductCreateReq struct {
 	SortOrder        *int                   `json:"sort_order,omitempty"`
 }
 
+type ProductBatchUpdateReq struct {
+	IDs    []int  `json:"ids" validate:"required"`
+	Active *bool  `json:"active,omitempty"`
+}
+
+type ProductBatchDeleteReq struct {
+	IDs []int `json:"ids" validate:"required"`
+}
+
 type ProductUpdateReq struct {
 	Name             *string                `json:"name,omitempty"`
 	Description      *string                `json:"description,omitempty"`

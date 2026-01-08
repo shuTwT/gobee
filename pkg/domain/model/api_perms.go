@@ -2,20 +2,6 @@ package model
 
 import "time"
 
-// ApiPerms represents the API permissions domain model.
-type ApiPerms struct {
-	ID             int       `json:"id"`
-	CreatedAt      time.Time `json:"created_at"`
-	UpdatedAt      time.Time `json:"updated_at"`
-	Name           string    `json:"name"`
-	Path           string    `json:"path"`
-	Method         string    `json:"method"`
-	Desc           string    `json:"desc"`
-	PermissionType string    `json:"permission_type"`
-	Roles          []string  `json:"roles"`
-	Status         string    `json:"status"`
-}
-
 // ApiPermsCreateReq represents the request body for creating an API permission.
 
 type ApiPermsCreateReq struct {

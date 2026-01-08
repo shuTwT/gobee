@@ -2,24 +2,6 @@ package model
 
 import "time"
 
-// StorageStrategy represents the storage strategy domain model.
-type StorageStrategy struct {
-	ID        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Name      string    `json:"name"`
-	Type      string    `json:"type"`
-	NodeID    string    `json:"node_id"`
-	Endpoint  string    `json:"endpoint"`
-	Region    string    `json:"region"`
-	Bucket    string    `json:"bucket"`
-	AccessKey string    `json:"access_key"`
-	SecretKey string    `json:"secret_key"`
-	BasePath  string    `json:"base_path"`
-	Domain    string    `json:"domain"`
-	Master    bool      `json:"master"`
-}
-
 // StorageStrategyCreateReq represents the request body for creating a storage strategy.
 type StorageStrategyCreateReq struct {
 	Name      string `json:"name" validate:"required"`

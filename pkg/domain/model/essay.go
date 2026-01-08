@@ -1,12 +1,5 @@
 package model
 
-type Essay struct {
-	ID      int64    `json:"id"`
-	Content string   `json:"content"`
-	Draft   bool     `json:"draft"`
-	Images  []string `json:"images"`
-}
-
 type EssayCreateReq struct {
 	Content string   `json:"content"`
 	Draft   bool     `json:"draft"`

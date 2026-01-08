@@ -2,16 +2,6 @@ package model
 
 import "time"
 
-// WebHook represents the webhook domain model.
-type WebHook struct {
-	ID        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Name      string    `json:"name"`
-	URL       string    `json:"url"`
-	Event     string    `json:"event"`
-}
-
 // WebHookCreateReq represents the request body for creating a webhook.
 type WebHookCreateReq struct {
 	Name  string `json:"name" validate:"required"`

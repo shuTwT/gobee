@@ -2,18 +2,6 @@ package model
 
 import "time"
 
-// Oauth2RefreshToken represents the OAuth2 refresh token domain model.
-type Oauth2RefreshToken struct {
-	ID           int       `json:"id"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
-	UserID       int       `json:"user_id"`
-	RefreshToken string    `json:"refresh_token"`
-	ClientID     string    `json:"client_id"`
-	Scope        string    `json:"scope"`
-	ExpireAt     time.Time `json:"expire_at"`
-}
-
 // Oauth2RefreshTokenCreateReq represents the request body for creating an OAuth2 refresh token.
 
 type Oauth2RefreshTokenCreateReq struct {

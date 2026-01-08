@@ -2,18 +2,6 @@ package model
 
 import "time"
 
-// AlbumPhoto represents the album photo domain model.
-type AlbumPhoto struct {
-	ID          int       `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	ImageURL    string    `json:"image_url"`
-	ViewCount   int       `json:"view_count"`
-	AlbumID     int       `json:"album_id"`
-}
-
 // AlbumPhotoCreateReq represents the request body for creating an album photo.
 
 type AlbumPhotoCreateReq struct {

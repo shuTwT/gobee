@@ -8,21 +8,6 @@ import (
 	"time"
 )
 
-// User represents the user domain model.
-type User struct {
-	ID                  int       `json:"id"`
-	CreatedAt           time.Time `json:"created_at"`
-	UpdatedAt           time.Time `json:"updated_at"`
-	Email               string    `json:"email"`
-	EmailVerified       bool      `json:"email_verified"`
-	Name                string    `json:"name"`
-	PhoneNumber         *string   `json:"phone_number,omitempty"`
-	PhoneNumberVerified bool      `json:"phone_number_verified"`
-	Password            string    `json:"-"` // Sensitive field, excluded from JSON output
-	RoleID              *int      `json:"role_id,omitempty"`
-	Role                *Role     `json:"role,omitempty"`
-}
-
 // UserCreateReq represents the request body for creating a user.
 
 type UserCreateReq struct {

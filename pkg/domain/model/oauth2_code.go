@@ -2,19 +2,6 @@ package model
 
 import "time"
 
-// Oauth2Code represents the OAuth2 authorization code domain model.
-type Oauth2Code struct {
-	ID          int       `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	UserID      int       `json:"user_id"`
-	Code        string    `json:"code"`
-	ExpireAt    time.Time `json:"expire_at"`
-	ClientID    string    `json:"client_id"`
-	RedirectURI string    `json:"redirect_uri"`
-	Scope       string    `json:"scope"`
-}
-
 // Oauth2CodeCreateReq represents the request body for creating an OAuth2 authorization code.
 
 type Oauth2CodeCreateReq struct {

@@ -2,16 +2,6 @@ package model
 
 import "time"
 
-// Album represents the album domain model.
-type Album struct {
-	ID          int       `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	Name        string    `json:"name"`
-	Description string    `json:"description,omitempty"`
-	Sort        int       `json:"sort"`
-}
-
 // AlbumCreateReq represents the request body for creating an album.
 
 type AlbumCreateReq struct {

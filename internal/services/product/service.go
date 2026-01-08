@@ -14,6 +14,8 @@ type ProductService interface {
 	GetProduct(ctx context.Context, id int) (*ent.Product, error)
 	ListProducts(ctx context.Context, page, pageSize int) ([]*ent.Product, int, error)
 	ListAllProducts(ctx context.Context) ([]*ent.Product, error)
+	BatchUpdateProducts(ctx context.Context, ids []int, req *model.ProductBatchUpdateReq) error
+	BatchDeleteProducts(ctx context.Context, ids []int) error
 }
 
 type ProductServiceImpl struct {
@@ -213,4 +215,31 @@ func (s *ProductServiceImpl) ListAllProducts(ctx context.Context) ([]*ent.Produc
 	return s.client.Product.Query().
 		Order(ent.Desc(product.FieldCreatedAt)).
 		All(ctx)
+}
+
+func (s *ProductServiceImpl) BatchUpdateProducts(ctx context.Context, ids []int, req *model.ProductBatchUpdateReq) error {
+	if len(ids) == 0 {
+		return nil
+	}
+
+	updateBuilder := s.client.Product.Update().
+		Where(product.IDIn(ids...))
+
+	if req.Active != nil {
+		updateBuilder.SetActive(*req.Active)
+	}
+
+	_, err := updateBuilder.Save(ctx)
+	return err
+}
+
+func (s *ProductServiceImpl) BatchDeleteProducts(ctx context.Context, ids []int) error {
+	if len(ids) == 0 {
+		return nil
+	}
+
+	_, err := s.client.Product.Delete().
+		Where(product.IDIn(ids...)).
+		Exec(ctx)
+	return err
 }
