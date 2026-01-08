@@ -3985,6 +3985,22 @@ func (c *UserClient) QueryMember(_m *User) *MemberQuery {
 	return query
 }
 
+// QueryWallet queries the wallet edge of a User.
+func (c *UserClient) QueryWallet(_m *User) *WalletQuery {
+	query := (&WalletClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(wallet.Table, wallet.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.WalletTable, user.WalletColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -4249,6 +4265,22 @@ func (c *WalletClient) GetX(ctx context.Context, id int) *Wallet {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryUser queries the user edge of a Wallet.
+func (c *WalletClient) QueryUser(_m *Wallet) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(wallet.Table, wallet.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, wallet.UserTable, wallet.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

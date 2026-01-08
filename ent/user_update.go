@@ -10,6 +10,7 @@ import (
 	"gobee/ent/predicate"
 	"gobee/ent/role"
 	"gobee/ent/user"
+	"gobee/ent/wallet"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -156,6 +157,25 @@ func (_u *UserUpdate) SetMember(v *Member) *UserUpdate {
 	return _u.SetMemberID(v.ID)
 }
 
+// SetWalletID sets the "wallet" edge to the Wallet entity by ID.
+func (_u *UserUpdate) SetWalletID(id int) *UserUpdate {
+	_u.mutation.SetWalletID(id)
+	return _u
+}
+
+// SetNillableWalletID sets the "wallet" edge to the Wallet entity by ID if the given value is not nil.
+func (_u *UserUpdate) SetNillableWalletID(id *int) *UserUpdate {
+	if id != nil {
+		_u = _u.SetWalletID(*id)
+	}
+	return _u
+}
+
+// SetWallet sets the "wallet" edge to the Wallet entity.
+func (_u *UserUpdate) SetWallet(v *Wallet) *UserUpdate {
+	return _u.SetWalletID(v.ID)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdate) Mutation() *UserMutation {
 	return _u.mutation
@@ -170,6 +190,12 @@ func (_u *UserUpdate) ClearRole() *UserUpdate {
 // ClearMember clears the "member" edge to the Member entity.
 func (_u *UserUpdate) ClearMember() *UserUpdate {
 	_u.mutation.ClearMember()
+	return _u
+}
+
+// ClearWallet clears the "wallet" edge to the Wallet entity.
+func (_u *UserUpdate) ClearWallet() *UserUpdate {
+	_u.mutation.ClearWallet()
 	return _u
 }
 
@@ -308,6 +334,35 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.WalletCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.WalletTable,
+			Columns: []string{user.WalletColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.WalletIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.WalletTable,
+			Columns: []string{user.WalletColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -461,6 +516,25 @@ func (_u *UserUpdateOne) SetMember(v *Member) *UserUpdateOne {
 	return _u.SetMemberID(v.ID)
 }
 
+// SetWalletID sets the "wallet" edge to the Wallet entity by ID.
+func (_u *UserUpdateOne) SetWalletID(id int) *UserUpdateOne {
+	_u.mutation.SetWalletID(id)
+	return _u
+}
+
+// SetNillableWalletID sets the "wallet" edge to the Wallet entity by ID if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableWalletID(id *int) *UserUpdateOne {
+	if id != nil {
+		_u = _u.SetWalletID(*id)
+	}
+	return _u
+}
+
+// SetWallet sets the "wallet" edge to the Wallet entity.
+func (_u *UserUpdateOne) SetWallet(v *Wallet) *UserUpdateOne {
+	return _u.SetWalletID(v.ID)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdateOne) Mutation() *UserMutation {
 	return _u.mutation
@@ -475,6 +549,12 @@ func (_u *UserUpdateOne) ClearRole() *UserUpdateOne {
 // ClearMember clears the "member" edge to the Member entity.
 func (_u *UserUpdateOne) ClearMember() *UserUpdateOne {
 	_u.mutation.ClearMember()
+	return _u
+}
+
+// ClearWallet clears the "wallet" edge to the Wallet entity.
+func (_u *UserUpdateOne) ClearWallet() *UserUpdateOne {
+	_u.mutation.ClearWallet()
 	return _u
 }
 
@@ -643,6 +723,35 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.WalletCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.WalletTable,
+			Columns: []string{user.WalletColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.WalletIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.WalletTable,
+			Columns: []string{user.WalletColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

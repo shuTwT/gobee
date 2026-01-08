@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -20,7 +21,6 @@ func (Wallet) Mixin() []ent.Mixin {
 func (Wallet) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("user_id").
-			Optional().
 			Comment("用户ID"),
 		field.Int("balance").
 			Default(0).
@@ -51,5 +51,13 @@ func (Wallet) Fields() []ent.Field {
 
 // Edges of the Wallet.
 func (Wallet) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.From("user", User.Type).
+			Ref("wallet").
+			Field("user_id").
+			// 一个用户只能有一个钱包
+			Unique().
+			//没有用户就没有钱包
+			Required(),
+	}
 }

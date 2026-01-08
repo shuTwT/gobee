@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"gobee/ent/predicate"
+	"gobee/ent/user"
 	"gobee/ent/wallet"
 	"time"
 
@@ -36,7 +37,6 @@ func (_u *WalletUpdate) SetUpdatedAt(v time.Time) *WalletUpdate {
 
 // SetUserID sets the "user_id" field.
 func (_u *WalletUpdate) SetUserID(v int) *WalletUpdate {
-	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
@@ -46,18 +46,6 @@ func (_u *WalletUpdate) SetNillableUserID(v *int) *WalletUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
-	return _u
-}
-
-// AddUserID adds value to the "user_id" field.
-func (_u *WalletUpdate) AddUserID(v int) *WalletUpdate {
-	_u.mutation.AddUserID(v)
-	return _u
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (_u *WalletUpdate) ClearUserID() *WalletUpdate {
-	_u.mutation.ClearUserID()
 	return _u
 }
 
@@ -199,9 +187,20 @@ func (_u *WalletUpdate) ClearRemark() *WalletUpdate {
 	return _u
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_u *WalletUpdate) SetUser(v *User) *WalletUpdate {
+	return _u.SetUserID(v.ID)
+}
+
 // Mutation returns the WalletMutation object of the builder.
 func (_u *WalletUpdate) Mutation() *WalletMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *WalletUpdate) ClearUser() *WalletUpdate {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -252,6 +251,9 @@ func (_u *WalletUpdate) check() error {
 			return &ValidationError{Name: "remark", err: fmt.Errorf(`ent: validator failed for field "Wallet.remark": %w`, err)}
 		}
 	}
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Wallet.user"`)
+	}
 	return nil
 }
 
@@ -269,15 +271,6 @@ func (_u *WalletUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(wallet.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(wallet.FieldUserID, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(wallet.FieldUserID, field.TypeInt, value)
-	}
-	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(wallet.FieldUserID, field.TypeInt)
 	}
 	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(wallet.FieldBalance, field.TypeInt, value)
@@ -318,6 +311,35 @@ func (_u *WalletUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.RemarkCleared() {
 		_spec.ClearField(wallet.FieldRemark, field.TypeString)
 	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   wallet.UserTable,
+			Columns: []string{wallet.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   wallet.UserTable,
+			Columns: []string{wallet.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{wallet.Label}
@@ -346,7 +368,6 @@ func (_u *WalletUpdateOne) SetUpdatedAt(v time.Time) *WalletUpdateOne {
 
 // SetUserID sets the "user_id" field.
 func (_u *WalletUpdateOne) SetUserID(v int) *WalletUpdateOne {
-	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
@@ -356,18 +377,6 @@ func (_u *WalletUpdateOne) SetNillableUserID(v *int) *WalletUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
-	return _u
-}
-
-// AddUserID adds value to the "user_id" field.
-func (_u *WalletUpdateOne) AddUserID(v int) *WalletUpdateOne {
-	_u.mutation.AddUserID(v)
-	return _u
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (_u *WalletUpdateOne) ClearUserID() *WalletUpdateOne {
-	_u.mutation.ClearUserID()
 	return _u
 }
 
@@ -509,9 +518,20 @@ func (_u *WalletUpdateOne) ClearRemark() *WalletUpdateOne {
 	return _u
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_u *WalletUpdateOne) SetUser(v *User) *WalletUpdateOne {
+	return _u.SetUserID(v.ID)
+}
+
 // Mutation returns the WalletMutation object of the builder.
 func (_u *WalletUpdateOne) Mutation() *WalletMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *WalletUpdateOne) ClearUser() *WalletUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // Where appends a list predicates to the WalletUpdate builder.
@@ -575,6 +595,9 @@ func (_u *WalletUpdateOne) check() error {
 			return &ValidationError{Name: "remark", err: fmt.Errorf(`ent: validator failed for field "Wallet.remark": %w`, err)}
 		}
 	}
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Wallet.user"`)
+	}
 	return nil
 }
 
@@ -609,15 +632,6 @@ func (_u *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err erro
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(wallet.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(wallet.FieldUserID, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(wallet.FieldUserID, field.TypeInt, value)
-	}
-	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(wallet.FieldUserID, field.TypeInt)
 	}
 	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(wallet.FieldBalance, field.TypeInt, value)
@@ -657,6 +671,35 @@ func (_u *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err erro
 	}
 	if _u.mutation.RemarkCleared() {
 		_spec.ClearField(wallet.FieldRemark, field.TypeString)
+	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   wallet.UserTable,
+			Columns: []string{wallet.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   wallet.UserTable,
+			Columns: []string{wallet.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Wallet{config: _u.config}
 	_spec.Assign = _node.assignValues

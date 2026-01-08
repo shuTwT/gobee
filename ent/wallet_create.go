@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gobee/ent/user"
 	"gobee/ent/wallet"
 	"time"
 
@@ -51,14 +52,6 @@ func (_c *WalletCreate) SetNillableUpdatedAt(v *time.Time) *WalletCreate {
 // SetUserID sets the "user_id" field.
 func (_c *WalletCreate) SetUserID(v int) *WalletCreate {
 	_c.mutation.SetUserID(v)
-	return _c
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *WalletCreate) SetNillableUserID(v *int) *WalletCreate {
-	if v != nil {
-		_c.SetUserID(*v)
-	}
 	return _c
 }
 
@@ -166,6 +159,11 @@ func (_c *WalletCreate) SetID(v int) *WalletCreate {
 	return _c
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_c *WalletCreate) SetUser(v *User) *WalletCreate {
+	return _c.SetUserID(v.ID)
+}
+
 // Mutation returns the WalletMutation object of the builder.
 func (_c *WalletCreate) Mutation() *WalletMutation {
 	return _c.mutation
@@ -239,6 +237,9 @@ func (_c *WalletCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Wallet.updated_at"`)}
 	}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Wallet.user_id"`)}
+	}
 	if _, ok := _c.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Wallet.balance"`)}
 	}
@@ -263,6 +264,9 @@ func (_c *WalletCreate) check() error {
 		if err := wallet.RemarkValidator(v); err != nil {
 			return &ValidationError{Name: "remark", err: fmt.Errorf(`ent: validator failed for field "Wallet.remark": %w`, err)}
 		}
+	}
+	if len(_c.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Wallet.user"`)}
 	}
 	return nil
 }
@@ -304,10 +308,6 @@ func (_c *WalletCreate) createSpec() (*Wallet, *sqlgraph.CreateSpec) {
 		_spec.SetField(wallet.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(wallet.FieldUserID, field.TypeInt, value)
-		_node.UserID = value
-	}
 	if value, ok := _c.mutation.Balance(); ok {
 		_spec.SetField(wallet.FieldBalance, field.TypeInt, value)
 		_node.Balance = value
@@ -335,6 +335,23 @@ func (_c *WalletCreate) createSpec() (*Wallet, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Remark(); ok {
 		_spec.SetField(wallet.FieldRemark, field.TypeString, value)
 		_node.Remark = value
+	}
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   wallet.UserTable,
+			Columns: []string{wallet.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

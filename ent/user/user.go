@@ -36,6 +36,8 @@ const (
 	EdgeRole = "role"
 	// EdgeMember holds the string denoting the member edge name in mutations.
 	EdgeMember = "member"
+	// EdgeWallet holds the string denoting the wallet edge name in mutations.
+	EdgeWallet = "wallet"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// RoleTable is the table that holds the role relation/edge.
@@ -52,6 +54,13 @@ const (
 	MemberInverseTable = "members"
 	// MemberColumn is the table column denoting the member relation/edge.
 	MemberColumn = "user_id"
+	// WalletTable is the table that holds the wallet relation/edge.
+	WalletTable = "wallets"
+	// WalletInverseTable is the table name for the Wallet entity.
+	// It exists in this package in order to avoid circular dependency with the "wallet" package.
+	WalletInverseTable = "wallets"
+	// WalletColumn is the table column denoting the wallet relation/edge.
+	WalletColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -165,6 +174,13 @@ func ByMemberField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newMemberStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByWalletField orders the results by wallet field.
+func ByWalletField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWalletStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newRoleStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -177,5 +193,12 @@ func newMemberStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MemberInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, MemberTable, MemberColumn),
+	)
+}
+func newWalletStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WalletInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, WalletTable, WalletColumn),
 	)
 }

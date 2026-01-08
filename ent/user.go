@@ -7,6 +7,7 @@ import (
 	"gobee/ent/member"
 	"gobee/ent/role"
 	"gobee/ent/user"
+	"gobee/ent/wallet"
 	"strings"
 	"time"
 
@@ -49,9 +50,11 @@ type UserEdges struct {
 	Role *Role `json:"role,omitempty"`
 	// Member holds the value of the member edge.
 	Member *Member `json:"member,omitempty"`
+	// Wallet holds the value of the wallet edge.
+	Wallet *Wallet `json:"wallet,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // RoleOrErr returns the Role value or an error if the edge
@@ -74,6 +77,17 @@ func (e UserEdges) MemberOrErr() (*Member, error) {
 		return nil, &NotFoundError{label: member.Label}
 	}
 	return nil, &NotLoadedError{edge: "member"}
+}
+
+// WalletOrErr returns the Wallet value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) WalletOrErr() (*Wallet, error) {
+	if e.Wallet != nil {
+		return e.Wallet, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: wallet.Label}
+	}
+	return nil, &NotLoadedError{edge: "wallet"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -185,6 +199,11 @@ func (_m *User) QueryRole() *RoleQuery {
 // QueryMember queries the "member" edge of the User entity.
 func (_m *User) QueryMember() *MemberQuery {
 	return NewUserClient(_m.config).QueryMember(_m)
+}
+
+// QueryWallet queries the "wallet" edge of the User entity.
+func (_m *User) QueryWallet() *WalletQuery {
+	return NewUserClient(_m.config).QueryWallet(_m)
 }
 
 // Update returns a builder for updating this User.

@@ -609,7 +609,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "user_id", Type: field.TypeInt, Nullable: true},
 		{Name: "balance", Type: field.TypeInt, Default: 0},
 		{Name: "frozen_amount", Type: field.TypeInt, Default: 0},
 		{Name: "total_income", Type: field.TypeInt, Default: 0},
@@ -617,12 +616,21 @@ var (
 		{Name: "password", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "active", Type: field.TypeBool, Default: true},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "user_id", Type: field.TypeInt, Unique: true},
 	}
 	// WalletsTable holds the schema information for the "wallets" table.
 	WalletsTable = &schema.Table{
 		Name:       "wallets",
 		Columns:    WalletsColumns,
 		PrimaryKey: []*schema.Column{WalletsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "wallets_users_wallet",
+				Columns:    []*schema.Column{WalletsColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// WebHooksColumns holds the columns for the "web_hooks" table.
 	WebHooksColumns = []*schema.Column{
@@ -678,4 +686,5 @@ func init() {
 	MembersTable.ForeignKeys[0].RefTable = MemberLevelsTable
 	MembersTable.ForeignKeys[1].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = RolesTable
+	WalletsTable.ForeignKeys[0].RefTable = UsersTable
 }

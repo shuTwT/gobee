@@ -9,6 +9,7 @@ import (
 	"gobee/ent/member"
 	"gobee/ent/role"
 	"gobee/ent/user"
+	"gobee/ent/wallet"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -160,6 +161,25 @@ func (_c *UserCreate) SetNillableMemberID(id *int) *UserCreate {
 // SetMember sets the "member" edge to the Member entity.
 func (_c *UserCreate) SetMember(v *Member) *UserCreate {
 	return _c.SetMemberID(v.ID)
+}
+
+// SetWalletID sets the "wallet" edge to the Wallet entity by ID.
+func (_c *UserCreate) SetWalletID(id int) *UserCreate {
+	_c.mutation.SetWalletID(id)
+	return _c
+}
+
+// SetNillableWalletID sets the "wallet" edge to the Wallet entity by ID if the given value is not nil.
+func (_c *UserCreate) SetNillableWalletID(id *int) *UserCreate {
+	if id != nil {
+		_c = _c.SetWalletID(*id)
+	}
+	return _c
+}
+
+// SetWallet sets the "wallet" edge to the Wallet entity.
+func (_c *UserCreate) SetWallet(v *Wallet) *UserCreate {
+	return _c.SetWalletID(v.ID)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -347,6 +367,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.WalletIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.WalletTable,
+			Columns: []string{user.WalletColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

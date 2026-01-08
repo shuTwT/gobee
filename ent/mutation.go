@@ -24819,6 +24819,8 @@ type UserMutation struct {
 	clearedrole           bool
 	member                *int
 	clearedmember         bool
+	wallet                *int
+	clearedwallet         bool
 	done                  bool
 	oldValue              func(context.Context) (*User, error)
 	predicates            []predicate.User
@@ -25344,6 +25346,45 @@ func (m *UserMutation) ResetMember() {
 	m.clearedmember = false
 }
 
+// SetWalletID sets the "wallet" edge to the Wallet entity by id.
+func (m *UserMutation) SetWalletID(id int) {
+	m.wallet = &id
+}
+
+// ClearWallet clears the "wallet" edge to the Wallet entity.
+func (m *UserMutation) ClearWallet() {
+	m.clearedwallet = true
+}
+
+// WalletCleared reports if the "wallet" edge to the Wallet entity was cleared.
+func (m *UserMutation) WalletCleared() bool {
+	return m.clearedwallet
+}
+
+// WalletID returns the "wallet" edge ID in the mutation.
+func (m *UserMutation) WalletID() (id int, exists bool) {
+	if m.wallet != nil {
+		return *m.wallet, true
+	}
+	return
+}
+
+// WalletIDs returns the "wallet" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// WalletID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) WalletIDs() (ids []int) {
+	if id := m.wallet; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetWallet resets all changes to the "wallet" edge.
+func (m *UserMutation) ResetWallet() {
+	m.wallet = nil
+	m.clearedwallet = false
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -25631,12 +25672,15 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.role != nil {
 		edges = append(edges, user.EdgeRole)
 	}
 	if m.member != nil {
 		edges = append(edges, user.EdgeMember)
+	}
+	if m.wallet != nil {
+		edges = append(edges, user.EdgeWallet)
 	}
 	return edges
 }
@@ -25653,13 +25697,17 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		if id := m.member; id != nil {
 			return []ent.Value{*id}
 		}
+	case user.EdgeWallet:
+		if id := m.wallet; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -25671,12 +25719,15 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedrole {
 		edges = append(edges, user.EdgeRole)
 	}
 	if m.clearedmember {
 		edges = append(edges, user.EdgeMember)
+	}
+	if m.clearedwallet {
+		edges = append(edges, user.EdgeWallet)
 	}
 	return edges
 }
@@ -25689,6 +25740,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedrole
 	case user.EdgeMember:
 		return m.clearedmember
+	case user.EdgeWallet:
+		return m.clearedwallet
 	}
 	return false
 }
@@ -25703,6 +25756,9 @@ func (m *UserMutation) ClearEdge(name string) error {
 	case user.EdgeMember:
 		m.ClearMember()
 		return nil
+	case user.EdgeWallet:
+		m.ClearWallet()
+		return nil
 	}
 	return fmt.Errorf("unknown User unique edge %s", name)
 }
@@ -25716,6 +25772,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeMember:
 		m.ResetMember()
+		return nil
+	case user.EdgeWallet:
+		m.ResetWallet()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
@@ -26518,8 +26577,6 @@ type WalletMutation struct {
 	id               *int
 	created_at       *time.Time
 	updated_at       *time.Time
-	user_id          *int
-	adduser_id       *int
 	balance          *int
 	addbalance       *int
 	frozen_amount    *int
@@ -26532,6 +26589,8 @@ type WalletMutation struct {
 	active           *bool
 	remark           *string
 	clearedFields    map[string]struct{}
+	user             *int
+	cleareduser      bool
 	done             bool
 	oldValue         func(context.Context) (*Wallet, error)
 	predicates       []predicate.Wallet
@@ -26715,13 +26774,12 @@ func (m *WalletMutation) ResetUpdatedAt() {
 
 // SetUserID sets the "user_id" field.
 func (m *WalletMutation) SetUserID(i int) {
-	m.user_id = &i
-	m.adduser_id = nil
+	m.user = &i
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
 func (m *WalletMutation) UserID() (r int, exists bool) {
-	v := m.user_id
+	v := m.user
 	if v == nil {
 		return
 	}
@@ -26745,42 +26803,9 @@ func (m *WalletMutation) OldUserID(ctx context.Context) (v int, err error) {
 	return oldValue.UserID, nil
 }
 
-// AddUserID adds i to the "user_id" field.
-func (m *WalletMutation) AddUserID(i int) {
-	if m.adduser_id != nil {
-		*m.adduser_id += i
-	} else {
-		m.adduser_id = &i
-	}
-}
-
-// AddedUserID returns the value that was added to the "user_id" field in this mutation.
-func (m *WalletMutation) AddedUserID() (r int, exists bool) {
-	v := m.adduser_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (m *WalletMutation) ClearUserID() {
-	m.user_id = nil
-	m.adduser_id = nil
-	m.clearedFields[wallet.FieldUserID] = struct{}{}
-}
-
-// UserIDCleared returns if the "user_id" field was cleared in this mutation.
-func (m *WalletMutation) UserIDCleared() bool {
-	_, ok := m.clearedFields[wallet.FieldUserID]
-	return ok
-}
-
 // ResetUserID resets all changes to the "user_id" field.
 func (m *WalletMutation) ResetUserID() {
-	m.user_id = nil
-	m.adduser_id = nil
-	delete(m.clearedFields, wallet.FieldUserID)
+	m.user = nil
 }
 
 // SetBalance sets the "balance" field.
@@ -27141,6 +27166,33 @@ func (m *WalletMutation) ResetRemark() {
 	delete(m.clearedFields, wallet.FieldRemark)
 }
 
+// ClearUser clears the "user" edge to the User entity.
+func (m *WalletMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[wallet.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *WalletMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *WalletMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *WalletMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
 // Where appends a list predicates to the WalletMutation builder.
 func (m *WalletMutation) Where(ps ...predicate.Wallet) {
 	m.predicates = append(m.predicates, ps...)
@@ -27182,7 +27234,7 @@ func (m *WalletMutation) Fields() []string {
 	if m.updated_at != nil {
 		fields = append(fields, wallet.FieldUpdatedAt)
 	}
-	if m.user_id != nil {
+	if m.user != nil {
 		fields = append(fields, wallet.FieldUserID)
 	}
 	if m.balance != nil {
@@ -27350,9 +27402,6 @@ func (m *WalletMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *WalletMutation) AddedFields() []string {
 	var fields []string
-	if m.adduser_id != nil {
-		fields = append(fields, wallet.FieldUserID)
-	}
 	if m.addbalance != nil {
 		fields = append(fields, wallet.FieldBalance)
 	}
@@ -27373,8 +27422,6 @@ func (m *WalletMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *WalletMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case wallet.FieldUserID:
-		return m.AddedUserID()
 	case wallet.FieldBalance:
 		return m.AddedBalance()
 	case wallet.FieldFrozenAmount:
@@ -27392,13 +27439,6 @@ func (m *WalletMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *WalletMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case wallet.FieldUserID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddUserID(v)
-		return nil
 	case wallet.FieldBalance:
 		v, ok := value.(int)
 		if !ok {
@@ -27435,9 +27475,6 @@ func (m *WalletMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *WalletMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(wallet.FieldUserID) {
-		fields = append(fields, wallet.FieldUserID)
-	}
 	if m.FieldCleared(wallet.FieldPassword) {
 		fields = append(fields, wallet.FieldPassword)
 	}
@@ -27458,9 +27495,6 @@ func (m *WalletMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *WalletMutation) ClearField(name string) error {
 	switch name {
-	case wallet.FieldUserID:
-		m.ClearUserID()
-		return nil
 	case wallet.FieldPassword:
 		m.ClearPassword()
 		return nil
@@ -27511,19 +27545,28 @@ func (m *WalletMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *WalletMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, wallet.EdgeUser)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *WalletMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case wallet.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *WalletMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -27535,25 +27578,42 @@ func (m *WalletMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *WalletMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, wallet.EdgeUser)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *WalletMutation) EdgeCleared(name string) bool {
+	switch name {
+	case wallet.EdgeUser:
+		return m.cleareduser
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *WalletMutation) ClearEdge(name string) error {
+	switch name {
+	case wallet.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
 	return fmt.Errorf("unknown Wallet unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *WalletMutation) ResetEdge(name string) error {
+	switch name {
+	case wallet.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
 	return fmt.Errorf("unknown Wallet edge %s", name)
 }
 

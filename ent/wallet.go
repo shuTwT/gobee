@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fmt"
+	"gobee/ent/user"
 	"gobee/ent/wallet"
 	"strings"
 	"time"
@@ -36,8 +37,31 @@ type Wallet struct {
 	// 是否激活
 	Active bool `json:"active,omitempty"`
 	// 备注
-	Remark       string `json:"remark,omitempty"`
+	Remark string `json:"remark,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the WalletQuery when eager-loading is set.
+	Edges        WalletEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// WalletEdges holds the relations/edges for other nodes in the graph.
+type WalletEdges struct {
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e WalletEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -145,6 +169,11 @@ func (_m *Wallet) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *Wallet) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryUser queries the "user" edge of the Wallet entity.
+func (_m *Wallet) QueryUser() *UserQuery {
+	return NewWalletClient(_m.config).QueryUser(_m)
 }
 
 // Update returns a builder for updating this Wallet.

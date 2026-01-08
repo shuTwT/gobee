@@ -52,5 +52,7 @@ func (User) Edges() []ent.Edge {
 			Unique().Field("role_id"),
 		edge.To("member", Member.Type).
 			Unique(),
+		edge.To("wallet", Wallet.Type).
+			Unique(),
 	}
 }
