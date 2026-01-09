@@ -35,7 +35,7 @@ export default [
       {
         path: '/system/webhook',
         name: 'WebhookManagement',
-        component: () => import('@/views/webhook/index.vue'),
+        component: () => import('@/views/system/webhook/index.vue'),
         meta: {
           title: 'webhook管理',
           showLink: true,

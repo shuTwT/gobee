@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// 注册系统路由
 func initSystemRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	settingsApi := router.Group("/settings")
 	{
@@ -34,6 +35,7 @@ func initSystemRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	}
 }
 
+// 注册内容路由
 func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	commentApi := router.Group("/comment")
 	{
@@ -99,6 +101,7 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	}
 }
 
+// 注册基础设施路由
 func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	storageStrategyApi := router.Group("/storage-strategy")
 	{
@@ -120,6 +123,7 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	}
 }
 
+// 注册商城路由
 func initMallRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	productApi := router.Group("/product")
 	{

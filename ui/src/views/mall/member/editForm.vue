@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
-import * as memberlevelService from '@/api/member/memberLevel'
-import type {FormProps,FormItemProps} from '@/views/member/member/utils/types'
+import * as memberlevelService from '@/api/mall/memberLevel'
+import type {FormProps,FormItemProps} from '@/views/mall/member/utils/types'
 
 
 

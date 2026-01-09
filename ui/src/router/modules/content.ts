@@ -45,7 +45,7 @@ export default [
             {
                 path: '/content/comment',
                 name: 'CommentManagement',
-                component: () => import('@/views/comment/index.vue'),
+                component: () => import('@/views/content/comment/index.vue'),
                 meta: {
                     title: '评论管理',
                     showLink: true,
@@ -65,7 +65,7 @@ export default [
             {
                 path: '/content/friend-circle',
                 name: 'FriendCircleRecord',
-                component: () => import('@/views/friend-circle/index.vue'),
+                component: () => import('@/views/content/friend-circle/index.vue'),
                 meta: {
                     title: '朋友圈',
                     showLink: true,
