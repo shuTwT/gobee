@@ -37,16 +37,16 @@ const (
 	FieldIsAutogenSummary = "is_autogen_summary"
 	// FieldIsVisible holds the string denoting the is_visible field in the database.
 	FieldIsVisible = "is_visible"
-	// FieldIsTipToTop holds the string denoting the is_tip_to_top field in the database.
-	FieldIsTipToTop = "is_tip_to_top"
+	// FieldIsPinToTop holds the string denoting the is_pin_to_top field in the database.
+	FieldIsPinToTop = "is_pin_to_top"
 	// FieldIsAllowComment holds the string denoting the is_allow_comment field in the database.
 	FieldIsAllowComment = "is_allow_comment"
 	// FieldIsVisibleAfterComment holds the string denoting the is_visible_after_comment field in the database.
 	FieldIsVisibleAfterComment = "is_visible_after_comment"
 	// FieldIsVisibleAfterPay holds the string denoting the is_visible_after_pay field in the database.
 	FieldIsVisibleAfterPay = "is_visible_after_pay"
-	// FieldMoney holds the string denoting the money field in the database.
-	FieldMoney = "money"
+	// FieldPrice holds the string denoting the price field in the database.
+	FieldPrice = "price"
 	// FieldPublishedAt holds the string denoting the published_at field in the database.
 	FieldPublishedAt = "published_at"
 	// FieldViewCount holds the string denoting the view_count field in the database.
@@ -95,11 +95,11 @@ var Columns = []string{
 	FieldStatus,
 	FieldIsAutogenSummary,
 	FieldIsVisible,
-	FieldIsTipToTop,
+	FieldIsPinToTop,
 	FieldIsAllowComment,
 	FieldIsVisibleAfterComment,
 	FieldIsVisibleAfterPay,
-	FieldMoney,
+	FieldPrice,
 	FieldPublishedAt,
 	FieldViewCount,
 	FieldCommentCount,
@@ -146,18 +146,18 @@ var (
 	DefaultIsAutogenSummary bool
 	// DefaultIsVisible holds the default value on creation for the "is_visible" field.
 	DefaultIsVisible bool
-	// DefaultIsTipToTop holds the default value on creation for the "is_tip_to_top" field.
-	DefaultIsTipToTop bool
+	// DefaultIsPinToTop holds the default value on creation for the "is_pin_to_top" field.
+	DefaultIsPinToTop bool
 	// DefaultIsAllowComment holds the default value on creation for the "is_allow_comment" field.
 	DefaultIsAllowComment bool
 	// DefaultIsVisibleAfterComment holds the default value on creation for the "is_visible_after_comment" field.
 	DefaultIsVisibleAfterComment bool
 	// DefaultIsVisibleAfterPay holds the default value on creation for the "is_visible_after_pay" field.
 	DefaultIsVisibleAfterPay bool
-	// DefaultMoney holds the default value on creation for the "money" field.
-	DefaultMoney int
-	// MoneyValidator is a validator for the "money" field. It is called by the builders before save.
-	MoneyValidator func(int) error
+	// DefaultPrice holds the default value on creation for the "price" field.
+	DefaultPrice int
+	// PriceValidator is a validator for the "price" field. It is called by the builders before save.
+	PriceValidator func(int) error
 	// DefaultViewCount holds the default value on creation for the "view_count" field.
 	DefaultViewCount int
 	// ViewCountValidator is a validator for the "view_count" field. It is called by the builders before save.
@@ -294,9 +294,9 @@ func ByIsVisible(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsVisible, opts...).ToFunc()
 }
 
-// ByIsTipToTop orders the results by the is_tip_to_top field.
-func ByIsTipToTop(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsTipToTop, opts...).ToFunc()
+// ByIsPinToTop orders the results by the is_pin_to_top field.
+func ByIsPinToTop(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsPinToTop, opts...).ToFunc()
 }
 
 // ByIsAllowComment orders the results by the is_allow_comment field.
@@ -314,9 +314,9 @@ func ByIsVisibleAfterPay(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsVisibleAfterPay, opts...).ToFunc()
 }
 
-// ByMoney orders the results by the money field.
-func ByMoney(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMoney, opts...).ToFunc()
+// ByPrice orders the results by the price field.
+func ByPrice(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPrice, opts...).ToFunc()
 }
 
 // ByPublishedAt orders the results by the published_at field.

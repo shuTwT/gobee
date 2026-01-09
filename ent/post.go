@@ -24,7 +24,7 @@ type Post struct {
 	// 文章标题
 	Title string `json:"title,omitempty"`
 	// 文章别名
-	Alias string `json:"alias,omitempty"`
+	Alias *string `json:"alias,omitempty"`
 	// 文章内容
 	Content string `json:"content,omitempty"`
 	// md文章内容
@@ -40,15 +40,15 @@ type Post struct {
 	// 是否可见
 	IsVisible bool `json:"is_visible,omitempty"`
 	// 是否置顶
-	IsTipToTop bool `json:"is_tip_to_top,omitempty"`
+	IsPinToTop bool `json:"is_pin_to_top,omitempty"`
 	// 是否允许评论
 	IsAllowComment bool `json:"is_allow_comment,omitempty"`
 	// 是否评论后可见
 	IsVisibleAfterComment bool `json:"is_visible_after_comment,omitempty"`
 	// 是否支付后可见
 	IsVisibleAfterPay bool `json:"is_visible_after_pay,omitempty"`
-	// 支付金额
-	Money int `json:"money,omitempty"`
+	// 文章价格
+	Price int `json:"price,omitempty"`
 	// 发布时间
 	PublishedAt *time.Time `json:"published_at,omitempty"`
 	// 浏览次数
@@ -105,9 +105,9 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case post.FieldIsAutogenSummary, post.FieldIsVisible, post.FieldIsTipToTop, post.FieldIsAllowComment, post.FieldIsVisibleAfterComment, post.FieldIsVisibleAfterPay:
+		case post.FieldIsAutogenSummary, post.FieldIsVisible, post.FieldIsPinToTop, post.FieldIsAllowComment, post.FieldIsVisibleAfterComment, post.FieldIsVisibleAfterPay:
 			values[i] = new(sql.NullBool)
-		case post.FieldID, post.FieldMoney, post.FieldViewCount, post.FieldCommentCount:
+		case post.FieldID, post.FieldPrice, post.FieldViewCount, post.FieldCommentCount:
 			values[i] = new(sql.NullInt64)
 		case post.FieldTitle, post.FieldAlias, post.FieldContent, post.FieldMdContent, post.FieldHTMLContent, post.FieldContentType, post.FieldStatus, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
 			values[i] = new(sql.NullString)
@@ -156,7 +156,8 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field alias", values[i])
 			} else if value.Valid {
-				_m.Alias = value.String
+				_m.Alias = new(string)
+				*_m.Alias = value.String
 			}
 		case post.FieldContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -202,11 +203,11 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.IsVisible = value.Bool
 			}
-		case post.FieldIsTipToTop:
+		case post.FieldIsPinToTop:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_tip_to_top", values[i])
+				return fmt.Errorf("unexpected type %T for field is_pin_to_top", values[i])
 			} else if value.Valid {
-				_m.IsTipToTop = value.Bool
+				_m.IsPinToTop = value.Bool
 			}
 		case post.FieldIsAllowComment:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -226,11 +227,11 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.IsVisibleAfterPay = value.Bool
 			}
-		case post.FieldMoney:
+		case post.FieldPrice:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field money", values[i])
+				return fmt.Errorf("unexpected type %T for field price", values[i])
 			} else if value.Valid {
-				_m.Money = int(value.Int64)
+				_m.Price = int(value.Int64)
 			}
 		case post.FieldPublishedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -336,8 +337,10 @@ func (_m *Post) String() string {
 	builder.WriteString("title=")
 	builder.WriteString(_m.Title)
 	builder.WriteString(", ")
-	builder.WriteString("alias=")
-	builder.WriteString(_m.Alias)
+	if v := _m.Alias; v != nil {
+		builder.WriteString("alias=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("content=")
 	builder.WriteString(_m.Content)
@@ -364,8 +367,8 @@ func (_m *Post) String() string {
 	builder.WriteString("is_visible=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsVisible))
 	builder.WriteString(", ")
-	builder.WriteString("is_tip_to_top=")
-	builder.WriteString(fmt.Sprintf("%v", _m.IsTipToTop))
+	builder.WriteString("is_pin_to_top=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsPinToTop))
 	builder.WriteString(", ")
 	builder.WriteString("is_allow_comment=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsAllowComment))
@@ -376,8 +379,8 @@ func (_m *Post) String() string {
 	builder.WriteString("is_visible_after_pay=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsVisibleAfterPay))
 	builder.WriteString(", ")
-	builder.WriteString("money=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Money))
+	builder.WriteString("price=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Price))
 	builder.WriteString(", ")
 	if v := _m.PublishedAt; v != nil {
 		builder.WriteString("published_at=")

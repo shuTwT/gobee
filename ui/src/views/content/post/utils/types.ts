@@ -2,14 +2,25 @@ export type FormItemProps = {
   id?: number
   title:string,
   alias:string,
+  content:string,
+  md_content:string,
+  html_content:string,
+  content_type:string,
+  status:string,
   categorys:any[],
   tags:any[],
   is_autogen_summary:boolean,
-  author:string,
-  is_allow_comments:boolean,
-  is_pin_to_top:boolean,
   is_visible:boolean,
-  cover:string
+  is_pin_to_top:boolean,
+  is_allow_comment:boolean,
+  is_visible_after_comment:boolean,
+  is_visible_after_pay:boolean,
+  money:string,
+  author:string,
+  cover:string,
+  keywords:string,
+  copyright:string,
+  summary:string
 }
 
 export type FormProps={

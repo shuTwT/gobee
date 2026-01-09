@@ -220,7 +220,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			apiV1.Get("/comment/recent", handlerMap.CommentHandler.RecentComment).Name("recentComment")
 			apiV1.Get("/flink/random", handlerMap.FlinkHandler.RandomFlink).Name("randomFlink")
 			// 登录身份验证中间件
-			// apiV1.Use(middleware.Protected())
+			apiV1.Use(middleware.Protected())
 
 			// 首页统计信息接口
 			apiV1.Get("/common/statistic", handlerMap.CommonHandler.GetHomeStatistics).Name("homeStatistic")

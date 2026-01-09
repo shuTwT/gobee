@@ -28,6 +28,7 @@ interface DialogOptions<P=Record<string,any>> extends ModalProps{
   visible?:boolean
   fullscreen?:boolean
   scroll?:boolean
+  scrollbarHeight?:number|string
   /** 自定义底部按钮操作 */
   footerButtons?: Array<ModalButtonProps>;
   /** 点击确定按钮后是否开启 `loading` 加载动画 */

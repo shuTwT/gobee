@@ -965,10 +965,10 @@ func init() {
 	postDescIsVisible := postFields[8].Descriptor()
 	// post.DefaultIsVisible holds the default value on creation for the is_visible field.
 	post.DefaultIsVisible = postDescIsVisible.Default.(bool)
-	// postDescIsTipToTop is the schema descriptor for is_tip_to_top field.
-	postDescIsTipToTop := postFields[9].Descriptor()
-	// post.DefaultIsTipToTop holds the default value on creation for the is_tip_to_top field.
-	post.DefaultIsTipToTop = postDescIsTipToTop.Default.(bool)
+	// postDescIsPinToTop is the schema descriptor for is_pin_to_top field.
+	postDescIsPinToTop := postFields[9].Descriptor()
+	// post.DefaultIsPinToTop holds the default value on creation for the is_pin_to_top field.
+	post.DefaultIsPinToTop = postDescIsPinToTop.Default.(bool)
 	// postDescIsAllowComment is the schema descriptor for is_allow_comment field.
 	postDescIsAllowComment := postFields[10].Descriptor()
 	// post.DefaultIsAllowComment holds the default value on creation for the is_allow_comment field.
@@ -981,12 +981,12 @@ func init() {
 	postDescIsVisibleAfterPay := postFields[12].Descriptor()
 	// post.DefaultIsVisibleAfterPay holds the default value on creation for the is_visible_after_pay field.
 	post.DefaultIsVisibleAfterPay = postDescIsVisibleAfterPay.Default.(bool)
-	// postDescMoney is the schema descriptor for money field.
-	postDescMoney := postFields[13].Descriptor()
-	// post.DefaultMoney holds the default value on creation for the money field.
-	post.DefaultMoney = postDescMoney.Default.(int)
-	// post.MoneyValidator is a validator for the "money" field. It is called by the builders before save.
-	post.MoneyValidator = postDescMoney.Validators[0].(func(int) error)
+	// postDescPrice is the schema descriptor for price field.
+	postDescPrice := postFields[13].Descriptor()
+	// post.DefaultPrice holds the default value on creation for the price field.
+	post.DefaultPrice = postDescPrice.Default.(int)
+	// post.PriceValidator is a validator for the "price" field. It is called by the builders before save.
+	post.PriceValidator = postDescPrice.Validators[0].(func(int) error)
 	// postDescViewCount is the schema descriptor for view_count field.
 	postDescViewCount := postFields[15].Descriptor()
 	// post.DefaultViewCount holds the default value on creation for the view_count field.

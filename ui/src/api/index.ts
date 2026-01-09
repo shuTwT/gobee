@@ -1,8 +1,14 @@
 import { Api, HttpClient, type RequestParams } from '@gobee/api-client'
 import type { AxiosResponse } from 'axios'
+import { getToken } from "@/utils/auth"
 
 const httpClient = new HttpClient({
   baseURL: '',
+})
+
+httpClient.instance.interceptors.request.use((config) => {
+  config.headers['Authorization'] = `Bearer ${getToken()?.accessToken}`
+  return config
 })
 
 

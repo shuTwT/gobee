@@ -20,11 +20,23 @@ const fullscreenStyle = (options:DialogOptions)=>{
     }
   }else{
     styles={
-      maxHeight:'80vh',
       width:options.width
     }
   }
 
+  return styles
+}
+
+const scrollStyle = (options:DialogOptions)=>{
+  let styles:Record<string,any>={}
+  if(options.scroll){
+
+    if(typeof options.scrollbarHeight==='number'){
+      styles['height']=options.scrollbarHeight+'px'
+    }else if(typeof options.scrollbarHeight==='string'){
+      styles['height']=options.scrollbarHeight
+    }
+  }
   return styles
 }
 
@@ -124,7 +136,7 @@ function handleClose(options: DialogOptions, index: number, args = { command: 'c
       </n-button>
     </template>
     <!-- content -->
-     <n-scrollbar style="height: auto;">
+     <n-scrollbar trigger="none" :style="scrollStyle(options)">
       <div class="px-3">
         <component v-bind="options.props" :is="options.contentRenderer({ options, index })" />
       </div>

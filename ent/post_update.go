@@ -180,16 +180,16 @@ func (_u *PostUpdate) SetNillableIsVisible(v *bool) *PostUpdate {
 	return _u
 }
 
-// SetIsTipToTop sets the "is_tip_to_top" field.
-func (_u *PostUpdate) SetIsTipToTop(v bool) *PostUpdate {
-	_u.mutation.SetIsTipToTop(v)
+// SetIsPinToTop sets the "is_pin_to_top" field.
+func (_u *PostUpdate) SetIsPinToTop(v bool) *PostUpdate {
+	_u.mutation.SetIsPinToTop(v)
 	return _u
 }
 
-// SetNillableIsTipToTop sets the "is_tip_to_top" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableIsTipToTop(v *bool) *PostUpdate {
+// SetNillableIsPinToTop sets the "is_pin_to_top" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableIsPinToTop(v *bool) *PostUpdate {
 	if v != nil {
-		_u.SetIsTipToTop(*v)
+		_u.SetIsPinToTop(*v)
 	}
 	return _u
 }
@@ -236,24 +236,24 @@ func (_u *PostUpdate) SetNillableIsVisibleAfterPay(v *bool) *PostUpdate {
 	return _u
 }
 
-// SetMoney sets the "money" field.
-func (_u *PostUpdate) SetMoney(v int) *PostUpdate {
-	_u.mutation.ResetMoney()
-	_u.mutation.SetMoney(v)
+// SetPrice sets the "price" field.
+func (_u *PostUpdate) SetPrice(v int) *PostUpdate {
+	_u.mutation.ResetPrice()
+	_u.mutation.SetPrice(v)
 	return _u
 }
 
-// SetNillableMoney sets the "money" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableMoney(v *int) *PostUpdate {
+// SetNillablePrice sets the "price" field if the given value is not nil.
+func (_u *PostUpdate) SetNillablePrice(v *int) *PostUpdate {
 	if v != nil {
-		_u.SetMoney(*v)
+		_u.SetPrice(*v)
 	}
 	return _u
 }
 
-// AddMoney adds value to the "money" field.
-func (_u *PostUpdate) AddMoney(v int) *PostUpdate {
-	_u.mutation.AddMoney(v)
+// AddPrice adds value to the "price" field.
+func (_u *PostUpdate) AddPrice(v int) *PostUpdate {
+	_u.mutation.AddPrice(v)
 	return _u
 }
 
@@ -553,9 +553,9 @@ func (_u *PostUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Money(); ok {
-		if err := post.MoneyValidator(v); err != nil {
-			return &ValidationError{Name: "money", err: fmt.Errorf(`ent: validator failed for field "Post.money": %w`, err)}
+	if v, ok := _u.mutation.Price(); ok {
+		if err := post.PriceValidator(v); err != nil {
+			return &ValidationError{Name: "price", err: fmt.Errorf(`ent: validator failed for field "Post.price": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.ViewCount(); ok {
@@ -642,8 +642,8 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.IsVisible(); ok {
 		_spec.SetField(post.FieldIsVisible, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.IsTipToTop(); ok {
-		_spec.SetField(post.FieldIsTipToTop, field.TypeBool, value)
+	if value, ok := _u.mutation.IsPinToTop(); ok {
+		_spec.SetField(post.FieldIsPinToTop, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.IsAllowComment(); ok {
 		_spec.SetField(post.FieldIsAllowComment, field.TypeBool, value)
@@ -654,11 +654,11 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.IsVisibleAfterPay(); ok {
 		_spec.SetField(post.FieldIsVisibleAfterPay, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.Money(); ok {
-		_spec.SetField(post.FieldMoney, field.TypeInt, value)
+	if value, ok := _u.mutation.Price(); ok {
+		_spec.SetField(post.FieldPrice, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.AddedMoney(); ok {
-		_spec.AddField(post.FieldMoney, field.TypeInt, value)
+	if value, ok := _u.mutation.AddedPrice(); ok {
+		_spec.AddField(post.FieldPrice, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)
@@ -965,16 +965,16 @@ func (_u *PostUpdateOne) SetNillableIsVisible(v *bool) *PostUpdateOne {
 	return _u
 }
 
-// SetIsTipToTop sets the "is_tip_to_top" field.
-func (_u *PostUpdateOne) SetIsTipToTop(v bool) *PostUpdateOne {
-	_u.mutation.SetIsTipToTop(v)
+// SetIsPinToTop sets the "is_pin_to_top" field.
+func (_u *PostUpdateOne) SetIsPinToTop(v bool) *PostUpdateOne {
+	_u.mutation.SetIsPinToTop(v)
 	return _u
 }
 
-// SetNillableIsTipToTop sets the "is_tip_to_top" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableIsTipToTop(v *bool) *PostUpdateOne {
+// SetNillableIsPinToTop sets the "is_pin_to_top" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableIsPinToTop(v *bool) *PostUpdateOne {
 	if v != nil {
-		_u.SetIsTipToTop(*v)
+		_u.SetIsPinToTop(*v)
 	}
 	return _u
 }
@@ -1021,24 +1021,24 @@ func (_u *PostUpdateOne) SetNillableIsVisibleAfterPay(v *bool) *PostUpdateOne {
 	return _u
 }
 
-// SetMoney sets the "money" field.
-func (_u *PostUpdateOne) SetMoney(v int) *PostUpdateOne {
-	_u.mutation.ResetMoney()
-	_u.mutation.SetMoney(v)
+// SetPrice sets the "price" field.
+func (_u *PostUpdateOne) SetPrice(v int) *PostUpdateOne {
+	_u.mutation.ResetPrice()
+	_u.mutation.SetPrice(v)
 	return _u
 }
 
-// SetNillableMoney sets the "money" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableMoney(v *int) *PostUpdateOne {
+// SetNillablePrice sets the "price" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillablePrice(v *int) *PostUpdateOne {
 	if v != nil {
-		_u.SetMoney(*v)
+		_u.SetPrice(*v)
 	}
 	return _u
 }
 
-// AddMoney adds value to the "money" field.
-func (_u *PostUpdateOne) AddMoney(v int) *PostUpdateOne {
-	_u.mutation.AddMoney(v)
+// AddPrice adds value to the "price" field.
+func (_u *PostUpdateOne) AddPrice(v int) *PostUpdateOne {
+	_u.mutation.AddPrice(v)
 	return _u
 }
 
@@ -1351,9 +1351,9 @@ func (_u *PostUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Money(); ok {
-		if err := post.MoneyValidator(v); err != nil {
-			return &ValidationError{Name: "money", err: fmt.Errorf(`ent: validator failed for field "Post.money": %w`, err)}
+	if v, ok := _u.mutation.Price(); ok {
+		if err := post.PriceValidator(v); err != nil {
+			return &ValidationError{Name: "price", err: fmt.Errorf(`ent: validator failed for field "Post.price": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.ViewCount(); ok {
@@ -1457,8 +1457,8 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	if value, ok := _u.mutation.IsVisible(); ok {
 		_spec.SetField(post.FieldIsVisible, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.IsTipToTop(); ok {
-		_spec.SetField(post.FieldIsTipToTop, field.TypeBool, value)
+	if value, ok := _u.mutation.IsPinToTop(); ok {
+		_spec.SetField(post.FieldIsPinToTop, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.IsAllowComment(); ok {
 		_spec.SetField(post.FieldIsAllowComment, field.TypeBool, value)
@@ -1469,11 +1469,11 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	if value, ok := _u.mutation.IsVisibleAfterPay(); ok {
 		_spec.SetField(post.FieldIsVisibleAfterPay, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.Money(); ok {
-		_spec.SetField(post.FieldMoney, field.TypeInt, value)
+	if value, ok := _u.mutation.Price(); ok {
+		_spec.SetField(post.FieldPrice, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.AddedMoney(); ok {
-		_spec.AddField(post.FieldMoney, field.TypeInt, value)
+	if value, ok := _u.mutation.AddedPrice(); ok {
+		_spec.AddField(post.FieldPrice, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)

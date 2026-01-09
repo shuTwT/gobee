@@ -92,6 +92,16 @@ export default [
                     roles: ['admin'],
                 },
             },
+            {
+                path: '/content/essay',
+                name: 'EssayManagement',
+                component: () => import('@/views/content/essay/index.vue'),
+                meta: {
+                    title: '说说',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
+            },
         ]
     }
 ] satisfies RouteRecordRaw[]

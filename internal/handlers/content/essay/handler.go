@@ -1,6 +1,7 @@
 package essay
 
 import (
+	"gobee/internal/middleware"
 	"gobee/internal/services/content/essay"
 	"gobee/pkg/domain/model"
 	"strconv"
@@ -38,7 +39,8 @@ func (h *EssayHandlerImpl) CreateEssay(c *fiber.Ctx) error {
 	if err := c.BodyParser(&createReq); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	_, err := h.service.CreateEssay(c.Context(), createReq)
+	userId := middleware.GetCurrentUser(c).ID
+	_, err := h.service.CreateEssay(c.Context(), userId, createReq)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}

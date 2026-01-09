@@ -160,16 +160,16 @@ func (_c *PostCreate) SetNillableIsVisible(v *bool) *PostCreate {
 	return _c
 }
 
-// SetIsTipToTop sets the "is_tip_to_top" field.
-func (_c *PostCreate) SetIsTipToTop(v bool) *PostCreate {
-	_c.mutation.SetIsTipToTop(v)
+// SetIsPinToTop sets the "is_pin_to_top" field.
+func (_c *PostCreate) SetIsPinToTop(v bool) *PostCreate {
+	_c.mutation.SetIsPinToTop(v)
 	return _c
 }
 
-// SetNillableIsTipToTop sets the "is_tip_to_top" field if the given value is not nil.
-func (_c *PostCreate) SetNillableIsTipToTop(v *bool) *PostCreate {
+// SetNillableIsPinToTop sets the "is_pin_to_top" field if the given value is not nil.
+func (_c *PostCreate) SetNillableIsPinToTop(v *bool) *PostCreate {
 	if v != nil {
-		_c.SetIsTipToTop(*v)
+		_c.SetIsPinToTop(*v)
 	}
 	return _c
 }
@@ -216,16 +216,16 @@ func (_c *PostCreate) SetNillableIsVisibleAfterPay(v *bool) *PostCreate {
 	return _c
 }
 
-// SetMoney sets the "money" field.
-func (_c *PostCreate) SetMoney(v int) *PostCreate {
-	_c.mutation.SetMoney(v)
+// SetPrice sets the "price" field.
+func (_c *PostCreate) SetPrice(v int) *PostCreate {
+	_c.mutation.SetPrice(v)
 	return _c
 }
 
-// SetNillableMoney sets the "money" field if the given value is not nil.
-func (_c *PostCreate) SetNillableMoney(v *int) *PostCreate {
+// SetNillablePrice sets the "price" field if the given value is not nil.
+func (_c *PostCreate) SetNillablePrice(v *int) *PostCreate {
 	if v != nil {
-		_c.SetMoney(*v)
+		_c.SetPrice(*v)
 	}
 	return _c
 }
@@ -437,9 +437,9 @@ func (_c *PostCreate) defaults() {
 		v := post.DefaultIsVisible
 		_c.mutation.SetIsVisible(v)
 	}
-	if _, ok := _c.mutation.IsTipToTop(); !ok {
-		v := post.DefaultIsTipToTop
-		_c.mutation.SetIsTipToTop(v)
+	if _, ok := _c.mutation.IsPinToTop(); !ok {
+		v := post.DefaultIsPinToTop
+		_c.mutation.SetIsPinToTop(v)
 	}
 	if _, ok := _c.mutation.IsAllowComment(); !ok {
 		v := post.DefaultIsAllowComment
@@ -453,9 +453,9 @@ func (_c *PostCreate) defaults() {
 		v := post.DefaultIsVisibleAfterPay
 		_c.mutation.SetIsVisibleAfterPay(v)
 	}
-	if _, ok := _c.mutation.Money(); !ok {
-		v := post.DefaultMoney
-		_c.mutation.SetMoney(v)
+	if _, ok := _c.mutation.Price(); !ok {
+		v := post.DefaultPrice
+		_c.mutation.SetPrice(v)
 	}
 	if _, ok := _c.mutation.ViewCount(); !ok {
 		v := post.DefaultViewCount
@@ -522,8 +522,8 @@ func (_c *PostCreate) check() error {
 	if _, ok := _c.mutation.IsVisible(); !ok {
 		return &ValidationError{Name: "is_visible", err: errors.New(`ent: missing required field "Post.is_visible"`)}
 	}
-	if _, ok := _c.mutation.IsTipToTop(); !ok {
-		return &ValidationError{Name: "is_tip_to_top", err: errors.New(`ent: missing required field "Post.is_tip_to_top"`)}
+	if _, ok := _c.mutation.IsPinToTop(); !ok {
+		return &ValidationError{Name: "is_pin_to_top", err: errors.New(`ent: missing required field "Post.is_pin_to_top"`)}
 	}
 	if _, ok := _c.mutation.IsAllowComment(); !ok {
 		return &ValidationError{Name: "is_allow_comment", err: errors.New(`ent: missing required field "Post.is_allow_comment"`)}
@@ -534,12 +534,12 @@ func (_c *PostCreate) check() error {
 	if _, ok := _c.mutation.IsVisibleAfterPay(); !ok {
 		return &ValidationError{Name: "is_visible_after_pay", err: errors.New(`ent: missing required field "Post.is_visible_after_pay"`)}
 	}
-	if _, ok := _c.mutation.Money(); !ok {
-		return &ValidationError{Name: "money", err: errors.New(`ent: missing required field "Post.money"`)}
+	if _, ok := _c.mutation.Price(); !ok {
+		return &ValidationError{Name: "price", err: errors.New(`ent: missing required field "Post.price"`)}
 	}
-	if v, ok := _c.mutation.Money(); ok {
-		if err := post.MoneyValidator(v); err != nil {
-			return &ValidationError{Name: "money", err: fmt.Errorf(`ent: validator failed for field "Post.money": %w`, err)}
+	if v, ok := _c.mutation.Price(); ok {
+		if err := post.PriceValidator(v); err != nil {
+			return &ValidationError{Name: "price", err: fmt.Errorf(`ent: validator failed for field "Post.price": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.ViewCount(); !ok {
@@ -627,7 +627,7 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.Alias(); ok {
 		_spec.SetField(post.FieldAlias, field.TypeString, value)
-		_node.Alias = value
+		_node.Alias = &value
 	}
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
@@ -657,9 +657,9 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_spec.SetField(post.FieldIsVisible, field.TypeBool, value)
 		_node.IsVisible = value
 	}
-	if value, ok := _c.mutation.IsTipToTop(); ok {
-		_spec.SetField(post.FieldIsTipToTop, field.TypeBool, value)
-		_node.IsTipToTop = value
+	if value, ok := _c.mutation.IsPinToTop(); ok {
+		_spec.SetField(post.FieldIsPinToTop, field.TypeBool, value)
+		_node.IsPinToTop = value
 	}
 	if value, ok := _c.mutation.IsAllowComment(); ok {
 		_spec.SetField(post.FieldIsAllowComment, field.TypeBool, value)
@@ -673,9 +673,9 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_spec.SetField(post.FieldIsVisibleAfterPay, field.TypeBool, value)
 		_node.IsVisibleAfterPay = value
 	}
-	if value, ok := _c.mutation.Money(); ok {
-		_spec.SetField(post.FieldMoney, field.TypeInt, value)
-		_node.Money = value
+	if value, ok := _c.mutation.Price(); ok {
+		_spec.SetField(post.FieldPrice, field.TypeInt, value)
+		_node.Price = value
 	}
 	if value, ok := _c.mutation.PublishedAt(); ok {
 		_spec.SetField(post.FieldPublishedAt, field.TypeTime, value)

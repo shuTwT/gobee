@@ -8,7 +8,7 @@ import (
 )
 
 type EssayService interface {
-	CreateEssay(ctx context.Context, req *model.EssayCreateReq) (*ent.Essay, error)
+	CreateEssay(ctx context.Context, userId int, req *model.EssayCreateReq) (*ent.Essay, error)
 	UpdateEssay(ctx context.Context, id int, req *model.EssayUpdateReq) error
 	GetEssay(ctx context.Context, id int) (*ent.Essay, error)
 	GetEssayPage(ctx context.Context, page, pageSize int) ([]*ent.Essay, int, error)
@@ -23,11 +23,12 @@ func NewEssayServiceImpl(client *ent.Client) EssayService {
 	return &EssayServiceImpl{client: client}
 }
 
-func (s *EssayServiceImpl) CreateEssay(ctx context.Context, req *model.EssayCreateReq) (*ent.Essay, error) {
+func (s *EssayServiceImpl) CreateEssay(ctx context.Context, userId int, req *model.EssayCreateReq) (*ent.Essay, error) {
 	essay := s.client.Essay.Create().
 		SetContent(req.Content).
 		SetDraft(req.Draft).
 		SetImages(req.Images).
+		SetUserID(userId).
 		SaveX(ctx)
 	return essay, nil
 }
@@ -59,6 +60,7 @@ func (s *EssayServiceImpl) GetEssayPage(ctx context.Context, page, pageSize int)
 		return nil, 0, err
 	}
 	essays, err := s.client.Essay.Query().
+		Order(ent.Desc(essay.FieldID)).
 		Limit(pageSize).
 		Offset((page - 1) * pageSize).
 		All(ctx)

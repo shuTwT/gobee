@@ -17976,12 +17976,12 @@ type PostMutation struct {
 	status                   *post.Status
 	is_autogen_summary       *bool
 	is_visible               *bool
-	is_tip_to_top            *bool
+	is_pin_to_top            *bool
 	is_allow_comment         *bool
 	is_visible_after_comment *bool
 	is_visible_after_pay     *bool
-	money                    *int
-	addmoney                 *int
+	price                    *int
+	addprice                 *int
 	published_at             *time.Time
 	view_count               *int
 	addview_count            *int
@@ -18233,7 +18233,7 @@ func (m *PostMutation) Alias() (r string, exists bool) {
 // OldAlias returns the old "alias" field's value of the Post entity.
 // If the Post object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldAlias(ctx context.Context) (v string, err error) {
+func (m *PostMutation) OldAlias(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAlias is only allowed on UpdateOne operations")
 	}
@@ -18543,40 +18543,40 @@ func (m *PostMutation) ResetIsVisible() {
 	m.is_visible = nil
 }
 
-// SetIsTipToTop sets the "is_tip_to_top" field.
-func (m *PostMutation) SetIsTipToTop(b bool) {
-	m.is_tip_to_top = &b
+// SetIsPinToTop sets the "is_pin_to_top" field.
+func (m *PostMutation) SetIsPinToTop(b bool) {
+	m.is_pin_to_top = &b
 }
 
-// IsTipToTop returns the value of the "is_tip_to_top" field in the mutation.
-func (m *PostMutation) IsTipToTop() (r bool, exists bool) {
-	v := m.is_tip_to_top
+// IsPinToTop returns the value of the "is_pin_to_top" field in the mutation.
+func (m *PostMutation) IsPinToTop() (r bool, exists bool) {
+	v := m.is_pin_to_top
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIsTipToTop returns the old "is_tip_to_top" field's value of the Post entity.
+// OldIsPinToTop returns the old "is_pin_to_top" field's value of the Post entity.
 // If the Post object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldIsTipToTop(ctx context.Context) (v bool, err error) {
+func (m *PostMutation) OldIsPinToTop(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsTipToTop is only allowed on UpdateOne operations")
+		return v, errors.New("OldIsPinToTop is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsTipToTop requires an ID field in the mutation")
+		return v, errors.New("OldIsPinToTop requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsTipToTop: %w", err)
+		return v, fmt.Errorf("querying old value for OldIsPinToTop: %w", err)
 	}
-	return oldValue.IsTipToTop, nil
+	return oldValue.IsPinToTop, nil
 }
 
-// ResetIsTipToTop resets all changes to the "is_tip_to_top" field.
-func (m *PostMutation) ResetIsTipToTop() {
-	m.is_tip_to_top = nil
+// ResetIsPinToTop resets all changes to the "is_pin_to_top" field.
+func (m *PostMutation) ResetIsPinToTop() {
+	m.is_pin_to_top = nil
 }
 
 // SetIsAllowComment sets the "is_allow_comment" field.
@@ -18687,60 +18687,60 @@ func (m *PostMutation) ResetIsVisibleAfterPay() {
 	m.is_visible_after_pay = nil
 }
 
-// SetMoney sets the "money" field.
-func (m *PostMutation) SetMoney(i int) {
-	m.money = &i
-	m.addmoney = nil
+// SetPrice sets the "price" field.
+func (m *PostMutation) SetPrice(i int) {
+	m.price = &i
+	m.addprice = nil
 }
 
-// Money returns the value of the "money" field in the mutation.
-func (m *PostMutation) Money() (r int, exists bool) {
-	v := m.money
+// Price returns the value of the "price" field in the mutation.
+func (m *PostMutation) Price() (r int, exists bool) {
+	v := m.price
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldMoney returns the old "money" field's value of the Post entity.
+// OldPrice returns the old "price" field's value of the Post entity.
 // If the Post object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldMoney(ctx context.Context) (v int, err error) {
+func (m *PostMutation) OldPrice(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMoney is only allowed on UpdateOne operations")
+		return v, errors.New("OldPrice is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMoney requires an ID field in the mutation")
+		return v, errors.New("OldPrice requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMoney: %w", err)
+		return v, fmt.Errorf("querying old value for OldPrice: %w", err)
 	}
-	return oldValue.Money, nil
+	return oldValue.Price, nil
 }
 
-// AddMoney adds i to the "money" field.
-func (m *PostMutation) AddMoney(i int) {
-	if m.addmoney != nil {
-		*m.addmoney += i
+// AddPrice adds i to the "price" field.
+func (m *PostMutation) AddPrice(i int) {
+	if m.addprice != nil {
+		*m.addprice += i
 	} else {
-		m.addmoney = &i
+		m.addprice = &i
 	}
 }
 
-// AddedMoney returns the value that was added to the "money" field in this mutation.
-func (m *PostMutation) AddedMoney() (r int, exists bool) {
-	v := m.addmoney
+// AddedPrice returns the value that was added to the "price" field in this mutation.
+func (m *PostMutation) AddedPrice() (r int, exists bool) {
+	v := m.addprice
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetMoney resets all changes to the "money" field.
-func (m *PostMutation) ResetMoney() {
-	m.money = nil
-	m.addmoney = nil
+// ResetPrice resets all changes to the "price" field.
+func (m *PostMutation) ResetPrice() {
+	m.price = nil
+	m.addprice = nil
 }
 
 // SetPublishedAt sets the "published_at" field.
@@ -19312,8 +19312,8 @@ func (m *PostMutation) Fields() []string {
 	if m.is_visible != nil {
 		fields = append(fields, post.FieldIsVisible)
 	}
-	if m.is_tip_to_top != nil {
-		fields = append(fields, post.FieldIsTipToTop)
+	if m.is_pin_to_top != nil {
+		fields = append(fields, post.FieldIsPinToTop)
 	}
 	if m.is_allow_comment != nil {
 		fields = append(fields, post.FieldIsAllowComment)
@@ -19324,8 +19324,8 @@ func (m *PostMutation) Fields() []string {
 	if m.is_visible_after_pay != nil {
 		fields = append(fields, post.FieldIsVisibleAfterPay)
 	}
-	if m.money != nil {
-		fields = append(fields, post.FieldMoney)
+	if m.price != nil {
+		fields = append(fields, post.FieldPrice)
 	}
 	if m.published_at != nil {
 		fields = append(fields, post.FieldPublishedAt)
@@ -19381,16 +19381,16 @@ func (m *PostMutation) Field(name string) (ent.Value, bool) {
 		return m.IsAutogenSummary()
 	case post.FieldIsVisible:
 		return m.IsVisible()
-	case post.FieldIsTipToTop:
-		return m.IsTipToTop()
+	case post.FieldIsPinToTop:
+		return m.IsPinToTop()
 	case post.FieldIsAllowComment:
 		return m.IsAllowComment()
 	case post.FieldIsVisibleAfterComment:
 		return m.IsVisibleAfterComment()
 	case post.FieldIsVisibleAfterPay:
 		return m.IsVisibleAfterPay()
-	case post.FieldMoney:
-		return m.Money()
+	case post.FieldPrice:
+		return m.Price()
 	case post.FieldPublishedAt:
 		return m.PublishedAt()
 	case post.FieldViewCount:
@@ -19438,16 +19438,16 @@ func (m *PostMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldIsAutogenSummary(ctx)
 	case post.FieldIsVisible:
 		return m.OldIsVisible(ctx)
-	case post.FieldIsTipToTop:
-		return m.OldIsTipToTop(ctx)
+	case post.FieldIsPinToTop:
+		return m.OldIsPinToTop(ctx)
 	case post.FieldIsAllowComment:
 		return m.OldIsAllowComment(ctx)
 	case post.FieldIsVisibleAfterComment:
 		return m.OldIsVisibleAfterComment(ctx)
 	case post.FieldIsVisibleAfterPay:
 		return m.OldIsVisibleAfterPay(ctx)
-	case post.FieldMoney:
-		return m.OldMoney(ctx)
+	case post.FieldPrice:
+		return m.OldPrice(ctx)
 	case post.FieldPublishedAt:
 		return m.OldPublishedAt(ctx)
 	case post.FieldViewCount:
@@ -19550,12 +19550,12 @@ func (m *PostMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIsVisible(v)
 		return nil
-	case post.FieldIsTipToTop:
+	case post.FieldIsPinToTop:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIsTipToTop(v)
+		m.SetIsPinToTop(v)
 		return nil
 	case post.FieldIsAllowComment:
 		v, ok := value.(bool)
@@ -19578,12 +19578,12 @@ func (m *PostMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIsVisibleAfterPay(v)
 		return nil
-	case post.FieldMoney:
+	case post.FieldPrice:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetMoney(v)
+		m.SetPrice(v)
 		return nil
 	case post.FieldPublishedAt:
 		v, ok := value.(time.Time)
@@ -19649,8 +19649,8 @@ func (m *PostMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *PostMutation) AddedFields() []string {
 	var fields []string
-	if m.addmoney != nil {
-		fields = append(fields, post.FieldMoney)
+	if m.addprice != nil {
+		fields = append(fields, post.FieldPrice)
 	}
 	if m.addview_count != nil {
 		fields = append(fields, post.FieldViewCount)
@@ -19666,8 +19666,8 @@ func (m *PostMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *PostMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case post.FieldMoney:
-		return m.AddedMoney()
+	case post.FieldPrice:
+		return m.AddedPrice()
 	case post.FieldViewCount:
 		return m.AddedViewCount()
 	case post.FieldCommentCount:
@@ -19681,12 +19681,12 @@ func (m *PostMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *PostMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case post.FieldMoney:
+	case post.FieldPrice:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddMoney(v)
+		m.AddPrice(v)
 		return nil
 	case post.FieldViewCount:
 		v, ok := value.(int)
@@ -19813,8 +19813,8 @@ func (m *PostMutation) ResetField(name string) error {
 	case post.FieldIsVisible:
 		m.ResetIsVisible()
 		return nil
-	case post.FieldIsTipToTop:
-		m.ResetIsTipToTop()
+	case post.FieldIsPinToTop:
+		m.ResetIsPinToTop()
 		return nil
 	case post.FieldIsAllowComment:
 		m.ResetIsAllowComment()
@@ -19825,8 +19825,8 @@ func (m *PostMutation) ResetField(name string) error {
 	case post.FieldIsVisibleAfterPay:
 		m.ResetIsVisibleAfterPay()
 		return nil
-	case post.FieldMoney:
-		m.ResetMoney()
+	case post.FieldPrice:
+		m.ResetPrice()
 		return nil
 	case post.FieldPublishedAt:
 		m.ResetPublishedAt()

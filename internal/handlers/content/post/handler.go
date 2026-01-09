@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"gobee/ent"
 	"gobee/ent/post"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
@@ -68,15 +67,11 @@ func (h *PostHandlerImpl) ListPost(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/posts [post]
 func (h *PostHandlerImpl) CreatePost(c *fiber.Ctx) error {
-	client := database.DB
-	var post *ent.Post
+	var post model.PostCreateReq
 	if err := c.BodyParser(&post); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	newPost, err := client.Post.Create().
-		SetTitle(post.Title).
-		SetContent(post.Content).
-		Save(c.Context())
+	newPost, err := h.postService.CreatePost(c.Context(), post.Title, post.Content)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -95,19 +90,16 @@ func (h *PostHandlerImpl) CreatePost(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/posts/{id} [put]
 func (h *PostHandlerImpl) UpdatePostContent(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	var post *model.PostUpdateReq
+	var post model.PostUpdateReq
 	if err = c.BodyParser(&post); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	newPost, err := client.Post.UpdateOneID(id).
-		SetContent(post.Content).
-		Save(c.Context())
+	newPost, err := h.postService.UpdatePostContent(c.Context(), id, post.Content)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}

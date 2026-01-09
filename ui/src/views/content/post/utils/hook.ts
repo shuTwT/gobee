@@ -39,19 +39,32 @@ export function usePostHook() {
           const formRef = ref()
           addDialog<FormProps>({
             title: `文章设置`,
+            scroll: true,
+            scrollbarHeight: '600px',
             props: {
               formInline: {
                 id: res.data.id ?? undefined,
                 title: res.data.title ?? '',
                 alias: res.data.alias ?? '',
+                content: res.data.content ?? '',
+                md_content: res.data.md_content ?? '',
+                html_content: res.data.html_content ?? '',
+                content_type: res.data.content_type ?? 'markdown',
+                status: res.data.status ?? 'draft',
                 categorys: res.data.categorys ?? [],
                 tags: res.data.tags ?? [],
                 is_autogen_summary: res.data.is_autogen_summary ?? false,
                 author: res.data.author ?? '',
-                is_allow_comments: res.data.is_allow_comments ?? true,
+                is_allow_comment: res.data.is_allow_comment ?? true,
                 is_pin_to_top: res.data.is_pin_to_top ?? false,
                 is_visible: res.data.is_visible ?? true,
+                is_visible_after_comment: res.data.is_visible_after_comment ?? false,
+                is_visible_after_pay: res.data.is_visible_after_pay ?? false,
+                money: (res.data.money ?? 0).toString(),
                 cover: res.data.cover ?? '',
+                keywords: res.data.keywords ?? '',
+                copyright: res.data.copyright ?? '',
+                summary: res.data.summary ?? '',
               },
             },
             contentRenderer: ({ options }) =>
