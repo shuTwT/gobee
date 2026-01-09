@@ -6,7 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gobee/ent/category"
 	"gobee/ent/post"
+	"gobee/ent/tag"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -346,6 +348,36 @@ func (_c *PostCreate) SetID(v int) *PostCreate {
 	return _c
 }
 
+// AddCategoryIDs adds the "categories" edge to the Category entity by IDs.
+func (_c *PostCreate) AddCategoryIDs(ids ...int) *PostCreate {
+	_c.mutation.AddCategoryIDs(ids...)
+	return _c
+}
+
+// AddCategories adds the "categories" edges to the Category entity.
+func (_c *PostCreate) AddCategories(v ...*Category) *PostCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddCategoryIDs(ids...)
+}
+
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (_c *PostCreate) AddTagIDs(ids ...int) *PostCreate {
+	_c.mutation.AddTagIDs(ids...)
+	return _c
+}
+
+// AddTags adds the "tags" edges to the Tag entity.
+func (_c *PostCreate) AddTags(v ...*Tag) *PostCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddTagIDs(ids...)
+}
+
 // Mutation returns the PostMutation object of the builder.
 func (_c *PostCreate) Mutation() *PostMutation {
 	return _c.mutation
@@ -676,6 +708,38 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Summary(); ok {
 		_spec.SetField(post.FieldSummary, field.TypeString, value)
 		_node.Summary = value
+	}
+	if nodes := _c.mutation.CategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   post.CategoriesTable,
+			Columns: post.CategoriesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   post.TagsTable,
+			Columns: post.TagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

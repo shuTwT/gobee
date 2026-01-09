@@ -13,13 +13,11 @@ type ApiInterfaceHandler interface {
 }
 
 type ApiInterfaceHandlerImpl struct {
-	client              *ent.Client
 	apiInterfaceService api_interface_service.ApiInterfaceService
 }
 
-func NewApiInterfaceHandlerImpl(client *ent.Client, apiInterfaceService api_interface_service.ApiInterfaceService) *ApiInterfaceHandlerImpl {
+func NewApiInterfaceHandlerImpl(apiInterfaceService api_interface_service.ApiInterfaceService) *ApiInterfaceHandlerImpl {
 	return &ApiInterfaceHandlerImpl{
-		client:              client,
 		apiInterfaceService: apiInterfaceService,
 	}
 }

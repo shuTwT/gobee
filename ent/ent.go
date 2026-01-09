@@ -9,6 +9,7 @@ import (
 	"gobee/ent/album"
 	"gobee/ent/albumphoto"
 	"gobee/ent/apiperms"
+	"gobee/ent/category"
 	"gobee/ent/comment"
 	"gobee/ent/coupon"
 	"gobee/ent/couponusage"
@@ -30,6 +31,7 @@ import (
 	"gobee/ent/schedulejob"
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
+	"gobee/ent/tag"
 	"gobee/ent/user"
 	"gobee/ent/visitlog"
 	"gobee/ent/wallet"
@@ -103,6 +105,7 @@ func checkColumn(t, c string) error {
 			album.Table:               album.ValidColumn,
 			albumphoto.Table:          albumphoto.ValidColumn,
 			apiperms.Table:            apiperms.ValidColumn,
+			category.Table:            category.ValidColumn,
 			comment.Table:             comment.ValidColumn,
 			coupon.Table:              coupon.ValidColumn,
 			couponusage.Table:         couponusage.ValidColumn,
@@ -124,6 +127,7 @@ func checkColumn(t, c string) error {
 			schedulejob.Table:         schedulejob.ValidColumn,
 			setting.Table:             setting.ValidColumn,
 			storagestrategy.Table:     storagestrategy.ValidColumn,
+			tag.Table:                 tag.ValidColumn,
 			user.Table:                user.ValidColumn,
 			visitlog.Table:            visitlog.ValidColumn,
 			wallet.Table:              wallet.ValidColumn,

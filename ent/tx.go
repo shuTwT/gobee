@@ -18,6 +18,8 @@ type Tx struct {
 	AlbumPhoto *AlbumPhotoClient
 	// ApiPerms is the client for interacting with the ApiPerms builders.
 	ApiPerms *ApiPermsClient
+	// Category is the client for interacting with the Category builders.
+	Category *CategoryClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -60,6 +62,8 @@ type Tx struct {
 	Setting *SettingClient
 	// StorageStrategy is the client for interacting with the StorageStrategy builders.
 	StorageStrategy *StorageStrategyClient
+	// Tag is the client for interacting with the Tag builders.
+	Tag *TagClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// VisitLog is the client for interacting with the VisitLog builders.
@@ -202,6 +206,7 @@ func (tx *Tx) init() {
 	tx.Album = NewAlbumClient(tx.config)
 	tx.AlbumPhoto = NewAlbumPhotoClient(tx.config)
 	tx.ApiPerms = NewApiPermsClient(tx.config)
+	tx.Category = NewCategoryClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.Coupon = NewCouponClient(tx.config)
 	tx.CouponUsage = NewCouponUsageClient(tx.config)
@@ -223,6 +228,7 @@ func (tx *Tx) init() {
 	tx.ScheduleJob = NewScheduleJobClient(tx.config)
 	tx.Setting = NewSettingClient(tx.config)
 	tx.StorageStrategy = NewStorageStrategyClient(tx.config)
+	tx.Tag = NewTagClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.VisitLog = NewVisitLogClient(tx.config)
 	tx.Wallet = NewWalletClient(tx.config)

@@ -6,6 +6,7 @@ import (
 	"gobee/ent/album"
 	"gobee/ent/albumphoto"
 	"gobee/ent/apiperms"
+	"gobee/ent/category"
 	"gobee/ent/comment"
 	"gobee/ent/coupon"
 	"gobee/ent/couponusage"
@@ -28,6 +29,7 @@ import (
 	"gobee/ent/schema"
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
+	"gobee/ent/tag"
 	"gobee/ent/user"
 	"gobee/ent/visitlog"
 	"gobee/ent/wallet"
@@ -112,6 +114,55 @@ func init() {
 	apipermsDescStatus := apipermsFields[6].Descriptor()
 	// apiperms.DefaultStatus holds the default value on creation for the status field.
 	apiperms.DefaultStatus = apipermsDescStatus.Default.(string)
+	categoryMixin := schema.Category{}.Mixin()
+	categoryMixinFields0 := categoryMixin[0].Fields()
+	_ = categoryMixinFields0
+	categoryFields := schema.Category{}.Fields()
+	_ = categoryFields
+	// categoryDescCreatedAt is the schema descriptor for created_at field.
+	categoryDescCreatedAt := categoryMixinFields0[1].Descriptor()
+	// category.DefaultCreatedAt holds the default value on creation for the created_at field.
+	category.DefaultCreatedAt = categoryDescCreatedAt.Default.(func() time.Time)
+	// categoryDescUpdatedAt is the schema descriptor for updated_at field.
+	categoryDescUpdatedAt := categoryMixinFields0[2].Descriptor()
+	// category.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	category.DefaultUpdatedAt = categoryDescUpdatedAt.Default.(func() time.Time)
+	// category.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	category.UpdateDefaultUpdatedAt = categoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// categoryDescName is the schema descriptor for name field.
+	categoryDescName := categoryFields[0].Descriptor()
+	// category.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	category.NameValidator = func() func(string) error {
+		validators := categoryDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// categoryDescDescription is the schema descriptor for description field.
+	categoryDescDescription := categoryFields[1].Descriptor()
+	// category.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	category.DescriptionValidator = categoryDescDescription.Validators[0].(func(string) error)
+	// categoryDescSlug is the schema descriptor for slug field.
+	categoryDescSlug := categoryFields[2].Descriptor()
+	// category.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	category.SlugValidator = categoryDescSlug.Validators[0].(func(string) error)
+	// categoryDescSortOrder is the schema descriptor for sort_order field.
+	categoryDescSortOrder := categoryFields[3].Descriptor()
+	// category.DefaultSortOrder holds the default value on creation for the sort_order field.
+	category.DefaultSortOrder = categoryDescSortOrder.Default.(int)
+	// categoryDescActive is the schema descriptor for active field.
+	categoryDescActive := categoryFields[4].Descriptor()
+	// category.DefaultActive holds the default value on creation for the active field.
+	category.DefaultActive = categoryDescActive.Default.(bool)
 	commentMixin := schema.Comment{}.Mixin()
 	commentMixinFields0 := commentMixin[0].Fields()
 	_ = commentMixinFields0
@@ -1245,6 +1296,59 @@ func init() {
 	storagestrategyDescMaster := storagestrategyFields[10].Descriptor()
 	// storagestrategy.DefaultMaster holds the default value on creation for the master field.
 	storagestrategy.DefaultMaster = storagestrategyDescMaster.Default.(bool)
+	tagMixin := schema.Tag{}.Mixin()
+	tagMixinFields0 := tagMixin[0].Fields()
+	_ = tagMixinFields0
+	tagFields := schema.Tag{}.Fields()
+	_ = tagFields
+	// tagDescCreatedAt is the schema descriptor for created_at field.
+	tagDescCreatedAt := tagMixinFields0[1].Descriptor()
+	// tag.DefaultCreatedAt holds the default value on creation for the created_at field.
+	tag.DefaultCreatedAt = tagDescCreatedAt.Default.(func() time.Time)
+	// tagDescUpdatedAt is the schema descriptor for updated_at field.
+	tagDescUpdatedAt := tagMixinFields0[2].Descriptor()
+	// tag.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	tag.DefaultUpdatedAt = tagDescUpdatedAt.Default.(func() time.Time)
+	// tag.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	tag.UpdateDefaultUpdatedAt = tagDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// tagDescName is the schema descriptor for name field.
+	tagDescName := tagFields[0].Descriptor()
+	// tag.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	tag.NameValidator = func() func(string) error {
+		validators := tagDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// tagDescDescription is the schema descriptor for description field.
+	tagDescDescription := tagFields[1].Descriptor()
+	// tag.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	tag.DescriptionValidator = tagDescDescription.Validators[0].(func(string) error)
+	// tagDescSlug is the schema descriptor for slug field.
+	tagDescSlug := tagFields[2].Descriptor()
+	// tag.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	tag.SlugValidator = tagDescSlug.Validators[0].(func(string) error)
+	// tagDescColor is the schema descriptor for color field.
+	tagDescColor := tagFields[3].Descriptor()
+	// tag.ColorValidator is a validator for the "color" field. It is called by the builders before save.
+	tag.ColorValidator = tagDescColor.Validators[0].(func(string) error)
+	// tagDescSortOrder is the schema descriptor for sort_order field.
+	tagDescSortOrder := tagFields[4].Descriptor()
+	// tag.DefaultSortOrder holds the default value on creation for the sort_order field.
+	tag.DefaultSortOrder = tagDescSortOrder.Default.(int)
+	// tagDescActive is the schema descriptor for active field.
+	tagDescActive := tagFields[5].Descriptor()
+	// tag.DefaultActive holds the default value on creation for the active field.
+	tag.DefaultActive = tagDescActive.Default.(bool)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0

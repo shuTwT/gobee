@@ -4,12 +4,14 @@ import (
 	"gobee/internal/database"
 	album_handler "gobee/internal/handlers/content/album"
 	albumphoto_handler "gobee/internal/handlers/content/albumphoto"
+	category_handler "gobee/internal/handlers/content/category"
 	comment_handler "gobee/internal/handlers/content/comment"
 	essay_handler "gobee/internal/handlers/content/essay"
 	flink_handler "gobee/internal/handlers/content/flink"
 	flinkgroup_handler "gobee/internal/handlers/content/flinkgroup"
 	friendcircle_handler "gobee/internal/handlers/content/friendcircle"
 	post_handler "gobee/internal/handlers/content/post"
+	tag_handler "gobee/internal/handlers/content/tag"
 	file_handler "gobee/internal/handlers/infra/file"
 	storagestrategy "gobee/internal/handlers/infra/storagestrategy"
 	visit_handler "gobee/internal/handlers/infra/visit"
@@ -34,6 +36,7 @@ type HandlerMap struct {
 	AlbumPhotoHandler      albumphoto_handler.AlbumPhotoHandler
 	ApiInterfaceHandler    apiinterface_handler.ApiInterfaceHandler
 	AuthHandler            auth_handler.AuthHandler
+	CategoryHandler        category_handler.CategoryHandler
 	CommentHandler         comment_handler.CommentHandler
 	CommonHandler          common_handler.CommonHandler
 	FileHandler            file_handler.FileHandler
@@ -49,6 +52,7 @@ type HandlerMap struct {
 	RoleHandler            role_handler.RoleHandler
 	RouteHandler           route_handler.RouteHandler
 	SettingHandler         setting_handler.SettingHandler
+	TagHandler             tag_handler.TagHandler
 	UserHandler            user_handler.UserHandler
 	EssayHandler           essay_handler.EssayHandler
 	StorageStrategyHandler storagestrategy.StorageStrategyHandler
@@ -59,9 +63,10 @@ type HandlerMap struct {
 func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	albumHandler := album_handler.NewAlbumHandlerImpl(serviceMap.AlbumService)
 	albnumPhotoHandler := albumphoto_handler.NewAlbumPhotoHandlerImpl(serviceMap.AlbumPhotoService)
-	apiInterfaceHandler := apiinterface_handler.NewApiInterfaceHandlerImpl(database.DB, serviceMap.ApiInterfaceService)
+	apiInterfaceHandler := apiinterface_handler.NewApiInterfaceHandlerImpl(serviceMap.ApiInterfaceService)
 	authHandler := auth_handler.NewAuthHandlerImpl(serviceMap.AuthService)
-	commentHandler := comment_handler.NewCommentHandlerImpl(database.DB, serviceMap.CommentService)
+	categoryHandler := category_handler.NewCategoryHandlerImpl(serviceMap.CategoryService)
+	commentHandler := comment_handler.NewCommentHandlerImpl(serviceMap.CommentService)
 	commonHandler := common_handler.NewCommonHandlerImpl(serviceMap.CommonService)
 	fileHandler := file_handler.NewFileHandlerImpl(serviceMap.FileService)
 	flinkHandler := flink_handler.NewFlinkHandlerImpl(database.DB, serviceMap.FlinkService)
@@ -74,6 +79,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	roleHandler := role_handler.NewRoleHandlerImpl(serviceMap.RoleService)
 	routeHandler := route_handler.NewRouteHandlerImpl()
 	settingHandler := setting_handler.NewSettingHandlerImpl(serviceMap.SettingService)
+	tagHandler := tag_handler.NewTagHandlerImpl(serviceMap.TagService)
 	userHandler := user_handler.NewUserHandlerImpl(serviceMap.UserService, serviceMap.RoleService)
 	essayHandler := essay_handler.NewEssayHandlerImpl(serviceMap.EssayService)
 	storageStrategyHandler := storagestrategy.NewStorageStrategyHandlerImpl(serviceMap.StorageStrategyService)
@@ -87,6 +93,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		AlbumPhotoHandler:      albnumPhotoHandler,
 		ApiInterfaceHandler:    apiInterfaceHandler,
 		AuthHandler:            authHandler,
+		CategoryHandler:        categoryHandler,
 		CommentHandler:         commentHandler,
 		CommonHandler:          commonHandler,
 		FileHandler:            fileHandler,
@@ -102,6 +109,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		RoleHandler:            roleHandler,
 		RouteHandler:           routeHandler,
 		SettingHandler:         settingHandler,
+		TagHandler:             tagHandler,
 		UserHandler:            userHandler,
 		EssayHandler:           essayHandler,
 		StorageStrategyHandler: storageStrategyHandler,

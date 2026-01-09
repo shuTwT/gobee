@@ -64,8 +64,40 @@ type Post struct {
 	// 作者
 	Author string `json:"author,omitempty"`
 	// 文章摘要
-	Summary      string `json:"summary,omitempty"`
+	Summary string `json:"summary,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the PostQuery when eager-loading is set.
+	Edges        PostEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// PostEdges holds the relations/edges for other nodes in the graph.
+type PostEdges struct {
+	// Categories holds the value of the categories edge.
+	Categories []*Category `json:"categories,omitempty"`
+	// Tags holds the value of the tags edge.
+	Tags []*Tag `json:"tags,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// CategoriesOrErr returns the Categories value or an error if the edge
+// was not loaded in eager-loading.
+func (e PostEdges) CategoriesOrErr() ([]*Category, error) {
+	if e.loadedTypes[0] {
+		return e.Categories, nil
+	}
+	return nil, &NotLoadedError{edge: "categories"}
+}
+
+// TagsOrErr returns the Tags value or an error if the edge
+// was not loaded in eager-loading.
+func (e PostEdges) TagsOrErr() ([]*Tag, error) {
+	if e.loadedTypes[1] {
+		return e.Tags, nil
+	}
+	return nil, &NotLoadedError{edge: "tags"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -260,6 +292,16 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *Post) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryCategories queries the "categories" edge of the Post entity.
+func (_m *Post) QueryCategories() *CategoryQuery {
+	return NewPostClient(_m.config).QueryCategories(_m)
+}
+
+// QueryTags queries the "tags" edge of the Post entity.
+func (_m *Post) QueryTags() *TagQuery {
+	return NewPostClient(_m.config).QueryTags(_m)
 }
 
 // Update returns a builder for updating this Post.

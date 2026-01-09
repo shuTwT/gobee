@@ -33,6 +33,26 @@ export default [
                 },
             },
             {
+                path: '/content/category',
+                name: 'CategoryManagement',
+                component: () => import('@/views/content/category/index.vue'),
+                meta: {
+                    title: '分类管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
+            },
+            {
+                path: '/content/tag',
+                name: 'TagManagement',
+                component: () => import('@/views/content/tag/index.vue'),
+                meta: {
+                    title: '标签管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
+            },
+            {
                 path: '/content/album',
                 name: 'AlbumManagement',
                 component: () => import('@/views/content/album/index.vue'),

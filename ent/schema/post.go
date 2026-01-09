@@ -2,10 +2,10 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
-// 文章
 type Post struct {
 	ent.Schema
 }
@@ -16,7 +16,6 @@ func (Post) Mixin() []ent.Mixin {
 	}
 }
 
-// Fields of the Post.
 func (Post) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title").NotEmpty().MaxLen(255).Comment("文章标题"),
@@ -44,7 +43,9 @@ func (Post) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Post.
 func (Post) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("categories", Category.Type).Ref("posts"),
+		edge.From("tags", Tag.Type).Ref("posts"),
+	}
 }

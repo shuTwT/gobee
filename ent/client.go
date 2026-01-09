@@ -14,6 +14,7 @@ import (
 	"gobee/ent/album"
 	"gobee/ent/albumphoto"
 	"gobee/ent/apiperms"
+	"gobee/ent/category"
 	"gobee/ent/comment"
 	"gobee/ent/coupon"
 	"gobee/ent/couponusage"
@@ -35,6 +36,7 @@ import (
 	"gobee/ent/schedulejob"
 	"gobee/ent/setting"
 	"gobee/ent/storagestrategy"
+	"gobee/ent/tag"
 	"gobee/ent/user"
 	"gobee/ent/visitlog"
 	"gobee/ent/wallet"
@@ -57,6 +59,8 @@ type Client struct {
 	AlbumPhoto *AlbumPhotoClient
 	// ApiPerms is the client for interacting with the ApiPerms builders.
 	ApiPerms *ApiPermsClient
+	// Category is the client for interacting with the Category builders.
+	Category *CategoryClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -99,6 +103,8 @@ type Client struct {
 	Setting *SettingClient
 	// StorageStrategy is the client for interacting with the StorageStrategy builders.
 	StorageStrategy *StorageStrategyClient
+	// Tag is the client for interacting with the Tag builders.
+	Tag *TagClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// VisitLog is the client for interacting with the VisitLog builders.
@@ -121,6 +127,7 @@ func (c *Client) init() {
 	c.Album = NewAlbumClient(c.config)
 	c.AlbumPhoto = NewAlbumPhotoClient(c.config)
 	c.ApiPerms = NewApiPermsClient(c.config)
+	c.Category = NewCategoryClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponUsage = NewCouponUsageClient(c.config)
@@ -142,6 +149,7 @@ func (c *Client) init() {
 	c.ScheduleJob = NewScheduleJobClient(c.config)
 	c.Setting = NewSettingClient(c.config)
 	c.StorageStrategy = NewStorageStrategyClient(c.config)
+	c.Tag = NewTagClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.VisitLog = NewVisitLogClient(c.config)
 	c.Wallet = NewWalletClient(c.config)
@@ -241,6 +249,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Album:               NewAlbumClient(cfg),
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		ApiPerms:            NewApiPermsClient(cfg),
+		Category:            NewCategoryClient(cfg),
 		Comment:             NewCommentClient(cfg),
 		Coupon:              NewCouponClient(cfg),
 		CouponUsage:         NewCouponUsageClient(cfg),
@@ -262,6 +271,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ScheduleJob:         NewScheduleJobClient(cfg),
 		Setting:             NewSettingClient(cfg),
 		StorageStrategy:     NewStorageStrategyClient(cfg),
+		Tag:                 NewTagClient(cfg),
 		User:                NewUserClient(cfg),
 		VisitLog:            NewVisitLogClient(cfg),
 		Wallet:              NewWalletClient(cfg),
@@ -288,6 +298,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Album:               NewAlbumClient(cfg),
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		ApiPerms:            NewApiPermsClient(cfg),
+		Category:            NewCategoryClient(cfg),
 		Comment:             NewCommentClient(cfg),
 		Coupon:              NewCouponClient(cfg),
 		CouponUsage:         NewCouponUsageClient(cfg),
@@ -309,6 +320,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ScheduleJob:         NewScheduleJobClient(cfg),
 		Setting:             NewSettingClient(cfg),
 		StorageStrategy:     NewStorageStrategyClient(cfg),
+		Tag:                 NewTagClient(cfg),
 		User:                NewUserClient(cfg),
 		VisitLog:            NewVisitLogClient(cfg),
 		Wallet:              NewWalletClient(cfg),
@@ -342,11 +354,12 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Coupon, c.CouponUsage, c.Essay,
-		c.FLink, c.FLinkGroup, c.File, c.FriendCircleRecord, c.Member, c.MemberLevel,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
-		c.PersonalAccessToken, c.Post, c.Product, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
+		c.CouponUsage, c.Essay, c.FLink, c.FLinkGroup, c.File, c.FriendCircleRecord,
+		c.Member, c.MemberLevel, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Post, c.Product,
+		c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog,
+		c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -356,11 +369,12 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Comment, c.Coupon, c.CouponUsage, c.Essay,
-		c.FLink, c.FLinkGroup, c.File, c.FriendCircleRecord, c.Member, c.MemberLevel,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
-		c.PersonalAccessToken, c.Post, c.Product, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
+		c.CouponUsage, c.Essay, c.FLink, c.FLinkGroup, c.File, c.FriendCircleRecord,
+		c.Member, c.MemberLevel, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Post, c.Product,
+		c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog,
+		c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -375,6 +389,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.AlbumPhoto.mutate(ctx, m)
 	case *ApiPermsMutation:
 		return c.ApiPerms.mutate(ctx, m)
+	case *CategoryMutation:
+		return c.Category.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
 	case *CouponMutation:
@@ -417,6 +433,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Setting.mutate(ctx, m)
 	case *StorageStrategyMutation:
 		return c.StorageStrategy.mutate(ctx, m)
+	case *TagMutation:
+		return c.Tag.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *VisitLogMutation:
@@ -826,6 +844,155 @@ func (c *ApiPermsClient) mutate(ctx context.Context, m *ApiPermsMutation) (Value
 		return (&ApiPermsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown ApiPerms mutation op: %q", m.Op())
+	}
+}
+
+// CategoryClient is a client for the Category schema.
+type CategoryClient struct {
+	config
+}
+
+// NewCategoryClient returns a client for the Category from the given config.
+func NewCategoryClient(c config) *CategoryClient {
+	return &CategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `category.Hooks(f(g(h())))`.
+func (c *CategoryClient) Use(hooks ...Hook) {
+	c.hooks.Category = append(c.hooks.Category, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `category.Intercept(f(g(h())))`.
+func (c *CategoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Category = append(c.inters.Category, interceptors...)
+}
+
+// Create returns a builder for creating a Category entity.
+func (c *CategoryClient) Create() *CategoryCreate {
+	mutation := newCategoryMutation(c.config, OpCreate)
+	return &CategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Category entities.
+func (c *CategoryClient) CreateBulk(builders ...*CategoryCreate) *CategoryCreateBulk {
+	return &CategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CategoryClient) MapCreateBulk(slice any, setFunc func(*CategoryCreate, int)) *CategoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CategoryCreateBulk{err: fmt.Errorf("calling to CategoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CategoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Category.
+func (c *CategoryClient) Update() *CategoryUpdate {
+	mutation := newCategoryMutation(c.config, OpUpdate)
+	return &CategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CategoryClient) UpdateOne(_m *Category) *CategoryUpdateOne {
+	mutation := newCategoryMutation(c.config, OpUpdateOne, withCategory(_m))
+	return &CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CategoryClient) UpdateOneID(id int) *CategoryUpdateOne {
+	mutation := newCategoryMutation(c.config, OpUpdateOne, withCategoryID(id))
+	return &CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Category.
+func (c *CategoryClient) Delete() *CategoryDelete {
+	mutation := newCategoryMutation(c.config, OpDelete)
+	return &CategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CategoryClient) DeleteOne(_m *Category) *CategoryDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CategoryClient) DeleteOneID(id int) *CategoryDeleteOne {
+	builder := c.Delete().Where(category.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for Category.
+func (c *CategoryClient) Query() *CategoryQuery {
+	return &CategoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCategory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Category entity by its id.
+func (c *CategoryClient) Get(ctx context.Context, id int) (*Category, error) {
+	return c.Query().Where(category.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CategoryClient) GetX(ctx context.Context, id int) *Category {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPosts queries the posts edge of a Category.
+func (c *CategoryClient) QueryPosts(_m *Category) *PostQuery {
+	query := (&PostClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(category.Table, category.FieldID, id),
+			sqlgraph.To(post.Table, post.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, category.PostsTable, category.PostsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CategoryClient) Hooks() []Hook {
+	return c.hooks.Category
+}
+
+// Interceptors returns the client interceptors.
+func (c *CategoryClient) Interceptors() []Interceptor {
+	return c.inters.Category
+}
+
+func (c *CategoryClient) mutate(ctx context.Context, m *CategoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CategoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CategoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Category mutation op: %q", m.Op())
 	}
 }
 
@@ -2996,6 +3163,38 @@ func (c *PostClient) GetX(ctx context.Context, id int) *Post {
 	return obj
 }
 
+// QueryCategories queries the categories edge of a Post.
+func (c *PostClient) QueryCategories(_m *Post) *CategoryQuery {
+	query := (&CategoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(post.Table, post.FieldID, id),
+			sqlgraph.To(category.Table, category.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, post.CategoriesTable, post.CategoriesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTags queries the tags edge of a Post.
+func (c *PostClient) QueryTags(_m *Post) *TagQuery {
+	query := (&TagClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(post.Table, post.FieldID, id),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, post.TagsTable, post.TagsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PostClient) Hooks() []Hook {
 	return c.hooks.Post
@@ -3702,6 +3901,155 @@ func (c *StorageStrategyClient) mutate(ctx context.Context, m *StorageStrategyMu
 	}
 }
 
+// TagClient is a client for the Tag schema.
+type TagClient struct {
+	config
+}
+
+// NewTagClient returns a client for the Tag from the given config.
+func NewTagClient(c config) *TagClient {
+	return &TagClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `tag.Hooks(f(g(h())))`.
+func (c *TagClient) Use(hooks ...Hook) {
+	c.hooks.Tag = append(c.hooks.Tag, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `tag.Intercept(f(g(h())))`.
+func (c *TagClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Tag = append(c.inters.Tag, interceptors...)
+}
+
+// Create returns a builder for creating a Tag entity.
+func (c *TagClient) Create() *TagCreate {
+	mutation := newTagMutation(c.config, OpCreate)
+	return &TagCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Tag entities.
+func (c *TagClient) CreateBulk(builders ...*TagCreate) *TagCreateBulk {
+	return &TagCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TagClient) MapCreateBulk(slice any, setFunc func(*TagCreate, int)) *TagCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TagCreateBulk{err: fmt.Errorf("calling to TagClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TagCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TagCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Tag.
+func (c *TagClient) Update() *TagUpdate {
+	mutation := newTagMutation(c.config, OpUpdate)
+	return &TagUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TagClient) UpdateOne(_m *Tag) *TagUpdateOne {
+	mutation := newTagMutation(c.config, OpUpdateOne, withTag(_m))
+	return &TagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TagClient) UpdateOneID(id int) *TagUpdateOne {
+	mutation := newTagMutation(c.config, OpUpdateOne, withTagID(id))
+	return &TagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Tag.
+func (c *TagClient) Delete() *TagDelete {
+	mutation := newTagMutation(c.config, OpDelete)
+	return &TagDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TagClient) DeleteOne(_m *Tag) *TagDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TagClient) DeleteOneID(id int) *TagDeleteOne {
+	builder := c.Delete().Where(tag.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TagDeleteOne{builder}
+}
+
+// Query returns a query builder for Tag.
+func (c *TagClient) Query() *TagQuery {
+	return &TagQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTag},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Tag entity by its id.
+func (c *TagClient) Get(ctx context.Context, id int) (*Tag, error) {
+	return c.Query().Where(tag.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TagClient) GetX(ctx context.Context, id int) *Tag {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPosts queries the posts edge of a Tag.
+func (c *TagClient) QueryPosts(_m *Tag) *PostQuery {
+	query := (&PostClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tag.Table, tag.FieldID, id),
+			sqlgraph.To(post.Table, post.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, tag.PostsTable, tag.PostsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TagClient) Hooks() []Hook {
+	return c.hooks.Tag
+}
+
+// Interceptors returns the client interceptors.
+func (c *TagClient) Interceptors() []Interceptor {
+	return c.inters.Tag
+}
+
+func (c *TagClient) mutate(ctx context.Context, m *TagMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TagCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TagUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TagDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Tag mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -4301,17 +4649,17 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, ApiPerms, Comment, Coupon, CouponUsage, Essay, FLink,
-		FLinkGroup, File, FriendCircleRecord, Member, MemberLevel, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, PayOrder, PersonalAccessToken, Post, Product,
-		Role, ScheduleJob, Setting, StorageStrategy, User, VisitLog, Wallet,
-		WebHook []ent.Hook
+		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, Essay,
+		FLink, FLinkGroup, File, FriendCircleRecord, Member, MemberLevel,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
+		PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
+		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, ApiPerms, Comment, Coupon, CouponUsage, Essay, FLink,
-		FLinkGroup, File, FriendCircleRecord, Member, MemberLevel, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, PayOrder, PersonalAccessToken, Post, Product,
-		Role, ScheduleJob, Setting, StorageStrategy, User, VisitLog, Wallet,
-		WebHook []ent.Interceptor
+		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, Essay,
+		FLink, FLinkGroup, File, FriendCircleRecord, Member, MemberLevel,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
+		PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
+		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Interceptor
 	}
 )

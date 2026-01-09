@@ -5,11 +5,13 @@ import (
 	"gobee/internal/database"
 	album_service "gobee/internal/services/content/album"
 	albumphoto_service "gobee/internal/services/content/albumphoto"
+	category_service "gobee/internal/services/content/category"
 	comment_service "gobee/internal/services/content/comment"
 	essay_service "gobee/internal/services/content/essay"
 	flink_service "gobee/internal/services/content/flink"
 	friend_circle_service "gobee/internal/services/content/friendcircle"
 	post_service "gobee/internal/services/content/post"
+	tag_service "gobee/internal/services/content/tag"
 	file_service "gobee/internal/services/infra/file"
 	permission_service "gobee/internal/services/infra/permission"
 	storagestrategy_service "gobee/internal/services/infra/storagestrategy"
@@ -31,28 +33,30 @@ import (
 const autoMigrate = true
 
 type ServiceMap struct {
+	AlbumService           album_service.AlbumService
+	AlbumPhotoService      albumphoto_service.AlbumPhotoService
 	ApiInterfaceService    api_interface_service.ApiInterfaceService
+	AuthService            auth_service.AuthService
+	CategoryService        category_service.CategoryService
 	CommentService         comment_service.CommentService
 	CommonService          common_service.CommonService
+	EssayService           essay_service.EssayService
+	FileService            file_service.FileService
+	FlinkService           flink_service.FlinkService
 	FriendCircleService    friend_circle_service.FriendCircleService
+	MemberLevelService     memberlevel_service.MemberLevelService
+	MemberService          member_service.MemberService
+	PayOrderService        payorder.PayOrderService
 	PermissionService      permission_service.PermissionService
 	PostService            post_service.PostService
 	ProductService         product_service.ProductService
 	RoleService            role_service.RoleService
 	SettingService         setting_service.SettingService
-	UserService            user_service.UserService
-	EssayService           essay_service.EssayService
-	FlinkService           flink_service.FlinkService
-	VisitService           visit_service.VisitService
-	PayOrderService        payorder.PayOrderService
-	AlbumService           album_service.AlbumService
-	AuthService            auth_service.AuthService
-	FileService            file_service.FileService
-	AlbumPhotoService      albumphoto_service.AlbumPhotoService
 	StorageStrategyService storagestrategy_service.StorageStrategyService
+	TagService             tag_service.TagService
+	UserService            user_service.UserService
+	VisitService           visit_service.VisitService
 	WalletService          wallet_service.WalletService
-	MemberService          member_service.MemberService
-	MemberLevelService     memberlevel_service.MemberLevelService
 }
 
 func InitializeServices(moduleDefs embed.FS) ServiceMap {
@@ -68,55 +72,59 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	}
 
 	// 初始化 service
+	albumService := album_service.NewAlbumServiceImpl(db)
+	albumPhotoService := albumphoto_service.NewAlbumPhotoServiceImpl(db)
 	apiInterfaceService := api_interface_service.NewApiInterfaceServiceImpl(db)
+	authService := auth_service.NewAuthServiceImpl(db)
+	categoryService := category_service.NewCategoryServiceImpl(db)
 	commentService := comment_service.NewCommentServiceImpl(db)
 	commonService := common_service.NewCommonServiceImpl(db, user_service.NewUserServiceImpl(db), post_service.NewPostServiceImpl(db), comment_service.NewCommentServiceImpl(db))
+	essayService := essay_service.NewEssayServiceImpl(db)
+	fileService := file_service.NewFileServiceImpl(db)
+	flinkService := flink_service.NewFlinkServiceImpl(db)
 	friendCircleService := friend_circle_service.NewFriendCircleServiceImpl(db)
+	memberLevelService := memberlevel_service.NewMemberLevelServiceImpl(db)
+	memberService := member_service.NewMemberServiceImpl(db)
+	payOderService := payorder.NewPayOrderServiceImpl(db)
 	permissionService := permission_service.NewPermissionServiceImpl(db)
 	postService := post_service.NewPostServiceImpl(db)
 	productService := product_service.NewProductServiceImpl(db)
 	roleService := role_service.NewRoleServiceImpl(db)
 	settingService := setting_service.NewSettingServiceImpl(db)
-	userService := user_service.NewUserServiceImpl(db)
-	essayService := essay_service.NewEssayServiceImpl(db)
-	flinkService := flink_service.NewFlinkServiceImpl(db)
-	visitService := visit_service.NewVisitServiceImpl(db)
-	payOderService := payorder.NewPayOrderServiceImpl(db)
-	albumService := album_service.NewAlbumServiceImpl(db)
-	authService := auth_service.NewAuthServiceImpl(db)
-	fileService := file_service.NewFileServiceImpl(db)
-	albumPhotoService := albumphoto_service.NewAlbumPhotoServiceImpl(db)
 	storageStrategyService := storagestrategy_service.NewStorageStrategyServiceImpl(db)
+	tagService := tag_service.NewTagServiceImpl(db)
+	userService := user_service.NewUserServiceImpl(db)
+	visitService := visit_service.NewVisitServiceImpl(db)
 	walletService := wallet_service.NewWalletServiceImpl(db)
-	memberService := member_service.NewMemberServiceImpl(db)
-	memberLevelService := memberlevel_service.NewMemberLevelServiceImpl(db)
 
 	//执行
 	permissionService.LoadPermissionsFromDef(moduleDefs)
 
 	serviceMap := ServiceMap{
+		AlbumService:           albumService,
+		AlbumPhotoService:      albumPhotoService,
 		ApiInterfaceService:    apiInterfaceService,
+		AuthService:            authService,
+		CategoryService:        categoryService,
 		CommentService:         commentService,
 		CommonService:          commonService,
+		EssayService:           essayService,
+		FileService:            fileService,
+		FlinkService:           flinkService,
 		FriendCircleService:    friendCircleService,
+		MemberLevelService:     memberLevelService,
+		MemberService:          memberService,
+		PayOrderService:        payOderService,
 		PermissionService:      permissionService,
 		PostService:            postService,
 		ProductService:         productService,
 		RoleService:            roleService,
 		SettingService:         settingService,
-		UserService:            userService,
-		EssayService:           essayService,
-		FlinkService:           flinkService,
-		VisitService:           visitService,
-		PayOrderService:        payOderService,
-		AlbumService:           albumService,
-		AuthService:            authService,
-		FileService:            fileService,
-		AlbumPhotoService:      albumPhotoService,
 		StorageStrategyService: storageStrategyService,
+		TagService:             tagService,
+		UserService:            userService,
+		VisitService:           visitService,
 		WalletService:          walletService,
-		MemberService:          memberService,
-		MemberLevelService:     memberLevelService,
 	}
 
 	return serviceMap

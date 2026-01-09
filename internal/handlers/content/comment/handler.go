@@ -1,7 +1,6 @@
 package comment
 
 import (
-	"gobee/ent"
 	comment_service "gobee/internal/services/content/comment"
 	"gobee/pkg/domain/model"
 	"strconv"
@@ -30,12 +29,11 @@ type CommentHandler interface {
 }
 
 type CommentHandlerImpl struct {
-	client         *ent.Client
 	commentService comment_service.CommentService
 }
 
-func NewCommentHandlerImpl(client *ent.Client, commentService comment_service.CommentService) *CommentHandlerImpl {
-	return &CommentHandlerImpl{client: client, commentService: commentService}
+func NewCommentHandlerImpl(commentService comment_service.CommentService) *CommentHandlerImpl {
+	return &CommentHandlerImpl{commentService: commentService}
 }
 
 // @Summary 获取评论列表

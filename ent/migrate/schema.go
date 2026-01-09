@@ -66,6 +66,23 @@ var (
 			},
 		},
 	}
+	// CategoriesColumns holds the columns for the "categories" table.
+	CategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 100},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
+		{Name: "active", Type: field.TypeBool, Default: true},
+	}
+	// CategoriesTable holds the schema information for the "categories" table.
+	CategoriesTable = &schema.Table{
+		Name:       "categories",
+		Columns:    CategoriesColumns,
+		PrimaryKey: []*schema.Column{CategoriesColumns[0]},
+	}
 	// CommentsColumns holds the columns for the "comments" table.
 	CommentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -530,6 +547,24 @@ var (
 		Columns:    StorageStrategiesColumns,
 		PrimaryKey: []*schema.Column{StorageStrategiesColumns[0]},
 	}
+	// TagsColumns holds the columns for the "tags" table.
+	TagsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 50},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Size: 50},
+		{Name: "color", Type: field.TypeString, Nullable: true, Size: 20},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
+		{Name: "active", Type: field.TypeBool, Default: true},
+	}
+	// TagsTable holds the schema information for the "tags" table.
+	TagsTable = &schema.Table{
+		Name:       "tags",
+		Columns:    TagsColumns,
+		PrimaryKey: []*schema.Column{TagsColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -630,11 +665,62 @@ var (
 		Columns:    WebHooksColumns,
 		PrimaryKey: []*schema.Column{WebHooksColumns[0]},
 	}
+	// CategoryPostsColumns holds the columns for the "category_posts" table.
+	CategoryPostsColumns = []*schema.Column{
+		{Name: "category_id", Type: field.TypeInt},
+		{Name: "post_id", Type: field.TypeInt},
+	}
+	// CategoryPostsTable holds the schema information for the "category_posts" table.
+	CategoryPostsTable = &schema.Table{
+		Name:       "category_posts",
+		Columns:    CategoryPostsColumns,
+		PrimaryKey: []*schema.Column{CategoryPostsColumns[0], CategoryPostsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "category_posts_category_id",
+				Columns:    []*schema.Column{CategoryPostsColumns[0]},
+				RefColumns: []*schema.Column{CategoriesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "category_posts_post_id",
+				Columns:    []*schema.Column{CategoryPostsColumns[1]},
+				RefColumns: []*schema.Column{PostsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// TagPostsColumns holds the columns for the "tag_posts" table.
+	TagPostsColumns = []*schema.Column{
+		{Name: "tag_id", Type: field.TypeInt},
+		{Name: "post_id", Type: field.TypeInt},
+	}
+	// TagPostsTable holds the schema information for the "tag_posts" table.
+	TagPostsTable = &schema.Table{
+		Name:       "tag_posts",
+		Columns:    TagPostsColumns,
+		PrimaryKey: []*schema.Column{TagPostsColumns[0], TagPostsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tag_posts_tag_id",
+				Columns:    []*schema.Column{TagPostsColumns[0]},
+				RefColumns: []*schema.Column{TagsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "tag_posts_post_id",
+				Columns:    []*schema.Column{TagPostsColumns[1]},
+				RefColumns: []*schema.Column{PostsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AlbumsTable,
 		AlbumPhotosTable,
 		APIPermsTable,
+		CategoriesTable,
 		CommentsTable,
 		CouponsTable,
 		CouponUsagesTable,
@@ -656,10 +742,13 @@ var (
 		ScheduleJobsTable,
 		SettingsTable,
 		StorageStrategiesTable,
+		TagsTable,
 		UsersTable,
 		VisitLogsTable,
 		WalletsTable,
 		WebHooksTable,
+		CategoryPostsTable,
+		TagPostsTable,
 	}
 )
 
@@ -669,4 +758,8 @@ func init() {
 	MembersTable.ForeignKeys[1].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = RolesTable
 	WalletsTable.ForeignKeys[0].RefTable = UsersTable
+	CategoryPostsTable.ForeignKeys[0].RefTable = CategoriesTable
+	CategoryPostsTable.ForeignKeys[1].RefTable = PostsTable
+	TagPostsTable.ForeignKeys[0].RefTable = TagsTable
+	TagPostsTable.ForeignKeys[1].RefTable = PostsTable
 }

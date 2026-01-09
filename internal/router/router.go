@@ -99,6 +99,24 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		postApi.Delete("/delete/:id", handlerMap.PostHandler.DeletePost).Name("postDelete")
 		postApi.Get("/summary/stream/:id", handlerMap.PostHandler.GetSummaryForStream).Name("postSummaryStream")
 	}
+	categoryApi := router.Group("/category")
+	{
+		categoryApi.Get("/query/:id", handlerMap.CategoryHandler.QueryCategory).Name("categoryQuery")
+		categoryApi.Get("/list", handlerMap.CategoryHandler.QueryCategoryList).Name("categoryList")
+		categoryApi.Get("/page", handlerMap.CategoryHandler.QueryCategoryPage).Name("categoryPage")
+		categoryApi.Post("/create", handlerMap.CategoryHandler.CreateCategory).Name("categoryCreate")
+		categoryApi.Put("/update/:id", handlerMap.CategoryHandler.UpdateCategory).Name("categoryUpdate")
+		categoryApi.Delete("/delete/:id", handlerMap.CategoryHandler.DeleteCategory).Name("categoryDelete")
+	}
+	tagApi := router.Group("/tag")
+	{
+		tagApi.Get("/query/:id", handlerMap.TagHandler.QueryTag).Name("tagQuery")
+		tagApi.Get("/list", handlerMap.TagHandler.QueryTagList).Name("tagList")
+		tagApi.Get("/page", handlerMap.TagHandler.QueryTagPage).Name("tagPage")
+		tagApi.Post("/create", handlerMap.TagHandler.CreateTag).Name("tagCreate")
+		tagApi.Put("/update/:id", handlerMap.TagHandler.UpdateTag).Name("tagUpdate")
+		tagApi.Delete("/delete/:id", handlerMap.TagHandler.DeleteTag).Name("tagDelete")
+	}
 }
 
 // 注册基础设施路由
