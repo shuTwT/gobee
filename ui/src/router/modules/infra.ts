@@ -31,6 +31,16 @@ export default [
                     showLink: true,
                     roles: ['admin', 'common'],
                 },
+            },
+            {
+                path: '/infra/migration',
+                name: 'MigrationManagement',
+                component: () => import('@/views/infra/migration/index.vue'),
+                meta: {
+                    title: '迁移',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
             }
         ]
     }
