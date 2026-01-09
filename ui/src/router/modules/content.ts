@@ -13,7 +13,7 @@ export default [
         },
         children: [
             {
-                path: '/post',
+                path: '/content/post',
                 name: 'PostManagement',
                 component: () => import('@/views/content/post/index.vue'),
                 meta: {
@@ -23,7 +23,7 @@ export default [
                 },
             },
             {
-                path: '/post/edit',
+                path: '/content/post/edit',
                 name: 'PostEditor',
                 component: () => import('@/views/content/post/editor/index.vue'),
                 meta: {
@@ -33,7 +33,7 @@ export default [
                 },
             },
             {
-                path: '/album',
+                path: '/content/album',
                 name: 'AlbumManagement',
                 component: () => import('@/views/content/album/index.vue'),
                 meta: {
@@ -43,7 +43,7 @@ export default [
                 },
             },
             {
-                path: '/comment',
+                path: '/content/comment',
                 name: 'CommentManagement',
                 component: () => import('@/views/comment/index.vue'),
                 meta: {
@@ -53,7 +53,7 @@ export default [
                 },
             },
             {
-                path: '/flink',
+                path: '/content/flink',
                 name: 'FlinkManagement',
                 component: () => import('@/views/content/flink/index.vue'),
                 meta: {
@@ -63,7 +63,7 @@ export default [
                 },
             },
             {
-                path: '/friend-circle',
+                path: '/content/friend-circle',
                 name: 'FriendCircleRecord',
                 component: () => import('@/views/friend-circle/index.vue'),
                 meta: {

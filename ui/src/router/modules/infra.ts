@@ -13,7 +13,7 @@ export default [
         },
         children: [
             {
-                path: '/file',
+                path: '/infra/file',
                 name: 'FileManagement',
                 component: () => import('@/views/infra/file/index.vue'),
                 meta: {
@@ -23,7 +23,7 @@ export default [
                 },
             },
             {
-                path: '/storage-strategy',
+                path: '/infra/storage-strategy',
                 name: 'StorageStrategyManagement',
                 component: () => import('@/views/infra/storage-strategy/index.vue'),
                 meta: {

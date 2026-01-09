@@ -23,7 +23,7 @@ export default [
         },
       },
       {
-        path: '/api',
+        path: '/system/api',
         name: 'ApiManagement',
         component: () => import('@/views/system/api/index.vue'),
         meta: {
@@ -33,7 +33,7 @@ export default [
         },
       },
       {
-        path: '/webhook',
+        path: '/system/webhook',
         name: 'WebhookManagement',
         component: () => import('@/views/webhook/index.vue'),
         meta: {
@@ -43,7 +43,7 @@ export default [
         },
       },
       {
-        path: '/role',
+        path: '/system/role',
         name: 'RoleManagement',
         component: () => import('@/views/system/role/index.vue'),
         meta: {
@@ -53,7 +53,7 @@ export default [
         },
       },
       {
-        path: '/user',
+        path: '/system/user',
         name: 'UserManagement',
         component: () => import('@/views/system/user/index.vue'),
         meta: {

@@ -1,20 +1,16 @@
 package user_handler
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
-	"golang.org/x/crypto/bcrypt"
 
 	"gobee/ent"
-	"gobee/ent/personalaccesstoken"
 	"gobee/ent/user"
 	"gobee/internal/database"
+	"gobee/internal/middleware"
 	role_service "gobee/internal/services/role"
 	user_service "gobee/internal/services/user"
-	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
 )
 
@@ -124,102 +120,21 @@ func (h *UserHandlerImpl) ListUserPage(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/user/create [post]
 func (h *UserHandlerImpl) CreateUser(c *fiber.Ctx) error {
-	client := database.DB
-	var userData *model.UserCreateReq
-	if err := c.BodyParser(&userData); err != nil {
+	var req model.UserCreateReq
+	if err := c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),
 		))
 	}
 
-	// 检查邮箱是否已存在
-	exists, err := client.User.Query().
-		Where(user.EmailEQ(userData.Email)).
-		Exist(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-	if exists {
-		return c.JSON(model.NewError(fiber.StatusBadRequest,
-			"Email already exists",
-		))
-	}
-
-	// 如果提供了手机号，检查手机号是否已存在
-	if userData.PhoneNumber != "" {
-		exists, err = client.User.Query().
-			Where(user.PhoneNumberEQ(userData.PhoneNumber)).
-			Exist(c.Context())
-		if err != nil {
-			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-		}
-		if exists {
-			return c.JSON(model.NewError(fiber.StatusBadRequest,
-				"Phone number already exists",
-			))
-		}
-	}
-
-	// 加密密码
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
+	user, err := h.userService.CreateUser(c.Context(), req)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
-			"Failed to hash password",
+			err.Error(),
 		))
 	}
 
-	// 使用事务创建用户和钱包
-	tx, err := client.Tx(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-
-	defer func() {
-		if p := recover(); p != nil {
-			_ = tx.Rollback()
-			panic(p)
-		}
-	}()
-
-	// 创建用户
-	newUser, err := tx.User.Create().
-		SetEmail(userData.Email).
-		SetName(userData.Name).
-		SetPassword(string(hashedPassword)).
-		SetPhoneNumber(userData.PhoneNumber).
-		Save(c.Context())
-	if err != nil {
-		_ = tx.Rollback()
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-
-	// 为用户创建钱包
-	_, err = tx.Wallet.Create().
-		SetUserID(newUser.ID).
-		Save(c.Context())
-	if err != nil {
-		_ = tx.Rollback()
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-
-	// 为用户创建会员
-	memberNo := fmt.Sprintf("M%06d", newUser.ID)
-	_, err = tx.Member.Create().
-		SetUserID(newUser.ID).
-		SetMemberLevel(1).
-		SetMemberNo(memberNo).
-		Save(c.Context())
-	if err != nil {
-		_ = tx.Rollback()
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-
-	// 提交事务
-	if err = tx.Commit(); err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-
-	return c.JSON(model.NewSuccess("success", newUser))
+	return c.JSON(model.NewSuccess("success", user))
 }
 
 // @Summary 更新用户
@@ -234,7 +149,6 @@ func (h *UserHandlerImpl) CreateUser(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/user/update/{id} [put]
 func (h *UserHandlerImpl) UpdateUser(c *fiber.Ctx) error {
-	client := database.DB
 	var err error
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -243,62 +157,18 @@ func (h *UserHandlerImpl) UpdateUser(c *fiber.Ctx) error {
 		))
 	}
 
-	var userData *model.UserUpdateReq
-	if err = c.BodyParser(&userData); err != nil {
+	var req model.UserUpdateReq
+	if err = c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),
 		))
 	}
 
-	// 开始构建更新
-	update := client.User.UpdateOneID(id)
-
-	// 如果提供了新名称
-	if userData.Name != "" {
-		update.SetName(userData.Name)
-	}
-
-	// 如果提供了新手机号
-	if userData.PhoneNumber != "" {
-		// 检查手机号是否已被其他用户使用
-		var exists bool
-		exists, err = client.User.Query().
-			Where(
-				user.And(
-					user.PhoneNumberEQ(userData.PhoneNumber),
-					user.IDNEQ(id),
-				),
-			).
-			Exist(c.Context())
-		if err != nil {
-			return c.JSON(model.NewError(fiber.StatusInternalServerError,
-				err.Error(),
-			))
-		}
-		if exists {
-			return c.JSON(model.NewError(fiber.StatusBadRequest,
-				"Phone number already exists",
-			))
-		}
-		update.SetPhoneNumber(userData.PhoneNumber)
-	}
-
-	// 如果提供了新密码
-	if userData.Password != "" {
-		var hashedPassword []byte
-		hashedPassword, err = bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
-		if err != nil {
-			return c.JSON(model.NewError(fiber.StatusInternalServerError,
-				"Failed to hash password",
-			))
-		}
-		update.SetPassword(string(hashedPassword))
-	}
-
-	// 执行更新
-	updatedUser, err := update.Save(c.Context())
+	updatedUser, err := h.userService.UpdateUser(c.Context(), id, req)
 	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+		return c.JSON(model.NewError(fiber.StatusInternalServerError,
+			err.Error(),
+		))
 	}
 
 	return c.JSON(model.NewSuccess("success", updatedUser))
@@ -353,7 +223,6 @@ func (h *UserHandlerImpl) QueryUser(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/user/delete/{id} [delete]
 func (h *UserHandlerImpl) DeleteUser(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -361,13 +230,8 @@ func (h *UserHandlerImpl) DeleteUser(c *fiber.Ctx) error {
 		))
 	}
 
-	err = client.User.DeleteOneID(id).Exec(c.Context())
+	err = h.userService.DeleteUser(c.Context(), id)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return c.JSON(model.NewError(fiber.StatusNotFound,
-				"User not found",
-			))
-		}
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
 		))
@@ -386,12 +250,17 @@ func (h *UserHandlerImpl) DeleteUser(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/user/personal-access-token/list [get]
 func (h *UserHandlerImpl) GetPersonalAccessTokenList(c *fiber.Ctx) error {
-	userId := int(c.Locals("userId").(float64))
-	client := database.DB
-	tokens, err := client.PersonalAccessToken.Query().Where(personalaccesstoken.UserID(userId)).All(c.Context())
-	if err != nil {
+	loginUser := middleware.GetCurrentUser(c)
+	if loginUser == nil {
 		return c.JSON(model.NewError(
-			fiber.StatusBadRequest, err.Error(),
+			fiber.StatusUnauthorized, "Unauthorized",
+		))
+	}
+	userId := loginUser.ID
+	tokens, err := h.userService.GetPersonalAccessTokenList(c.Context(), userId)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError,
+			err.Error(),
 		))
 	}
 	result := []model.PersonalAccessTokenListResp{}
@@ -420,15 +289,20 @@ func (h *UserHandlerImpl) GetPersonalAccessTokenList(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/user/personal-access-token/query/{id} [get]
 func (h *UserHandlerImpl) GetPersonalAccessToken(c *fiber.Ctx) error {
-	userId := int(c.Locals("userId").(float64))
+	loginUser := middleware.GetCurrentUser(c)
+	if loginUser == nil {
+		return c.JSON(model.NewError(
+			fiber.StatusInternalServerError, "Unauthorized",
+		))
+	}
+	userId := loginUser.ID
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(
 			fiber.StatusBadRequest, err.Error(),
 		))
 	}
-	client := database.DB
-	token, err := client.PersonalAccessToken.Query().Where(personalaccesstoken.UserIDEQ(userId), personalaccesstoken.IDEQ(id)).Only(c.Context())
+	token, err := h.userService.GetPersonalAccessToken(c.Context(), userId, id)
 	if err != nil {
 		return c.JSON(model.NewError(
 			fiber.StatusBadRequest, err.Error(),
@@ -455,45 +329,27 @@ func (h *UserHandlerImpl) GetPersonalAccessToken(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/user/personal-access-token/create [post]
 func (h *UserHandlerImpl) CreatePat(c *fiber.Ctx) error {
-	userId := int(c.Locals("userId").(float64))
-	var createReq *model.PersonalAccessTokenCreateReq
+	loginUser := middleware.GetCurrentUser(c)
+	if loginUser == nil {
+		return c.JSON(model.NewError(
+			fiber.StatusInternalServerError, "Unauthorized",
+		))
+	}
+	userId := loginUser.ID
+	var createReq model.PersonalAccessTokenCreateReq
 	err := c.BodyParser(&createReq)
 	if err != nil {
 		return c.JSON(model.NewError(
 			fiber.StatusBadRequest, err.Error(),
 		))
 	}
-	client := database.DB
 	// 查找用户
-	u, _ := client.User.Query().
-		Where(user.IDEQ(userId)).
-		Only(c.Context())
-
-		// 生成JWT令牌
-	claims := jwt.MapClaims{
-		"id":    u.ID,
-		"email": u.Email,
-		"name":  u.Name,
-		"exp":   createReq.Expires, // 24小时过期
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	secret := config.GetString(config.AUTH_PAT_SECRET)
-
-	// 使用密钥签名令牌
-	t, err := token.SignedString([]byte(secret)) // 注意：在生产环境中应该使用环境变量存储密钥
+	_, err = h.userService.CreatePersonalAccessToken(c.Context(), userId, createReq)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(model.NewError(
-			fiber.StatusBadRequest, "Could not generate token",
+		return c.JSON(model.NewError(fiber.StatusInternalServerError,
+			err.Error(),
 		))
 	}
-
-	client.PersonalAccessToken.Create().
-		SetName(createReq.Name).
-		SetDescription(createReq.Description).
-		SetExpires(createReq.Expires.Time()).
-		SetToken(t).
-		SetUserID(userId).Save(c.Context())
 
 	return c.JSON(model.NewSuccess("success", nil))
 }
@@ -510,7 +366,13 @@ func (h *UserHandlerImpl) CreatePat(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/user/profile [get]
 func (h *UserHandlerImpl) GetUserProfile(c *fiber.Ctx) error {
-	userId := int(c.Locals("userId").(float64))
+	loginUser := middleware.GetCurrentUser(c)
+	if loginUser == nil {
+		return c.JSON(model.NewError(
+			fiber.StatusInternalServerError, "Unauthorized",
+		))
+	}
+	userId := loginUser.ID
 	client := database.DB
 
 	user, err := client.User.Query().

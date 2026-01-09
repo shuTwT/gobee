@@ -43,3 +43,10 @@ type PersonalAccessTokenResp struct {
 	// 令牌
 	Token string `json:"token"`
 }
+
+type LoginUser struct {
+	ID       int      `json:"id"`
+	Email    string   `json:"email"`
+	Username string   `json:"username"`
+	Roles    []string `json:"roles"`
+}

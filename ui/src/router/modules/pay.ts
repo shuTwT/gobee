@@ -4,7 +4,7 @@ export default [
     {
         path: '/pay',
         name: 'PayManagement',
-        redirect:"/pay-order",
+        redirect:"/pay/pay-order",
         meta: {
             title: '支付订单管理',
             showLink: true,
@@ -13,7 +13,7 @@ export default [
         },
         children: [
             {
-                path: '/pay-order',
+                path: '/pay/pay-order',
                 name: 'PayOrderManagement',
                 component: () => import('@/views/pay/pay-order/index.vue'),
                 meta: {

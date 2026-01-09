@@ -9,6 +9,7 @@ import (
 
 func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 	router.Use(middleware.Security)
+	router.Get("/api/preinit", handlerMap.InitializeHandler.PreInit)
 	router.Post("/api/initialize", handlerMap.InitializeHandler.Initialize)
 
 	router.Get("/", func(c *fiber.Ctx) error {

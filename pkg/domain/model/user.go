@@ -15,7 +15,7 @@ type UserCreateReq struct {
 	Name        string `json:"name" validate:"required"`
 	Password    string `json:"password" validate:"required,min=8"`
 	PhoneNumber string `json:"phone_number,omitempty"`
-	RoleID      *int   `json:"role_id,omitempty"`
+	RoleID      int    `json:"role_id,omitempty"`
 }
 
 // UserUpdateReq represents the request body for updating a user.

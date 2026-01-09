@@ -43,10 +43,13 @@ func jwtSuccess(c *fiber.Ctx) error {
 }
 
 // GetCurrentUser 获取当前登录用户信息
-func GetCurrentUser(c *fiber.Ctx) fiber.Map {
-	return fiber.Map{
-		"id":    c.Locals("userId"),
-		"email": c.Locals("userEmail"),
-		"name":  c.Locals("userName"),
+func GetCurrentUser(c *fiber.Ctx) *model.LoginUser {
+	if c.Locals("userId") == nil {
+		return nil
+	}
+	return &model.LoginUser{
+		ID:       int(c.Locals("userId").(float64)),
+		Email:    c.Locals("userEmail").(string),
+		Username: c.Locals("userName").(string),
 	}
 }

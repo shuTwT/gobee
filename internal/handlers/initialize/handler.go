@@ -6,13 +6,14 @@ import (
 	"gobee/internal/database"
 	"gobee/internal/services/setting"
 	services "gobee/internal/services/user"
+	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 )
 
 type InitializeHandler interface {
+	PreInit(c *fiber.Ctx) error
 	Initialize(c *fiber.Ctx) error
 }
 
@@ -23,6 +24,11 @@ type InitializeHandlerImpl struct {
 
 func NewInitializeHandlerImpl(userService services.UserService, settingService setting.SettingService) *InitializeHandlerImpl {
 	return &InitializeHandlerImpl{userService: userService, settingService: settingService}
+}
+
+func (h *InitializeHandlerImpl) PreInit(c *fiber.Ctx) error {
+	DBType := config.GetString(config.DATABASE_TYPE)
+	return c.JSON(model.NewSuccess("success", model.PreInitResp{DBType: DBType}))
 }
 
 // Initialize 处理系统初始化请求
@@ -56,27 +62,14 @@ func (h *InitializeHandlerImpl) Initialize(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusConflict, "系统已初始化，请勿重复操作"))
 	}
 
-	log.Info(fmt.Sprintf("初始化请求参数: %s", req.DBType))
-	// 根据数据库类型进行参数验证
-	switch req.DBType {
-	case "mysql", "postgres":
-		if req.DBHost == "" || req.DBPort == 0 || req.DBUser == "" || req.DBPassword == "" || req.DBName == "" {
-			return c.JSON(model.NewError(fiber.StatusBadRequest, "MySQL/PostgreSQL数据库连接信息不完整"))
-		}
-	case "sqlite":
-		// SQLite不需要额外的连接信息，但可以接受DBName作为文件路径
-	default:
-		return c.JSON(model.NewError(fiber.StatusBadRequest, "不支持的数据库类型"))
-	}
-
 	// 创建角色e
 	initRole(c)
 	// 创建超级管理员账户
-	adminUser, err := h.userService.CreateUser(services.CreateUserRequest{
-		Username: req.AdminUsername,
+	adminUser, err := h.userService.CreateUser(c.UserContext(), model.UserCreateReq{
+		Name:     req.AdminUsername,
 		Password: req.AdminPassword,
 		Email:    req.AdminEmail,
-		RoleId:   1,
+		RoleID:   1,
 	})
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("创建超级管理员账户失败: %v", err)))

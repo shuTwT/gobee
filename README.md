@@ -57,7 +57,7 @@ go mod verify
 cd ui
 
 # 安装 npm 依赖
-npm install
+pnpm install
 
 # 返回项目根目录
 cd ..
@@ -97,7 +97,7 @@ make run
 cd ui
 
 # 启动开发服务器
-npm run dev
+pnpm run dev
 
 # 前端开发服务器运行在 http://localhost:5173
 ```
