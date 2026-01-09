@@ -186,7 +186,6 @@ func (h *UserHandlerImpl) UpdateUser(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/user/query/{id} [get]
 func (h *UserHandlerImpl) QueryUser(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -194,21 +193,22 @@ func (h *UserHandlerImpl) QueryUser(c *fiber.Ctx) error {
 		))
 	}
 
-	user, err := client.User.Query().
-		Where(user.ID(id)).
-		Only(c.Context())
+	user, err := h.userService.QueryUserById(c.Context(), id)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return c.JSON(model.NewError(fiber.StatusNotFound,
-				"User not found",
-			))
-		}
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
 		))
 	}
 
-	return c.JSON(model.NewSuccess("success", user))
+	userResp := model.UserResp{
+		ID:          user.ID,
+		Name:        user.Name,
+		Email:       user.Email,
+		PhoneNumber: &user.PhoneNumber,
+		RoleID:      &user.RoleID,
+	}
+
+	return c.JSON(model.NewSuccess("success", userResp))
 }
 
 // @Summary 删除用户

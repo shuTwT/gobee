@@ -54,6 +54,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/oklog/run v1.1.0 // indirect
+	github.com/philippgille/chromem-go v0.7.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/sagikazarmark/locafero v0.11.0 // indirect
 	github.com/sashabaranov/go-openai v1.41.2 // indirect

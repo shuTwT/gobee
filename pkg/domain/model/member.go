@@ -21,6 +21,7 @@ type MemberUpdateReq struct {
 type MemberResp struct {
 	ID          int    `json:"id"`
 	UserID      int    `json:"user_id"`
+	UserName    string `json:"user_name"`
 	MemberLevel int    `json:"member_level"`
 	MemberNo    string `json:"member_no"`
 	JoinTime    string `json:"join_time"`

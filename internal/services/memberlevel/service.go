@@ -11,6 +11,7 @@ import (
 
 type MemberLevelService interface {
 	QueryMemberLevel(c *fiber.Ctx, id int) (*ent.MemberLevel, error)
+	QueryMemberLevelList(c *fiber.Ctx) ([]*ent.MemberLevel, error)
 	QueryMemberLevelPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.MemberLevel, error)
 	CreateMemberLevel(c *fiber.Ctx, createReq *model.MemberLevelCreateReq) (*ent.MemberLevel, error)
 	UpdateMemberLevel(c *fiber.Ctx, id int, updateReq *model.MemberLevelUpdateReq) (*ent.MemberLevel, error)
@@ -34,6 +35,16 @@ func (s *MemberLevelServiceImpl) QueryMemberLevel(c *fiber.Ctx, id int) (*ent.Me
 		return nil, err
 	}
 	return ml, nil
+}
+
+func (s *MemberLevelServiceImpl) QueryMemberLevelList(c *fiber.Ctx) ([]*ent.MemberLevel, error) {
+	client := database.DB
+	memberLevels, err := client.MemberLevel.Query().
+		All(c.Context())
+	if err != nil {
+		return nil, err
+	}
+	return memberLevels, nil
 }
 
 func (s *MemberLevelServiceImpl) QueryMemberLevelPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.MemberLevel, error) {

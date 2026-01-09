@@ -1,24 +1,15 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
+import * as memberlevelService from '@/api/member/memberLevel'
+import type {FormProps,FormItemProps} from '@/views/member/member/utils/types'
 
-interface Props {
-  memberId: number
-  memberData: {
-    member_level: number
-    balance: number
-    discount_rate: number
-  }
-}
 
-const props = defineProps<Props>()
+
+const props = defineProps<FormProps>()
 const emit = defineEmits(['confirm'])
 
 const formRef = ref<FormInst | null>(null)
-const formData = ref({
-  member_level: props.memberData.member_level,
-  balance: props.memberData.balance,
-  discount_rate: props.memberData.discount_rate,
-})
+const formData = ref<FormItemProps>(props.formInline)
 
 const memberLevels = ref<any[]>([])
 
@@ -45,8 +36,7 @@ const rules: FormRules = {
 
 const getMemberLevels = async () => {
   try {
-    const res = await fetch('/api/v1/memberlevel/list')
-    const data = await res.json()
+    const data = await memberlevelService.getMemberLevelList()
     if (data.code === 200) {
       memberLevels.value = data.data || []
     }
@@ -55,7 +45,7 @@ const getMemberLevels = async () => {
   }
 }
 
-const getData = () => {
+const getData = (): Promise<typeof formData.value> => {
   return new Promise((resolve, reject) => {
     if (formRef.value) {
       formRef.value?.validate((errors) => {
@@ -78,7 +68,7 @@ const handleSubmit = async () => {
       member_level: data.member_level,
     }
     
-    await fetch(`/api/v1/member/update/${props.memberId}`, {
+    await fetch(`/api/v1/member/update/${props.formInline.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -100,7 +90,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-form :rules="rules" ref="formRef" label-placement="left" label-width="100px">
+  <n-form :model="formData" :rules="rules" ref="formRef" label-placement="left" label-width="100px">
     <n-form-item label="会员等级" path="member_level">
       <n-select
         v-model:value="formData.member_level"

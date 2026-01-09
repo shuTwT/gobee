@@ -18,6 +18,7 @@ import (
 type UserService interface {
 	ListUser(c *fiber.Ctx) ([]*ent.User, error)
 	ListUserPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.User, error)
+	QueryUserById(ctx context.Context, id int) (*ent.User, error)
 	CreateUser(ctx context.Context, req model.UserCreateReq) (*ent.User, error)
 	UpdateUser(ctx context.Context, id int, req model.UserUpdateReq) (*ent.User, error)
 	GetUserCount(ctx context.Context) (int, error)
@@ -67,6 +68,19 @@ func (s *UserServiceImpl) ListUserPage(c *fiber.Ctx, pageQuery model.PageQuery) 
 	}
 
 	return count, users, err
+}
+
+func (s *UserServiceImpl) QueryUserById(ctx context.Context, id int) (*ent.User, error) {
+	user, err := s.client.User.Query().
+		Where(user.ID(id)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, fmt.Errorf("User not found")
+		}
+		return nil, err
+	}
+	return user, nil
 }
 
 func (s *UserServiceImpl) CreateUser(ctx context.Context, req model.UserCreateReq) (*ent.User, error) {

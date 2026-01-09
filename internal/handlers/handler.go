@@ -79,7 +79,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	storageStrategyHandler := storagestrategy.NewStorageStrategyHandlerImpl(serviceMap.StorageStrategyService)
 	visitHandler := visit_handler.NewVisitHandlerImpl(serviceMap.VisitService)
 	walletHandler := wallet_handler.NewWalletHandlerImpl(serviceMap.WalletService)
-	memberHandler := member_handler.NewMemberHandlerImpl(serviceMap.MemberService)
+	memberHandler := member_handler.NewMemberHandlerImpl(serviceMap.UserService, serviceMap.MemberService)
 	memberLevelHandler := memberlevel_handler.NewMemberLevelHandlerImpl(serviceMap.MemberLevelService)
 
 	handlerMap := HandlerMap{

@@ -12,6 +12,7 @@ import (
 
 type MemberLevelHandler interface {
 	QueryMemberLevel(c *fiber.Ctx) error
+	QueryMemberLevelList(c *fiber.Ctx) error
 	QueryMemberLevelPage(c *fiber.Ctx) error
 	CreateMemberLevel(c *fiber.Ctx) error
 	UpdateMemberLevel(c *fiber.Ctx) error
@@ -49,6 +50,17 @@ func (h *MemberLevelHandlerImpl) QueryMemberLevel(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(model.NewSuccess("success", ml))
+}
+
+func (h *MemberLevelHandlerImpl) QueryMemberLevelList(c *fiber.Ctx) error {
+	memberLevels, err := h.memberLevelService.QueryMemberLevelList(c)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError,
+			err.Error(),
+		))
+	}
+
+	return c.JSON(model.NewSuccess("success", memberLevels))
 }
 
 func (h *MemberLevelHandlerImpl) QueryMemberLevelPage(c *fiber.Ctx) error {

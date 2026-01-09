@@ -106,6 +106,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			memberLevelApi := apiV1.Group("/member-level")
 			{
 				memberLevelApi.Get("/query/:id", handlerMap.MemberLevelHandler.QueryMemberLevel).Name("memberLevelQuery")
+				memberLevelApi.Get("/list", handlerMap.MemberLevelHandler.QueryMemberLevelList).Name("memberLevelList")
 				memberLevelApi.Get("/page", handlerMap.MemberLevelHandler.QueryMemberLevelPage).Name("memberLevelPage")
 				memberLevelApi.Post("/create", handlerMap.MemberLevelHandler.CreateMemberLevel).Name("memberLevelCreate")
 				memberLevelApi.Put("/update/:id", handlerMap.MemberLevelHandler.UpdateMemberLevel).Name("memberLevelUpdate")

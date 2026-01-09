@@ -145,14 +145,14 @@ const openEditDialog = (row: any) => {
   addDialog({
     title: '编辑会员',
     props: {
-      memberId: row.id,
-      memberData: {
+      formInline: {
+        id: row.id,
         member_level: row.member_level,
         balance: 0,
         discount_rate: 100,
       },
     },
-    contentRenderer: ({ options }) => h(EditForm, { memberId: options.props!.memberId, memberData: options.props!.memberData }),
+    contentRenderer: ({ options }) => h(EditForm, { formInline: options.props!.formInline }),
     onConfirm: async () => {
       onSearch()
     },
