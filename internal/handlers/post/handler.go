@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	post_service "gobee/internal/services/post"
+	post_service "gobee/internal/services/content/post"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"

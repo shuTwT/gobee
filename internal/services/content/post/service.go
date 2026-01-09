@@ -22,7 +22,7 @@ func NewPostServiceImpl(client *ent.Client) *PostServiceImpl {
 
 func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post *model.PostUpdateReq) (*ent.Post, error) {
 	client := s.client
-	summary := ""
+	var summary string
 	if post.IsAutogenSummary {
 		summary = "生成失败"
 	} else {

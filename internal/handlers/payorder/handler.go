@@ -8,7 +8,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/payorder"
 	"gobee/internal/database"
-	payorder_service "gobee/internal/services/pay_order"
+	payorder_service "gobee/internal/services/pay/payorder"
 	"gobee/pkg/domain/model"
 )
 

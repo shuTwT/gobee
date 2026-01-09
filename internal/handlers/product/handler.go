@@ -5,7 +5,7 @@ import (
 	"gobee/pkg/domain/model"
 	"strconv"
 
-	product_service "gobee/internal/services/product"
+	product_service "gobee/internal/services/mall/product"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -3,9 +3,9 @@ package common
 import (
 	"context"
 	"gobee/ent"
-	comment_service "gobee/internal/services/comment"
-	post_service "gobee/internal/services/post"
-	user_service "gobee/internal/services/user"
+	comment_service "gobee/internal/services/content/comment"
+	post_service "gobee/internal/services/content/post"
+	user_service "gobee/internal/services/system/user"
 	"gobee/pkg/domain/model"
 )
 

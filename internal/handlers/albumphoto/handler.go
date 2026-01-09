@@ -2,7 +2,7 @@ package albumphoto
 
 import (
 	"gobee/ent"
-	albumphotoservice "gobee/internal/services/albumphoto"
+	albumphotoservice "gobee/internal/services/content/albumphoto"
 	"gobee/pkg/domain/model"
 	"strconv"
 

@@ -3,7 +3,7 @@ package setting_handler
 import (
 	"encoding/json"
 	"gobee/internal/database"
-	setting_service "gobee/internal/services/setting"
+	setting_service "gobee/internal/services/system/setting"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"

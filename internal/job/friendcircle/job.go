@@ -7,7 +7,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/flink"
 	"gobee/internal/database"
-	friend_circle_service "gobee/internal/services/friend_circle"
+	friend_circle_service "gobee/internal/services/content/friendcircle"
 	schedule_model "gobee/pkg/domain/model/schedule"
 	"time"
 

@@ -1,7 +1,7 @@
 package auth_handler
 
 import (
-	"gobee/internal/services/auth"
+	"gobee/internal/services/system/auth"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"

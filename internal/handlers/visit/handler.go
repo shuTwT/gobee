@@ -1,7 +1,7 @@
 package visit
 
 import (
-	"gobee/internal/services/visit"
+	"gobee/internal/services/infra/visit"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"

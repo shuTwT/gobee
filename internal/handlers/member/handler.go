@@ -4,8 +4,8 @@ import (
 	"strconv"
 
 	"gobee/ent"
-	member_service "gobee/internal/services/member"
-	user_service "gobee/internal/services/user"
+	member_service "gobee/internal/services/member/member"
+	user_service "gobee/internal/services/system/user"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"

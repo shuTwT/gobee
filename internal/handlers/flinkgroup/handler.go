@@ -2,7 +2,7 @@ package flinkgroup
 
 import (
 	"gobee/ent"
-	"gobee/internal/services/flink"
+	"gobee/internal/services/content/flink"
 	"gobee/pkg/domain/model"
 	"strconv"
 

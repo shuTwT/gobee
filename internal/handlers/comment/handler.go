@@ -2,7 +2,7 @@ package comment
 
 import (
 	"gobee/ent"
-	comment_service "gobee/internal/services/comment"
+	comment_service "gobee/internal/services/content/comment"
 	"gobee/pkg/domain/model"
 	"strconv"
 	"time"

@@ -3,7 +3,7 @@ package flink
 import (
 	"gobee/ent"
 	"gobee/ent/flink"
-	flink_service "gobee/internal/services/flink"
+	flink_service "gobee/internal/services/content/flink"
 	"gobee/pkg/domain/model"
 	"log"
 	"strconv"

@@ -9,8 +9,8 @@ import (
 	"gobee/ent/user"
 	"gobee/internal/database"
 	"gobee/internal/middleware"
-	role_service "gobee/internal/services/role"
-	user_service "gobee/internal/services/user"
+	role_service "gobee/internal/services/system/role"
+	user_service "gobee/internal/services/system/user"
 	"gobee/pkg/domain/model"
 )
 

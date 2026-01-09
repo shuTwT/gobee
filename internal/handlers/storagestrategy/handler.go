@@ -1,8 +1,8 @@
 package storagestrategy
 
 import (
+	storagestrategy_service "gobee/internal/services/infra/storagestrategy"
 	"gobee/internal/services/storage"
-	storagestrategy_service "gobee/internal/services/storagestrategy"
 	"gobee/pkg/domain/model"
 	"strconv"
 

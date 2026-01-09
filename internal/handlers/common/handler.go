@@ -3,7 +3,7 @@ package common
 import (
 	"gobee/pkg/domain/model"
 
-	common_service "gobee/internal/services/common"
+	common_service "gobee/internal/services/system/common"
 
 	"github.com/gofiber/fiber/v2"
 )

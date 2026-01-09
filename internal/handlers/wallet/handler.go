@@ -5,7 +5,7 @@ import (
 
 	"gobee/ent"
 	"gobee/internal/database"
-	wallet_service "gobee/internal/services/wallet"
+	wallet_service "gobee/internal/services/pay/wallet"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"

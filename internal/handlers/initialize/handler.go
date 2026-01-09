@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"gobee/ent"
 	"gobee/internal/database"
-	"gobee/internal/services/setting"
-	services "gobee/internal/services/user"
+	setting_service "gobee/internal/services/system/setting"
+	user_service "gobee/internal/services/system/user"
 	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
 
@@ -18,11 +18,11 @@ type InitializeHandler interface {
 }
 
 type InitializeHandlerImpl struct {
-	userService    services.UserService
-	settingService setting.SettingService
+	userService    user_service.UserService
+	settingService setting_service.SettingService
 }
 
-func NewInitializeHandlerImpl(userService services.UserService, settingService setting.SettingService) *InitializeHandlerImpl {
+func NewInitializeHandlerImpl(userService user_service.UserService, settingService setting_service.SettingService) *InitializeHandlerImpl {
 	return &InitializeHandlerImpl{userService: userService, settingService: settingService}
 }
 

@@ -4,7 +4,7 @@ import (
 	"gobee/ent"
 	"gobee/ent/role"
 	"gobee/internal/database"
-	role_service "gobee/internal/services/role"
+	role_service "gobee/internal/services/system/role"
 	"gobee/pkg/domain/model"
 	"strconv"
 

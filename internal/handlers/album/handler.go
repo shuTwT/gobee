@@ -2,7 +2,7 @@ package album
 
 import (
 	"gobee/ent"
-	"gobee/internal/services/album"
+	"gobee/internal/services/content/album"
 	"gobee/pkg/domain/model"
 	"strconv"
 
@@ -61,12 +61,12 @@ func (h *AlbumHandlerImpl) ListAlbumPage(c *fiber.Ctx) error {
 	if err := c.QueryParser(&pageQuery); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	
+
 	count, albums, err := h.albumService.ListAlbumPage(c.Context(), pageQuery.Page, pageQuery.Size)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	
+
 	pageResult := model.PageResult[*ent.Album]{
 		Total:   int64(count),
 		Records: albums,
@@ -89,12 +89,12 @@ func (h *AlbumHandlerImpl) CreateAlbum(c *fiber.Ctx) error {
 	if err := c.BodyParser(&album); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	
+
 	newAlbum, err := h.albumService.CreateAlbum(c.Context(), album)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	
+
 	return c.JSON(model.NewSuccess("success", newAlbum))
 }
 
@@ -115,17 +115,17 @@ func (h *AlbumHandlerImpl) UpdateAlbum(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	
+
 	var album *model.AlbumUpdateReq
 	if err := c.BodyParser(&album); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	
+
 	updatedAlbum, err := h.albumService.UpdateAlbum(c.Context(), id, album)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	
+
 	return c.JSON(model.NewSuccess("success", updatedAlbum))
 }
 
@@ -145,12 +145,12 @@ func (h *AlbumHandlerImpl) QueryAlbum(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	
+
 	album, err := h.albumService.QueryAlbum(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	
+
 	return c.JSON(model.NewSuccess("success", album))
 }
 
@@ -170,11 +170,11 @@ func (h *AlbumHandlerImpl) DeleteAlbum(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	
+
 	err = h.albumService.DeleteAlbum(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	
+
 	return c.JSON(model.NewSuccess("success", nil))
 }

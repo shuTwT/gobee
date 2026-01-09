@@ -1,7 +1,7 @@
 package friendcircle
 
 import (
-	friendcircle "gobee/internal/services/friend_circle"
+	friendcircle "gobee/internal/services/content/friendcircle"
 	"gobee/pkg/domain/model"
 	"strconv"
 

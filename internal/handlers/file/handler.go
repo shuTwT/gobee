@@ -2,7 +2,7 @@ package file
 
 import (
 	"gobee/ent"
-	"gobee/internal/services/file"
+	"gobee/internal/services/infra/file"
 	"gobee/internal/services/storage"
 	"gobee/pkg/domain/model"
 	"strconv"

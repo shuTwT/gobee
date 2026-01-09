@@ -1,7 +1,7 @@
 package essay
 
 import (
-	"gobee/internal/services/essay"
+	"gobee/internal/services/content/essay"
 	"gobee/pkg/domain/model"
 	"strconv"
 

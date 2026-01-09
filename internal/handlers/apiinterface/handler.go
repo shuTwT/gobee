@@ -2,7 +2,7 @@ package apiinterface
 
 import (
 	"gobee/ent"
-	api_interface_service "gobee/internal/services/api_interface"
+	api_interface_service "gobee/internal/services/system/apiinterface"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"

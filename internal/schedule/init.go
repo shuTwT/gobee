@@ -3,7 +3,7 @@ package schedule
 import (
 	"context"
 	"fmt"
-	"gobee/internal/job"
+	friendcircle_job "gobee/internal/job/friendcircle"
 	schedule_model "gobee/pkg/domain/model/schedule"
 	"log"
 
@@ -21,7 +21,7 @@ func ClearCache() {
 // 初始化调度
 func InitializeSchedule() (gocron.Scheduler, error) {
 	jobCache = map[string]schedule_model.Job{
-		"friendCircle": job.FriendCircleJob{},
+		"friendCircle": friendcircle_job.FriendCircleJob{},
 	}
 	// 创建调度器
 	scheduler, err := gocron.NewScheduler()
