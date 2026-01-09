@@ -43,4 +43,4 @@ if err := c.QueryParser(&pageQuery); err != nil {
 }
 ```
 
-14.一般情况下前端和后端都区分一级模块和二级模块，在后端中体现为`/api/v1/{一级模块}/{二级模块}`的路由结构,`handlers/{一级模块}/{二级模块}/handler.go`,`services/{一级模块}/{二级模块}/service.go`的文件夹结构。在前端中体现为`/src/views/{一级模块}/{二级模块}/index.vue`,`/src/api/{一级模块}/{二级模块}.ts`,`/src/router/{一级模块}/{二级模块}.ts`的文件夹结构。
+14.一般情况下前端和后端都区分一级模块和二级模块，在后端中体现为`/api/v1/{一级模块}/{二级模块}`开头的路由结构,`handlers/{一级模块}/{二级模块}/handler.go`,`services/{一级模块}/{二级模块}/service.go`的文件夹结构。在前端中体现为`/src/views/{一级模块}/{二级模块}/index.vue`,`/src/api/{一级模块}/{二级模块}.ts`,`/src/router/{一级模块}/{二级模块}.ts`的文件夹结构。

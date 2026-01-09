@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gobee/ent"
-	"gobee/internal/services/pay/epay"
+	"gobee/internal/infra/pay/epay"
 	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
 	"strconv"

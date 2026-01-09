@@ -6,9 +6,9 @@ import (
 	"gobee/ent"
 	"gobee/ent/storagestrategy"
 	"gobee/internal/database"
-	"gobee/internal/services/storage/ftp"
-	"gobee/internal/services/storage/local"
-	"gobee/internal/services/storage/s3"
+	"gobee/internal/infra/storage/ftp"
+	"gobee/internal/infra/storage/local"
+	"gobee/internal/infra/storage/s3"
 )
 
 // StorageType 存储类型枚举

@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	"gobee/ent"
-	memberlevel_service "gobee/internal/services/member/memberlevel"
+	memberlevel_service "gobee/internal/services/mall/memberlevel"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"

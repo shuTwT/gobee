@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	"gobee/ent"
-	member_service "gobee/internal/services/member/member"
+	member_service "gobee/internal/services/mall/member"
 	user_service "gobee/internal/services/system/user"
 	"gobee/pkg/domain/model"
 
