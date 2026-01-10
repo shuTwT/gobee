@@ -199,12 +199,6 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 	router.Get("/api/preinit", handlerMap.InitializeHandler.PreInit)
 	router.Post("/api/initialize", handlerMap.InitializeHandler.Initialize)
 
-	router.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("pages/index", fiber.Map{
-			"Title": "Hello, World!",
-		})
-	})
-
 	auth := router.Group("/api/auth")
 	{
 		auth.Post("/login/password", handlerMap.AuthHandler.Login)

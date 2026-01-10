@@ -2,7 +2,6 @@ package config
 
 import (
 	"gobee/internal/infra/logger"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -71,7 +70,7 @@ func Init() {
 			panic("fatal error config file: " + err.Error())
 		}
 	} else {
-		logger.Info("已加载配置文件: %s", "config_file", viper.ConfigFileUsed())
+		logger.Info("已加载配置文件", "config_file", viper.ConfigFileUsed())
 	}
 }
 
@@ -79,7 +78,7 @@ func createDefaultConfig() {
 	// 获取当前工作目录
 	workDir, err := os.Getwd()
 	if err != nil {
-		println("警告: 无法获取当前工作目录:", err.Error())
+		logger.Warn("无法获取当前工作目录", "error", err.Error())
 		return
 	}
 
@@ -88,16 +87,16 @@ func createDefaultConfig() {
 
 	// 确保目录存在
 	if err := os.MkdirAll(configDir, 0755); err != nil {
-		log.Panicln("警告: 无法创建配置目录:", err.Error())
+		logger.Panic("无法创建配置目录", "error", err.Error())
 		return
 	}
 
 	// 在可执行文件同级目录创建配置文件
 	if err := viper.WriteConfigAs(configPath); err != nil {
 		// 如果写入失败，记录警告但不影响程序运行
-		println("警告: 无法创建默认配置文件:", err.Error())
+		logger.Warn("无法创建默认配置文件", "error", err.Error())
 	} else {
-		println("已创建默认配置文件:", configPath)
+		logger.Info("已创建默认配置文件", "config_path", configPath)
 	}
 }
 

@@ -6,32 +6,23 @@ import (
 	"gobee/internal/router"
 	"gobee/pkg"
 	"gobee/pkg/config"
-	"io/fs"
-	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/swagger"
-
-	"github.com/gofiber/template/html/v2"
 )
 
 func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	config.Init()
 	serviceMap := pkg.InitializeServices(moduleDefs)
 
-	viewsPkg, _ := fs.Sub(moduleDefs, "views")
-	engine := html.NewFileSystem(http.FS(viewsPkg), ".tmpl")
-	engine.Debug(true)
-	engine.Reload(true)
 	app := fiber.New(fiber.Config{
 		AppName:       "Fiber HTML Template Demo",
 		Prefork:       true,    // 启用多进程（Prefork 模式）
 		CaseSensitive: true,    // 路由大小写敏感
 		StrictRouting: true,    // 严格匹配带 / 和不带 / 的路由
 		ServerHeader:  "Fiber", // 返回响应头中的 Server 字段
-		Views:         engine,  // 关联模板引擎
 	})
 
 	if config.GetBool(config.SWAGGER_ENABLE) {

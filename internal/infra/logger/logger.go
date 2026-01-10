@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"log"
 	"log/slog"
 	"os"
 )
@@ -17,17 +18,25 @@ func NewLogger() *slog.Logger {
 }
 
 func Info(msg string, args ...any) {
+	args = append([]any{"pid", os.Getpid()}, args...)
 	globalLogger.Info(msg, args...)
 }
 
 func Warn(msg string, args ...any) {
+	args = append([]any{"pid", os.Getpid()}, args...)
 	globalLogger.Warn(msg, args...)
 }
 
 func Error(msg string, args ...any) {
+	args = append([]any{"pid", os.Getpid()}, args...)
 	globalLogger.Error(msg, args...)
 }
 
 func Debug(msg string, args ...any) {
 	globalLogger.Debug(msg, args...)
+}
+
+func Panic(msg string, args ...any) {
+	args = append([]any{"pid", os.Getpid()}, args...)
+	log.Panicf(msg, args...)
 }

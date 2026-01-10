@@ -15,7 +15,6 @@ import (
 	"gobee/internal/infra/logger"
 )
 
-//go:embed views
 //go:embed assets/moduleDefs
 var moduleDefs embed.FS
 
