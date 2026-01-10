@@ -31,3 +31,14 @@ export interface PreviewData {
   files?: string[]
   url?: string
 }
+
+export interface MigrationCheckResult {
+  has_duplicates: boolean
+  duplicates: DuplicateFile[]
+}
+
+export interface DuplicateFile {
+  filename: string
+  title: string
+  post_id?: number
+}

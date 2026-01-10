@@ -10,6 +10,7 @@ import (
 
 type MigrationHandler interface {
 	ImportMarkdown(c *fiber.Ctx) error
+	CheckDuplicate(c *fiber.Ctx) error
 }
 
 type MigrationHandlerImpl struct {
@@ -57,4 +58,33 @@ func (h *MigrationHandlerImpl) ImportMarkdown(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(model.NewSuccess("导入完成", result))
+}
+
+// @Summary 检查重复文件
+// @Description 检查待导入的文件中是否有与数据库中文章标题重复的文件
+// @Tags migration
+// @Accept multipart/form-data
+// @Produce json
+// @Param files formData file true "Markdown文件"
+// @Success 200 {object} model.HttpSuccess{data=model.MigrationCheckResult}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/migration/check-duplicate [post]
+func (h *MigrationHandlerImpl) CheckDuplicate(c *fiber.Ctx) error {
+	form, err := c.MultipartForm()
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "无法解析表单数据"))
+	}
+
+	files := form.File["files"]
+	if len(files) == 0 {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "请选择要导入的文件"))
+	}
+
+	result, err := h.migrationService.CheckDuplicateFiles(c.Context(), files)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	return c.JSON(model.NewSuccess("检查完成", result))
 }

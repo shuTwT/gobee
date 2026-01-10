@@ -143,6 +143,7 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	migrationApi := router.Group("/migration")
 	{
 		migrationApi.Post("/md", handlerMap.MigrationHandler.ImportMarkdown).Name("migrationMd")
+		migrationApi.Post("/check-duplicate", handlerMap.MigrationHandler.CheckDuplicate).Name("migrationCheckDuplicate")
 	}
 }
 

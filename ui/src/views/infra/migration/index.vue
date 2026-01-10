@@ -14,11 +14,15 @@ import {
   NProgress,
   NStatistic,
   NIcon,
+  NModal,
+  NList,
+  NListItem,
+  NThing,
 } from 'naive-ui'
-import { CloudUploadOutline, Link, Folder, DocumentText, CheckmarkCircleOutline, AlertCircleOutline } from '@vicons/ionicons5'
+import { CloudUploadOutline, Link, Folder, DocumentText, CheckmarkCircleOutline, AlertCircleOutline, WarningOutline } from '@vicons/ionicons5'
 import type { UploadFileInfo } from 'naive-ui'
-import { importMarkdown } from '@/api/infra/migration'
-import type { SourceType, SourceTypeItem, MigrationResult, PreviewData } from './utils/types'
+import { importMarkdown, checkDuplicate } from '@/api/infra/migration'
+import type { SourceType, SourceTypeItem, MigrationResult, PreviewData, MigrationCheckResult, DuplicateFile } from './utils/types'
 
 // 步骤状态
 const currentStep = ref(1)
@@ -67,6 +71,8 @@ const atomUrl = ref('')
 const importProgress = ref(0)
 const isImporting = ref(false)
 const hasConfirmedImport = ref(false)
+const showConfirmDialog = ref(false)
+const duplicateCheckResult = ref<MigrationCheckResult | null>(null)
 const migrationResult = ref<MigrationResult>({
   status: null,
   message: '',
@@ -208,6 +214,73 @@ const startImport = () => {
 
 // 确认迁移 - 步骤三执行迁移
 const confirmImport = async () => {
+  if (sourceType.value === 'md') {
+    const files = mdFileList.value.map(f => f.file).filter((f): f is File => f !== undefined)
+    const response = await checkDuplicate(files)
+    
+    if (response.code === 200 && response.data) {
+      duplicateCheckResult.value = response.data
+      
+      if (response.data.has_duplicates) {
+        showConfirmDialog.value = true
+      } else {
+        hasConfirmedImport.value = true
+        isImporting.value = true
+        importProgress.value = 0
+        
+        const progressInterval = setInterval(() => {
+          if (importProgress.value < 90) {
+            importProgress.value += 10
+          }
+        }, 200)
+        
+        try {
+          const response = await importMarkdown(files)
+          
+          clearInterval(progressInterval)
+          
+          if (response.code === 200 && response.data) {
+            importProgress.value = 100
+            isImporting.value = false
+            
+            migrationResult.value = {
+              status: response.data.status as any,
+              message: response.data.message,
+              stats: {
+                total: response.data.total,
+                success: response.data.success,
+                failed: response.data.failed
+              },
+              errors: response.data.errors || []
+            }
+          } else {
+            throw new Error(response.msg || '导入失败')
+          }
+        } catch (error: any) {
+          clearInterval(progressInterval)
+          isImporting.value = false
+          importProgress.value = 0
+          migrationResult.value = {
+            status: 'failed',
+            message: error.message || '数据迁移失败',
+            stats: {
+              total: getFileCount.value,
+              success: 0,
+              failed: getFileCount.value
+            },
+            errors: [error.message || '未知错误']
+          }
+        }
+      }
+    } else {
+      throw new Error('暂不支持该类型的导入')
+    }
+  }
+}
+
+// 确认覆盖并继续导入
+const confirmAndImport = async () => {
+  showConfirmDialog.value = false
   hasConfirmedImport.value = true
   isImporting.value = true
   importProgress.value = 0
@@ -654,6 +727,54 @@ const getImportMethodText = computed(() => {
       </div>
     </n-card>
   </div>
+
+  <!-- 确认覆盖弹窗 -->
+  <n-modal
+    v-model:show="showConfirmDialog"
+    preset="dialog"
+    title="确认导入"
+    :style="{ width: '600px' }"
+  >
+    <n-alert type="warning" class="mb-4">
+      <template #icon>
+        <n-icon :component="WarningOutline" size="24" />
+      </template>
+      数据库中已存在以下具有相同标题的文章，继续导入将覆盖这些文章
+    </n-alert>
+    <n-scrollbar style="height: 400px;">
+
+    <n-list bordered>
+      <n-list-item v-for="item in duplicateCheckResult?.duplicates" :key="item.filename">
+        <n-thing content-indented>
+          <template #avatar>
+            <n-icon :component="DocumentText" size="20" />
+          </template>
+          <template #header>
+            <div class="duplicate-item-header">
+              <span class="duplicate-filename">{{ item.filename }}</span>
+              <span class="duplicate-title">{{ item.title }}</span>
+            </div>
+          </template>
+          <template #description>
+            <span v-if="item.post_id" class="duplicate-post-id">文章ID: {{ item.post_id }}</span>
+            <span v-else class="duplicate-post-id">新文章</span>
+          </template>
+        </n-thing>
+      </n-list-item>
+    </n-list>
+          
+    </n-scrollbar>
+    <template #action>
+      <n-space>
+        <n-button @click="showConfirmDialog = false">
+          取消
+        </n-button>
+        <n-button type="warning" @click="confirmAndImport">
+          确认覆盖并导入
+        </n-button>
+      </n-space>
+    </template>
+  </n-modal>
 </template>
 
 <style scoped>
@@ -856,8 +977,31 @@ const getImportMethodText = computed(() => {
   background-color: #fef2f2;
 }
 
-/* 错误信息 */
-.errors-section {
+/* 重复文件弹窗样式 */
+.duplicate-item-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.duplicate-filename {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.duplicate-title {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.duplicate-post-id {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* 通用样式 */
+.step-one, .errors-section {
   margin-top: 20px;
 }
 
