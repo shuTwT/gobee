@@ -17,14 +17,16 @@ import {
 } from 'naive-ui'
 import { CloudUploadOutline, Link, Folder, DocumentText, CheckmarkCircleOutline, AlertCircleOutline } from '@vicons/ionicons5'
 import type { UploadFileInfo } from 'naive-ui'
+import { importMarkdown } from '@/api/infra/migration'
+import type { SourceType, SourceTypeItem, MigrationResult, PreviewData } from './utils/types'
 
 // 步骤状态
 const currentStep = ref(1)
 const totalSteps = 3
 
 // 来源类型 - 扩展了详细描述
-const sourceType = ref<string>('')
-const sourceTypes = [
+const sourceType = ref<SourceType|null>(null)
+const sourceTypes: SourceTypeItem[] = [
   { 
     value: 'rss', 
     label: 'RSS Feed',
@@ -65,16 +67,7 @@ const atomUrl = ref('')
 const importProgress = ref(0)
 const isImporting = ref(false)
 const hasConfirmedImport = ref(false)
-const migrationResult = ref<{
-  status: 'success' | 'failed' | null
-  message: string
-  stats: {
-    total: number
-    success: number
-    failed: number
-  }
-  errors?: string[]
-}>({
+const migrationResult = ref<MigrationResult>({
   status: null,
   message: '',
   stats: {
@@ -86,7 +79,7 @@ const migrationResult = ref<{
 })
 
 // 待迁移数据预览
-const previewData = computed(() => {
+const previewData = computed<PreviewData | null>(() => {
   if (sourceType.value === 'rss') {
     if (rssImportType.value === 'file') {
       return {
@@ -184,7 +177,7 @@ const prevStep = () => {
 // 重置步骤
 const resetSteps = () => {
   currentStep.value = 1
-  sourceType.value = ''
+  sourceType.value = null
   rssImportType.value = ''
   atomImportType.value = ''
   mdImportType.value = ''
@@ -214,36 +207,59 @@ const startImport = () => {
 }
 
 // 确认迁移 - 步骤三执行迁移
-const confirmImport = () => {
+const confirmImport = async () => {
   hasConfirmedImport.value = true
   isImporting.value = true
   importProgress.value = 0
   
-  // 模拟导入进度
-  const interval = setInterval(() => {
-    importProgress.value += 10
-    if (importProgress.value >= 100) {
-      clearInterval(interval)
-      isImporting.value = false
-      
-      // 模拟迁移结果
-      setTimeout(() => {
-        migrationResult.value = {
-          status: 'success',
-          message: '数据迁移完成',
-          stats: {
-            total: 25,
-            success: 23,
-            failed: 2
-          },
-          errors: [
-            'file1.md: 解析错误',
-            'file2.md: 缺少必要字段'
-          ]
-        }
-      }, 500)
+  const progressInterval = setInterval(() => {
+    if (importProgress.value < 90) {
+      importProgress.value += 10
     }
-  }, 300)
+  }, 200)
+  
+  try {
+    if (sourceType.value === 'md') {
+      const files = mdFileList.value.map(f => f.file).filter((f): f is File => f !== undefined)
+      const response = await importMarkdown(files)
+      
+      clearInterval(progressInterval)
+      
+      if (response.code === 200 && response.data) {
+        importProgress.value = 100
+        isImporting.value = false
+        
+        migrationResult.value = {
+          status: response.data.status as any,
+          message: response.data.message,
+          stats: {
+            total: response.data.total,
+            success: response.data.success,
+            failed: response.data.failed
+          },
+          errors: response.data.errors || []
+        }
+      } else {
+        throw new Error(response.msg || '导入失败')
+      }
+    } else {
+      throw new Error('暂不支持该类型的导入')
+    }
+  } catch (error: any) {
+    clearInterval(progressInterval)
+    isImporting.value = false
+    importProgress.value = 0
+    migrationResult.value = {
+      status: 'failed',
+      message: error.message || '数据迁移失败',
+      stats: {
+        total: getFileCount.value,
+        success: 0,
+        failed: getFileCount.value
+      },
+      errors: [error.message || '未知错误']
+    }
+  }
 }
 
 // 文件上传变化

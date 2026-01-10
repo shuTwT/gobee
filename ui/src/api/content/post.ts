@@ -1,8 +1,8 @@
 import { http } from "@/utils/http";
-import { BASE_URL, type ApiResponse } from "@/api/utils";
+import { BASE_URL, type ApiResponse, type TableResponse} from "@/api/utils";
 
-export const getPostList = (params:any)=>{
-  return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/post/list`,{params});
+export const getPostPage = (params:any)=>{
+  return http.request<TableResponse<any>>('get',`${BASE_URL}/v1/post/page`,{params});
 }
 
 export const createPost = (data:any) =>{

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"gobee/ent"
 	"gobee/ent/post"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
@@ -18,6 +19,7 @@ import (
 
 type PostHandler interface {
 	ListPost(c *fiber.Ctx) error
+	ListPostPage(c *fiber.Ctx) error
 	CreatePost(c *fiber.Ctx) error
 	UpdatePostContent(c *fiber.Ctx) error
 	UpdatePostSetting(c *fiber.Ctx) error
@@ -47,13 +49,27 @@ func NewPostHandlerImpl(postService post_service.PostService) *PostHandlerImpl {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/posts [get]
 func (h *PostHandlerImpl) ListPost(c *fiber.Ctx) error {
-	client := database.DB
-	posts, err := client.Post.Query().All(c.Context())
+	posts, err := h.postService.QueryPostList(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
 	return c.JSON(model.NewSuccess("success", posts))
+}
+
+func (h *PostHandlerImpl) ListPostPage(c *fiber.Ctx) error {
+	var req model.PageQuery
+	if err := c.QueryParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	posts, count, err := h.postService.QueryPostPage(c.Context(), req)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", model.PageResult[*ent.Post]{
+		Total:   int64(count),
+		Records: posts,
+	}))
 }
 
 // @Summary 创建文章

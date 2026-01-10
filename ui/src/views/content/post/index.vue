@@ -11,6 +11,7 @@ import {
   NDropdown,
   useMessage,
   type DataTableColumns,
+  type PaginationProps,
 } from 'naive-ui'
 import {
   SearchOutline,
@@ -46,9 +47,10 @@ const dateRange = ref<[number, number] | null>(null)
 const loading = ref(false)
 
 // 分页配置
-const pagination = reactive({
+const pagination = reactive<PaginationProps>({
   page: 1,
   pageSize: 10,
+  itemCount: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 30, 40],
   onChange: (page: number) => {
@@ -380,7 +382,7 @@ const handleRefresh = () => {
 }
 
 const onSearch = async () => {
-  const res = await postApi.getPostList({
+  const res = await postApi.getPostPage({
     page: pagination.page,
     page_size: pagination.pageSize,
     title: searchKeyword.value,
@@ -388,8 +390,8 @@ const onSearch = async () => {
     start_date: dateRange.value?.[0],
     end_date: dateRange.value?.[1],
   })
-  console.log(res)
-  dataList.value = res.data
+  pagination.itemCount = res.data.total
+  dataList.value = res.data.records
 }
 onMounted(() => {
   onSearch()

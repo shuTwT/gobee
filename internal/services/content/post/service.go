@@ -8,6 +8,8 @@ import (
 )
 
 type PostService interface {
+	QueryPostList(c context.Context) ([]*ent.Post, error)
+	QueryPostPage(c context.Context, req model.PageQuery) ([]*ent.Post, int, error)
 	CreatePost(c context.Context, title string, content string) (*ent.Post, error)
 	UpdatePostContent(c context.Context, id int, content string) (*ent.Post, error)
 	UpdatePostSetting(c context.Context, id int, post *model.PostUpdateReq) (*ent.Post, error)
@@ -20,6 +22,31 @@ type PostServiceImpl struct {
 
 func NewPostServiceImpl(client *ent.Client) *PostServiceImpl {
 	return &PostServiceImpl{client: client}
+}
+
+func (s *PostServiceImpl) QueryPostList(c context.Context) ([]*ent.Post, error) {
+	posts, err := s.client.Post.Query().
+		All(c)
+	if err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+
+func (s *PostServiceImpl) QueryPostPage(c context.Context, req model.PageQuery) ([]*ent.Post, int, error) {
+
+	count, err := s.client.Post.Query().Count(c)
+	if err != nil {
+		return nil, 0, err
+	}
+	posts, err := s.client.Post.Query().
+		Offset((req.Page - 1) * req.Size).
+		Limit(req.Size).
+		All(c)
+	if err != nil {
+		return nil, 0, err
+	}
+	return posts, count, nil
 }
 
 func (s *PostServiceImpl) CreatePost(c context.Context, title string, content string) (*ent.Post, error) {

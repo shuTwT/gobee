@@ -90,6 +90,7 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	postApi := router.Group("/post")
 	{
 		postApi.Get("/list", handlerMap.PostHandler.ListPost).Name("postList")
+		postApi.Get("/page", handlerMap.PostHandler.ListPostPage).Name("postPage")
 		postApi.Post("/create", handlerMap.PostHandler.CreatePost).Name("postCreate")
 		postApi.Put("/update/content/:id", handlerMap.PostHandler.UpdatePostContent).Name("postUpdateContent")
 		postApi.Put("/update/setting/:id", handlerMap.PostHandler.UpdatePostSetting).Name("postUpdateSetting")
@@ -138,6 +139,10 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		fileApi.Get("/query/:id", handlerMap.FileHandler.QueryFile).Name("fileQuery")
 		fileApi.Delete("/delete/:id", handlerMap.FileHandler.DeleteFile).Name("fileDelete")
 		fileApi.Post("/upload", handlerMap.FileHandler.Upload).Name("fileUpload")
+	}
+	migrationApi := router.Group("/migration")
+	{
+		migrationApi.Post("/md", handlerMap.MigrationHandler.ImportMarkdown).Name("migrationMd")
 	}
 }
 

@@ -13,6 +13,7 @@ import (
 	post_handler "gobee/internal/handlers/content/post"
 	tag_handler "gobee/internal/handlers/content/tag"
 	file_handler "gobee/internal/handlers/infra/file"
+	migration_handler "gobee/internal/handlers/infra/migration"
 	storagestrategy "gobee/internal/handlers/infra/storagestrategy"
 	visit_handler "gobee/internal/handlers/infra/visit"
 	member_handler "gobee/internal/handlers/mall/member"
@@ -46,6 +47,7 @@ type HandlerMap struct {
 	InitializeHandler      initialize_handler.InitializeHandler
 	MemberHandler          member_handler.MemberHandler
 	MemberLevelHandler     memberlevel_handler.MemberLevelHandler
+	MigrationHandler       migration_handler.MigrationHandler
 	PayOrderHandler        payorder_handler.PayOrderHandler
 	PostHandler            post_handler.PostHandler
 	ProductHandler         product_handler.ProductHandler
@@ -87,6 +89,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	walletHandler := wallet_handler.NewWalletHandlerImpl(serviceMap.WalletService)
 	memberHandler := member_handler.NewMemberHandlerImpl(serviceMap.UserService, serviceMap.MemberService)
 	memberLevelHandler := memberlevel_handler.NewMemberLevelHandlerImpl(serviceMap.MemberLevelService)
+	migrationHandler := migration_handler.NewMigrationHandlerImpl(serviceMap.MigrationService)
 
 	handlerMap := HandlerMap{
 		AlbumHandler:           albumHandler,
@@ -103,6 +106,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		InitializeHandler:      initializeHandler,
 		MemberHandler:          memberHandler,
 		MemberLevelHandler:     memberLevelHandler,
+		MigrationHandler:       migrationHandler,
 		PayOrderHandler:        payOrderHandler,
 		PostHandler:            postHandler,
 		ProductHandler:         productHandler,
