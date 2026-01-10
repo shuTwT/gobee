@@ -92,6 +92,18 @@ func (f CouponUsageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CouponUsageMutation", m)
 }
 
+// The DocLibraryFunc type is an adapter to allow the use of ordinary
+// function as DocLibrary mutator.
+type DocLibraryFunc func(context.Context, *ent.DocLibraryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DocLibraryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.DocLibraryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DocLibraryMutation", m)
+}
+
 // The EssayFunc type is an adapter to allow the use of ordinary
 // function as Essay mutator.
 type EssayFunc func(context.Context, *ent.EssayMutation) (ent.Value, error)

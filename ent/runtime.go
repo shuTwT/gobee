@@ -10,6 +10,7 @@ import (
 	"gobee/ent/comment"
 	"gobee/ent/coupon"
 	"gobee/ent/couponusage"
+	"gobee/ent/doclibrary"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
@@ -342,6 +343,21 @@ func init() {
 	couponusageDescRemark := couponusageFields[7].Descriptor()
 	// couponusage.RemarkValidator is a validator for the "remark" field. It is called by the builders before save.
 	couponusage.RemarkValidator = couponusageDescRemark.Validators[0].(func(string) error)
+	doclibraryMixin := schema.DocLibrary{}.Mixin()
+	doclibraryMixinFields0 := doclibraryMixin[0].Fields()
+	_ = doclibraryMixinFields0
+	doclibraryFields := schema.DocLibrary{}.Fields()
+	_ = doclibraryFields
+	// doclibraryDescCreatedAt is the schema descriptor for created_at field.
+	doclibraryDescCreatedAt := doclibraryMixinFields0[1].Descriptor()
+	// doclibrary.DefaultCreatedAt holds the default value on creation for the created_at field.
+	doclibrary.DefaultCreatedAt = doclibraryDescCreatedAt.Default.(func() time.Time)
+	// doclibraryDescUpdatedAt is the schema descriptor for updated_at field.
+	doclibraryDescUpdatedAt := doclibraryMixinFields0[2].Descriptor()
+	// doclibrary.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	doclibrary.DefaultUpdatedAt = doclibraryDescUpdatedAt.Default.(func() time.Time)
+	// doclibrary.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	doclibrary.UpdateDefaultUpdatedAt = doclibraryDescUpdatedAt.UpdateDefault.(func() time.Time)
 	essayMixin := schema.Essay{}.Mixin()
 	essayMixinFields0 := essayMixin[0].Fields()
 	_ = essayMixinFields0

@@ -26,6 +26,8 @@ type Tx struct {
 	Coupon *CouponClient
 	// CouponUsage is the client for interacting with the CouponUsage builders.
 	CouponUsage *CouponUsageClient
+	// DocLibrary is the client for interacting with the DocLibrary builders.
+	DocLibrary *DocLibraryClient
 	// Essay is the client for interacting with the Essay builders.
 	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
@@ -210,6 +212,7 @@ func (tx *Tx) init() {
 	tx.Comment = NewCommentClient(tx.config)
 	tx.Coupon = NewCouponClient(tx.config)
 	tx.CouponUsage = NewCouponUsageClient(tx.config)
+	tx.DocLibrary = NewDocLibraryClient(tx.config)
 	tx.Essay = NewEssayClient(tx.config)
 	tx.FLink = NewFLinkClient(tx.config)
 	tx.FLinkGroup = NewFLinkGroupClient(tx.config)

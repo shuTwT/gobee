@@ -18,6 +18,7 @@ import (
 	"gobee/ent/comment"
 	"gobee/ent/coupon"
 	"gobee/ent/couponusage"
+	"gobee/ent/doclibrary"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
@@ -67,6 +68,8 @@ type Client struct {
 	Coupon *CouponClient
 	// CouponUsage is the client for interacting with the CouponUsage builders.
 	CouponUsage *CouponUsageClient
+	// DocLibrary is the client for interacting with the DocLibrary builders.
+	DocLibrary *DocLibraryClient
 	// Essay is the client for interacting with the Essay builders.
 	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
@@ -131,6 +134,7 @@ func (c *Client) init() {
 	c.Comment = NewCommentClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponUsage = NewCouponUsageClient(c.config)
+	c.DocLibrary = NewDocLibraryClient(c.config)
 	c.Essay = NewEssayClient(c.config)
 	c.FLink = NewFLinkClient(c.config)
 	c.FLinkGroup = NewFLinkGroupClient(c.config)
@@ -253,6 +257,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Comment:             NewCommentClient(cfg),
 		Coupon:              NewCouponClient(cfg),
 		CouponUsage:         NewCouponUsageClient(cfg),
+		DocLibrary:          NewDocLibraryClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
@@ -302,6 +307,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Comment:             NewCommentClient(cfg),
 		Coupon:              NewCouponClient(cfg),
 		CouponUsage:         NewCouponUsageClient(cfg),
+		DocLibrary:          NewDocLibraryClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
@@ -355,11 +361,11 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
-		c.CouponUsage, c.Essay, c.FLink, c.FLinkGroup, c.File, c.FriendCircleRecord,
-		c.Member, c.MemberLevel, c.Oauth2AccessToken, c.Oauth2Code,
-		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Post, c.Product,
-		c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog,
-		c.Wallet, c.WebHook,
+		c.CouponUsage, c.DocLibrary, c.Essay, c.FLink, c.FLinkGroup, c.File,
+		c.FriendCircleRecord, c.Member, c.MemberLevel, c.Oauth2AccessToken,
+		c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Post,
+		c.Product, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.User,
+		c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -370,11 +376,11 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
-		c.CouponUsage, c.Essay, c.FLink, c.FLinkGroup, c.File, c.FriendCircleRecord,
-		c.Member, c.MemberLevel, c.Oauth2AccessToken, c.Oauth2Code,
-		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Post, c.Product,
-		c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog,
-		c.Wallet, c.WebHook,
+		c.CouponUsage, c.DocLibrary, c.Essay, c.FLink, c.FLinkGroup, c.File,
+		c.FriendCircleRecord, c.Member, c.MemberLevel, c.Oauth2AccessToken,
+		c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Post,
+		c.Product, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.User,
+		c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -397,6 +403,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Coupon.mutate(ctx, m)
 	case *CouponUsageMutation:
 		return c.CouponUsage.mutate(ctx, m)
+	case *DocLibraryMutation:
+		return c.DocLibrary.mutate(ctx, m)
 	case *EssayMutation:
 		return c.Essay.mutate(ctx, m)
 	case *FLinkMutation:
@@ -1392,6 +1400,139 @@ func (c *CouponUsageClient) mutate(ctx context.Context, m *CouponUsageMutation) 
 		return (&CouponUsageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown CouponUsage mutation op: %q", m.Op())
+	}
+}
+
+// DocLibraryClient is a client for the DocLibrary schema.
+type DocLibraryClient struct {
+	config
+}
+
+// NewDocLibraryClient returns a client for the DocLibrary from the given config.
+func NewDocLibraryClient(c config) *DocLibraryClient {
+	return &DocLibraryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `doclibrary.Hooks(f(g(h())))`.
+func (c *DocLibraryClient) Use(hooks ...Hook) {
+	c.hooks.DocLibrary = append(c.hooks.DocLibrary, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `doclibrary.Intercept(f(g(h())))`.
+func (c *DocLibraryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DocLibrary = append(c.inters.DocLibrary, interceptors...)
+}
+
+// Create returns a builder for creating a DocLibrary entity.
+func (c *DocLibraryClient) Create() *DocLibraryCreate {
+	mutation := newDocLibraryMutation(c.config, OpCreate)
+	return &DocLibraryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DocLibrary entities.
+func (c *DocLibraryClient) CreateBulk(builders ...*DocLibraryCreate) *DocLibraryCreateBulk {
+	return &DocLibraryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DocLibraryClient) MapCreateBulk(slice any, setFunc func(*DocLibraryCreate, int)) *DocLibraryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DocLibraryCreateBulk{err: fmt.Errorf("calling to DocLibraryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DocLibraryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DocLibraryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DocLibrary.
+func (c *DocLibraryClient) Update() *DocLibraryUpdate {
+	mutation := newDocLibraryMutation(c.config, OpUpdate)
+	return &DocLibraryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DocLibraryClient) UpdateOne(_m *DocLibrary) *DocLibraryUpdateOne {
+	mutation := newDocLibraryMutation(c.config, OpUpdateOne, withDocLibrary(_m))
+	return &DocLibraryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DocLibraryClient) UpdateOneID(id int) *DocLibraryUpdateOne {
+	mutation := newDocLibraryMutation(c.config, OpUpdateOne, withDocLibraryID(id))
+	return &DocLibraryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DocLibrary.
+func (c *DocLibraryClient) Delete() *DocLibraryDelete {
+	mutation := newDocLibraryMutation(c.config, OpDelete)
+	return &DocLibraryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DocLibraryClient) DeleteOne(_m *DocLibrary) *DocLibraryDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DocLibraryClient) DeleteOneID(id int) *DocLibraryDeleteOne {
+	builder := c.Delete().Where(doclibrary.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DocLibraryDeleteOne{builder}
+}
+
+// Query returns a query builder for DocLibrary.
+func (c *DocLibraryClient) Query() *DocLibraryQuery {
+	return &DocLibraryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDocLibrary},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DocLibrary entity by its id.
+func (c *DocLibraryClient) Get(ctx context.Context, id int) (*DocLibrary, error) {
+	return c.Query().Where(doclibrary.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DocLibraryClient) GetX(ctx context.Context, id int) *DocLibrary {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *DocLibraryClient) Hooks() []Hook {
+	return c.hooks.DocLibrary
+}
+
+// Interceptors returns the client interceptors.
+func (c *DocLibraryClient) Interceptors() []Interceptor {
+	return c.inters.DocLibrary
+}
+
+func (c *DocLibraryClient) mutate(ctx context.Context, m *DocLibraryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DocLibraryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DocLibraryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DocLibraryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DocLibraryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown DocLibrary mutation op: %q", m.Op())
 	}
 }
 
@@ -4681,15 +4822,15 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, Essay,
-		FLink, FLinkGroup, File, FriendCircleRecord, Member, MemberLevel,
+		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, DocLibrary,
+		Essay, FLink, FLinkGroup, File, FriendCircleRecord, Member, MemberLevel,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
 		PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
 		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, Essay,
-		FLink, FLinkGroup, File, FriendCircleRecord, Member, MemberLevel,
+		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, DocLibrary,
+		Essay, FLink, FLinkGroup, File, FriendCircleRecord, Member, MemberLevel,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
 		PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
 		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Interceptor

@@ -154,6 +154,22 @@ var (
 		Columns:    CouponUsagesColumns,
 		PrimaryKey: []*schema.Column{CouponUsagesColumns[0]},
 	}
+	// DocLibrariesColumns holds the columns for the "doc_libraries" table.
+	DocLibrariesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "alias", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "url", Type: field.TypeString},
+	}
+	// DocLibrariesTable holds the schema information for the "doc_libraries" table.
+	DocLibrariesTable = &schema.Table{
+		Name:       "doc_libraries",
+		Columns:    DocLibrariesColumns,
+		PrimaryKey: []*schema.Column{DocLibrariesColumns[0]},
+	}
 	// EssaysColumns holds the columns for the "essays" table.
 	EssaysColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -733,6 +749,7 @@ var (
 		CommentsTable,
 		CouponsTable,
 		CouponUsagesTable,
+		DocLibrariesTable,
 		EssaysTable,
 		FlinksTable,
 		FlinkGroupsTable,
