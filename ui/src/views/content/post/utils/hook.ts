@@ -51,7 +51,7 @@ export function usePostHook() {
                 html_content: res.data.html_content ?? '',
                 content_type: res.data.content_type ?? 'markdown',
                 status: res.data.status ?? 'draft',
-                categorys: res.data.categorys ?? [],
+                categories: res.data.categories ?? [],
                 tags: res.data.tags ?? [],
                 is_autogen_summary: res.data.is_autogen_summary ?? false,
                 author: res.data.author ?? '',

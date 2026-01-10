@@ -139,7 +139,7 @@ func (h *PostHandlerImpl) UpdatePostSetting(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	var post *model.PostUpdateReq
+	var post model.PostUpdateReq
 	if err = c.BodyParser(&post); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -219,13 +219,37 @@ func (h *PostHandlerImpl) QueryPost(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	post, err := client.Post.Query().
+	post, err := client.Post.Query().WithCategories().WithTags().
 		Where(post.ID(id)).
 		First(c.Context())
+	postResp := model.PostResp{
+		ID:          post.ID,
+		Title:       post.Title,
+		Alias:       post.Alias,
+		Content:     post.Content,
+		MdContent:   post.MdContent,
+		HtmlContent: post.HTMLContent,
+		ContentType: string(post.ContentType),
+		Status:      string(post.Status),
+		Categories: func() []int {
+			ids := make([]int, len(post.Edges.Categories))
+			for i, cat := range post.Edges.Categories {
+				ids[i] = cat.ID
+			}
+			return ids
+		}(),
+		Tags: func() []int {
+			ids := make([]int, len(post.Edges.Tags))
+			for i, tag := range post.Edges.Tags {
+				ids[i] = tag.ID
+			}
+			return ids
+		}(),
+	}
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("success", post))
+	return c.JSON(model.NewSuccess("success", postResp))
 }
 
 // @Summary 删除文章

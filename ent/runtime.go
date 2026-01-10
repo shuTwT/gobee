@@ -938,21 +938,7 @@ func init() {
 	// postDescAlias is the schema descriptor for alias field.
 	postDescAlias := postFields[1].Descriptor()
 	// post.AliasValidator is a validator for the "alias" field. It is called by the builders before save.
-	post.AliasValidator = func() func(string) error {
-		validators := postDescAlias.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(alias string) error {
-			for _, fn := range fns {
-				if err := fn(alias); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
+	post.AliasValidator = postDescAlias.Validators[0].(func(string) error)
 	// postDescContent is the schema descriptor for content field.
 	postDescContent := postFields[2].Descriptor()
 	// post.ContentValidator is a validator for the "content" field. It is called by the builders before save.

@@ -4,6 +4,7 @@ import (
 	"context"
 	"gobee/ent"
 	"gobee/internal/database"
+	"gobee/internal/infra/logger"
 	"gobee/pkg/domain/model"
 )
 
@@ -12,7 +13,7 @@ type PostService interface {
 	QueryPostPage(c context.Context, req model.PageQuery) ([]*ent.Post, int, error)
 	CreatePost(c context.Context, title string, content string) (*ent.Post, error)
 	UpdatePostContent(c context.Context, id int, content string) (*ent.Post, error)
-	UpdatePostSetting(c context.Context, id int, post *model.PostUpdateReq) (*ent.Post, error)
+	UpdatePostSetting(c context.Context, id int, post model.PostUpdateReq) (*ent.Post, error)
 	GetPostCount(c context.Context) (int, error)
 }
 
@@ -25,7 +26,7 @@ func NewPostServiceImpl(client *ent.Client) *PostServiceImpl {
 }
 
 func (s *PostServiceImpl) QueryPostList(c context.Context) ([]*ent.Post, error) {
-	posts, err := s.client.Post.Query().
+	posts, err := s.client.Post.Query().WithCategories().WithTags().
 		All(c)
 	if err != nil {
 		return nil, err
@@ -39,7 +40,7 @@ func (s *PostServiceImpl) QueryPostPage(c context.Context, req model.PageQuery) 
 	if err != nil {
 		return nil, 0, err
 	}
-	posts, err := s.client.Post.Query().
+	posts, err := s.client.Post.Query().WithCategories().WithTags().
 		Offset((req.Page - 1) * req.Size).
 		Limit(req.Size).
 		All(c)
@@ -65,7 +66,7 @@ func (s *PostServiceImpl) UpdatePostContent(c context.Context, id int, content s
 	return newPost, err
 }
 
-func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post *model.PostUpdateReq) (*ent.Post, error) {
+func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post model.PostUpdateReq) (*ent.Post, error) {
 	client := s.client
 	var summary string
 	if post.IsAutogenSummary {
@@ -73,6 +74,7 @@ func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post *mod
 	} else {
 		summary = post.Summary
 	}
+	logger.Info("category ids", "ids", post.Categories)
 	newPost, err := client.Post.UpdateOneID(id).
 		SetTitle(post.Title).
 		SetNillableAlias(post.Alias).
@@ -88,6 +90,8 @@ func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post *mod
 		SetIsVisibleAfterPay(post.IsVisibleAfterPay).
 		SetPrice(post.Price).
 		SetSummary(summary).
+		AddCategoryIDs(post.Categories...).
+		AddTagIDs(post.Tags...).
 		Save(c)
 	return newPost, err
 }

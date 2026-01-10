@@ -87,7 +87,7 @@ func (h *TagHandlerImpl) QueryTagPage(c *fiber.Ctx) error {
 }
 
 func (h *TagHandlerImpl) CreateTag(c *fiber.Ctx) error {
-	var createReq *model.TagCreateReq
+	var createReq model.TagCreateReq
 	if err := c.BodyParser(&createReq); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),
@@ -112,7 +112,7 @@ func (h *TagHandlerImpl) UpdateTag(c *fiber.Ctx) error {
 		))
 	}
 
-	var updateReq *model.TagUpdateReq
+	var updateReq model.TagUpdateReq
 	if err = c.BodyParser(&updateReq); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),

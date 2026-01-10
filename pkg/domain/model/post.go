@@ -23,6 +23,8 @@ type PostCreateReq struct {
 	Copyright             *string `json:"copyright,omitempty"`                                      //文章版权
 	Author                string  `json:"author" validate:"required"`                               //作者
 	Summary               *string `json:"summary,omitempty"`                                        //文章摘要
+	Categories            []int   `json:"categories,omitempty"`                                     //分类ID列表
+	Tags                  []int   `json:"tags,omitempty"`                                           //标签ID列表
 }
 
 // PostUpdateReq represents the request body for updating a post.
@@ -46,6 +48,8 @@ type PostUpdateReq struct {
 	Copyright             string  `json:"copyright,omitempty"`                                      //文章版权
 	Author                string  `json:"author,omitempty"`                                         //作者
 	Summary               string  `json:"summary,omitempty"`                                        //文章摘要
+	Categories            []int   `json:"categories,omitempty"`                                     //分类ID列表
+	Tags                  []int   `json:"tags,omitempty"`                                           //标签ID列表
 }
 
 // PostResp represents the response body for a post.
@@ -74,4 +78,6 @@ type PostResp struct {
 	Copyright             *string    `json:"copyright,omitempty"`      //文章版权
 	Author                string     `json:"author"`                   //作者
 	Summary               *string    `json:"summary,omitempty"`        //文章摘要
+	Categories            []int      `json:"categories"`               //分类ID列表
+	Tags                  []int      `json:"tags"`                     //标签ID列表
 }

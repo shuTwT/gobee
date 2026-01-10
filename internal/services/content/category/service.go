@@ -14,7 +14,7 @@ type CategoryService interface {
 	QueryCategory(c *fiber.Ctx, id int) (*ent.Category, error)
 	QueryCategoryList(c *fiber.Ctx) ([]*ent.Category, error)
 	QueryCategoryPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Category, error)
-	CreateCategory(c context.Context, createReq *model.CategoryCreateReq) (*ent.Category, error)
+	CreateCategory(c context.Context, createReq model.CategoryCreateReq) (*ent.Category, error)
 	UpdateCategory(c *fiber.Ctx, id int, updateReq *model.CategoryUpdateReq) (*ent.Category, error)
 	DeleteCategory(c *fiber.Ctx, id int) error
 }
@@ -66,14 +66,14 @@ func (s *CategoryServiceImpl) QueryCategoryPage(c *fiber.Ctx, pageQuery model.Pa
 	return count, categories, nil
 }
 
-func (s *CategoryServiceImpl) CreateCategory(c context.Context, createReq *model.CategoryCreateReq) (*ent.Category, error) {
+func (s *CategoryServiceImpl) CreateCategory(c context.Context, createReq model.CategoryCreateReq) (*ent.Category, error) {
 	client := database.DB
 	category, err := client.Category.Create().
 		SetName(createReq.Name).
-		SetDescription(*createReq.Description).
-		SetSlug(*createReq.Slug).
+		SetNillableDescription(createReq.Description).
+		SetNillableSlug(createReq.Slug).
 		SetSortOrder(createReq.SortOrder).
-		SetActive(*createReq.Active).
+		SetNillableActive(createReq.Active).
 		Save(c)
 	if err != nil {
 		return nil, err
@@ -90,19 +90,19 @@ func (s *CategoryServiceImpl) UpdateCategory(c *fiber.Ctx, id int, updateReq *mo
 	}
 
 	if updateReq.Description != nil {
-		update.SetDescription(*updateReq.Description)
+		update.SetNillableDescription(updateReq.Description)
 	}
 
 	if updateReq.Slug != nil {
-		update.SetSlug(*updateReq.Slug)
+		update.SetNillableSlug(updateReq.Slug)
 	}
 
 	if updateReq.SortOrder != nil {
-		update.SetSortOrder(*updateReq.SortOrder)
+		update.SetNillableSortOrder(updateReq.SortOrder)
 	}
 
 	if updateReq.Active != nil {
-		update.SetActive(*updateReq.Active)
+		update.SetNillableActive(updateReq.Active)
 	}
 
 	updatedCategory, err := update.Save(c.Context())

@@ -61,7 +61,7 @@ defineExpose({ getData })
 </script>
 
 <template>
-  <n-form :rules="rules" ref="formRef" label-placement="left" label-width="120px">
+  <n-form :model="formData" :rules="rules" ref="formRef" label-placement="left" label-width="120px">
     <n-form-item label="分类名称" path="name">
       <n-input v-model:value="formData.name" placeholder="请输入分类名称" />
     </n-form-item>

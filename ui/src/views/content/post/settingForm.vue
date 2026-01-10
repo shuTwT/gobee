@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui';
 import type { FormItemProps } from './utils/types'
+import { getCategoryList } from '@/api/content/category'
+import { getTagList } from '@/api/content/tag'
 
 const props = defineProps<{
   formInline: FormItemProps
@@ -34,6 +36,39 @@ const getData = () => {
     }
   })
 }
+
+const loadCategoryOptions = async () => {
+  try {
+    const res = await getCategoryList()
+    if (res.code === 200 && res.data) {
+      categoryOptions.value = res.data.map((item: any) => ({
+        value: item.id,
+        label: item.name
+      }))
+    }
+  } catch (error) {
+    console.error('加载分类列表失败:', error)
+  }
+}
+
+const loadTagOptions = async () => {
+  try {
+    const res = await getTagList()
+    if (res.code === 200 && res.data) {
+      tagOptions.value = res.data.map((item: any) => ({
+        value: item.id,
+        label: item.name
+      }))
+    }
+  } catch (error) {
+    console.error('加载标签列表失败:', error)
+  }
+}
+
+onMounted(() => {
+  loadCategoryOptions()
+  loadTagOptions()
+})
 
 defineExpose({getData})
 
@@ -75,8 +110,8 @@ defineExpose({getData})
       </n-gi>
     </n-grid>
     
-    <n-form-item label="分类" path="categorys">
-      <n-select v-model:value="formData.categorys" :multiple="true" :filterable="true" :options="categoryOptions" placeholder="请选择分类"/>
+    <n-form-item label="分类" path="categories">
+      <n-select v-model:value="formData.categories" :multiple="true" :filterable="true" :options="categoryOptions" placeholder="请选择分类"/>
     </n-form-item>
     <n-form-item label="标签" path="tags">
       <n-select v-model:value="formData.tags" :multiple="true" :filterable="true" :options="tagOptions" placeholder="请选择标签"/>
@@ -124,12 +159,21 @@ defineExpose({getData})
     <n-form-item label="支付后可见" path="is_visible_after_pay">
       <n-checkbox v-model:checked="formData.is_visible_after_pay"/>
     </n-form-item>
-    <n-form-item v-if="formData.is_visible_after_pay" label="支付金额" path="money">
-      <n-input v-model:value="formData.money" type="text" placeholder="请输入支付金额" :validator="(value: string | null | undefined) => {
-        if (!value) return true;
-        const num = Number(value);
-        return !isNaN(num) && num >= 0;
-      }"/>
+    <n-form-item v-if="formData.is_visible_after_pay" label="支付金额" path="price">
+      <n-input-number v-model:value="formData.price" :min="0" :precision="2" placeholder="请输入支付金额"/>
     </n-form-item>
+    
+    <n-grid :cols="2" :x-gap="16">
+      <n-gi>
+        <n-form-item label="浏览次数" path="view_count">
+          <n-input-number v-model:value="formData.view_count" :disabled="true" placeholder="浏览次数"/>
+        </n-form-item>
+      </n-gi>
+      <n-gi>
+        <n-form-item label="评论次数" path="comment_count">
+          <n-input-number v-model:value="formData.comment_count" :disabled="true" placeholder="评论次数"/>
+        </n-form-item>
+      </n-gi>
+    </n-grid>
   </n-form>
 </template>

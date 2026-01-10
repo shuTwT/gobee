@@ -86,7 +86,7 @@ func (h *CategoryHandlerImpl) QueryCategoryPage(c *fiber.Ctx) error {
 }
 
 func (h *CategoryHandlerImpl) CreateCategory(c *fiber.Ctx) error {
-	var createReq *model.CategoryCreateReq
+	var createReq model.CategoryCreateReq
 	if err := c.BodyParser(&createReq); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),

@@ -14,8 +14,8 @@ type TagService interface {
 	QueryTag(c *fiber.Ctx, id int) (*ent.Tag, error)
 	QueryTagList(c *fiber.Ctx) ([]*ent.Tag, error)
 	QueryTagPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Tag, error)
-	CreateTag(c context.Context, createReq *model.TagCreateReq) (*ent.Tag, error)
-	UpdateTag(c *fiber.Ctx, id int, updateReq *model.TagUpdateReq) (*ent.Tag, error)
+	CreateTag(c context.Context, createReq model.TagCreateReq) (*ent.Tag, error)
+	UpdateTag(c *fiber.Ctx, id int, updateReq model.TagUpdateReq) (*ent.Tag, error)
 	DeleteTag(c *fiber.Ctx, id int) error
 }
 
@@ -66,15 +66,15 @@ func (s *TagServiceImpl) QueryTagPage(c *fiber.Ctx, pageQuery model.PageQuery) (
 	return count, tags, nil
 }
 
-func (s *TagServiceImpl) CreateTag(c context.Context, createReq *model.TagCreateReq) (*ent.Tag, error) {
+func (s *TagServiceImpl) CreateTag(c context.Context, createReq model.TagCreateReq) (*ent.Tag, error) {
 	client := database.DB
 	tag, err := client.Tag.Create().
 		SetName(createReq.Name).
-		SetDescription(*createReq.Description).
-		SetSlug(*createReq.Slug).
-		SetColor(*createReq.Color).
-		SetSortOrder(createReq.SortOrder).
-		SetActive(*createReq.Active).
+		SetNillableDescription(createReq.Description).
+		SetNillableSlug(createReq.Slug).
+		SetNillableColor(createReq.Color).
+		SetNillableSortOrder(createReq.SortOrder).
+		SetNillableActive(createReq.Active).
 		Save(c)
 	if err != nil {
 		return nil, err
@@ -82,32 +82,32 @@ func (s *TagServiceImpl) CreateTag(c context.Context, createReq *model.TagCreate
 	return tag, nil
 }
 
-func (s *TagServiceImpl) UpdateTag(c *fiber.Ctx, id int, updateReq *model.TagUpdateReq) (*ent.Tag, error) {
+func (s *TagServiceImpl) UpdateTag(c *fiber.Ctx, id int, updateReq model.TagUpdateReq) (*ent.Tag, error) {
 	client := database.DB
 	update := client.Tag.UpdateOneID(id)
 
 	if updateReq.Name != nil {
-		update.SetName(*updateReq.Name)
+		update.SetNillableName(updateReq.Name)
 	}
 
 	if updateReq.Description != nil {
-		update.SetDescription(*updateReq.Description)
+		update.SetNillableDescription(updateReq.Description)
 	}
 
 	if updateReq.Slug != nil {
-		update.SetSlug(*updateReq.Slug)
+		update.SetNillableSlug(updateReq.Slug)
 	}
 
 	if updateReq.Color != nil {
-		update.SetColor(*updateReq.Color)
+		update.SetNillableColor(updateReq.Color)
 	}
 
 	if updateReq.SortOrder != nil {
-		update.SetSortOrder(*updateReq.SortOrder)
+		update.SetNillableSortOrder(updateReq.SortOrder)
 	}
 
 	if updateReq.Active != nil {
-		update.SetActive(*updateReq.Active)
+		update.SetNillableActive(updateReq.Active)
 	}
 
 	updatedTag, err := update.Save(c.Context())
