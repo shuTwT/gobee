@@ -3,7 +3,7 @@ import { FileTraySharp } from "@vicons/ionicons5"
 import type { AlbumPhotoFormProps } from "./utils/types";
 import type { FormInst, FormRules } from "naive-ui";
 import { addDialog } from "@/components/dialog";
-import ImageUpload from "@/components/upload/ImageUpload.vue";
+import ImageSelector from "@/components/ImageSelector.vue";
 
 const props = defineProps<AlbumPhotoFormProps>()
 
@@ -14,16 +14,22 @@ const rules:FormRules = {
 }
 
 const openUploadImage = ()=>{
-  const fileList = ref<string[]>([])
-  const uploadRef = ref()
+  const selectedImage = ref('')
   addDialog({
-    props:{
-      limit:1,
-      fileList,
-    },
-    contentRenderer:({options})=>h(ImageUpload,{ref:uploadRef,fileList:options.props!.fileList}),
+    title: '选择附件',
+    width: '80%',
+    height: '80%',
+    contentRenderer:()=>h(ImageSelector, {
+      visible: true,
+      modelValue: selectedImage.value,
+      'onUpdate:modelValue': (value) => {
+        selectedImage.value = value
+      }
+    }),
     beforeSure:async(done)=>{
-      console.log(fileList.value)
+      if (selectedImage.value) {
+        formData.value.image_url = selectedImage.value
+      }
       done()
     }
   })

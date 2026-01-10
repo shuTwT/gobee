@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -87,6 +88,11 @@ func Type(v string) predicate.File {
 // Size applies equality check predicate on the "size" field. It's identical to SizeEQ.
 func Size(v string) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldSize, v))
+}
+
+// StorageStrategyID applies equality check predicate on the "storage_strategy_id" field. It's identical to StorageStrategyIDEQ.
+func StorageStrategyID(v int) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldStorageStrategyID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -492,6 +498,59 @@ func SizeEqualFold(v string) predicate.File {
 // SizeContainsFold applies the ContainsFold predicate on the "size" field.
 func SizeContainsFold(v string) predicate.File {
 	return predicate.File(sql.FieldContainsFold(FieldSize, v))
+}
+
+// StorageStrategyIDEQ applies the EQ predicate on the "storage_strategy_id" field.
+func StorageStrategyIDEQ(v int) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldStorageStrategyID, v))
+}
+
+// StorageStrategyIDNEQ applies the NEQ predicate on the "storage_strategy_id" field.
+func StorageStrategyIDNEQ(v int) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldStorageStrategyID, v))
+}
+
+// StorageStrategyIDIn applies the In predicate on the "storage_strategy_id" field.
+func StorageStrategyIDIn(vs ...int) predicate.File {
+	return predicate.File(sql.FieldIn(FieldStorageStrategyID, vs...))
+}
+
+// StorageStrategyIDNotIn applies the NotIn predicate on the "storage_strategy_id" field.
+func StorageStrategyIDNotIn(vs ...int) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldStorageStrategyID, vs...))
+}
+
+// StorageStrategyIDIsNil applies the IsNil predicate on the "storage_strategy_id" field.
+func StorageStrategyIDIsNil() predicate.File {
+	return predicate.File(sql.FieldIsNull(FieldStorageStrategyID))
+}
+
+// StorageStrategyIDNotNil applies the NotNil predicate on the "storage_strategy_id" field.
+func StorageStrategyIDNotNil() predicate.File {
+	return predicate.File(sql.FieldNotNull(FieldStorageStrategyID))
+}
+
+// HasStorageStrategy applies the HasEdge predicate on the "storage_strategy" edge.
+func HasStorageStrategy() predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, StorageStrategyTable, StorageStrategyColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasStorageStrategyWith applies the HasEdge predicate on the "storage_strategy" edge with a given conditions (other predicates).
+func HasStorageStrategyWith(preds ...predicate.StorageStrategy) predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := newStorageStrategyStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

@@ -56,6 +56,7 @@ func (s *CategoryServiceImpl) QueryCategoryPage(c *fiber.Ctx, pageQuery model.Pa
 	}
 
 	categories, err := client.Category.Query().
+		Order(ent.Desc(category.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
 		All(c.Context())

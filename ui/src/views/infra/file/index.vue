@@ -44,12 +44,23 @@ const columns: DataTableColumns<any> = [
     },
   },
   {
+    title:"名称",
+    key:"name",
+    width: 200,
+    ellipsis: {
+      tooltip: true,
+    },
+  },
+  {
     title: '大小',
     key: 'size',
     width: 180,
     ellipsis: {
       tooltip: true,
     },
+    render:(row)=>{
+      return row.size ? `${(row.size / 1024 / 1024).toFixed(2)} MB` : '0 KB'
+    }
   },
   {
     title: '上传时间',

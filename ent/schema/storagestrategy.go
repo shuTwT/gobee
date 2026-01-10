@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -35,5 +36,8 @@ func (StorageStrategy) Fields() []ent.Field {
 
 // Edges of the StorageStrategy.
 func (StorageStrategy) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("files", File.Type).
+			Ref("storage_strategy"),
+	}
 }

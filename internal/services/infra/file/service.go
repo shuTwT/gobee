@@ -11,7 +11,7 @@ type FileService interface {
 	ListFilePage(ctx context.Context, page, size int) (int, []*ent.File, error)
 	QueryFile(ctx context.Context, id int) (*ent.File, error)
 	DeleteFile(ctx context.Context, id int) error
-	CreateFile(ctx context.Context, name, path, url, fileType, size string) (*ent.File, error)
+	CreateFile(ctx context.Context, strategyID int, name, path, url, fileType, size string) (*ent.File, error)
 }
 
 type FileServiceImpl struct {
@@ -37,6 +37,8 @@ func (s *FileServiceImpl) ListFilePage(ctx context.Context, page, size int) (int
 	}
 
 	files, err := s.client.File.Query().
+		WithStorageStrategy().
+		Order(ent.Desc(file.FieldID)).
 		Offset((page - 1) * size).
 		Limit(size).
 		All(ctx)
@@ -48,7 +50,10 @@ func (s *FileServiceImpl) ListFilePage(ctx context.Context, page, size int) (int
 }
 
 func (s *FileServiceImpl) QueryFile(ctx context.Context, id int) (*ent.File, error) {
-	file, err := s.client.File.Query().Where(file.ID(id)).First(ctx)
+	file, err := s.client.File.Query().
+		WithStorageStrategy().
+		Where(file.ID(id)).
+		First(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -63,13 +68,14 @@ func (s *FileServiceImpl) DeleteFile(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *FileServiceImpl) CreateFile(ctx context.Context, name, path, url, fileType, size string) (*ent.File, error) {
+func (s *FileServiceImpl) CreateFile(ctx context.Context, strategyID int, name, path, url, fileType, size string) (*ent.File, error) {
 	newFile, err := s.client.File.Create().
 		SetName(name).
 		SetPath(path).
 		SetURL(url).
 		SetType(fileType).
 		SetSize(size).
+		SetStorageStrategyID(strategyID).
 		Save(ctx)
 	if err != nil {
 		return nil, err

@@ -40,6 +40,7 @@ func (s *MemberLevelServiceImpl) QueryMemberLevel(c *fiber.Ctx, id int) (*ent.Me
 func (s *MemberLevelServiceImpl) QueryMemberLevelList(c *fiber.Ctx) ([]*ent.MemberLevel, error) {
 	client := database.DB
 	memberLevels, err := client.MemberLevel.Query().
+		Order(ent.Desc(memberlevel.FieldID)).
 		All(c.Context())
 	if err != nil {
 		return nil, err
@@ -55,6 +56,7 @@ func (s *MemberLevelServiceImpl) QueryMemberLevelPage(c *fiber.Ctx, pageQuery mo
 	}
 
 	memberLevels, err := client.MemberLevel.Query().
+		Order(ent.Desc(memberlevel.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
 		All(c.Context())

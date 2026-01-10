@@ -203,9 +203,9 @@ func (s *ProductServiceImpl) ListProducts(ctx context.Context, page, pageSize in
 	}
 
 	products, err := s.client.Product.Query().
+		Order(ent.Desc(product.FieldCreatedAt)).
 		Offset((page - 1) * pageSize).
 		Limit(pageSize).
-		Order(ent.Desc(product.FieldCreatedAt)).
 		All(ctx)
 
 	return products, total, err

@@ -31,7 +31,27 @@ func (h *FileHandlerImpl) ListFile(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("文件列表获取成功", files))
+
+	fileResps := make([]*model.FileResp, 0, len(files))
+	for _, file := range files {
+		fileResps = append(fileResps, &model.FileResp{
+			ID:                file.ID,
+			CreatedAt:         file.CreatedAt,
+			Name:              file.Name,
+			Path:              file.Path,
+			URL:               file.URL,
+			Type:              file.Type,
+			Size:              file.Size,
+			StorageStrategyID: file.StorageStrategyID,
+			StorageStrategy: func() *string {
+				if file.Edges.StorageStrategy != nil {
+					return &file.Edges.StorageStrategy.Name
+				}
+				return nil
+			}(),
+		})
+	}
+	return c.JSON(model.NewSuccess("文件列表获取成功", fileResps))
 }
 
 func (h *FileHandlerImpl) ListFilePage(c *fiber.Ctx) error {
@@ -45,9 +65,29 @@ func (h *FileHandlerImpl) ListFilePage(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	pageResult := model.PageResult[*ent.File]{
+	fileResps := make([]*model.FileResp, 0, len(files))
+	for _, file := range files {
+		fileResps = append(fileResps, &model.FileResp{
+			ID:                file.ID,
+			CreatedAt:         file.CreatedAt,
+			Name:              file.Name,
+			Path:              file.Path,
+			URL:               file.URL,
+			Type:              file.Type,
+			Size:              file.Size,
+			StorageStrategyID: file.StorageStrategyID,
+			StorageStrategy: func() *string {
+				if file.Edges.StorageStrategy != nil {
+					return &file.Edges.StorageStrategy.Name
+				}
+				return nil
+			}(),
+		})
+	}
+
+	pageResult := model.PageResult[*model.FileResp]{
 		Total:   int64(count),
-		Records: files,
+		Records: fileResps,
 	}
 	return c.JSON(model.NewSuccess("文件列表获取成功", pageResult))
 }
@@ -62,7 +102,24 @@ func (h *FileHandlerImpl) QueryFile(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("文件查询成功", file))
+
+	fileResp := &model.FileResp{
+		ID:                file.ID,
+		CreatedAt:         file.CreatedAt,
+		Name:              file.Name,
+		Path:              file.Path,
+		URL:               file.URL,
+		Type:              file.Type,
+		Size:              file.Size,
+		StorageStrategyID: file.StorageStrategyID,
+		StorageStrategy: func() *string {
+			if file.Edges.StorageStrategy != nil {
+				return &file.Edges.StorageStrategy.Name
+			}
+			return nil
+		}(),
+	}
+	return c.JSON(model.NewSuccess("文件查询成功", fileResp))
 }
 
 func (h *FileHandlerImpl) DeleteFile(c *fiber.Ctx) error {
@@ -138,7 +195,7 @@ func (h *FileHandlerImpl) Upload(c *fiber.Ctx) error {
 		}
 
 		// 保存到数据库
-		newFile, err := h.fileService.CreateFile(c.Context(), file.Filename, strategy.BasePath, fullUrl, file.Header.Get("Content-Type"), strconv.FormatInt(file.Size, 10))
+		newFile, err := h.fileService.CreateFile(c.Context(), strategy.ID, file.Filename, strategy.BasePath, fullUrl, file.Header.Get("Content-Type"), strconv.FormatInt(file.Size, 10))
 		if err != nil {
 			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 		}

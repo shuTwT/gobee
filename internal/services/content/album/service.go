@@ -26,6 +26,7 @@ func NewAlbumServiceImpl(client *ent.Client) *AlbumServiceImpl {
 
 func (s *AlbumServiceImpl) ListAlbum(ctx context.Context) ([]*ent.Album, error) {
 	albums, err := s.client.Album.Query().
+		Order(ent.Desc(album.FieldID)).
 		All(ctx)
 	if err != nil {
 		return nil, err
@@ -40,6 +41,7 @@ func (s *AlbumServiceImpl) ListAlbumPage(ctx context.Context, page, size int) (i
 	}
 
 	albums, err := s.client.Album.Query().
+		Order(ent.Desc(album.FieldID)).
 		Limit(size).
 		Offset((page - 1) * size).
 		All(ctx)

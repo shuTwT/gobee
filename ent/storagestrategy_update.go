@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gobee/ent/file"
 	"gobee/ent/predicate"
 	"gobee/ent/storagestrategy"
 	"time"
@@ -188,9 +189,45 @@ func (_u *StorageStrategyUpdate) SetNillableMaster(v *bool) *StorageStrategyUpda
 	return _u
 }
 
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (_u *StorageStrategyUpdate) AddFileIDs(ids ...int) *StorageStrategyUpdate {
+	_u.mutation.AddFileIDs(ids...)
+	return _u
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (_u *StorageStrategyUpdate) AddFiles(v ...*File) *StorageStrategyUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddFileIDs(ids...)
+}
+
 // Mutation returns the StorageStrategyMutation object of the builder.
 func (_u *StorageStrategyUpdate) Mutation() *StorageStrategyMutation {
 	return _u.mutation
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (_u *StorageStrategyUpdate) ClearFiles() *StorageStrategyUpdate {
+	_u.mutation.ClearFiles()
+	return _u
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (_u *StorageStrategyUpdate) RemoveFileIDs(ids ...int) *StorageStrategyUpdate {
+	_u.mutation.RemoveFileIDs(ids...)
+	return _u
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (_u *StorageStrategyUpdate) RemoveFiles(v ...*File) *StorageStrategyUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveFileIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -296,6 +333,51 @@ func (_u *StorageStrategyUpdate) sqlSave(ctx context.Context) (_node int, err er
 	}
 	if value, ok := _u.mutation.Master(); ok {
 		_spec.SetField(storagestrategy.FieldMaster, field.TypeBool, value)
+	}
+	if _u.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   storagestrategy.FilesTable,
+			Columns: []string{storagestrategy.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedFilesIDs(); len(nodes) > 0 && !_u.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   storagestrategy.FilesTable,
+			Columns: []string{storagestrategy.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   storagestrategy.FilesTable,
+			Columns: []string{storagestrategy.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -477,9 +559,45 @@ func (_u *StorageStrategyUpdateOne) SetNillableMaster(v *bool) *StorageStrategyU
 	return _u
 }
 
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (_u *StorageStrategyUpdateOne) AddFileIDs(ids ...int) *StorageStrategyUpdateOne {
+	_u.mutation.AddFileIDs(ids...)
+	return _u
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (_u *StorageStrategyUpdateOne) AddFiles(v ...*File) *StorageStrategyUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddFileIDs(ids...)
+}
+
 // Mutation returns the StorageStrategyMutation object of the builder.
 func (_u *StorageStrategyUpdateOne) Mutation() *StorageStrategyMutation {
 	return _u.mutation
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (_u *StorageStrategyUpdateOne) ClearFiles() *StorageStrategyUpdateOne {
+	_u.mutation.ClearFiles()
+	return _u
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (_u *StorageStrategyUpdateOne) RemoveFileIDs(ids ...int) *StorageStrategyUpdateOne {
+	_u.mutation.RemoveFileIDs(ids...)
+	return _u
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (_u *StorageStrategyUpdateOne) RemoveFiles(v ...*File) *StorageStrategyUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveFileIDs(ids...)
 }
 
 // Where appends a list predicates to the StorageStrategyUpdate builder.
@@ -615,6 +733,51 @@ func (_u *StorageStrategyUpdateOne) sqlSave(ctx context.Context) (_node *Storage
 	}
 	if value, ok := _u.mutation.Master(); ok {
 		_spec.SetField(storagestrategy.FieldMaster, field.TypeBool, value)
+	}
+	if _u.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   storagestrategy.FilesTable,
+			Columns: []string{storagestrategy.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedFilesIDs(); len(nodes) > 0 && !_u.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   storagestrategy.FilesTable,
+			Columns: []string{storagestrategy.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   storagestrategy.FilesTable,
+			Columns: []string{storagestrategy.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &StorageStrategy{config: _u.config}
 	_spec.Assign = _node.assignValues

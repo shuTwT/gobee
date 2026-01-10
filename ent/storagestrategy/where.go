@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -807,6 +808,29 @@ func MasterEQ(v bool) predicate.StorageStrategy {
 // MasterNEQ applies the NEQ predicate on the "master" field.
 func MasterNEQ(v bool) predicate.StorageStrategy {
 	return predicate.StorageStrategy(sql.FieldNEQ(FieldMaster, v))
+}
+
+// HasFiles applies the HasEdge predicate on the "files" edge.
+func HasFiles() predicate.StorageStrategy {
+	return predicate.StorageStrategy(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, FilesTable, FilesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFilesWith applies the HasEdge predicate on the "files" edge with a given conditions (other predicates).
+func HasFilesWith(preds ...predicate.File) predicate.StorageStrategy {
+	return predicate.StorageStrategy(func(s *sql.Selector) {
+		step := newFilesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

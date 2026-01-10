@@ -25,7 +25,9 @@ func NewStorageStrategyServiceImpl(client *ent.Client) *StorageStrategyServiceIm
 }
 
 func (s *StorageStrategyServiceImpl) ListStorageStrategy(ctx context.Context) ([]*ent.StorageStrategy, error) {
-	strategies, err := s.client.StorageStrategy.Query().All(ctx)
+	strategies, err := s.client.StorageStrategy.Query().
+		Order(ent.Desc(storagestrategy.FieldID)).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -39,6 +41,7 @@ func (s *StorageStrategyServiceImpl) ListStorageStrategyPage(ctx context.Context
 	}
 
 	strategies, err := s.client.StorageStrategy.Query().
+		Order(ent.Desc(storagestrategy.FieldID)).
 		Limit(size).
 		Offset((page - 1) * size).
 		All(ctx)

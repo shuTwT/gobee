@@ -37,6 +37,7 @@ func (s *CommentServiceImpl) ListCommentPage(c context.Context, pageQuery model.
 		return nil, err
 	}
 	comments, err := client.Comment.Query().
+		Order(ent.Desc(comment.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
 		All(c)
@@ -53,6 +54,7 @@ func (s *CommentServiceImpl) ListCommentPage(c context.Context, pageQuery model.
 func (s *CommentServiceImpl) ListComment(c context.Context, url string) ([]*ent.Comment, error) {
 	client := database.DB
 	comments, err := client.Comment.Query().
+		Order(ent.Desc(comment.FieldID)).
 		Where(comment.URLEQ(url)).
 		All(c)
 	if err != nil {

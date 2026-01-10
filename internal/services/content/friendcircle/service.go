@@ -26,7 +26,9 @@ func NewFriendCircleServiceImpl(client *ent.Client) *FriendCircleServiceImpl {
 }
 
 func (s *FriendCircleServiceImpl) ListFriendCircleRecord(ctx context.Context) ([]*ent.FriendCircleRecord, error) {
-	records, err := s.client.FriendCircleRecord.Query().All(ctx)
+	records, err := s.client.FriendCircleRecord.Query().
+		Order(ent.Desc(friendcirclerecord.FieldID)).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -40,6 +42,7 @@ func (s *FriendCircleServiceImpl) ListFriendCircleRecordPage(ctx context.Context
 	}
 
 	records, err := s.client.FriendCircleRecord.Query().
+		Order(ent.Desc(friendcirclerecord.FieldID)).
 		Limit(size).
 		Offset((page - 1) * size).
 		All(ctx)

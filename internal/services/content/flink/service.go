@@ -42,6 +42,7 @@ func (s *FlinkServiceImpl) ListFlink(c context.Context, listPage model.FlinkList
 		Where(preds...).
 		QueryLinks().
 		WithGroup().
+		Order(ent.Desc(flink.FieldID)).
 		All(c)
 	if err != nil {
 		return nil, err
@@ -60,6 +61,7 @@ func (s *FlinkServiceImpl) ListFlinkPage(c context.Context, pageQuery model.Flin
 	}
 	flinks, err := s.client.FLink.Query().
 		Where(preds...).
+		Order(ent.Desc(flink.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).All(c)
 	if err != nil {

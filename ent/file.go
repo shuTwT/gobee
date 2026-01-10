@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"gobee/ent/file"
+	"gobee/ent/storagestrategy"
 	"strings"
 	"time"
 
@@ -30,8 +31,33 @@ type File struct {
 	// 文件类型
 	Type string `json:"type,omitempty"`
 	// 文件大小
-	Size         string `json:"size,omitempty"`
+	Size string `json:"size,omitempty"`
+	// 存储策略ID
+	StorageStrategyID int `json:"storage_strategy_id,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the FileQuery when eager-loading is set.
+	Edges        FileEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// FileEdges holds the relations/edges for other nodes in the graph.
+type FileEdges struct {
+	// StorageStrategy holds the value of the storage_strategy edge.
+	StorageStrategy *StorageStrategy `json:"storage_strategy,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// StorageStrategyOrErr returns the StorageStrategy value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FileEdges) StorageStrategyOrErr() (*StorageStrategy, error) {
+	if e.StorageStrategy != nil {
+		return e.StorageStrategy, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: storagestrategy.Label}
+	}
+	return nil, &NotLoadedError{edge: "storage_strategy"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -39,7 +65,7 @@ func (*File) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case file.FieldID:
+		case file.FieldID, file.FieldStorageStrategyID:
 			values[i] = new(sql.NullInt64)
 		case file.FieldName, file.FieldPath, file.FieldURL, file.FieldType, file.FieldSize:
 			values[i] = new(sql.NullString)
@@ -108,6 +134,12 @@ func (_m *File) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Size = value.String
 			}
+		case file.FieldStorageStrategyID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field storage_strategy_id", values[i])
+			} else if value.Valid {
+				_m.StorageStrategyID = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -119,6 +151,11 @@ func (_m *File) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *File) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryStorageStrategy queries the "storage_strategy" edge of the File entity.
+func (_m *File) QueryStorageStrategy() *StorageStrategyQuery {
+	return NewFileClient(_m.config).QueryStorageStrategy(_m)
 }
 
 // Update returns a builder for updating this File.
@@ -164,6 +201,9 @@ func (_m *File) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("size=")
 	builder.WriteString(_m.Size)
+	builder.WriteString(", ")
+	builder.WriteString("storage_strategy_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.StorageStrategyID))
 	builder.WriteByte(')')
 	return builder.String()
 }

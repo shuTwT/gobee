@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -24,10 +25,15 @@ func (File) Fields() []ent.Field {
 		field.String("url").NotEmpty().MaxLen(1024).Comment("文件地址"),
 		field.String("type").Comment("文件类型"),
 		field.String("size").Comment("文件大小"),
+		field.Int("storage_strategy_id").Optional().Comment("存储策略ID"),
 	}
 }
 
 // Edges of the File.
 func (File) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("storage_strategy", StorageStrategy.Type).
+			Field("storage_strategy_id").
+			Unique(),
+	}
 }

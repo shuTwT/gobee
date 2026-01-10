@@ -47,6 +47,7 @@ func (s *MemberServiceImpl) QueryMemberPage(c *fiber.Ctx, pageQuery model.PageQu
 	}
 
 	members, err := client.Member.Query().
+		Order(ent.Desc(member.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
 		All(c.Context())

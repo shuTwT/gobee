@@ -9948,20 +9948,22 @@ func (m *FLinkGroupMutation) ResetEdge(name string) error {
 // FileMutation represents an operation that mutates the File nodes in the graph.
 type FileMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	created_at    *time.Time
-	updated_at    *time.Time
-	name          *string
-	_path         *string
-	url           *string
-	_type         *string
-	size          *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*File, error)
-	predicates    []predicate.File
+	op                      Op
+	typ                     string
+	id                      *int
+	created_at              *time.Time
+	updated_at              *time.Time
+	name                    *string
+	_path                   *string
+	url                     *string
+	_type                   *string
+	size                    *string
+	clearedFields           map[string]struct{}
+	storage_strategy        *int
+	clearedstorage_strategy bool
+	done                    bool
+	oldValue                func(context.Context) (*File, error)
+	predicates              []predicate.File
 }
 
 var _ ent.Mutation = (*FileMutation)(nil)
@@ -10320,6 +10322,82 @@ func (m *FileMutation) ResetSize() {
 	m.size = nil
 }
 
+// SetStorageStrategyID sets the "storage_strategy_id" field.
+func (m *FileMutation) SetStorageStrategyID(i int) {
+	m.storage_strategy = &i
+}
+
+// StorageStrategyID returns the value of the "storage_strategy_id" field in the mutation.
+func (m *FileMutation) StorageStrategyID() (r int, exists bool) {
+	v := m.storage_strategy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStorageStrategyID returns the old "storage_strategy_id" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldStorageStrategyID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStorageStrategyID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStorageStrategyID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStorageStrategyID: %w", err)
+	}
+	return oldValue.StorageStrategyID, nil
+}
+
+// ClearStorageStrategyID clears the value of the "storage_strategy_id" field.
+func (m *FileMutation) ClearStorageStrategyID() {
+	m.storage_strategy = nil
+	m.clearedFields[file.FieldStorageStrategyID] = struct{}{}
+}
+
+// StorageStrategyIDCleared returns if the "storage_strategy_id" field was cleared in this mutation.
+func (m *FileMutation) StorageStrategyIDCleared() bool {
+	_, ok := m.clearedFields[file.FieldStorageStrategyID]
+	return ok
+}
+
+// ResetStorageStrategyID resets all changes to the "storage_strategy_id" field.
+func (m *FileMutation) ResetStorageStrategyID() {
+	m.storage_strategy = nil
+	delete(m.clearedFields, file.FieldStorageStrategyID)
+}
+
+// ClearStorageStrategy clears the "storage_strategy" edge to the StorageStrategy entity.
+func (m *FileMutation) ClearStorageStrategy() {
+	m.clearedstorage_strategy = true
+	m.clearedFields[file.FieldStorageStrategyID] = struct{}{}
+}
+
+// StorageStrategyCleared reports if the "storage_strategy" edge to the StorageStrategy entity was cleared.
+func (m *FileMutation) StorageStrategyCleared() bool {
+	return m.StorageStrategyIDCleared() || m.clearedstorage_strategy
+}
+
+// StorageStrategyIDs returns the "storage_strategy" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// StorageStrategyID instead. It exists only for internal usage by the builders.
+func (m *FileMutation) StorageStrategyIDs() (ids []int) {
+	if id := m.storage_strategy; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetStorageStrategy resets all changes to the "storage_strategy" edge.
+func (m *FileMutation) ResetStorageStrategy() {
+	m.storage_strategy = nil
+	m.clearedstorage_strategy = false
+}
+
 // Where appends a list predicates to the FileMutation builder.
 func (m *FileMutation) Where(ps ...predicate.File) {
 	m.predicates = append(m.predicates, ps...)
@@ -10354,7 +10432,7 @@ func (m *FileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FileMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, file.FieldCreatedAt)
 	}
@@ -10375,6 +10453,9 @@ func (m *FileMutation) Fields() []string {
 	}
 	if m.size != nil {
 		fields = append(fields, file.FieldSize)
+	}
+	if m.storage_strategy != nil {
+		fields = append(fields, file.FieldStorageStrategyID)
 	}
 	return fields
 }
@@ -10398,6 +10479,8 @@ func (m *FileMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case file.FieldSize:
 		return m.Size()
+	case file.FieldStorageStrategyID:
+		return m.StorageStrategyID()
 	}
 	return nil, false
 }
@@ -10421,6 +10504,8 @@ func (m *FileMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldType(ctx)
 	case file.FieldSize:
 		return m.OldSize(ctx)
+	case file.FieldStorageStrategyID:
+		return m.OldStorageStrategyID(ctx)
 	}
 	return nil, fmt.Errorf("unknown File field %s", name)
 }
@@ -10479,6 +10564,13 @@ func (m *FileMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSize(v)
 		return nil
+	case file.FieldStorageStrategyID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStorageStrategyID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown File field %s", name)
 }
@@ -10486,13 +10578,16 @@ func (m *FileMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *FileMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *FileMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -10508,7 +10603,11 @@ func (m *FileMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *FileMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(file.FieldStorageStrategyID) {
+		fields = append(fields, file.FieldStorageStrategyID)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -10521,6 +10620,11 @@ func (m *FileMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *FileMutation) ClearField(name string) error {
+	switch name {
+	case file.FieldStorageStrategyID:
+		m.ClearStorageStrategyID()
+		return nil
+	}
 	return fmt.Errorf("unknown File nullable field %s", name)
 }
 
@@ -10549,25 +10653,37 @@ func (m *FileMutation) ResetField(name string) error {
 	case file.FieldSize:
 		m.ResetSize()
 		return nil
+	case file.FieldStorageStrategyID:
+		m.ResetStorageStrategyID()
+		return nil
 	}
 	return fmt.Errorf("unknown File field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *FileMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.storage_strategy != nil {
+		edges = append(edges, file.EdgeStorageStrategy)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *FileMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case file.EdgeStorageStrategy:
+		if id := m.storage_strategy; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *FileMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -10579,25 +10695,42 @@ func (m *FileMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *FileMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedstorage_strategy {
+		edges = append(edges, file.EdgeStorageStrategy)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *FileMutation) EdgeCleared(name string) bool {
+	switch name {
+	case file.EdgeStorageStrategy:
+		return m.clearedstorage_strategy
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *FileMutation) ClearEdge(name string) error {
+	switch name {
+	case file.EdgeStorageStrategy:
+		m.ClearStorageStrategy()
+		return nil
+	}
 	return fmt.Errorf("unknown File unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *FileMutation) ResetEdge(name string) error {
+	switch name {
+	case file.EdgeStorageStrategy:
+		m.ResetStorageStrategy()
+		return nil
+	}
 	return fmt.Errorf("unknown File edge %s", name)
 }
 
@@ -24109,6 +24242,9 @@ type StorageStrategyMutation struct {
 	domain        *string
 	master        *bool
 	clearedFields map[string]struct{}
+	files         map[int]struct{}
+	removedfiles  map[int]struct{}
+	clearedfiles  bool
 	done          bool
 	oldValue      func(context.Context) (*StorageStrategy, error)
 	predicates    []predicate.StorageStrategy
@@ -24686,6 +24822,60 @@ func (m *StorageStrategyMutation) ResetMaster() {
 	m.master = nil
 }
 
+// AddFileIDs adds the "files" edge to the File entity by ids.
+func (m *StorageStrategyMutation) AddFileIDs(ids ...int) {
+	if m.files == nil {
+		m.files = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.files[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFiles clears the "files" edge to the File entity.
+func (m *StorageStrategyMutation) ClearFiles() {
+	m.clearedfiles = true
+}
+
+// FilesCleared reports if the "files" edge to the File entity was cleared.
+func (m *StorageStrategyMutation) FilesCleared() bool {
+	return m.clearedfiles
+}
+
+// RemoveFileIDs removes the "files" edge to the File entity by IDs.
+func (m *StorageStrategyMutation) RemoveFileIDs(ids ...int) {
+	if m.removedfiles == nil {
+		m.removedfiles = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.files, ids[i])
+		m.removedfiles[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFiles returns the removed IDs of the "files" edge to the File entity.
+func (m *StorageStrategyMutation) RemovedFilesIDs() (ids []int) {
+	for id := range m.removedfiles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FilesIDs returns the "files" edge IDs in the mutation.
+func (m *StorageStrategyMutation) FilesIDs() (ids []int) {
+	for id := range m.files {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFiles resets all changes to the "files" edge.
+func (m *StorageStrategyMutation) ResetFiles() {
+	m.files = nil
+	m.clearedfiles = false
+	m.removedfiles = nil
+}
+
 // Where appends a list predicates to the StorageStrategyMutation builder.
 func (m *StorageStrategyMutation) Where(ps ...predicate.StorageStrategy) {
 	m.predicates = append(m.predicates, ps...)
@@ -25023,49 +25213,85 @@ func (m *StorageStrategyMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *StorageStrategyMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.files != nil {
+		edges = append(edges, storagestrategy.EdgeFiles)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *StorageStrategyMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case storagestrategy.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.files))
+		for id := range m.files {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *StorageStrategyMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedfiles != nil {
+		edges = append(edges, storagestrategy.EdgeFiles)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *StorageStrategyMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case storagestrategy.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.removedfiles))
+		for id := range m.removedfiles {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *StorageStrategyMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedfiles {
+		edges = append(edges, storagestrategy.EdgeFiles)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *StorageStrategyMutation) EdgeCleared(name string) bool {
+	switch name {
+	case storagestrategy.EdgeFiles:
+		return m.clearedfiles
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *StorageStrategyMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown StorageStrategy unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *StorageStrategyMutation) ResetEdge(name string) error {
+	switch name {
+	case storagestrategy.EdgeFiles:
+		m.ResetFiles()
+		return nil
+	}
 	return fmt.Errorf("unknown StorageStrategy edge %s", name)
 }
 

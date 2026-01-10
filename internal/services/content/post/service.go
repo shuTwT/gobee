@@ -3,6 +3,7 @@ package post
 import (
 	"context"
 	"gobee/ent"
+	"gobee/ent/post"
 	"gobee/internal/database"
 	"gobee/internal/infra/logger"
 	"gobee/pkg/domain/model"
@@ -26,7 +27,10 @@ func NewPostServiceImpl(client *ent.Client) *PostServiceImpl {
 }
 
 func (s *PostServiceImpl) QueryPostList(c context.Context) ([]*ent.Post, error) {
-	posts, err := s.client.Post.Query().WithCategories().WithTags().
+	posts, err := s.client.Post.Query().
+		WithCategories().
+		WithTags().
+		Order(ent.Desc(post.FieldID)).
 		All(c)
 	if err != nil {
 		return nil, err
@@ -40,7 +44,10 @@ func (s *PostServiceImpl) QueryPostPage(c context.Context, req model.PageQuery) 
 	if err != nil {
 		return nil, 0, err
 	}
-	posts, err := s.client.Post.Query().WithCategories().WithTags().
+	posts, err := s.client.Post.Query().
+		WithCategories().
+		WithTags().
+		Order(ent.Desc(post.FieldID)).
 		Offset((req.Page - 1) * req.Size).
 		Limit(req.Size).
 		All(c)

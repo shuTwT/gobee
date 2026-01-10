@@ -22,11 +22,13 @@ type FileUpdateReq struct {
 // FileResp represents the response body for a file.
 
 type FileResp struct {
-	ID        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	Name      string    `json:"name"`
-	Path      string    `json:"path"`
-	URL       string    `json:"url"`
-	Type      string    `json:"type"`
-	Size      string    `json:"size"`
+	ID                int       `json:"id"`
+	CreatedAt         time.Time `json:"created_at"`
+	Name              string    `json:"name"`
+	Path              string    `json:"path"`
+	URL               string    `json:"url"`
+	Type              string    `json:"type"`
+	Size              string    `json:"size"`
+	StorageStrategyID int       `json:"storage_strategy_id"`
+	StorageStrategy   *string   `json:"storage_strategy"`
 }

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"gobee/ent/file"
 	"gobee/ent/predicate"
+	"gobee/ent/storagestrategy"
 	"math"
 
 	"entgo.io/ent"
@@ -18,10 +19,11 @@ import (
 // FileQuery is the builder for querying File entities.
 type FileQuery struct {
 	config
-	ctx        *QueryContext
-	order      []file.OrderOption
-	inters     []Interceptor
-	predicates []predicate.File
+	ctx                 *QueryContext
+	order               []file.OrderOption
+	inters              []Interceptor
+	predicates          []predicate.File
+	withStorageStrategy *StorageStrategyQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -56,6 +58,28 @@ func (_q *FileQuery) Unique(unique bool) *FileQuery {
 func (_q *FileQuery) Order(o ...file.OrderOption) *FileQuery {
 	_q.order = append(_q.order, o...)
 	return _q
+}
+
+// QueryStorageStrategy chains the current query on the "storage_strategy" edge.
+func (_q *FileQuery) QueryStorageStrategy() *StorageStrategyQuery {
+	query := (&StorageStrategyClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, selector),
+			sqlgraph.To(storagestrategy.Table, storagestrategy.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, file.StorageStrategyTable, file.StorageStrategyColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first File entity from the query.
@@ -245,15 +269,27 @@ func (_q *FileQuery) Clone() *FileQuery {
 		return nil
 	}
 	return &FileQuery{
-		config:     _q.config,
-		ctx:        _q.ctx.Clone(),
-		order:      append([]file.OrderOption{}, _q.order...),
-		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.File{}, _q.predicates...),
+		config:              _q.config,
+		ctx:                 _q.ctx.Clone(),
+		order:               append([]file.OrderOption{}, _q.order...),
+		inters:              append([]Interceptor{}, _q.inters...),
+		predicates:          append([]predicate.File{}, _q.predicates...),
+		withStorageStrategy: _q.withStorageStrategy.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
+}
+
+// WithStorageStrategy tells the query-builder to eager-load the nodes that are connected to
+// the "storage_strategy" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *FileQuery) WithStorageStrategy(opts ...func(*StorageStrategyQuery)) *FileQuery {
+	query := (&StorageStrategyClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withStorageStrategy = query
+	return _q
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -332,8 +368,11 @@ func (_q *FileQuery) prepareQuery(ctx context.Context) error {
 
 func (_q *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, error) {
 	var (
-		nodes = []*File{}
-		_spec = _q.querySpec()
+		nodes       = []*File{}
+		_spec       = _q.querySpec()
+		loadedTypes = [1]bool{
+			_q.withStorageStrategy != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*File).scanValues(nil, columns)
@@ -341,6 +380,7 @@ func (_q *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, e
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &File{config: _q.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -352,7 +392,43 @@ func (_q *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := _q.withStorageStrategy; query != nil {
+		if err := _q.loadStorageStrategy(ctx, query, nodes, nil,
+			func(n *File, e *StorageStrategy) { n.Edges.StorageStrategy = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (_q *FileQuery) loadStorageStrategy(ctx context.Context, query *StorageStrategyQuery, nodes []*File, init func(*File), assign func(*File, *StorageStrategy)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*File)
+	for i := range nodes {
+		fk := nodes[i].StorageStrategyID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(storagestrategy.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "storage_strategy_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (_q *FileQuery) sqlCount(ctx context.Context) (int, error) {
@@ -379,6 +455,9 @@ func (_q *FileQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != file.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withStorageStrategy != nil {
+			_spec.Node.AddColumnOnce(file.FieldStorageStrategyID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

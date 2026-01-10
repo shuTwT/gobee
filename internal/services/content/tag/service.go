@@ -41,6 +41,7 @@ func (s *TagServiceImpl) QueryTag(c *fiber.Ctx, id int) (*ent.Tag, error) {
 func (s *TagServiceImpl) QueryTagList(c *fiber.Ctx) ([]*ent.Tag, error) {
 	client := database.DB
 	tags, err := client.Tag.Query().
+		Order(ent.Desc(tag.FieldID)).
 		All(c.Context())
 	if err != nil {
 		return nil, err
@@ -56,6 +57,7 @@ func (s *TagServiceImpl) QueryTagPage(c *fiber.Ctx, pageQuery model.PageQuery) (
 	}
 
 	tags, err := client.Tag.Query().
+		Order(ent.Desc(tag.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
 		All(c.Context())

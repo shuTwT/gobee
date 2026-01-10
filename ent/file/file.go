@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -27,8 +28,19 @@ const (
 	FieldType = "type"
 	// FieldSize holds the string denoting the size field in the database.
 	FieldSize = "size"
+	// FieldStorageStrategyID holds the string denoting the storage_strategy_id field in the database.
+	FieldStorageStrategyID = "storage_strategy_id"
+	// EdgeStorageStrategy holds the string denoting the storage_strategy edge name in mutations.
+	EdgeStorageStrategy = "storage_strategy"
 	// Table holds the table name of the file in the database.
 	Table = "files"
+	// StorageStrategyTable is the table that holds the storage_strategy relation/edge.
+	StorageStrategyTable = "files"
+	// StorageStrategyInverseTable is the table name for the StorageStrategy entity.
+	// It exists in this package in order to avoid circular dependency with the "storagestrategy" package.
+	StorageStrategyInverseTable = "storage_strategies"
+	// StorageStrategyColumn is the table column denoting the storage_strategy relation/edge.
+	StorageStrategyColumn = "storage_strategy_id"
 )
 
 // Columns holds all SQL columns for file fields.
@@ -41,6 +53,7 @@ var Columns = []string{
 	FieldURL,
 	FieldType,
 	FieldSize,
+	FieldStorageStrategyID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -111,4 +124,23 @@ func ByType(opts ...sql.OrderTermOption) OrderOption {
 // BySize orders the results by the size field.
 func BySize(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSize, opts...).ToFunc()
+}
+
+// ByStorageStrategyID orders the results by the storage_strategy_id field.
+func ByStorageStrategyID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStorageStrategyID, opts...).ToFunc()
+}
+
+// ByStorageStrategyField orders the results by storage_strategy field.
+func ByStorageStrategyField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newStorageStrategyStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newStorageStrategyStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(StorageStrategyInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, StorageStrategyTable, StorageStrategyColumn),
+	)
 }

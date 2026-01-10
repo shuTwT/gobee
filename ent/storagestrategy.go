@@ -42,8 +42,29 @@ type StorageStrategy struct {
 	// 访问域名
 	Domain string `json:"domain,omitempty"`
 	// 是否为默认策略
-	Master       bool `json:"master,omitempty"`
+	Master bool `json:"master,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the StorageStrategyQuery when eager-loading is set.
+	Edges        StorageStrategyEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// StorageStrategyEdges holds the relations/edges for other nodes in the graph.
+type StorageStrategyEdges struct {
+	// Files holds the value of the files edge.
+	Files []*File `json:"files,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// FilesOrErr returns the Files value or an error if the edge
+// was not loaded in eager-loading.
+func (e StorageStrategyEdges) FilesOrErr() ([]*File, error) {
+	if e.loadedTypes[0] {
+		return e.Files, nil
+	}
+	return nil, &NotLoadedError{edge: "files"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -169,6 +190,11 @@ func (_m *StorageStrategy) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *StorageStrategy) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryFiles queries the "files" edge of the StorageStrategy entity.
+func (_m *StorageStrategy) QueryFiles() *FileQuery {
+	return NewStorageStrategyClient(_m.config).QueryFiles(_m)
 }
 
 // Update returns a builder for updating this StorageStrategy.

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"gobee/ent/file"
+	"gobee/ent/storagestrategy"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -86,10 +87,29 @@ func (_c *FileCreate) SetSize(v string) *FileCreate {
 	return _c
 }
 
+// SetStorageStrategyID sets the "storage_strategy_id" field.
+func (_c *FileCreate) SetStorageStrategyID(v int) *FileCreate {
+	_c.mutation.SetStorageStrategyID(v)
+	return _c
+}
+
+// SetNillableStorageStrategyID sets the "storage_strategy_id" field if the given value is not nil.
+func (_c *FileCreate) SetNillableStorageStrategyID(v *int) *FileCreate {
+	if v != nil {
+		_c.SetStorageStrategyID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *FileCreate) SetID(v int) *FileCreate {
 	_c.mutation.SetID(v)
 	return _c
+}
+
+// SetStorageStrategy sets the "storage_strategy" edge to the StorageStrategy entity.
+func (_c *FileCreate) SetStorageStrategy(v *StorageStrategy) *FileCreate {
+	return _c.SetStorageStrategyID(v.ID)
 }
 
 // Mutation returns the FileMutation object of the builder.
@@ -238,6 +258,23 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Size(); ok {
 		_spec.SetField(file.FieldSize, field.TypeString, value)
 		_node.Size = value
+	}
+	if nodes := _c.mutation.StorageStrategyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.StorageStrategyTable,
+			Columns: []string{file.StorageStrategyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(storagestrategy.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.StorageStrategyID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

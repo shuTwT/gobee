@@ -24,7 +24,9 @@ func NewAlbumPhotoServiceImpl(client *ent.Client) *AlbumPhotoServiceImpl {
 }
 
 func (s *AlbumPhotoServiceImpl) ListAlbumPhoto(ctx context.Context) ([]*ent.AlbumPhoto, error) {
-	albumPhotos, err := s.client.AlbumPhoto.Query().All(ctx)
+	albumPhotos, err := s.client.AlbumPhoto.Query().
+		Order(ent.Desc(albumphoto.FieldID)).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -38,6 +40,7 @@ func (s *AlbumPhotoServiceImpl) ListAlbumPhotoPage(ctx context.Context, page, si
 	}
 
 	albumPhotos, err := s.client.AlbumPhoto.Query().
+		Order(ent.Desc(albumphoto.FieldID)).
 		Limit(size).
 		Offset((page - 1) * size).
 		All(ctx)

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"gobee/ent/file"
 	"gobee/ent/predicate"
+	"gobee/ent/storagestrategy"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -104,9 +105,40 @@ func (_u *FileUpdate) SetNillableSize(v *string) *FileUpdate {
 	return _u
 }
 
+// SetStorageStrategyID sets the "storage_strategy_id" field.
+func (_u *FileUpdate) SetStorageStrategyID(v int) *FileUpdate {
+	_u.mutation.SetStorageStrategyID(v)
+	return _u
+}
+
+// SetNillableStorageStrategyID sets the "storage_strategy_id" field if the given value is not nil.
+func (_u *FileUpdate) SetNillableStorageStrategyID(v *int) *FileUpdate {
+	if v != nil {
+		_u.SetStorageStrategyID(*v)
+	}
+	return _u
+}
+
+// ClearStorageStrategyID clears the value of the "storage_strategy_id" field.
+func (_u *FileUpdate) ClearStorageStrategyID() *FileUpdate {
+	_u.mutation.ClearStorageStrategyID()
+	return _u
+}
+
+// SetStorageStrategy sets the "storage_strategy" edge to the StorageStrategy entity.
+func (_u *FileUpdate) SetStorageStrategy(v *StorageStrategy) *FileUpdate {
+	return _u.SetStorageStrategyID(v.ID)
+}
+
 // Mutation returns the FileMutation object of the builder.
 func (_u *FileUpdate) Mutation() *FileMutation {
 	return _u.mutation
+}
+
+// ClearStorageStrategy clears the "storage_strategy" edge to the StorageStrategy entity.
+func (_u *FileUpdate) ClearStorageStrategy() *FileUpdate {
+	_u.mutation.ClearStorageStrategy()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -194,6 +226,35 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Size(); ok {
 		_spec.SetField(file.FieldSize, field.TypeString, value)
+	}
+	if _u.mutation.StorageStrategyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.StorageStrategyTable,
+			Columns: []string{file.StorageStrategyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(storagestrategy.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StorageStrategyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.StorageStrategyTable,
+			Columns: []string{file.StorageStrategyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(storagestrategy.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -291,9 +352,40 @@ func (_u *FileUpdateOne) SetNillableSize(v *string) *FileUpdateOne {
 	return _u
 }
 
+// SetStorageStrategyID sets the "storage_strategy_id" field.
+func (_u *FileUpdateOne) SetStorageStrategyID(v int) *FileUpdateOne {
+	_u.mutation.SetStorageStrategyID(v)
+	return _u
+}
+
+// SetNillableStorageStrategyID sets the "storage_strategy_id" field if the given value is not nil.
+func (_u *FileUpdateOne) SetNillableStorageStrategyID(v *int) *FileUpdateOne {
+	if v != nil {
+		_u.SetStorageStrategyID(*v)
+	}
+	return _u
+}
+
+// ClearStorageStrategyID clears the value of the "storage_strategy_id" field.
+func (_u *FileUpdateOne) ClearStorageStrategyID() *FileUpdateOne {
+	_u.mutation.ClearStorageStrategyID()
+	return _u
+}
+
+// SetStorageStrategy sets the "storage_strategy" edge to the StorageStrategy entity.
+func (_u *FileUpdateOne) SetStorageStrategy(v *StorageStrategy) *FileUpdateOne {
+	return _u.SetStorageStrategyID(v.ID)
+}
+
 // Mutation returns the FileMutation object of the builder.
 func (_u *FileUpdateOne) Mutation() *FileMutation {
 	return _u.mutation
+}
+
+// ClearStorageStrategy clears the "storage_strategy" edge to the StorageStrategy entity.
+func (_u *FileUpdateOne) ClearStorageStrategy() *FileUpdateOne {
+	_u.mutation.ClearStorageStrategy()
+	return _u
 }
 
 // Where appends a list predicates to the FileUpdate builder.
@@ -411,6 +503,35 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 	}
 	if value, ok := _u.mutation.Size(); ok {
 		_spec.SetField(file.FieldSize, field.TypeString, value)
+	}
+	if _u.mutation.StorageStrategyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.StorageStrategyTable,
+			Columns: []string{file.StorageStrategyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(storagestrategy.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StorageStrategyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.StorageStrategyTable,
+			Columns: []string{file.StorageStrategyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(storagestrategy.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &File{config: _u.config}
 	_spec.Assign = _node.assignValues

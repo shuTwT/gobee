@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gobee/ent/file"
 	"gobee/ent/storagestrategy"
 	"time"
 
@@ -190,6 +191,21 @@ func (_c *StorageStrategyCreate) SetNillableMaster(v *bool) *StorageStrategyCrea
 func (_c *StorageStrategyCreate) SetID(v int) *StorageStrategyCreate {
 	_c.mutation.SetID(v)
 	return _c
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (_c *StorageStrategyCreate) AddFileIDs(ids ...int) *StorageStrategyCreate {
+	_c.mutation.AddFileIDs(ids...)
+	return _c
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (_c *StorageStrategyCreate) AddFiles(v ...*File) *StorageStrategyCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddFileIDs(ids...)
 }
 
 // Mutation returns the StorageStrategyMutation object of the builder.
@@ -412,6 +428,22 @@ func (_c *StorageStrategyCreate) createSpec() (*StorageStrategy, *sqlgraph.Creat
 	if value, ok := _c.mutation.Master(); ok {
 		_spec.SetField(storagestrategy.FieldMaster, field.TypeBool, value)
 		_node.Master = value
+	}
+	if nodes := _c.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   storagestrategy.FilesTable,
+			Columns: []string{storagestrategy.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

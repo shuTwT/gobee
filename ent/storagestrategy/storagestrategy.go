@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -40,8 +41,17 @@ const (
 	FieldDomain = "domain"
 	// FieldMaster holds the string denoting the master field in the database.
 	FieldMaster = "master"
+	// EdgeFiles holds the string denoting the files edge name in mutations.
+	EdgeFiles = "files"
 	// Table holds the table name of the storagestrategy in the database.
 	Table = "storage_strategies"
+	// FilesTable is the table that holds the files relation/edge.
+	FilesTable = "files"
+	// FilesInverseTable is the table name for the File entity.
+	// It exists in this package in order to avoid circular dependency with the "file" package.
+	FilesInverseTable = "files"
+	// FilesColumn is the table column denoting the files relation/edge.
+	FilesColumn = "storage_strategy_id"
 )
 
 // Columns holds all SQL columns for storagestrategy fields.
@@ -198,4 +208,25 @@ func ByDomain(opts ...sql.OrderTermOption) OrderOption {
 // ByMaster orders the results by the master field.
 func ByMaster(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMaster, opts...).ToFunc()
+}
+
+// ByFilesCount orders the results by files count.
+func ByFilesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFilesStep(), opts...)
+	}
+}
+
+// ByFiles orders the results by files terms.
+func ByFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newFilesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FilesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, FilesTable, FilesColumn),
+	)
 }

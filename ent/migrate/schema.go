@@ -231,12 +231,21 @@ var (
 		{Name: "url", Type: field.TypeString, Size: 1024},
 		{Name: "type", Type: field.TypeString},
 		{Name: "size", Type: field.TypeString},
+		{Name: "storage_strategy_id", Type: field.TypeInt, Nullable: true},
 	}
 	// FilesTable holds the schema information for the "files" table.
 	FilesTable = &schema.Table{
 		Name:       "files",
 		Columns:    FilesColumns,
 		PrimaryKey: []*schema.Column{FilesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "files_storage_strategies_storage_strategy",
+				Columns:    []*schema.Column{FilesColumns[8]},
+				RefColumns: []*schema.Column{StorageStrategiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// FriendCircleRecordsColumns holds the columns for the "friend_circle_records" table.
 	FriendCircleRecordsColumns = []*schema.Column{
@@ -754,6 +763,7 @@ var (
 
 func init() {
 	FlinksTable.ForeignKeys[0].RefTable = FlinkGroupsTable
+	FilesTable.ForeignKeys[0].RefTable = StorageStrategiesTable
 	MembersTable.ForeignKeys[0].RefTable = MemberLevelsTable
 	MembersTable.ForeignKeys[1].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = RolesTable

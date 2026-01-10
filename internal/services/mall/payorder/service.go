@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gobee/ent"
+	"gobee/ent/payorder"
 	"gobee/internal/infra/pay/epay"
 	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
@@ -42,7 +43,9 @@ func (s *PayOrderServiceImpl) ListPayOrderPage(ctx context.Context, req *model.P
 	if err != nil {
 		return nil, 0, err
 	}
-	count, err := s.db.PayOrder.Query().Count(ctx)
+	count, err := s.db.PayOrder.Query().
+		Order(ent.Desc(payorder.FieldID)).
+		Count(ctx)
 	if err != nil {
 		return nil, 0, err
 	}

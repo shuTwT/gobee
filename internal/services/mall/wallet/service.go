@@ -46,6 +46,7 @@ func (s *WalletServiceImpl) QueryWalletPage(c *fiber.Ctx, pageQuery model.PageQu
 	}
 
 	wallets, err := client.Wallet.Query().
+		Order(ent.Desc(wallet.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
 		All(c.Context())

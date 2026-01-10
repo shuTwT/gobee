@@ -1934,6 +1934,22 @@ func (c *FileClient) GetX(ctx context.Context, id int) *File {
 	return obj
 }
 
+// QueryStorageStrategy queries the storage_strategy edge of a File.
+func (c *FileClient) QueryStorageStrategy(_m *File) *StorageStrategyQuery {
+	query := (&StorageStrategyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, id),
+			sqlgraph.To(storagestrategy.Table, storagestrategy.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, file.StorageStrategyTable, file.StorageStrategyColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *FileClient) Hooks() []Hook {
 	return c.hooks.File
@@ -3874,6 +3890,22 @@ func (c *StorageStrategyClient) GetX(ctx context.Context, id int) *StorageStrate
 		panic(err)
 	}
 	return obj
+}
+
+// QueryFiles queries the files edge of a StorageStrategy.
+func (c *StorageStrategyClient) QueryFiles(_m *StorageStrategy) *FileQuery {
+	query := (&FileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(storagestrategy.Table, storagestrategy.FieldID, id),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, storagestrategy.FilesTable, storagestrategy.FilesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
