@@ -6,6 +6,7 @@ import (
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -40,7 +41,8 @@ func InitializeDB(cfg DBConfig, autoMigrate bool) (*ent.Client, error) {
 	}
 	DB = client
 
-	if autoMigrate {
+	// 主进程执行迁移
+	if autoMigrate && !fiber.IsChild() {
 		log.Println("Auto migrating schema...")
 		if err = client.Schema.Create(context.Background()); err != nil {
 			log.Fatalf("failed creating schema resources: %v", err)

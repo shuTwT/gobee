@@ -1,6 +1,7 @@
 package config
 
 import (
+	"gobee/internal/infra/logger"
 	"log"
 	"os"
 	"path/filepath"
@@ -70,7 +71,7 @@ func Init() {
 			panic("fatal error config file: " + err.Error())
 		}
 	} else {
-		log.Printf("已加载配置文件: %s", viper.ConfigFileUsed())
+		logger.Info("已加载配置文件: %s", "config_file", viper.ConfigFileUsed())
 	}
 }
 

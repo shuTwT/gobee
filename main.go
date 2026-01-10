@@ -2,7 +2,9 @@ package main
 
 import (
 	"embed"
+	"log"
 
+	"github.com/gofiber/fiber/v2"
 	_ "github.com/mattn/go-sqlite3"
 
 	"gobee/cmd"
@@ -10,6 +12,7 @@ import (
 	"gobee/internal/schedule"
 
 	_ "gobee/docs"
+	"gobee/internal/infra/logger"
 )
 
 //go:embed views
@@ -30,12 +33,16 @@ var frontendRes embed.FS
 // @host localhost:13000
 // @BasePath /
 func main() {
+	logger.NewLogger()
 	app := cmd.InitializeApp(moduleDefs, frontendRes)
 	defer database.CloseDB()
-	scheduler, err := schedule.InitializeSchedule()
-	if err != nil {
-		defer scheduler.Shutdown()
+	if !fiber.IsChild() {
+		// 主进程程初始化定时任务
+		scheduler, err := schedule.InitializeSchedule()
+		if err != nil {
+			defer scheduler.Shutdown()
+		}
 	}
 
-	app.Listen(":13000")
+	log.Fatal(app.Listen(":13000"))
 }

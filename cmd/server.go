@@ -15,11 +15,9 @@ import (
 	"github.com/gofiber/swagger"
 
 	"github.com/gofiber/template/html/v2"
-	"github.com/joho/godotenv"
 )
 
 func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
-	godotenv.Load()
 	config.Init()
 	serviceMap := pkg.InitializeServices(moduleDefs)
 
@@ -28,8 +26,12 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	engine.Debug(true)
 	engine.Reload(true)
 	app := fiber.New(fiber.Config{
-		AppName: "Fiber HTML Template Demo",
-		Views:   engine, // 关联模板引擎
+		AppName:       "Fiber HTML Template Demo",
+		Prefork:       true,    // 启用多进程（Prefork 模式）
+		CaseSensitive: true,    // 路由大小写敏感
+		StrictRouting: true,    // 严格匹配带 / 和不带 / 的路由
+		ServerHeader:  "Fiber", // 返回响应头中的 Server 字段
+		Views:         engine,  // 关联模板引擎
 	})
 
 	if config.GetBool(config.SWAGGER_ENABLE) {
