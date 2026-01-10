@@ -1,10 +1,8 @@
 export type FormItemProps = {
   id?: number
-  email: string
   name: string
-  phone_number: string
-  password: string
-  role_id?: number
+  code: string
+  description: string
 }
 
 export type FormProps={

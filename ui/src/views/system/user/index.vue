@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { NButton, NIcon,NDataTable, type DataTableColumns, NTag } from 'naive-ui'
-import { Pencil,RefreshOutline } from '@vicons/ionicons5'
+import { NButton, NIcon,NDataTable, type DataTableColumns, NTag, NPopconfirm } from 'naive-ui'
+import { Pencil,RefreshOutline,TrashOutline } from '@vicons/ionicons5'
 import * as userApi from '@/api/system/user'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 
-
 const showModal = ref(false)
-// 分页配置
+const editFormRef = ref<any>(null)
+const currentUserId = ref<number | undefined>(undefined)
+
 const pagination = reactive({
   page: 1,
   pageSize: 10,
@@ -16,17 +17,18 @@ const pagination = reactive({
   pageSizes: [10, 20, 50, 100],
   onChange: (page: number) => {
     pagination.page = page
+    onSearch()
   },
   onUpdatePageSize: (pageSize: number) => {
     pagination.pageSize = pageSize
     pagination.page = 1
+    onSearch()
   },
 })
 
 const dataList = ref<any>([])
 const loading = ref(false)
 
-// 表格列定义
 const columns: DataTableColumns<any> = [
   {
     title: '用户 ID',
@@ -75,54 +77,118 @@ const columns: DataTableColumns<any> = [
     title: '操作',
     key: 'actions',
     width: 180,
-    render: () => {
+    render: (row) => {
       return h(
-        NButton,
-        {
-          size: 'small',
-          type: 'primary',
-          quaternary: true,
-          onClick: (row) => {
-            openEditDialog('编辑',row)
-          },
-        },
-        {
-          icon: () => h(NIcon, {}, () => h(Pencil)),
-          default: () => '编辑',
-        },
+        'div',
+        { style: { display: 'flex', gap: '8px' } },
+        [
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'primary',
+              quaternary: true,
+              onClick: () => {
+                openEditDialog('编辑',row)
+              },
+            },
+            {
+              icon: () => h(NIcon, {}, () => h(Pencil)),
+              default: () => '编辑',
+            },
+          ),
+          h(
+            NPopconfirm,
+            {
+              onPositiveClick: () => handleDelete(row.id),
+            },
+            {
+              trigger: () =>
+                h(
+                  NButton,
+                  {
+                    size: 'small',
+                    type: 'error',
+                    quaternary: true,
+                  },
+                  {
+                    icon: () => h(NIcon, {}, () => h(TrashOutline)),
+                    default: () => '删除',
+                  },
+                ),
+              default: () => '确定删除该用户吗？',
+            },
+          ),
+        ],
       )
     },
   },
 ]
 
-const openEditDialog=(title="新增",row?:any)=>{
-  const formRef = ref<any>(null)
+const openEditDialog = (title = '新增', row?: any) => {
+  currentUserId.value = row?.id
   addDialog({
-    title:`${title}用户`,
-    props:{
-      formInline:{
-        id:row?.id || undefined,
-        email:row?.email || '',
-        name:row?.name || '',
-        phone_number:row?.phone_number || '',
-        password:row?.password || '',
+    title: `${title}用户`,
+    props: {
+      formInline: {
+        id: row?.id || undefined,
+        email: row?.email || '',
+        name: row?.name || '',
+        phone_number: row?.phone_number || '',
+        password: '',
+        role_id: row?.role_id || undefined,
       }
     },
-    contentRenderer:({ options })=> h(EditForm,{ref:formRef,formInline:options.props!.formInline}),
+    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, formInline: options.props!.formInline }),
+    beforeSure: async (done) => {
+      try {
+        const data = await editFormRef.value?.getData()
+        
+        if (currentUserId.value) {
+          await userApi.updateUser(currentUserId.value, data)
+          window.$message?.success('更新成功')
+        } else {
+          await userApi.createUser(data)
+          window.$message?.success('创建成功')
+        }
+        
+        onSearch()
+        done()
+      } catch (error) {
+        console.error('提交失败:', error)
+        window.$message?.error('提交失败')
+      }
+    },
   })
 }
 
-const onSearch= ()=>{
+const onSearch = () => {
+  loading.value = true
   userApi.getUserPage({
-    pageNum: pagination.page,
-    pageSize: pagination.pageSize,
-  }).then(res=>{
-    dataList.value = res.data.records || []
-    pagination.total = res.data.total || 0
+    page: pagination.page,
+    page_size: pagination.pageSize,
+  }).then(res => {
+    if (res.code === 200) {
+      dataList.value = res.data.records || []
+      pagination.total = res.data.total || 0
+    }
+  }).finally(() => {
+    loading.value = false
   })
 }
 
-onMounted(()=>{
+const handleDelete = async (id: number) => {
+  try {
+    await userApi.deleteUser(id)
+    window.$message?.success('删除成功')
+    onSearch()
+  } catch (error) {
+    console.error('删除失败:', error)
+    window.$message?.error('删除失败')
+  }
+}
+
+onMounted(() => {
   onSearch()
 })
 </script>
@@ -155,33 +221,6 @@ onMounted(()=>{
       />
     </n-card>
   </div>
-
-  <!-- 添加/编辑用户模态框 -->
-  <n-modal v-model:show="showModal" preset="dialog" :closable="true">
-    <template #header>
-      <h5 class="modal-title" >添加用户</h5>
-    </template>
-    <template #default>
-      <n-form>
-        <n-form-item label="邮箱" path="email">
-          <n-input/>
-        </n-form-item>
-        <n-form-item label="用户名" path="username">
-          <n-input/>
-        </n-form-item>
-        <n-form-item label="手机号" path="phonenumber">
-          <n-input/>
-        </n-form-item>
-        <n-form-item label="密码" path="password">
-          <n-input/>
-        </n-form-item>
-      </n-form>
-    </template>
-    <template #action>
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-      <button type="button" class="btn btn-primary" onclick="saveUser()">保存</button>
-    </template>
-  </n-modal>
 </template>
 <style scoped>
 .user-card{

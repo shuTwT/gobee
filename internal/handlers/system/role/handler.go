@@ -2,8 +2,6 @@ package role
 
 import (
 	"gobee/ent"
-	"gobee/ent/role"
-	"gobee/internal/database"
 	role_service "gobee/internal/services/system/role"
 	"gobee/pkg/domain/model"
 	"strconv"
@@ -39,8 +37,7 @@ func NewRoleHandlerImpl(roleService role_service.RoleService) *RoleHandlerImpl {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/roles [get]
 func (h *RoleHandlerImpl) ListRole(c *fiber.Ctx) error {
-	client := database.DB
-	roles, err := client.Role.Query().All(c.Context())
+	roles, err := h.roleService.QueryRoleList(c)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -62,8 +59,7 @@ func (h *RoleHandlerImpl) ListRole(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/roles/page [get]
 func (h *RoleHandlerImpl) ListRolePage(c *fiber.Ctx) error {
-	client := database.DB
-	pageQuery := model.PageQuery{}
+	var pageQuery = model.PageQuery{}
 	err := c.QueryParser(&pageQuery)
 
 	if err != nil {
@@ -72,17 +68,7 @@ func (h *RoleHandlerImpl) ListRolePage(c *fiber.Ctx) error {
 		))
 	}
 
-	count, err := client.Role.Query().Count(c.UserContext())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError,
-			err.Error(),
-		))
-	}
-
-	roles, err := client.Role.Query().
-		Offset((pageQuery.Page - 1) * pageQuery.Size).
-		Limit(pageQuery.Size).
-		All(c.Context())
+	roles, count, err := h.roleService.QueryRolePage(c, pageQuery)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -106,30 +92,14 @@ func (h *RoleHandlerImpl) ListRolePage(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/roles [post]
 func (h *RoleHandlerImpl) CreateRole(c *fiber.Ctx) error {
-	client := database.DB
-	var roleData *model.RoleCreateReq
+	var roleData model.RoleCreateReq
 	if err := c.BodyParser(&roleData); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),
 		))
 	}
 
-	// 检查角色代码是否已存在
-	exists, err := client.Role.Query().
-		Where(role.CodeEQ(roleData.Code)).
-		Exist(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError,
-			err.Error(),
-		))
-	}
-	if exists {
-		return c.JSON(model.NewError(fiber.StatusBadRequest,
-			"Role code already exists",
-		))
-	}
-
-	role, err := client.Role.Create().SetName(roleData.Name).SetCode(roleData.Code).Save(c.Context())
+	role, err := h.roleService.CreateRole(c, roleData)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -151,7 +121,6 @@ func (h *RoleHandlerImpl) CreateRole(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/roles/{id} [put]
 func (h *RoleHandlerImpl) UpdateRole(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -159,41 +128,14 @@ func (h *RoleHandlerImpl) UpdateRole(c *fiber.Ctx) error {
 		))
 	}
 
-	var roleData *model.RoleUpdateReq
+	var roleData model.RoleUpdateReq
 	if err = c.BodyParser(&roleData); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),
 		))
 	}
 
-	// 检查角色代码是否已存在
-	exists, err := client.Role.Query().
-		Where(role.CodeEQ(roleData.Code)).
-		Exist(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError,
-			err.Error(),
-		))
-	}
-	if exists {
-		return c.JSON(model.NewError(fiber.StatusBadRequest,
-			"Role code already exists",
-		))
-	}
-	// 开始构建更新
-	update := client.Role.UpdateOneID(id)
-
-	// 如果提供了新名称
-	if roleData.Name != "" {
-		update.SetName(roleData.Name)
-	}
-
-	// 如果提供了新代码
-	if roleData.Code != "" {
-		update.SetCode(roleData.Code)
-	}
-
-	role, err := update.Save(c.Context())
+	role, err := h.roleService.UpdateRole(c, id, roleData)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -240,14 +182,13 @@ func (h *RoleHandlerImpl) QueryRole(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/roles/{id} [delete]
 func (h *RoleHandlerImpl) DeleteRole(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format",
 		))
 	}
-	err = client.Role.DeleteOneID(id).Exec(c.Context())
+	err = h.roleService.DeleteRole(c, id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),

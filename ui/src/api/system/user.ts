@@ -9,20 +9,20 @@ export const getUserPage = (params?:any) => {
   return http.request<TableResponse<any>>('get',`${BASE_URL}/v1/user/page`,{params})
 }
 
-export const createUser = () => {
-  return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/user/create`)
+export const createUser = (data:any) => {
+  return http.request<ApiResponse<any>>('post',`${BASE_URL}/v1/user/create`,{data})
 }
 
-export const updateUser = () => {
-  return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/user/update`)
+export const updateUser = (id:number,data:any) => {
+  return http.request<ApiResponse<any>>('put',`${BASE_URL}/v1/user/update/${id}`,{data})
 }
 
-export const queryUser = () => {
-  return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/user/query`)
+export const queryUser = (id:number) => {
+  return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/user/query/${id}`)
 }
 
-export const deleteUser = () => {
-  return http.request<ApiResponse<any>>('delete',`${BASE_URL}/v1/user/delete`)
+export const deleteUser = (id:number) => {
+  return http.request<ApiResponse<any>>('delete',`${BASE_URL}/v1/user/delete/${id}`)
 }
 
 export const getPersonalAccessTokenList = ()=>{

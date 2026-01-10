@@ -33,16 +33,6 @@ export default [
         },
       },
       {
-        path: '/system/webhook',
-        name: 'WebhookManagement',
-        component: () => import('@/views/system/webhook/index.vue'),
-        meta: {
-          title: 'webhook管理',
-          showLink: true,
-          roles: ['admin'],
-        },
-      },
-      {
         path: '/system/role',
         name: 'RoleManagement',
         component: () => import('@/views/system/role/index.vue'),
