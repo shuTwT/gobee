@@ -60,7 +60,7 @@ export function usePostHook() {
                 is_visible: res.data.is_visible ?? true,
                 is_visible_after_comment: res.data.is_visible_after_comment ?? false,
                 is_visible_after_pay: res.data.is_visible_after_pay ?? false,
-                money: (res.data.money ?? 0).toString(),
+                price: (res.data.price ?? 0).toString(),
                 cover: res.data.cover ?? '',
                 keywords: res.data.keywords ?? '',
                 copyright: res.data.copyright ?? '',

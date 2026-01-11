@@ -21,8 +21,8 @@ export type FormItemProps = {
   keywords:string,
   copyright:string,
   summary:string,
-  view_count:number,
-  comment_count:number
+  view_count?:number,
+  comment_count?:number
 }
 
 export type FormProps={

@@ -5,7 +5,6 @@ import (
 	"gobee/ent"
 	"gobee/ent/post"
 	"gobee/internal/database"
-	"gobee/internal/infra/logger"
 	"gobee/pkg/domain/model"
 )
 
@@ -81,7 +80,6 @@ func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post mode
 	} else {
 		summary = post.Summary
 	}
-	logger.Info("category ids", "ids", post.Categories)
 	newPost, err := client.Post.UpdateOneID(id).
 		SetTitle(post.Title).
 		SetNillableAlias(post.Alias).

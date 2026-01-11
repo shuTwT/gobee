@@ -21,7 +21,7 @@ type PostCreateReq struct {
 	Cover                 *string `json:"cover,omitempty"`                                          //文章封面
 	Keywords              *string `json:"keywords,omitempty"`                                       //文章关键词
 	Copyright             *string `json:"copyright,omitempty"`                                      //文章版权
-	Author                string  `json:"author" validate:"required"`                               //作者
+	Author                string  `json:"author"`                                                   //作者
 	Summary               *string `json:"summary,omitempty"`                                        //文章摘要
 	Categories            []int   `json:"categories,omitempty"`                                     //分类ID列表
 	Tags                  []int   `json:"tags,omitempty"`                                           //标签ID列表
@@ -46,7 +46,7 @@ type PostUpdateReq struct {
 	Cover                 string  `json:"cover,omitempty"`                                          //文章封面
 	Keywords              string  `json:"keywords,omitempty"`                                       //文章关键词
 	Copyright             string  `json:"copyright,omitempty"`                                      //文章版权
-	Author                string  `json:"author,omitempty"`                                         //作者
+	Author                string  `json:"author"`                                                   //作者
 	Summary               string  `json:"summary,omitempty"`                                        //文章摘要
 	Categories            []int   `json:"categories,omitempty"`                                     //分类ID列表
 	Tags                  []int   `json:"tags,omitempty"`                                           //标签ID列表

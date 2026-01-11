@@ -223,14 +223,29 @@ func (h *PostHandlerImpl) QueryPost(c *fiber.Ctx) error {
 		Where(post.ID(id)).
 		First(c.Context())
 	postResp := model.PostResp{
-		ID:          post.ID,
-		Title:       post.Title,
-		Alias:       post.Alias,
-		Content:     post.Content,
-		MdContent:   post.MdContent,
-		HtmlContent: post.HTMLContent,
-		ContentType: string(post.ContentType),
-		Status:      string(post.Status),
+		ID:                    post.ID,
+		Title:                 post.Title,
+		Alias:                 post.Alias,
+		Content:               post.Content,
+		MdContent:             post.MdContent,
+		HtmlContent:           post.HTMLContent,
+		ContentType:           string(post.ContentType),
+		Status:                string(post.Status),
+		IsAutogenSummary:      post.IsAutogenSummary,
+		IsVisible:             post.IsVisible,
+		IsPinToTop:            post.IsPinToTop,
+		IsAllowComment:        post.IsAllowComment,
+		IsVisibleAfterComment: post.IsVisibleAfterComment,
+		IsVisibleAfterPay:     post.IsVisibleAfterPay,
+		Price:                 post.Price,
+		PublishedAt:           post.PublishedAt,
+		ViewCount:             post.ViewCount,
+		CommentCount:          post.CommentCount,
+		Cover:                 &post.Cover,
+		Keywords:              &post.Keywords,
+		Copyright:             &post.Copyright,
+		Author:                post.Author,
+		Summary:               &post.Summary,
 		Categories: func() []int {
 			ids := make([]int, len(post.Edges.Categories))
 			for i, cat := range post.Edges.Categories {

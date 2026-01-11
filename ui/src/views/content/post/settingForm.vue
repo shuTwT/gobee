@@ -14,7 +14,6 @@ const rules:FormRules = {
   title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
   content_type: [{ required: true, message: '请选择内容类型', trigger: 'change' }],
   status: [{ required: true, message: '请选择状态', trigger: 'change' }],
-  author: [{ required: true, message: '请输入作者', trigger: 'blur' }],
 }
 
 const categoryOptions = ref([])
