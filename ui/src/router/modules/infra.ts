@@ -41,6 +41,16 @@ export default [
                     showLink: true,
                     roles: ['admin', 'common'],
                 },
+            },
+            {
+                path: '/infra/visit-log',
+                name: 'VisitLogManagement',
+                component: () => import('@/views/infra/visit-log/index.vue'),
+                meta: {
+                    title: '访问日志',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
             }
         ]
     }

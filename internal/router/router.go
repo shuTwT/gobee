@@ -152,6 +152,13 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		migrationApi.Post("/md", handlerMap.MigrationHandler.ImportMarkdown).Name("migrationMd")
 		migrationApi.Post("/check-duplicate", handlerMap.MigrationHandler.CheckDuplicate).Name("migrationCheckDuplicate")
 	}
+	visitLogApi := router.Group("/visit-log")
+	{
+		visitLogApi.Get("/page", handlerMap.VisitHandler.ListVisitLogPage).Name("visitLogPage")
+		visitLogApi.Get("/query/:id", handlerMap.VisitHandler.QueryVisitLog).Name("visitLogQuery")
+		visitLogApi.Delete("/delete/:id", handlerMap.VisitHandler.DeleteVisitLog).Name("visitLogDelete")
+		visitLogApi.Post("/batch/delete", handlerMap.VisitHandler.BatchDeleteVisitLog).Name("visitLogBatchDelete")
+	}
 }
 
 // 注册商城路由
