@@ -99,6 +99,9 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	{
 		postApi.Get("/list", handlerMap.PostHandler.ListPost).Name("postList")
 		postApi.Get("/page", handlerMap.PostHandler.ListPostPage).Name("postPage")
+		postApi.Get("/month-stats", handlerMap.PostHandler.GetPostMonthStats).Name("postMonthStats")
+		postApi.Get("/random", handlerMap.PostHandler.GetRandomPost).Name("postRandom")
+		postApi.Get("/slug/:slug", handlerMap.PostHandler.QueryPostBySlug).Name("postQueryBySlug")
 		postApi.Post("/create", handlerMap.PostHandler.CreatePost).Name("postCreate")
 		postApi.Put("/update/content/:id", handlerMap.PostHandler.UpdatePostContent).Name("postUpdateContent")
 		postApi.Put("/update/setting/:id", handlerMap.PostHandler.UpdatePostSetting).Name("postUpdateSetting")

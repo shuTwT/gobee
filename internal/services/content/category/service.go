@@ -4,6 +4,7 @@ import (
 	"context"
 	"gobee/ent"
 	"gobee/ent/category"
+	"gobee/ent/post"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
@@ -12,7 +13,7 @@ import (
 
 type CategoryService interface {
 	QueryCategory(c *fiber.Ctx, id int) (*ent.Category, error)
-	QueryCategoryList(c *fiber.Ctx) ([]*ent.Category, error)
+	QueryCategoryList(c *fiber.Ctx) ([]model.CategoryResp, error)
 	QueryCategoryPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Category, error)
 	CreateCategory(c context.Context, createReq model.CategoryCreateReq) (*ent.Category, error)
 	UpdateCategory(c *fiber.Ctx, id int, updateReq *model.CategoryUpdateReq) (*ent.Category, error)
@@ -38,14 +39,35 @@ func (s *CategoryServiceImpl) QueryCategory(c *fiber.Ctx, id int) (*ent.Category
 	return category, nil
 }
 
-func (s *CategoryServiceImpl) QueryCategoryList(c *fiber.Ctx) ([]*ent.Category, error) {
+func (s *CategoryServiceImpl) QueryCategoryList(c *fiber.Ctx) ([]model.CategoryResp, error) {
 	client := database.DB
 	categories, err := client.Category.Query().
 		All(c.Context())
 	if err != nil {
 		return nil, err
 	}
-	return categories, nil
+
+	var resp []model.CategoryResp
+	for _, cat := range categories {
+		postCount, err := client.Post.Query().
+			Where(post.HasCategoriesWith(category.ID(cat.ID))).
+			Count(c.Context())
+		if err != nil {
+			return nil, err
+		}
+
+		resp = append(resp, model.CategoryResp{
+			ID:          cat.ID,
+			Name:        cat.Name,
+			Description: cat.Description,
+			Slug:        cat.Slug,
+			SortOrder:   cat.SortOrder,
+			Active:      cat.Active,
+			PostCount:   postCount,
+		})
+	}
+
+	return resp, nil
 }
 
 func (s *CategoryServiceImpl) QueryCategoryPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Category, error) {

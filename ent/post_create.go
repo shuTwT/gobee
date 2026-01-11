@@ -56,16 +56,16 @@ func (_c *PostCreate) SetTitle(v string) *PostCreate {
 	return _c
 }
 
-// SetAlias sets the "alias" field.
-func (_c *PostCreate) SetAlias(v string) *PostCreate {
-	_c.mutation.SetAlias(v)
+// SetSlug sets the "slug" field.
+func (_c *PostCreate) SetSlug(v string) *PostCreate {
+	_c.mutation.SetSlug(v)
 	return _c
 }
 
-// SetNillableAlias sets the "alias" field if the given value is not nil.
-func (_c *PostCreate) SetNillableAlias(v *string) *PostCreate {
+// SetNillableSlug sets the "slug" field if the given value is not nil.
+func (_c *PostCreate) SetNillableSlug(v *string) *PostCreate {
 	if v != nil {
-		_c.SetAlias(*v)
+		_c.SetSlug(*v)
 	}
 	return _c
 }
@@ -487,9 +487,9 @@ func (_c *PostCreate) check() error {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Post.title": %w`, err)}
 		}
 	}
-	if v, ok := _c.mutation.Alias(); ok {
-		if err := post.AliasValidator(v); err != nil {
-			return &ValidationError{Name: "alias", err: fmt.Errorf(`ent: validator failed for field "Post.alias": %w`, err)}
+	if v, ok := _c.mutation.Slug(); ok {
+		if err := post.SlugValidator(v); err != nil {
+			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Post.slug": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.Content(); !ok {
@@ -625,9 +625,9 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_spec.SetField(post.FieldTitle, field.TypeString, value)
 		_node.Title = value
 	}
-	if value, ok := _c.mutation.Alias(); ok {
-		_spec.SetField(post.FieldAlias, field.TypeString, value)
-		_node.Alias = &value
+	if value, ok := _c.mutation.Slug(); ok {
+		_spec.SetField(post.FieldSlug, field.TypeString, value)
+		_node.Slug = &value
 	}
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)

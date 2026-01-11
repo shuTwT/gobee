@@ -70,9 +70,9 @@ func Title(v string) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldTitle, v))
 }
 
-// Alias applies equality check predicate on the "alias" field. It's identical to AliasEQ.
-func Alias(v string) predicate.Post {
-	return predicate.Post(sql.FieldEQ(FieldAlias, v))
+// Slug applies equality check predicate on the "slug" field. It's identical to SlugEQ.
+func Slug(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldSlug, v))
 }
 
 // Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
@@ -310,79 +310,79 @@ func TitleContainsFold(v string) predicate.Post {
 	return predicate.Post(sql.FieldContainsFold(FieldTitle, v))
 }
 
-// AliasEQ applies the EQ predicate on the "alias" field.
-func AliasEQ(v string) predicate.Post {
-	return predicate.Post(sql.FieldEQ(FieldAlias, v))
+// SlugEQ applies the EQ predicate on the "slug" field.
+func SlugEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldSlug, v))
 }
 
-// AliasNEQ applies the NEQ predicate on the "alias" field.
-func AliasNEQ(v string) predicate.Post {
-	return predicate.Post(sql.FieldNEQ(FieldAlias, v))
+// SlugNEQ applies the NEQ predicate on the "slug" field.
+func SlugNEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldSlug, v))
 }
 
-// AliasIn applies the In predicate on the "alias" field.
-func AliasIn(vs ...string) predicate.Post {
-	return predicate.Post(sql.FieldIn(FieldAlias, vs...))
+// SlugIn applies the In predicate on the "slug" field.
+func SlugIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldIn(FieldSlug, vs...))
 }
 
-// AliasNotIn applies the NotIn predicate on the "alias" field.
-func AliasNotIn(vs ...string) predicate.Post {
-	return predicate.Post(sql.FieldNotIn(FieldAlias, vs...))
+// SlugNotIn applies the NotIn predicate on the "slug" field.
+func SlugNotIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldNotIn(FieldSlug, vs...))
 }
 
-// AliasGT applies the GT predicate on the "alias" field.
-func AliasGT(v string) predicate.Post {
-	return predicate.Post(sql.FieldGT(FieldAlias, v))
+// SlugGT applies the GT predicate on the "slug" field.
+func SlugGT(v string) predicate.Post {
+	return predicate.Post(sql.FieldGT(FieldSlug, v))
 }
 
-// AliasGTE applies the GTE predicate on the "alias" field.
-func AliasGTE(v string) predicate.Post {
-	return predicate.Post(sql.FieldGTE(FieldAlias, v))
+// SlugGTE applies the GTE predicate on the "slug" field.
+func SlugGTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldGTE(FieldSlug, v))
 }
 
-// AliasLT applies the LT predicate on the "alias" field.
-func AliasLT(v string) predicate.Post {
-	return predicate.Post(sql.FieldLT(FieldAlias, v))
+// SlugLT applies the LT predicate on the "slug" field.
+func SlugLT(v string) predicate.Post {
+	return predicate.Post(sql.FieldLT(FieldSlug, v))
 }
 
-// AliasLTE applies the LTE predicate on the "alias" field.
-func AliasLTE(v string) predicate.Post {
-	return predicate.Post(sql.FieldLTE(FieldAlias, v))
+// SlugLTE applies the LTE predicate on the "slug" field.
+func SlugLTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldLTE(FieldSlug, v))
 }
 
-// AliasContains applies the Contains predicate on the "alias" field.
-func AliasContains(v string) predicate.Post {
-	return predicate.Post(sql.FieldContains(FieldAlias, v))
+// SlugContains applies the Contains predicate on the "slug" field.
+func SlugContains(v string) predicate.Post {
+	return predicate.Post(sql.FieldContains(FieldSlug, v))
 }
 
-// AliasHasPrefix applies the HasPrefix predicate on the "alias" field.
-func AliasHasPrefix(v string) predicate.Post {
-	return predicate.Post(sql.FieldHasPrefix(FieldAlias, v))
+// SlugHasPrefix applies the HasPrefix predicate on the "slug" field.
+func SlugHasPrefix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasPrefix(FieldSlug, v))
 }
 
-// AliasHasSuffix applies the HasSuffix predicate on the "alias" field.
-func AliasHasSuffix(v string) predicate.Post {
-	return predicate.Post(sql.FieldHasSuffix(FieldAlias, v))
+// SlugHasSuffix applies the HasSuffix predicate on the "slug" field.
+func SlugHasSuffix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasSuffix(FieldSlug, v))
 }
 
-// AliasIsNil applies the IsNil predicate on the "alias" field.
-func AliasIsNil() predicate.Post {
-	return predicate.Post(sql.FieldIsNull(FieldAlias))
+// SlugIsNil applies the IsNil predicate on the "slug" field.
+func SlugIsNil() predicate.Post {
+	return predicate.Post(sql.FieldIsNull(FieldSlug))
 }
 
-// AliasNotNil applies the NotNil predicate on the "alias" field.
-func AliasNotNil() predicate.Post {
-	return predicate.Post(sql.FieldNotNull(FieldAlias))
+// SlugNotNil applies the NotNil predicate on the "slug" field.
+func SlugNotNil() predicate.Post {
+	return predicate.Post(sql.FieldNotNull(FieldSlug))
 }
 
-// AliasEqualFold applies the EqualFold predicate on the "alias" field.
-func AliasEqualFold(v string) predicate.Post {
-	return predicate.Post(sql.FieldEqualFold(FieldAlias, v))
+// SlugEqualFold applies the EqualFold predicate on the "slug" field.
+func SlugEqualFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldEqualFold(FieldSlug, v))
 }
 
-// AliasContainsFold applies the ContainsFold predicate on the "alias" field.
-func AliasContainsFold(v string) predicate.Post {
-	return predicate.Post(sql.FieldContainsFold(FieldAlias, v))
+// SlugContainsFold applies the ContainsFold predicate on the "slug" field.
+func SlugContainsFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldContainsFold(FieldSlug, v))
 }
 
 // ContentEQ applies the EQ predicate on the "content" field.

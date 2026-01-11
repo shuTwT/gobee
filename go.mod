@@ -56,6 +56,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.27 // indirect
+	github.com/mozillazg/go-pinyin v0.21.0 // indirect
 	github.com/oklog/run v1.1.0 // indirect
 	github.com/philippgille/chromem-go v0.7.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect

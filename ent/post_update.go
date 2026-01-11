@@ -50,23 +50,23 @@ func (_u *PostUpdate) SetNillableTitle(v *string) *PostUpdate {
 	return _u
 }
 
-// SetAlias sets the "alias" field.
-func (_u *PostUpdate) SetAlias(v string) *PostUpdate {
-	_u.mutation.SetAlias(v)
+// SetSlug sets the "slug" field.
+func (_u *PostUpdate) SetSlug(v string) *PostUpdate {
+	_u.mutation.SetSlug(v)
 	return _u
 }
 
-// SetNillableAlias sets the "alias" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableAlias(v *string) *PostUpdate {
+// SetNillableSlug sets the "slug" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableSlug(v *string) *PostUpdate {
 	if v != nil {
-		_u.SetAlias(*v)
+		_u.SetSlug(*v)
 	}
 	return _u
 }
 
-// ClearAlias clears the value of the "alias" field.
-func (_u *PostUpdate) ClearAlias() *PostUpdate {
-	_u.mutation.ClearAlias()
+// ClearSlug clears the value of the "slug" field.
+func (_u *PostUpdate) ClearSlug() *PostUpdate {
+	_u.mutation.ClearSlug()
 	return _u
 }
 
@@ -533,9 +533,9 @@ func (_u *PostUpdate) check() error {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Post.title": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Alias(); ok {
-		if err := post.AliasValidator(v); err != nil {
-			return &ValidationError{Name: "alias", err: fmt.Errorf(`ent: validator failed for field "Post.alias": %w`, err)}
+	if v, ok := _u.mutation.Slug(); ok {
+		if err := post.SlugValidator(v); err != nil {
+			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Post.slug": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Content(); ok {
@@ -609,11 +609,11 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(post.FieldTitle, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.Alias(); ok {
-		_spec.SetField(post.FieldAlias, field.TypeString, value)
+	if value, ok := _u.mutation.Slug(); ok {
+		_spec.SetField(post.FieldSlug, field.TypeString, value)
 	}
-	if _u.mutation.AliasCleared() {
-		_spec.ClearField(post.FieldAlias, field.TypeString)
+	if _u.mutation.SlugCleared() {
+		_spec.ClearField(post.FieldSlug, field.TypeString)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
@@ -835,23 +835,23 @@ func (_u *PostUpdateOne) SetNillableTitle(v *string) *PostUpdateOne {
 	return _u
 }
 
-// SetAlias sets the "alias" field.
-func (_u *PostUpdateOne) SetAlias(v string) *PostUpdateOne {
-	_u.mutation.SetAlias(v)
+// SetSlug sets the "slug" field.
+func (_u *PostUpdateOne) SetSlug(v string) *PostUpdateOne {
+	_u.mutation.SetSlug(v)
 	return _u
 }
 
-// SetNillableAlias sets the "alias" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableAlias(v *string) *PostUpdateOne {
+// SetNillableSlug sets the "slug" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableSlug(v *string) *PostUpdateOne {
 	if v != nil {
-		_u.SetAlias(*v)
+		_u.SetSlug(*v)
 	}
 	return _u
 }
 
-// ClearAlias clears the value of the "alias" field.
-func (_u *PostUpdateOne) ClearAlias() *PostUpdateOne {
-	_u.mutation.ClearAlias()
+// ClearSlug clears the value of the "slug" field.
+func (_u *PostUpdateOne) ClearSlug() *PostUpdateOne {
+	_u.mutation.ClearSlug()
 	return _u
 }
 
@@ -1331,9 +1331,9 @@ func (_u *PostUpdateOne) check() error {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Post.title": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Alias(); ok {
-		if err := post.AliasValidator(v); err != nil {
-			return &ValidationError{Name: "alias", err: fmt.Errorf(`ent: validator failed for field "Post.alias": %w`, err)}
+	if v, ok := _u.mutation.Slug(); ok {
+		if err := post.SlugValidator(v); err != nil {
+			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Post.slug": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Content(); ok {
@@ -1424,11 +1424,11 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(post.FieldTitle, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.Alias(); ok {
-		_spec.SetField(post.FieldAlias, field.TypeString, value)
+	if value, ok := _u.mutation.Slug(); ok {
+		_spec.SetField(post.FieldSlug, field.TypeString, value)
 	}
-	if _u.mutation.AliasCleared() {
-		_spec.ClearField(post.FieldAlias, field.TypeString)
+	if _u.mutation.SlugCleared() {
+		_spec.ClearField(post.FieldSlug, field.TypeString)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)

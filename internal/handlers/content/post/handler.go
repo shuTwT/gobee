@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"gobee/ent"
 	"gobee/ent/post"
 	"gobee/internal/database"
+	"gobee/internal/infra/logger"
 	"gobee/pkg/domain/model"
 	"strconv"
 	"time"
@@ -26,8 +26,11 @@ type PostHandler interface {
 	PublishPost(c *fiber.Ctx) error
 	UnpublishPost(c *fiber.Ctx) error
 	QueryPost(c *fiber.Ctx) error
+	QueryPostBySlug(c *fiber.Ctx) error
 	DeletePost(c *fiber.Ctx) error
 	GetSummaryForStream(c *fiber.Ctx) error
+	GetPostMonthStats(c *fiber.Ctx) error
+	GetRandomPost(c *fiber.Ctx) error
 }
 
 type PostHandlerImpl struct {
@@ -49,7 +52,56 @@ func NewPostHandlerImpl(postService post_service.PostService) *PostHandlerImpl {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/posts [get]
 func (h *PostHandlerImpl) ListPost(c *fiber.Ctx) error {
-	posts, err := h.postService.QueryPostList(c.Context())
+	var req model.PostListReq
+	if err := c.QueryParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	posts, err := h.postService.QueryPostList(c.Context(), req)
+	postResp := make([]*model.PostResp, 0, len(posts))
+	for _, post := range posts {
+		postResp = append(postResp, &model.PostResp{
+			ID:                    post.ID,
+			Title:                 post.Title,
+			Slug:                  post.Slug,
+			Content:               post.Content,
+			MdContent:             post.MdContent,
+			HtmlContent:           post.HTMLContent,
+			ContentType:           string(post.ContentType),
+			Status:                string(post.Status),
+			IsAutogenSummary:      post.IsAutogenSummary,
+			IsVisible:             post.IsVisible,
+			IsPinToTop:            post.IsPinToTop,
+			IsAllowComment:        post.IsAllowComment,
+			IsVisibleAfterComment: post.IsVisibleAfterComment,
+			IsVisibleAfterPay:     post.IsVisibleAfterPay,
+			Price:                 float32(post.Price) / 100,
+			PublishedAt:           post.PublishedAt,
+			ViewCount:             post.ViewCount,
+			CommentCount:          post.CommentCount,
+			Cover:                 post.Cover,
+			Keywords:              post.Keywords,
+			Copyright:             post.Copyright,
+			Author:                post.Author,
+			Summary:               post.Summary,
+			CreatedAt:             post.CreatedAt,
+			Categories:            post.Edges.Categories,
+			CategoryIds: func() []int {
+				ids := make([]int, len(post.Edges.Categories))
+				for i, cat := range post.Edges.Categories {
+					ids[i] = cat.ID
+				}
+				return ids
+			}(),
+			Tags: post.Edges.Tags,
+			TagIds: func() []int {
+				ids := make([]int, len(post.Edges.Tags))
+				for i, tag := range post.Edges.Tags {
+					ids[i] = tag.ID
+				}
+				return ids
+			}(),
+		})
+	}
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -66,9 +118,54 @@ func (h *PostHandlerImpl) ListPostPage(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return c.JSON(model.NewSuccess("success", model.PageResult[*ent.Post]{
+	postResp := make([]*model.PostResp, 0, len(posts))
+	for _, post := range posts {
+		postResp = append(postResp, &model.PostResp{
+			ID:                    post.ID,
+			Title:                 post.Title,
+			Slug:                  post.Slug,
+			Content:               post.Content,
+			MdContent:             post.MdContent,
+			HtmlContent:           post.HTMLContent,
+			ContentType:           string(post.ContentType),
+			Status:                string(post.Status),
+			IsAutogenSummary:      post.IsAutogenSummary,
+			IsVisible:             post.IsVisible,
+			IsPinToTop:            post.IsPinToTop,
+			IsAllowComment:        post.IsAllowComment,
+			IsVisibleAfterComment: post.IsVisibleAfterComment,
+			IsVisibleAfterPay:     post.IsVisibleAfterPay,
+			Price:                 float32(post.Price) / 100,
+			PublishedAt:           post.PublishedAt,
+			ViewCount:             post.ViewCount,
+			CommentCount:          post.CommentCount,
+			Cover:                 post.Cover,
+			Keywords:              post.Keywords,
+			Copyright:             post.Copyright,
+			Author:                post.Author,
+			Summary:               post.Summary,
+			CreatedAt:             post.CreatedAt,
+			Categories:            post.Edges.Categories,
+			CategoryIds: func() []int {
+				ids := make([]int, len(post.Edges.Categories))
+				for i, cat := range post.Edges.Categories {
+					ids[i] = cat.ID
+				}
+				return ids
+			}(),
+			Tags: post.Edges.Tags,
+			TagIds: func() []int {
+				ids := make([]int, len(post.Edges.Tags))
+				for i, tag := range post.Edges.Tags {
+					ids[i] = tag.ID
+				}
+				return ids
+			}(),
+		})
+	}
+	return c.JSON(model.NewSuccess("success", model.PageResult[*model.PostResp]{
 		Total:   int64(count),
-		Records: posts,
+		Records: postResp,
 	}))
 }
 
@@ -225,7 +322,7 @@ func (h *PostHandlerImpl) QueryPost(c *fiber.Ctx) error {
 	postResp := model.PostResp{
 		ID:                    post.ID,
 		Title:                 post.Title,
-		Alias:                 post.Alias,
+		Slug:                  post.Slug,
 		Content:               post.Content,
 		MdContent:             post.MdContent,
 		HtmlContent:           post.HTMLContent,
@@ -241,28 +338,101 @@ func (h *PostHandlerImpl) QueryPost(c *fiber.Ctx) error {
 		PublishedAt:           post.PublishedAt,
 		ViewCount:             post.ViewCount,
 		CommentCount:          post.CommentCount,
-		Cover:                 &post.Cover,
-		Keywords:              &post.Keywords,
-		Copyright:             &post.Copyright,
+		Cover:                 post.Cover,
+		Keywords:              post.Keywords,
+		Copyright:             post.Copyright,
 		Author:                post.Author,
-		Summary:               &post.Summary,
-		Categories: func() []int {
+		Summary:               post.Summary,
+		Categories:            post.Edges.Categories,
+		CategoryIds: func() []int {
 			ids := make([]int, len(post.Edges.Categories))
 			for i, cat := range post.Edges.Categories {
 				ids[i] = cat.ID
 			}
 			return ids
 		}(),
-		Tags: func() []int {
+		Tags: post.Edges.Tags,
+		TagIds: func() []int {
 			ids := make([]int, len(post.Edges.Tags))
 			for i, tag := range post.Edges.Tags {
 				ids[i] = tag.ID
 			}
 			return ids
 		}(),
+		CreatedAt: post.CreatedAt,
 	}
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", postResp))
+}
+
+// @Summary 根据Slug查询文章
+// @Description 根据Slug查询指定文章
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Param slug path string true "文章Slug"
+// @Success 200 {object} model.HttpSuccess{data=model.PostResp}
+// @Failure 400 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/posts/slug/{slug} [get]
+func (h *PostHandlerImpl) QueryPostBySlug(c *fiber.Ctx) error {
+	slug := c.Params("slug")
+	if slug == "" {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "Slug is required"))
+	}
+
+	post, err := h.postService.QueryPostBySlug(c.Context(), slug)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	if post == nil {
+		return c.JSON(model.NewError(fiber.StatusNotFound, "Post not found"))
+	}
+
+	postResp := model.PostResp{
+		ID:                    post.ID,
+		Title:                 post.Title,
+		Slug:                  post.Slug,
+		Content:               post.Content,
+		MdContent:             post.MdContent,
+		HtmlContent:           post.HTMLContent,
+		ContentType:           string(post.ContentType),
+		Status:                string(post.Status),
+		IsAutogenSummary:      post.IsAutogenSummary,
+		IsVisible:             post.IsVisible,
+		IsPinToTop:            post.IsPinToTop,
+		IsAllowComment:        post.IsAllowComment,
+		IsVisibleAfterComment: post.IsVisibleAfterComment,
+		IsVisibleAfterPay:     post.IsVisibleAfterPay,
+		Price:                 float32(post.Price) / 100,
+		PublishedAt:           post.PublishedAt,
+		ViewCount:             post.ViewCount,
+		CommentCount:          post.CommentCount,
+		Cover:                 post.Cover,
+		Keywords:              post.Keywords,
+		Copyright:             post.Copyright,
+		Author:                post.Author,
+		Summary:               post.Summary,
+		Categories:            post.Edges.Categories,
+		CategoryIds: func() []int {
+			ids := make([]int, len(post.Edges.Categories))
+			for i, cat := range post.Edges.Categories {
+				ids[i] = cat.ID
+			}
+			return ids
+		}(),
+		Tags: post.Edges.Tags,
+		TagIds: func() []int {
+			ids := make([]int, len(post.Edges.Tags))
+			for i, tag := range post.Edges.Tags {
+				ids[i] = tag.ID
+			}
+			return ids
+		}(),
+		CreatedAt: post.CreatedAt,
 	}
 	return c.JSON(model.NewSuccess("success", postResp))
 }
@@ -345,4 +515,46 @@ func (h *PostHandlerImpl) GetSummaryForStream(c *fiber.Ctx) error {
 	}))
 
 	return nil
+}
+
+// @Summary 获取文章月份统计
+// @Description 获取每个月份的文章数量统计
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Param limit query int false "返回数据条数限制"
+// @Success 200 {object} model.HttpSuccess{data=[]model.PostMonthStat}
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/post/month-stats [get]
+func (h *PostHandlerImpl) GetPostMonthStats(c *fiber.Ctx) error {
+	var req model.PostMonthStatsReq
+	if err := c.QueryParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	stats, err := h.postService.GetPostMonthStats(c.Context(), req)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	logger.Info("GetPostMonthStats: %v", stats)
+	return c.JSON(model.NewSuccess("success", stats))
+}
+
+// @Summary 随机获取一篇文章
+// @Description 随机获取一篇文章
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=ent.Post}
+// @Failure 404 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/post/random [get]
+func (h *PostHandlerImpl) GetRandomPost(c *fiber.Ctx) error {
+	post, err := h.postService.GetRandomPost(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	if post == nil {
+		return c.JSON(model.NewError(fiber.StatusNotFound, "No posts found"))
+	}
+	return c.JSON(model.NewSuccess("success", post))
 }

@@ -24,7 +24,7 @@ type Post struct {
 	// 文章标题
 	Title string `json:"title,omitempty"`
 	// 文章别名
-	Alias *string `json:"alias,omitempty"`
+	Slug *string `json:"slug,omitempty"`
 	// 文章内容
 	Content string `json:"content,omitempty"`
 	// md文章内容
@@ -109,7 +109,7 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case post.FieldID, post.FieldPrice, post.FieldViewCount, post.FieldCommentCount:
 			values[i] = new(sql.NullInt64)
-		case post.FieldTitle, post.FieldAlias, post.FieldContent, post.FieldMdContent, post.FieldHTMLContent, post.FieldContentType, post.FieldStatus, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
+		case post.FieldTitle, post.FieldSlug, post.FieldContent, post.FieldMdContent, post.FieldHTMLContent, post.FieldContentType, post.FieldStatus, post.FieldCover, post.FieldKeywords, post.FieldCopyright, post.FieldAuthor, post.FieldSummary:
 			values[i] = new(sql.NullString)
 		case post.FieldCreatedAt, post.FieldUpdatedAt, post.FieldPublishedAt:
 			values[i] = new(sql.NullTime)
@@ -152,12 +152,12 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Title = value.String
 			}
-		case post.FieldAlias:
+		case post.FieldSlug:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field alias", values[i])
+				return fmt.Errorf("unexpected type %T for field slug", values[i])
 			} else if value.Valid {
-				_m.Alias = new(string)
-				*_m.Alias = value.String
+				_m.Slug = new(string)
+				*_m.Slug = value.String
 			}
 		case post.FieldContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -337,8 +337,8 @@ func (_m *Post) String() string {
 	builder.WriteString("title=")
 	builder.WriteString(_m.Title)
 	builder.WriteString(", ")
-	if v := _m.Alias; v != nil {
-		builder.WriteString("alias=")
+	if v := _m.Slug; v != nil {
+		builder.WriteString("slug=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")

@@ -100,13 +100,13 @@ const columns: DataTableColumns<any> = [
     key: 'categories',
     width: 150,
     render: (row: any) => {
-      if (!row.edges || !row.edges.categories || row.edges.categories.length === 0) {
+      if ( !row.categories || row.categories.length === 0) {
         return h('span', { style: { color: '#999' } }, '-')
       }
       return h(
         'div',
         { style: { display: 'flex', flexWrap: 'wrap', gap: '4px' } },
-        row.edges.categories.map((cat: any) =>
+        row.categories.map((cat: any) =>
           h(NTag, { size: 'small', type: 'info' }, { default: () => cat.name })
         )
       )
@@ -117,13 +117,13 @@ const columns: DataTableColumns<any> = [
     key: 'tags',
     width: 150,
     render: (row: any) => {
-      if (!row.edges || !row.edges.tags || row.edges.tags.length === 0) {
+      if (!row.tags || row.tags.length === 0) {
         return h('span', { style: { color: '#999' } }, '-')
       }
       return h(
         'div',
         { style: { display: 'flex', flexWrap: 'wrap', gap: '4px' } },
-        row.edges.tags.map((tag: any) =>
+        row.tags.map((tag: any) =>
           h(NTag, { size: 'small', type: 'default' }, { default: () => tag.name })
         )
       )

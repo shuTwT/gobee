@@ -17,3 +17,14 @@ type TagUpdateReq struct {
 	SortOrder   *int    `json:"sort_order,omitempty"`
 	Active      *bool   `json:"active,omitempty"`
 }
+
+type TagResp struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Slug        string `json:"slug"`
+	Color       string `json:"color"`
+	SortOrder   int    `json:"sort_order"`
+	Active      bool   `json:"active"`
+	PostCount   int    `json:"post_count"`
+}

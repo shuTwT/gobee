@@ -456,7 +456,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "title", Type: field.TypeString, Size: 255},
-		{Name: "alias", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "content", Type: field.TypeString, Size: 2147483647},
 		{Name: "md_content", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "html_content", Type: field.TypeString, Nullable: true, Size: 2147483647},

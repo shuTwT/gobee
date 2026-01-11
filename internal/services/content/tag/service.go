@@ -3,6 +3,7 @@ package tag
 import (
 	"context"
 	"gobee/ent"
+	"gobee/ent/post"
 	"gobee/ent/tag"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
@@ -12,7 +13,7 @@ import (
 
 type TagService interface {
 	QueryTag(c *fiber.Ctx, id int) (*ent.Tag, error)
-	QueryTagList(c *fiber.Ctx) ([]*ent.Tag, error)
+	QueryTagList(c *fiber.Ctx) ([]model.TagResp, error)
 	QueryTagPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Tag, error)
 	CreateTag(c context.Context, createReq model.TagCreateReq) (*ent.Tag, error)
 	UpdateTag(c *fiber.Ctx, id int, updateReq model.TagUpdateReq) (*ent.Tag, error)
@@ -38,7 +39,7 @@ func (s *TagServiceImpl) QueryTag(c *fiber.Ctx, id int) (*ent.Tag, error) {
 	return tag, nil
 }
 
-func (s *TagServiceImpl) QueryTagList(c *fiber.Ctx) ([]*ent.Tag, error) {
+func (s *TagServiceImpl) QueryTagList(c *fiber.Ctx) ([]model.TagResp, error) {
 	client := database.DB
 	tags, err := client.Tag.Query().
 		Order(ent.Desc(tag.FieldID)).
@@ -46,7 +47,29 @@ func (s *TagServiceImpl) QueryTagList(c *fiber.Ctx) ([]*ent.Tag, error) {
 	if err != nil {
 		return nil, err
 	}
-	return tags, nil
+
+	var resp []model.TagResp
+	for _, t := range tags {
+		postCount, err := client.Post.Query().
+			Where(post.HasTagsWith(tag.ID(t.ID))).
+			Count(c.Context())
+		if err != nil {
+			return nil, err
+		}
+
+		resp = append(resp, model.TagResp{
+			ID:          t.ID,
+			Name:        t.Name,
+			Description: t.Description,
+			Slug:        t.Slug,
+			Color:       t.Color,
+			SortOrder:   t.SortOrder,
+			Active:      t.Active,
+			PostCount:   postCount,
+		})
+	}
+
+	return resp, nil
 }
 
 func (s *TagServiceImpl) QueryTagPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Tag, error) {

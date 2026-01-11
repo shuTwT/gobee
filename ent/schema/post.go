@@ -19,7 +19,7 @@ func (Post) Mixin() []ent.Mixin {
 func (Post) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title").NotEmpty().MaxLen(255).Comment("文章标题"),
-		field.String("alias").Optional().Nillable().MaxLen(255).Comment("文章别名"),
+		field.String("slug").Optional().Nillable().MaxLen(255).Comment("文章别名"),
 		field.Text("content").NotEmpty().Comment("文章内容"),
 		field.Text("md_content").Optional().Nillable().Comment("md文章内容"),
 		field.Text("html_content").Optional().Nillable().Comment("html文章内容"),

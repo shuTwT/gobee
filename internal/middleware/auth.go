@@ -83,7 +83,7 @@ func FlexibleAuth() fiber.Handler {
 		}
 
 		if !hasAuth {
-			token, err := jwt.ParseWithClaims(tokenString, &jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+			token, err := jwt.ParseWithClaims(tokenString, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
 				return []byte(patSecret), nil
 			})
 

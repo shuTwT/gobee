@@ -19353,7 +19353,7 @@ type PostMutation struct {
 	created_at               *time.Time
 	updated_at               *time.Time
 	title                    *string
-	alias                    *string
+	slug                     *string
 	content                  *string
 	md_content               *string
 	html_content             *string
@@ -19601,53 +19601,53 @@ func (m *PostMutation) ResetTitle() {
 	m.title = nil
 }
 
-// SetAlias sets the "alias" field.
-func (m *PostMutation) SetAlias(s string) {
-	m.alias = &s
+// SetSlug sets the "slug" field.
+func (m *PostMutation) SetSlug(s string) {
+	m.slug = &s
 }
 
-// Alias returns the value of the "alias" field in the mutation.
-func (m *PostMutation) Alias() (r string, exists bool) {
-	v := m.alias
+// Slug returns the value of the "slug" field in the mutation.
+func (m *PostMutation) Slug() (r string, exists bool) {
+	v := m.slug
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAlias returns the old "alias" field's value of the Post entity.
+// OldSlug returns the old "slug" field's value of the Post entity.
 // If the Post object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldAlias(ctx context.Context) (v *string, err error) {
+func (m *PostMutation) OldSlug(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAlias is only allowed on UpdateOne operations")
+		return v, errors.New("OldSlug is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAlias requires an ID field in the mutation")
+		return v, errors.New("OldSlug requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAlias: %w", err)
+		return v, fmt.Errorf("querying old value for OldSlug: %w", err)
 	}
-	return oldValue.Alias, nil
+	return oldValue.Slug, nil
 }
 
-// ClearAlias clears the value of the "alias" field.
-func (m *PostMutation) ClearAlias() {
-	m.alias = nil
-	m.clearedFields[post.FieldAlias] = struct{}{}
+// ClearSlug clears the value of the "slug" field.
+func (m *PostMutation) ClearSlug() {
+	m.slug = nil
+	m.clearedFields[post.FieldSlug] = struct{}{}
 }
 
-// AliasCleared returns if the "alias" field was cleared in this mutation.
-func (m *PostMutation) AliasCleared() bool {
-	_, ok := m.clearedFields[post.FieldAlias]
+// SlugCleared returns if the "slug" field was cleared in this mutation.
+func (m *PostMutation) SlugCleared() bool {
+	_, ok := m.clearedFields[post.FieldSlug]
 	return ok
 }
 
-// ResetAlias resets all changes to the "alias" field.
-func (m *PostMutation) ResetAlias() {
-	m.alias = nil
-	delete(m.clearedFields, post.FieldAlias)
+// ResetSlug resets all changes to the "slug" field.
+func (m *PostMutation) ResetSlug() {
+	m.slug = nil
+	delete(m.clearedFields, post.FieldSlug)
 }
 
 // SetContent sets the "content" field.
@@ -20673,8 +20673,8 @@ func (m *PostMutation) Fields() []string {
 	if m.title != nil {
 		fields = append(fields, post.FieldTitle)
 	}
-	if m.alias != nil {
-		fields = append(fields, post.FieldAlias)
+	if m.slug != nil {
+		fields = append(fields, post.FieldSlug)
 	}
 	if m.content != nil {
 		fields = append(fields, post.FieldContent)
@@ -20750,8 +20750,8 @@ func (m *PostMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case post.FieldTitle:
 		return m.Title()
-	case post.FieldAlias:
-		return m.Alias()
+	case post.FieldSlug:
+		return m.Slug()
 	case post.FieldContent:
 		return m.Content()
 	case post.FieldMdContent:
@@ -20807,8 +20807,8 @@ func (m *PostMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldUpdatedAt(ctx)
 	case post.FieldTitle:
 		return m.OldTitle(ctx)
-	case post.FieldAlias:
-		return m.OldAlias(ctx)
+	case post.FieldSlug:
+		return m.OldSlug(ctx)
 	case post.FieldContent:
 		return m.OldContent(ctx)
 	case post.FieldMdContent:
@@ -20879,12 +20879,12 @@ func (m *PostMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTitle(v)
 		return nil
-	case post.FieldAlias:
+	case post.FieldSlug:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAlias(v)
+		m.SetSlug(v)
 		return nil
 	case post.FieldContent:
 		v, ok := value.(string)
@@ -21095,8 +21095,8 @@ func (m *PostMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *PostMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(post.FieldAlias) {
-		fields = append(fields, post.FieldAlias)
+	if m.FieldCleared(post.FieldSlug) {
+		fields = append(fields, post.FieldSlug)
 	}
 	if m.FieldCleared(post.FieldMdContent) {
 		fields = append(fields, post.FieldMdContent)
@@ -21133,8 +21133,8 @@ func (m *PostMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *PostMutation) ClearField(name string) error {
 	switch name {
-	case post.FieldAlias:
-		m.ClearAlias()
+	case post.FieldSlug:
+		m.ClearSlug()
 		return nil
 	case post.FieldMdContent:
 		m.ClearMdContent()
@@ -21174,8 +21174,8 @@ func (m *PostMutation) ResetField(name string) error {
 	case post.FieldTitle:
 		m.ResetTitle()
 		return nil
-	case post.FieldAlias:
-		m.ResetAlias()
+	case post.FieldSlug:
+		m.ResetSlug()
 		return nil
 	case post.FieldContent:
 		m.ResetContent()

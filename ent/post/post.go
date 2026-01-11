@@ -21,8 +21,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
-	// FieldAlias holds the string denoting the alias field in the database.
-	FieldAlias = "alias"
+	// FieldSlug holds the string denoting the slug field in the database.
+	FieldSlug = "slug"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
 	// FieldMdContent holds the string denoting the md_content field in the database.
@@ -87,7 +87,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldTitle,
-	FieldAlias,
+	FieldSlug,
 	FieldContent,
 	FieldMdContent,
 	FieldHTMLContent,
@@ -138,8 +138,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	TitleValidator func(string) error
-	// AliasValidator is a validator for the "alias" field. It is called by the builders before save.
-	AliasValidator func(string) error
+	// SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	SlugValidator func(string) error
 	// ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	ContentValidator func(string) error
 	// DefaultIsAutogenSummary holds the default value on creation for the "is_autogen_summary" field.
@@ -254,9 +254,9 @@ func ByTitle(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTitle, opts...).ToFunc()
 }
 
-// ByAlias orders the results by the alias field.
-func ByAlias(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAlias, opts...).ToFunc()
+// BySlug orders the results by the slug field.
+func BySlug(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSlug, opts...).ToFunc()
 }
 
 // ByContent orders the results by the content field.
