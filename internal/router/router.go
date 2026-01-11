@@ -33,6 +33,13 @@ func initSystemRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		userApi.Get("/query/:id", handlerMap.UserHandler.QueryUser).Name("userQuery")
 		userApi.Delete("/delete/:id", handlerMap.UserHandler.DeleteUser).Name("userDelete")
 	}
+	notificationApi := router.Group("/notifications")
+	{
+		notificationApi.Get("/page", handlerMap.NotificationHandler.ListNotificationPage).Name("notificationPage")
+		notificationApi.Get("/query/:id", handlerMap.NotificationHandler.QueryNotification).Name("notificationQuery")
+		notificationApi.Delete("/delete/:id", handlerMap.NotificationHandler.DeleteNotification).Name("notificationDelete")
+		notificationApi.Post("/batch/read", handlerMap.NotificationHandler.BatchMarkAsRead).Name("notificationBatchRead")
+	}
 }
 
 // 注册内容路由

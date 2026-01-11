@@ -25,6 +25,7 @@ import (
 	auth_handler "gobee/internal/handlers/system/auth"
 	common_handler "gobee/internal/handlers/system/common"
 	initialize_handler "gobee/internal/handlers/system/initialize"
+	notification_handler "gobee/internal/handlers/system/notification"
 	role_handler "gobee/internal/handlers/system/role"
 	route_handler "gobee/internal/handlers/system/route"
 	setting_handler "gobee/internal/handlers/system/setting"
@@ -48,6 +49,7 @@ type HandlerMap struct {
 	MemberHandler          member_handler.MemberHandler
 	MemberLevelHandler     memberlevel_handler.MemberLevelHandler
 	MigrationHandler       migration_handler.MigrationHandler
+	NotificationHandler    notification_handler.NotificationHandler
 	PayOrderHandler        payorder_handler.PayOrderHandler
 	PostHandler            post_handler.PostHandler
 	ProductHandler         product_handler.ProductHandler
@@ -90,6 +92,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	memberHandler := member_handler.NewMemberHandlerImpl(serviceMap.UserService, serviceMap.MemberService)
 	memberLevelHandler := memberlevel_handler.NewMemberLevelHandlerImpl(serviceMap.MemberLevelService)
 	migrationHandler := migration_handler.NewMigrationHandlerImpl(serviceMap.MigrationService)
+	notificationHandler := notification_handler.NewNotificationHandlerImpl(serviceMap.NotificationService)
 
 	handlerMap := HandlerMap{
 		AlbumHandler:           albumHandler,
@@ -107,6 +110,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		MemberHandler:          memberHandler,
 		MemberLevelHandler:     memberLevelHandler,
 		MigrationHandler:       migrationHandler,
+		NotificationHandler:    notificationHandler,
 		PayOrderHandler:        payOrderHandler,
 		PostHandler:            postHandler,
 		ProductHandler:         productHandler,

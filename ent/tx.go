@@ -42,6 +42,8 @@ type Tx struct {
 	Member *MemberClient
 	// MemberLevel is the client for interacting with the MemberLevel builders.
 	MemberLevel *MemberLevelClient
+	// Notification is the client for interacting with the Notification builders.
+	Notification *NotificationClient
 	// Oauth2AccessToken is the client for interacting with the Oauth2AccessToken builders.
 	Oauth2AccessToken *Oauth2AccessTokenClient
 	// Oauth2Code is the client for interacting with the Oauth2Code builders.
@@ -220,6 +222,7 @@ func (tx *Tx) init() {
 	tx.FriendCircleRecord = NewFriendCircleRecordClient(tx.config)
 	tx.Member = NewMemberClient(tx.config)
 	tx.MemberLevel = NewMemberLevelClient(tx.config)
+	tx.Notification = NewNotificationClient(tx.config)
 	tx.Oauth2AccessToken = NewOauth2AccessTokenClient(tx.config)
 	tx.Oauth2Code = NewOauth2CodeClient(tx.config)
 	tx.Oauth2RefreshToken = NewOauth2RefreshTokenClient(tx.config)

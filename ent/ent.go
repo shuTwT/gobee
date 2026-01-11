@@ -21,6 +21,7 @@ import (
 	"gobee/ent/friendcirclerecord"
 	"gobee/ent/member"
 	"gobee/ent/memberlevel"
+	"gobee/ent/notification"
 	"gobee/ent/oauth2accesstoken"
 	"gobee/ent/oauth2code"
 	"gobee/ent/oauth2refreshtoken"
@@ -118,6 +119,7 @@ func checkColumn(t, c string) error {
 			friendcirclerecord.Table:  friendcirclerecord.ValidColumn,
 			member.Table:              member.ValidColumn,
 			memberlevel.Table:         memberlevel.ValidColumn,
+			notification.Table:        notification.ValidColumn,
 			oauth2accesstoken.Table:   oauth2accesstoken.ValidColumn,
 			oauth2code.Table:          oauth2code.ValidColumn,
 			oauth2refreshtoken.Table:  oauth2refreshtoken.ValidColumn,

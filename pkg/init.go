@@ -25,6 +25,7 @@ import (
 	api_interface_service "gobee/internal/services/system/apiinterface"
 	auth_service "gobee/internal/services/system/auth"
 	common_service "gobee/internal/services/system/common"
+	notification_service "gobee/internal/services/system/notification"
 	role_service "gobee/internal/services/system/role"
 	setting_service "gobee/internal/services/system/setting"
 	user_service "gobee/internal/services/system/user"
@@ -48,6 +49,7 @@ type ServiceMap struct {
 	MemberLevelService     memberlevel_service.MemberLevelService
 	MemberService          member_service.MemberService
 	MigrationService       migration_service.MigrationService
+	NotificationService    notification_service.NotificationService
 	PayOrderService        payorder.PayOrderService
 	PermissionService      permission_service.PermissionService
 	PostService            post_service.PostService
@@ -99,6 +101,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	visitService := visit_service.NewVisitServiceImpl(db)
 	walletService := wallet_service.NewWalletServiceImpl(db)
 	migrationService := migration_service.NewMigrationServiceImpl(db)
+	notificationService := notification_service.NewNotificationServiceImpl(db)
 
 	//执行
 	permissionService.LoadPermissionsFromDef(moduleDefs)
@@ -118,6 +121,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		MemberLevelService:     memberLevelService,
 		MemberService:          memberService,
 		MigrationService:       migrationService,
+		NotificationService:    notificationService,
 		PayOrderService:        payOderService,
 		PermissionService:      permissionService,
 		PostService:            postService,

@@ -51,6 +51,9 @@ type Member func(*sql.Selector)
 // MemberLevel is the predicate function for memberlevel builders.
 type MemberLevel func(*sql.Selector)
 
+// Notification is the predicate function for notification builders.
+type Notification func(*sql.Selector)
+
 // Oauth2AccessToken is the predicate function for oauth2accesstoken builders.
 type Oauth2AccessToken func(*sql.Selector)
 

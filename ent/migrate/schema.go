@@ -339,6 +339,22 @@ var (
 		Columns:    MemberLevelsColumns,
 		PrimaryKey: []*schema.Column{MemberLevelsColumns[0]},
 	}
+	// NotificationsColumns holds the columns for the "notifications" table.
+	NotificationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "title", Type: field.TypeString, Size: 255},
+		{Name: "content", Type: field.TypeString},
+		{Name: "publish_time", Type: field.TypeTime, Nullable: true},
+		{Name: "is_read", Type: field.TypeBool, Default: false},
+	}
+	// NotificationsTable holds the schema information for the "notifications" table.
+	NotificationsTable = &schema.Table{
+		Name:       "notifications",
+		Columns:    NotificationsColumns,
+		PrimaryKey: []*schema.Column{NotificationsColumns[0]},
+	}
 	// Oauth2accessTokensColumns holds the columns for the "oauth2access_tokens" table.
 	Oauth2accessTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -757,6 +773,7 @@ var (
 		FriendCircleRecordsTable,
 		MembersTable,
 		MemberLevelsTable,
+		NotificationsTable,
 		Oauth2accessTokensTable,
 		Oauth2codesTable,
 		Oauth2refreshTokensTable,

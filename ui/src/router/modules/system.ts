@@ -52,6 +52,16 @@ export default [
           roles: ['admin'],
         },
       },
+      {
+        path: '/system/notification',
+        name: 'NotificationManagement',
+        component: () => import('@/views/system/notification/index.vue'),
+        meta: {
+          title: '通知管理',
+          showLink: true,
+          roles: ['admin'],
+        },
+      },
     ],
   },
 ] satisfies RouteRecordRaw[]
