@@ -58,7 +58,7 @@ func (h *PostHandlerImpl) ListPost(c *fiber.Ctx) error {
 }
 
 func (h *PostHandlerImpl) ListPostPage(c *fiber.Ctx) error {
-	var req model.PageQuery
+	var req model.PostPageReq
 	if err := c.QueryParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
@@ -237,7 +237,7 @@ func (h *PostHandlerImpl) QueryPost(c *fiber.Ctx) error {
 		IsAllowComment:        post.IsAllowComment,
 		IsVisibleAfterComment: post.IsVisibleAfterComment,
 		IsVisibleAfterPay:     post.IsVisibleAfterPay,
-		Price:                 post.Price,
+		Price:                 float32(post.Price) / 100,
 		PublishedAt:           post.PublishedAt,
 		ViewCount:             post.ViewCount,
 		CommentCount:          post.CommentCount,

@@ -10,6 +10,7 @@ import {
   NTag,
   NDropdown,
   useMessage,
+  useDialog,
   type DataTableColumns,
   type PaginationProps,
 } from 'naive-ui'
@@ -26,10 +27,12 @@ import {
   CopyOutline,
   DuplicateOutline,
 } from '@vicons/ionicons5'
-import { h } from 'vue'
+import { h, ref, reactive, onMounted } from 'vue'
 import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 import { useRouter } from 'vue-router'
 import * as postApi from '@/api/content/post'
+import * as categoryApi from '@/api/content/category'
+import * as tagApi from '@/api/content/tag'
 import { usePostHook } from './utils/hook'
 import dayjs from 'dayjs'
 
@@ -41,7 +44,13 @@ const { settingPost,publishPost,unpublishPost } = usePostHook()
 // 搜索和筛选
 const searchKeyword = ref('')
 const filterStatus = ref(null)
+const filterCategory = ref<number | null>(null)
+const filterTag = ref<number | null>(null)
 const dateRange = ref<[number, number] | null>(null)
+
+// 分类和标签选项
+const categoryOptions = ref<any[]>([])
+const tagOptions = ref<any[]>([])
 
 // 表格加载状态
 const loading = ref(false)
@@ -72,30 +81,7 @@ const statusOptions = [
 ]
 
 // 模拟文章数据
-const dataList = ref([
-  {
-    id: '1',
-    title: '示例文章1',
-    summary: '这是一篇示例文章的摘要内容...',
-    author: '管理员',
-    status: 'published',
-    views: 100,
-    comments: 5,
-    createdAt: '2024-01-15 10:00:00',
-    updatedAt: '2024-01-15 10:00:00',
-  },
-  {
-    id: '2',
-    title: '示例文章2',
-    summary: '这是另一篇示例文章的摘要内容...',
-    author: '管理员',
-    status: 'draft',
-    views: 0,
-    comments: 0,
-    createdAt: '2024-01-15 11:00:00',
-    updatedAt: '2024-01-15 11:00:00',
-  },
-])
+const dataList = ref<any[]>([])
 
 // 表格列配置
 const columns: DataTableColumns<any> = [
@@ -108,6 +94,40 @@ const columns: DataTableColumns<any> = [
     title: '摘要',
     key: 'summary',
     ellipsis: true,
+  },
+  {
+    title: '分类',
+    key: 'categories',
+    width: 150,
+    render: (row: any) => {
+      if (!row.edges || !row.edges.categories || row.edges.categories.length === 0) {
+        return h('span', { style: { color: '#999' } }, '-')
+      }
+      return h(
+        'div',
+        { style: { display: 'flex', flexWrap: 'wrap', gap: '4px' } },
+        row.edges.categories.map((cat: any) =>
+          h(NTag, { size: 'small', type: 'info' }, { default: () => cat.name })
+        )
+      )
+    },
+  },
+  {
+    title: '标签',
+    key: 'tags',
+    width: 150,
+    render: (row: any) => {
+      if (!row.edges || !row.edges.tags || row.edges.tags.length === 0) {
+        return h('span', { style: { color: '#999' } }, '-')
+      }
+      return h(
+        'div',
+        { style: { display: 'flex', flexWrap: 'wrap', gap: '4px' } },
+        row.edges.tags.map((tag: any) =>
+          h(NTag, { size: 'small', type: 'default' }, { default: () => tag.name })
+        )
+      )
+    },
   },
   {
     title: '作者',
@@ -272,6 +292,30 @@ const columns: DataTableColumns<any> = [
   },
 ]
 
+// 加载分类和标签选项
+const loadCategoryAndTagOptions = async () => {
+  try {
+    const [categoryRes, tagRes] = await Promise.all([
+      categoryApi.getCategoryList(),
+      tagApi.getTagList(),
+    ])
+    if (categoryRes.code === 200) {
+      categoryOptions.value = categoryRes.data.map((item: any) => ({
+        label: item.name,
+        value: item.id,
+      }))
+    }
+    if (tagRes.code === 200) {
+      tagOptions.value = tagRes.data.map((item: any) => ({
+        label: item.name,
+        value: item.id,
+      }))
+    }
+  } catch (error) {
+    message.error('加载分类和标签失败')
+  }
+}
+
 // 创建文章
 const createPost = () => {
   postApi
@@ -335,7 +379,7 @@ const clonePost = (row: any) => {
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
-      const newPost = { ...row }
+      const newPost:any = { ...row }
       newPost.id = Date.now()
       newPost.title = `${newPost.title} (副本)`
       newPost.status = 'draft'
@@ -353,9 +397,10 @@ const deletePost = (row: any) => {
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
-      message.success('删除成功')
-      const index = dataList.value.findIndex((item) => item.id === row.id)
-      dataList.value.splice(index, 1)
+      postApi.deletePost(row.id).then(() => {
+        message.success('删除成功')
+        onSearch()
+      })
     },
   })
 }
@@ -387,6 +432,8 @@ const onSearch = async () => {
     page_size: pagination.pageSize,
     title: searchKeyword.value,
     status: filterStatus.value,
+    category_id: filterCategory.value,
+    tag_id: filterTag.value,
     start_date: dateRange.value?.[0],
     end_date: dateRange.value?.[1],
   })
@@ -394,6 +441,7 @@ const onSearch = async () => {
   dataList.value = res.data.records
 }
 onMounted(() => {
+  loadCategoryAndTagOptions()
   onSearch()
 })
 </script>
@@ -415,6 +463,22 @@ onMounted(() => {
               <n-icon><search-outline /></n-icon>
             </template>
           </n-input>
+          <n-select
+            v-model:value="filterCategory"
+            placeholder="选择分类"
+            :options="categoryOptions"
+            clearable
+            style="width: 150px"
+            @update:value="handleFilterChange"
+          />
+          <n-select
+            v-model:value="filterTag"
+            placeholder="选择标签"
+            :options="tagOptions"
+            clearable
+            style="width: 150px"
+            @update:value="handleFilterChange"
+          />
           <n-select
             v-model:value="filterStatus"
             placeholder="文章状态"

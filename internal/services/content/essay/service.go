@@ -12,6 +12,7 @@ type EssayService interface {
 	UpdateEssay(ctx context.Context, id int, req *model.EssayUpdateReq) error
 	GetEssay(ctx context.Context, id int) (*ent.Essay, error)
 	GetEssayPage(ctx context.Context, page, pageSize int) ([]*ent.Essay, int, error)
+	GetEssayList(ctx context.Context, limit int) ([]*ent.Essay, error)
 	DeleteEssay(ctx context.Context, id int) error
 }
 
@@ -69,6 +70,17 @@ func (s *EssayServiceImpl) GetEssayPage(ctx context.Context, page, pageSize int)
 		return nil, 0, err
 	}
 	return essays, count, nil
+}
+
+func (s *EssayServiceImpl) GetEssayList(ctx context.Context, limit int) ([]*ent.Essay, error) {
+	essays, err := s.client.Essay.Query().
+		Order(ent.Desc(essay.FieldID)).
+		Limit(limit).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return essays, nil
 }
 
 func (s *EssayServiceImpl) DeleteEssay(ctx context.Context, id int) error {

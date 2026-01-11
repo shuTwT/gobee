@@ -2,6 +2,14 @@ package model
 
 import "time"
 
+type PostPageReq struct {
+	Page       int    `json:"page" query:"page" form:"page" validate:"required,min=1"`
+	Size       int    `json:"page_size" query:"page_size" form:"page_size" validate:"required,min=1,max=100"`
+	CategoryID *int   `json:"category_id" query:"category_id" form:"category_id"`
+	TagID      *int   `json:"tag_id" query:"tag_id" form:"tag_id"`
+	Title      string `json:"title" query:"title" form:"title"`
+}
+
 // PostCreateReq represents the request body for creating a post.
 type PostCreateReq struct {
 	Title                 string  `json:"title" validate:"required"`                                //文章标题
@@ -17,7 +25,7 @@ type PostCreateReq struct {
 	IsAllowComment        bool    `json:"is_allow_comment"`                                         //是否允许评论
 	IsVisibleAfterComment bool    `json:"is_visible_after_comment"`                                 //是否评论后可见
 	IsVisibleAfterPay     bool    `json:"is_visible_after_pay"`                                     //是否支付后可见
-	Price                 int     `json:"price" validate:"required,min=0"`                          //文章价格
+	Price                 float32 `json:"price" validate:"required,min=0"`                          //文章价格
 	Cover                 *string `json:"cover,omitempty"`                                          //文章封面
 	Keywords              *string `json:"keywords,omitempty"`                                       //文章关键词
 	Copyright             *string `json:"copyright,omitempty"`                                      //文章版权
@@ -42,7 +50,7 @@ type PostUpdateReq struct {
 	IsAllowComment        bool    `json:"is_allow_comment,omitempty"`                               //是否允许评论
 	IsVisibleAfterComment bool    `json:"is_visible_after_comment,omitempty"`                       //是否评论后可见
 	IsVisibleAfterPay     bool    `json:"is_visible_after_pay,omitempty"`                           //是否支付后可见
-	Price                 int     `json:"price" validate:"required,min=0"`                          //文章价格
+	Price                 float32 `json:"price" validate:"required,min=0"`                          //文章价格
 	Cover                 string  `json:"cover,omitempty"`                                          //文章封面
 	Keywords              string  `json:"keywords,omitempty"`                                       //文章关键词
 	Copyright             string  `json:"copyright,omitempty"`                                      //文章版权
@@ -69,7 +77,7 @@ type PostResp struct {
 	IsAllowComment        bool       `json:"is_allow_comment"`         //是否允许评论
 	IsVisibleAfterComment bool       `json:"is_visible_after_comment"` //是否评论后可见
 	IsVisibleAfterPay     bool       `json:"is_visible_after_pay"`     //是否支付后可见
-	Price                 int        `json:"price"`                    //文章价格
+	Price                 float32    `json:"price"`                    //文章价格
 	PublishedAt           *time.Time `json:"published_at,omitempty"`   //发布时间
 	ViewCount             int        `json:"view_count"`               //浏览次数
 	CommentCount          int        `json:"comment_count"`            //评论次数

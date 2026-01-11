@@ -13,6 +13,7 @@ type EssayHandler interface {
 	CreateEssay(c *fiber.Ctx) error
 	UpdateEssay(c *fiber.Ctx) error
 	GetEssayPage(c *fiber.Ctx) error
+	ListEssay(c *fiber.Ctx) error
 	DeleteEssay(c *fiber.Ctx) error
 }
 
@@ -108,6 +109,35 @@ func (h *EssayHandlerImpl) GetEssayPage(c *fiber.Ctx) error {
 		Total:   int64(total),
 		Records: resp,
 	}))
+}
+
+// @Summary 获取说说列表
+// @Description 获取说说列表
+// @Tags essay
+// @Accept json
+// @Produce json
+// @Param limit query int false "数量限制" default(10)
+// @Success 200 {object} model.HttpSuccess{data=[]model.EssayResp}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/essay/list [get]
+func (h *EssayHandlerImpl) ListEssay(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit", 10)
+	essays, err := h.service.GetEssayList(c.Context(), limit)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	resp := make([]model.EssayResp, 0, len(essays))
+	for _, e := range essays {
+		resp = append(resp, model.EssayResp{
+			ID:       e.ID,
+			Content:  e.Content,
+			Draft:    e.Draft,
+			Images:   e.Images,
+			CreateAt: (*model.LocalTime)(&e.CreatedAt),
+		})
+	}
+	return c.JSON(model.NewSuccess("success", resp))
 }
 
 // @Summary 删除说说

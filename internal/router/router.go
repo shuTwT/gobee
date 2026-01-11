@@ -89,6 +89,7 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	}
 	essayApi := router.Group("/essay")
 	{
+		essayApi.Get("/list", handlerMap.EssayHandler.ListEssay).Name("essayList")
 		essayApi.Get("/page", handlerMap.EssayHandler.GetEssayPage).Name("essayPage")
 		essayApi.Post("/create", handlerMap.EssayHandler.CreateEssay).Name("essayCreate")
 		essayApi.Put("/update/:id", handlerMap.EssayHandler.UpdateEssay).Name("essayUpdate")

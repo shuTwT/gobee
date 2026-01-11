@@ -3,14 +3,16 @@ package post
 import (
 	"context"
 	"gobee/ent"
+	"gobee/ent/category"
 	"gobee/ent/post"
+	"gobee/ent/tag"
 	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 )
 
 type PostService interface {
 	QueryPostList(c context.Context) ([]*ent.Post, error)
-	QueryPostPage(c context.Context, req model.PageQuery) ([]*ent.Post, int, error)
+	QueryPostPage(c context.Context, req model.PostPageReq) ([]*ent.Post, int, error)
 	CreatePost(c context.Context, title string, content string) (*ent.Post, error)
 	UpdatePostContent(c context.Context, id int, content string) (*ent.Post, error)
 	UpdatePostSetting(c context.Context, id int, post model.PostUpdateReq) (*ent.Post, error)
@@ -37,13 +39,26 @@ func (s *PostServiceImpl) QueryPostList(c context.Context) ([]*ent.Post, error) 
 	return posts, nil
 }
 
-func (s *PostServiceImpl) QueryPostPage(c context.Context, req model.PageQuery) ([]*ent.Post, int, error) {
+func (s *PostServiceImpl) QueryPostPage(c context.Context, req model.PostPageReq) ([]*ent.Post, int, error) {
+	query := s.client.Post.Query()
 
-	count, err := s.client.Post.Query().Count(c)
+	if req.CategoryID != nil {
+		query.Where(post.HasCategoriesWith(category.ID(*req.CategoryID)))
+	}
+
+	if req.TagID != nil {
+		query.Where(post.HasTagsWith(tag.ID(*req.TagID)))
+	}
+
+	if req.Title != "" {
+		query.Where(post.TitleContains(req.Title))
+	}
+
+	count, err := query.Count(c)
 	if err != nil {
 		return nil, 0, err
 	}
-	posts, err := s.client.Post.Query().
+	posts, err := query.
 		WithCategories().
 		WithTags().
 		Order(ent.Desc(post.FieldID)).
@@ -93,7 +108,7 @@ func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, post mode
 		SetIsAllowComment(post.IsAllowComment).
 		SetIsVisibleAfterComment(post.IsVisibleAfterComment).
 		SetIsVisibleAfterPay(post.IsVisibleAfterPay).
-		SetPrice(post.Price).
+		SetPrice(int(post.Price * 100)).
 		SetSummary(summary).
 		AddCategoryIDs(post.Categories...).
 		AddTagIDs(post.Tags...).

@@ -98,15 +98,9 @@ func (s *MigrationServiceImpl) ImportMarkdownFiles(ctx context.Context, files []
 
 		htmlContent := s.htmlSanitizer.Sanitize(buf.String())
 
-		existingPost, err := s.client.Post.Query().
+		existingPost, _ := s.client.Post.Query().
 			Where(post.Title(title)).
 			First(ctx)
-
-		if err != nil {
-			result.Failed++
-			result.Errors = append(result.Errors, fmt.Sprintf("%s: 查询文章失败 - %v", fileHeader.Filename, err))
-			continue
-		}
 
 		if existingPost != nil {
 			_, updateErr := s.client.Post.UpdateOneID(existingPost.ID).
