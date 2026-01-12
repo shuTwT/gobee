@@ -3,9 +3,11 @@
 package doclibrary
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -23,10 +25,21 @@ const (
 	FieldAlias = "alias"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldSource holds the string denoting the source field in the database.
+	FieldSource = "source"
 	// FieldURL holds the string denoting the url field in the database.
 	FieldURL = "url"
+	// EdgeDetails holds the string denoting the details edge name in mutations.
+	EdgeDetails = "details"
 	// Table holds the table name of the doclibrary in the database.
 	Table = "doc_libraries"
+	// DetailsTable is the table that holds the details relation/edge.
+	DetailsTable = "doc_library_details"
+	// DetailsInverseTable is the table name for the DocLibraryDetail entity.
+	// It exists in this package in order to avoid circular dependency with the "doclibrarydetail" package.
+	DetailsInverseTable = "doc_library_details"
+	// DetailsColumn is the table column denoting the details relation/edge.
+	DetailsColumn = "library_id"
 )
 
 // Columns holds all SQL columns for doclibrary fields.
@@ -37,6 +50,7 @@ var Columns = []string{
 	FieldName,
 	FieldAlias,
 	FieldDescription,
+	FieldSource,
 	FieldURL,
 }
 
@@ -58,6 +72,31 @@ var (
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
 )
+
+// Source defines the type for the "source" enum field.
+type Source string
+
+// Source values.
+const (
+	SourceGit     Source = "git"
+	SourceOpenapi Source = "openapi"
+	SourceLlmsTxt Source = "llms_txt"
+	SourceWebsite Source = "website"
+)
+
+func (s Source) String() string {
+	return string(s)
+}
+
+// SourceValidator is a validator for the "source" field enum values. It is called by the builders before save.
+func SourceValidator(s Source) error {
+	switch s {
+	case SourceGit, SourceOpenapi, SourceLlmsTxt, SourceWebsite:
+		return nil
+	default:
+		return fmt.Errorf("doclibrary: invalid enum value for source field: %q", s)
+	}
+}
 
 // OrderOption defines the ordering options for the DocLibrary queries.
 type OrderOption func(*sql.Selector)
@@ -92,7 +131,33 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
+// BySource orders the results by the source field.
+func BySource(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSource, opts...).ToFunc()
+}
+
 // ByURL orders the results by the url field.
 func ByURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldURL, opts...).ToFunc()
+}
+
+// ByDetailsCount orders the results by details count.
+func ByDetailsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDetailsStep(), opts...)
+	}
+}
+
+// ByDetails orders the results by details terms.
+func ByDetails(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDetailsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newDetailsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DetailsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, DetailsTable, DetailsColumn),
+	)
 }

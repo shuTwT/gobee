@@ -7,6 +7,8 @@ import (
 	albumphoto_service "gobee/internal/services/content/albumphoto"
 	category_service "gobee/internal/services/content/category"
 	comment_service "gobee/internal/services/content/comment"
+	doclibrary_service "gobee/internal/services/content/doclibrary"
+	doclibrarydetail_service "gobee/internal/services/content/doclibrarydetail"
 	essay_service "gobee/internal/services/content/essay"
 	flink_service "gobee/internal/services/content/flink"
 	friend_circle_service "gobee/internal/services/content/friendcircle"
@@ -37,34 +39,36 @@ import (
 const autoMigrate = true
 
 type ServiceMap struct {
-	AlbumService           album_service.AlbumService
-	AlbumPhotoService      albumphoto_service.AlbumPhotoService
-	ApiInterfaceService    api_interface_service.ApiInterfaceService
-	AuthService            auth_service.AuthService
-	CategoryService        category_service.CategoryService
-	CommentService         comment_service.CommentService
-	CommonService          common_service.CommonService
-	CouponService          coupon_service.CouponService
-	CouponUsageService     couponusage_service.CouponUsageService
-	EssayService           essay_service.EssayService
-	FileService            file_service.FileService
-	FlinkService           flink_service.FlinkService
-	FriendCircleService    friend_circle_service.FriendCircleService
-	MemberLevelService     memberlevel_service.MemberLevelService
-	MemberService          member_service.MemberService
-	MigrationService       migration_service.MigrationService
-	NotificationService    notification_service.NotificationService
-	PayOrderService        payorder.PayOrderService
-	PermissionService      permission_service.PermissionService
-	PostService            post_service.PostService
-	ProductService         product_service.ProductService
-	RoleService            role_service.RoleService
-	SettingService         setting_service.SettingService
-	StorageStrategyService storagestrategy_service.StorageStrategyService
-	TagService             tag_service.TagService
-	UserService            user_service.UserService
-	VisitService           visit_service.VisitService
-	WalletService          wallet_service.WalletService
+	AlbumService            album_service.AlbumService
+	AlbumPhotoService       albumphoto_service.AlbumPhotoService
+	ApiInterfaceService     api_interface_service.ApiInterfaceService
+	AuthService             auth_service.AuthService
+	CategoryService         category_service.CategoryService
+	CommentService          comment_service.CommentService
+	CommonService           common_service.CommonService
+	CouponService           coupon_service.CouponService
+	CouponUsageService      couponusage_service.CouponUsageService
+	DocLibraryService       doclibrary_service.DocLibraryService
+	DocLibraryDetailService doclibrarydetail_service.DocLibraryDetailService
+	EssayService            essay_service.EssayService
+	FileService             file_service.FileService
+	FlinkService            flink_service.FlinkService
+	FriendCircleService     friend_circle_service.FriendCircleService
+	MemberLevelService      memberlevel_service.MemberLevelService
+	MemberService           member_service.MemberService
+	MigrationService        migration_service.MigrationService
+	NotificationService     notification_service.NotificationService
+	PayOrderService         payorder.PayOrderService
+	PermissionService       permission_service.PermissionService
+	PostService             post_service.PostService
+	ProductService          product_service.ProductService
+	RoleService             role_service.RoleService
+	SettingService          setting_service.SettingService
+	StorageStrategyService  storagestrategy_service.StorageStrategyService
+	TagService              tag_service.TagService
+	UserService             user_service.UserService
+	VisitService            visit_service.VisitService
+	WalletService           wallet_service.WalletService
 }
 
 func InitializeServices(moduleDefs embed.FS) ServiceMap {
@@ -87,6 +91,8 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	commonService := common_service.NewCommonServiceImpl(db, user_service.NewUserServiceImpl(db), post_service.NewPostServiceImpl(db), comment_service.NewCommentServiceImpl(db))
 	couponService := coupon_service.NewCouponServiceImpl(db)
 	couponUsageService := couponusage_service.NewCouponUsageServiceImpl(db)
+	doclibraryService := doclibrary_service.NewDocLibraryServiceImpl(db)
+	doclibrarydetailService := doclibrarydetail_service.NewDocLibraryDetailServiceImpl(db)
 	essayService := essay_service.NewEssayServiceImpl(db)
 	fileService := file_service.NewFileServiceImpl(db)
 	flinkService := flink_service.NewFlinkServiceImpl(db)
@@ -110,34 +116,36 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	permissionService.LoadPermissionsFromDef(moduleDefs)
 
 	serviceMap := ServiceMap{
-		AlbumService:           albumService,
-		AlbumPhotoService:      albumPhotoService,
-		ApiInterfaceService:    apiInterfaceService,
-		AuthService:            authService,
-		CategoryService:        categoryService,
-		CommentService:         commentService,
-		CommonService:          commonService,
-		CouponService:          couponService,
-		CouponUsageService:     couponUsageService,
-		EssayService:           essayService,
-		FileService:            fileService,
-		FlinkService:           flinkService,
-		FriendCircleService:    friendCircleService,
-		MemberLevelService:     memberLevelService,
-		MemberService:          memberService,
-		MigrationService:       migrationService,
-		NotificationService:    notificationService,
-		PayOrderService:        payOderService,
-		PermissionService:      permissionService,
-		PostService:            postService,
-		ProductService:         productService,
-		RoleService:            roleService,
-		SettingService:         settingService,
-		StorageStrategyService: storageStrategyService,
-		TagService:             tagService,
-		UserService:            userService,
-		VisitService:           visitService,
-		WalletService:          walletService,
+		AlbumService:            albumService,
+		AlbumPhotoService:       albumPhotoService,
+		ApiInterfaceService:     apiInterfaceService,
+		AuthService:             authService,
+		CategoryService:         categoryService,
+		CommentService:          commentService,
+		CommonService:           commonService,
+		CouponService:           couponService,
+		CouponUsageService:      couponUsageService,
+		DocLibraryService:       doclibraryService,
+		DocLibraryDetailService: doclibrarydetailService,
+		EssayService:            essayService,
+		FileService:             fileService,
+		FlinkService:            flinkService,
+		FriendCircleService:     friendCircleService,
+		MemberLevelService:      memberLevelService,
+		MemberService:           memberService,
+		MigrationService:        migrationService,
+		NotificationService:     notificationService,
+		PayOrderService:         payOderService,
+		PermissionService:       permissionService,
+		PostService:             postService,
+		ProductService:          productService,
+		RoleService:             roleService,
+		SettingService:          settingService,
+		StorageStrategyService:  storageStrategyService,
+		TagService:              tagService,
+		UserService:             userService,
+		VisitService:            visitService,
+		WalletService:           walletService,
 	}
 
 	return serviceMap

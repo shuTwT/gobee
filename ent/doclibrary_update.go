@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"gobee/ent/doclibrary"
+	"gobee/ent/doclibrarydetail"
 	"gobee/ent/predicate"
 	"time"
 
@@ -82,6 +83,20 @@ func (_u *DocLibraryUpdate) ClearDescription() *DocLibraryUpdate {
 	return _u
 }
 
+// SetSource sets the "source" field.
+func (_u *DocLibraryUpdate) SetSource(v doclibrary.Source) *DocLibraryUpdate {
+	_u.mutation.SetSource(v)
+	return _u
+}
+
+// SetNillableSource sets the "source" field if the given value is not nil.
+func (_u *DocLibraryUpdate) SetNillableSource(v *doclibrary.Source) *DocLibraryUpdate {
+	if v != nil {
+		_u.SetSource(*v)
+	}
+	return _u
+}
+
 // SetURL sets the "url" field.
 func (_u *DocLibraryUpdate) SetURL(v string) *DocLibraryUpdate {
 	_u.mutation.SetURL(v)
@@ -96,9 +111,45 @@ func (_u *DocLibraryUpdate) SetNillableURL(v *string) *DocLibraryUpdate {
 	return _u
 }
 
+// AddDetailIDs adds the "details" edge to the DocLibraryDetail entity by IDs.
+func (_u *DocLibraryUpdate) AddDetailIDs(ids ...int) *DocLibraryUpdate {
+	_u.mutation.AddDetailIDs(ids...)
+	return _u
+}
+
+// AddDetails adds the "details" edges to the DocLibraryDetail entity.
+func (_u *DocLibraryUpdate) AddDetails(v ...*DocLibraryDetail) *DocLibraryUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddDetailIDs(ids...)
+}
+
 // Mutation returns the DocLibraryMutation object of the builder.
 func (_u *DocLibraryUpdate) Mutation() *DocLibraryMutation {
 	return _u.mutation
+}
+
+// ClearDetails clears all "details" edges to the DocLibraryDetail entity.
+func (_u *DocLibraryUpdate) ClearDetails() *DocLibraryUpdate {
+	_u.mutation.ClearDetails()
+	return _u
+}
+
+// RemoveDetailIDs removes the "details" edge to DocLibraryDetail entities by IDs.
+func (_u *DocLibraryUpdate) RemoveDetailIDs(ids ...int) *DocLibraryUpdate {
+	_u.mutation.RemoveDetailIDs(ids...)
+	return _u
+}
+
+// RemoveDetails removes "details" edges to DocLibraryDetail entities.
+func (_u *DocLibraryUpdate) RemoveDetails(v ...*DocLibraryDetail) *DocLibraryUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveDetailIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -137,7 +188,20 @@ func (_u *DocLibraryUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *DocLibraryUpdate) check() error {
+	if v, ok := _u.mutation.Source(); ok {
+		if err := doclibrary.SourceValidator(v); err != nil {
+			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "DocLibrary.source": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *DocLibraryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(doclibrary.Table, doclibrary.Columns, sqlgraph.NewFieldSpec(doclibrary.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -161,8 +225,56 @@ func (_u *DocLibraryUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(doclibrary.FieldDescription, field.TypeString)
 	}
+	if value, ok := _u.mutation.Source(); ok {
+		_spec.SetField(doclibrary.FieldSource, field.TypeEnum, value)
+	}
 	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(doclibrary.FieldURL, field.TypeString, value)
+	}
+	if _u.mutation.DetailsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   doclibrary.DetailsTable,
+			Columns: []string{doclibrary.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(doclibrarydetail.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedDetailsIDs(); len(nodes) > 0 && !_u.mutation.DetailsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   doclibrary.DetailsTable,
+			Columns: []string{doclibrary.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(doclibrarydetail.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.DetailsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   doclibrary.DetailsTable,
+			Columns: []string{doclibrary.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(doclibrarydetail.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -238,6 +350,20 @@ func (_u *DocLibraryUpdateOne) ClearDescription() *DocLibraryUpdateOne {
 	return _u
 }
 
+// SetSource sets the "source" field.
+func (_u *DocLibraryUpdateOne) SetSource(v doclibrary.Source) *DocLibraryUpdateOne {
+	_u.mutation.SetSource(v)
+	return _u
+}
+
+// SetNillableSource sets the "source" field if the given value is not nil.
+func (_u *DocLibraryUpdateOne) SetNillableSource(v *doclibrary.Source) *DocLibraryUpdateOne {
+	if v != nil {
+		_u.SetSource(*v)
+	}
+	return _u
+}
+
 // SetURL sets the "url" field.
 func (_u *DocLibraryUpdateOne) SetURL(v string) *DocLibraryUpdateOne {
 	_u.mutation.SetURL(v)
@@ -252,9 +378,45 @@ func (_u *DocLibraryUpdateOne) SetNillableURL(v *string) *DocLibraryUpdateOne {
 	return _u
 }
 
+// AddDetailIDs adds the "details" edge to the DocLibraryDetail entity by IDs.
+func (_u *DocLibraryUpdateOne) AddDetailIDs(ids ...int) *DocLibraryUpdateOne {
+	_u.mutation.AddDetailIDs(ids...)
+	return _u
+}
+
+// AddDetails adds the "details" edges to the DocLibraryDetail entity.
+func (_u *DocLibraryUpdateOne) AddDetails(v ...*DocLibraryDetail) *DocLibraryUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddDetailIDs(ids...)
+}
+
 // Mutation returns the DocLibraryMutation object of the builder.
 func (_u *DocLibraryUpdateOne) Mutation() *DocLibraryMutation {
 	return _u.mutation
+}
+
+// ClearDetails clears all "details" edges to the DocLibraryDetail entity.
+func (_u *DocLibraryUpdateOne) ClearDetails() *DocLibraryUpdateOne {
+	_u.mutation.ClearDetails()
+	return _u
+}
+
+// RemoveDetailIDs removes the "details" edge to DocLibraryDetail entities by IDs.
+func (_u *DocLibraryUpdateOne) RemoveDetailIDs(ids ...int) *DocLibraryUpdateOne {
+	_u.mutation.RemoveDetailIDs(ids...)
+	return _u
+}
+
+// RemoveDetails removes "details" edges to DocLibraryDetail entities.
+func (_u *DocLibraryUpdateOne) RemoveDetails(v ...*DocLibraryDetail) *DocLibraryUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveDetailIDs(ids...)
 }
 
 // Where appends a list predicates to the DocLibraryUpdate builder.
@@ -306,7 +468,20 @@ func (_u *DocLibraryUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *DocLibraryUpdateOne) check() error {
+	if v, ok := _u.mutation.Source(); ok {
+		if err := doclibrary.SourceValidator(v); err != nil {
+			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "DocLibrary.source": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *DocLibraryUpdateOne) sqlSave(ctx context.Context) (_node *DocLibrary, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(doclibrary.Table, doclibrary.Columns, sqlgraph.NewFieldSpec(doclibrary.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -347,8 +522,56 @@ func (_u *DocLibraryUpdateOne) sqlSave(ctx context.Context) (_node *DocLibrary, 
 	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(doclibrary.FieldDescription, field.TypeString)
 	}
+	if value, ok := _u.mutation.Source(); ok {
+		_spec.SetField(doclibrary.FieldSource, field.TypeEnum, value)
+	}
 	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(doclibrary.FieldURL, field.TypeString, value)
+	}
+	if _u.mutation.DetailsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   doclibrary.DetailsTable,
+			Columns: []string{doclibrary.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(doclibrarydetail.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedDetailsIDs(); len(nodes) > 0 && !_u.mutation.DetailsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   doclibrary.DetailsTable,
+			Columns: []string{doclibrary.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(doclibrarydetail.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.DetailsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   doclibrary.DetailsTable,
+			Columns: []string{doclibrary.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(doclibrarydetail.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &DocLibrary{config: _u.config}
 	_spec.Assign = _node.assignValues

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"gobee/ent/doclibrary"
+	"gobee/ent/doclibrarydetail"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -74,6 +75,12 @@ func (_c *DocLibraryCreate) SetNillableDescription(v *string) *DocLibraryCreate 
 	return _c
 }
 
+// SetSource sets the "source" field.
+func (_c *DocLibraryCreate) SetSource(v doclibrary.Source) *DocLibraryCreate {
+	_c.mutation.SetSource(v)
+	return _c
+}
+
 // SetURL sets the "url" field.
 func (_c *DocLibraryCreate) SetURL(v string) *DocLibraryCreate {
 	_c.mutation.SetURL(v)
@@ -84,6 +91,21 @@ func (_c *DocLibraryCreate) SetURL(v string) *DocLibraryCreate {
 func (_c *DocLibraryCreate) SetID(v int) *DocLibraryCreate {
 	_c.mutation.SetID(v)
 	return _c
+}
+
+// AddDetailIDs adds the "details" edge to the DocLibraryDetail entity by IDs.
+func (_c *DocLibraryCreate) AddDetailIDs(ids ...int) *DocLibraryCreate {
+	_c.mutation.AddDetailIDs(ids...)
+	return _c
+}
+
+// AddDetails adds the "details" edges to the DocLibraryDetail entity.
+func (_c *DocLibraryCreate) AddDetails(v ...*DocLibraryDetail) *DocLibraryCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddDetailIDs(ids...)
 }
 
 // Mutation returns the DocLibraryMutation object of the builder.
@@ -145,6 +167,14 @@ func (_c *DocLibraryCreate) check() error {
 	if _, ok := _c.mutation.Alias(); !ok {
 		return &ValidationError{Name: "alias", err: errors.New(`ent: missing required field "DocLibrary.alias"`)}
 	}
+	if _, ok := _c.mutation.Source(); !ok {
+		return &ValidationError{Name: "source", err: errors.New(`ent: missing required field "DocLibrary.source"`)}
+	}
+	if v, ok := _c.mutation.Source(); ok {
+		if err := doclibrary.SourceValidator(v); err != nil {
+			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "DocLibrary.source": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "DocLibrary.url"`)}
 	}
@@ -200,9 +230,29 @@ func (_c *DocLibraryCreate) createSpec() (*DocLibrary, *sqlgraph.CreateSpec) {
 		_spec.SetField(doclibrary.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
+	if value, ok := _c.mutation.Source(); ok {
+		_spec.SetField(doclibrary.FieldSource, field.TypeEnum, value)
+		_node.Source = value
+	}
 	if value, ok := _c.mutation.URL(); ok {
 		_spec.SetField(doclibrary.FieldURL, field.TypeString, value)
 		_node.URL = value
+	}
+	if nodes := _c.mutation.DetailsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   doclibrary.DetailsTable,
+			Columns: []string{doclibrary.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(doclibrarydetail.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

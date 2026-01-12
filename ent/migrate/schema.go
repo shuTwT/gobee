@@ -162,6 +162,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "alias", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "source", Type: field.TypeEnum, Enums: []string{"git", "openapi", "llms_txt", "website"}},
 		{Name: "url", Type: field.TypeString},
 	}
 	// DocLibrariesTable holds the schema information for the "doc_libraries" table.
@@ -169,6 +170,34 @@ var (
 		Name:       "doc_libraries",
 		Columns:    DocLibrariesColumns,
 		PrimaryKey: []*schema.Column{DocLibrariesColumns[0]},
+	}
+	// DocLibraryDetailsColumns holds the columns for the "doc_library_details" table.
+	DocLibraryDetailsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "title", Type: field.TypeString},
+		{Name: "version", Type: field.TypeString, Nullable: true},
+		{Name: "content", Type: field.TypeString, Size: 2147483647},
+		{Name: "parent_id", Type: field.TypeInt, Nullable: true},
+		{Name: "path", Type: field.TypeString, Nullable: true},
+		{Name: "url", Type: field.TypeString, Nullable: true},
+		{Name: "language", Type: field.TypeString, Nullable: true, Default: "zh"},
+		{Name: "library_id", Type: field.TypeInt, Nullable: true},
+	}
+	// DocLibraryDetailsTable holds the schema information for the "doc_library_details" table.
+	DocLibraryDetailsTable = &schema.Table{
+		Name:       "doc_library_details",
+		Columns:    DocLibraryDetailsColumns,
+		PrimaryKey: []*schema.Column{DocLibraryDetailsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "doc_library_details_doc_libraries_details",
+				Columns:    []*schema.Column{DocLibraryDetailsColumns[10]},
+				RefColumns: []*schema.Column{DocLibrariesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// EssaysColumns holds the columns for the "essays" table.
 	EssaysColumns = []*schema.Column{
@@ -766,6 +795,7 @@ var (
 		CouponsTable,
 		CouponUsagesTable,
 		DocLibrariesTable,
+		DocLibraryDetailsTable,
 		EssaysTable,
 		FlinksTable,
 		FlinkGroupsTable,
@@ -796,6 +826,7 @@ var (
 )
 
 func init() {
+	DocLibraryDetailsTable.ForeignKeys[0].RefTable = DocLibrariesTable
 	FlinksTable.ForeignKeys[0].RefTable = FlinkGroupsTable
 	FilesTable.ForeignKeys[0].RefTable = StorageStrategiesTable
 	MembersTable.ForeignKeys[0].RefTable = MemberLevelsTable

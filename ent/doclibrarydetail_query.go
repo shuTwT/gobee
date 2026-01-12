@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fmt"
 	"gobee/ent/doclibrary"
 	"gobee/ent/doclibrarydetail"
@@ -17,53 +16,53 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// DocLibraryQuery is the builder for querying DocLibrary entities.
-type DocLibraryQuery struct {
+// DocLibraryDetailQuery is the builder for querying DocLibraryDetail entities.
+type DocLibraryDetailQuery struct {
 	config
 	ctx         *QueryContext
-	order       []doclibrary.OrderOption
+	order       []doclibrarydetail.OrderOption
 	inters      []Interceptor
-	predicates  []predicate.DocLibrary
-	withDetails *DocLibraryDetailQuery
+	predicates  []predicate.DocLibraryDetail
+	withLibrary *DocLibraryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the DocLibraryQuery builder.
-func (_q *DocLibraryQuery) Where(ps ...predicate.DocLibrary) *DocLibraryQuery {
+// Where adds a new predicate for the DocLibraryDetailQuery builder.
+func (_q *DocLibraryDetailQuery) Where(ps ...predicate.DocLibraryDetail) *DocLibraryDetailQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *DocLibraryQuery) Limit(limit int) *DocLibraryQuery {
+func (_q *DocLibraryDetailQuery) Limit(limit int) *DocLibraryDetailQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *DocLibraryQuery) Offset(offset int) *DocLibraryQuery {
+func (_q *DocLibraryDetailQuery) Offset(offset int) *DocLibraryDetailQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *DocLibraryQuery) Unique(unique bool) *DocLibraryQuery {
+func (_q *DocLibraryDetailQuery) Unique(unique bool) *DocLibraryDetailQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *DocLibraryQuery) Order(o ...doclibrary.OrderOption) *DocLibraryQuery {
+func (_q *DocLibraryDetailQuery) Order(o ...doclibrarydetail.OrderOption) *DocLibraryDetailQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
-// QueryDetails chains the current query on the "details" edge.
-func (_q *DocLibraryQuery) QueryDetails() *DocLibraryDetailQuery {
-	query := (&DocLibraryDetailClient{config: _q.config}).Query()
+// QueryLibrary chains the current query on the "library" edge.
+func (_q *DocLibraryDetailQuery) QueryLibrary() *DocLibraryQuery {
+	query := (&DocLibraryClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -73,9 +72,9 @@ func (_q *DocLibraryQuery) QueryDetails() *DocLibraryDetailQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(doclibrary.Table, doclibrary.FieldID, selector),
-			sqlgraph.To(doclibrarydetail.Table, doclibrarydetail.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, doclibrary.DetailsTable, doclibrary.DetailsColumn),
+			sqlgraph.From(doclibrarydetail.Table, doclibrarydetail.FieldID, selector),
+			sqlgraph.To(doclibrary.Table, doclibrary.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, doclibrarydetail.LibraryTable, doclibrarydetail.LibraryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -83,21 +82,21 @@ func (_q *DocLibraryQuery) QueryDetails() *DocLibraryDetailQuery {
 	return query
 }
 
-// First returns the first DocLibrary entity from the query.
-// Returns a *NotFoundError when no DocLibrary was found.
-func (_q *DocLibraryQuery) First(ctx context.Context) (*DocLibrary, error) {
+// First returns the first DocLibraryDetail entity from the query.
+// Returns a *NotFoundError when no DocLibraryDetail was found.
+func (_q *DocLibraryDetailQuery) First(ctx context.Context) (*DocLibraryDetail, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{doclibrary.Label}
+		return nil, &NotFoundError{doclibrarydetail.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *DocLibraryQuery) FirstX(ctx context.Context) *DocLibrary {
+func (_q *DocLibraryDetailQuery) FirstX(ctx context.Context) *DocLibraryDetail {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -105,22 +104,22 @@ func (_q *DocLibraryQuery) FirstX(ctx context.Context) *DocLibrary {
 	return node
 }
 
-// FirstID returns the first DocLibrary ID from the query.
-// Returns a *NotFoundError when no DocLibrary ID was found.
-func (_q *DocLibraryQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first DocLibraryDetail ID from the query.
+// Returns a *NotFoundError when no DocLibraryDetail ID was found.
+func (_q *DocLibraryDetailQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{doclibrary.Label}
+		err = &NotFoundError{doclibrarydetail.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *DocLibraryQuery) FirstIDX(ctx context.Context) int {
+func (_q *DocLibraryDetailQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -128,10 +127,10 @@ func (_q *DocLibraryQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single DocLibrary entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one DocLibrary entity is found.
-// Returns a *NotFoundError when no DocLibrary entities are found.
-func (_q *DocLibraryQuery) Only(ctx context.Context) (*DocLibrary, error) {
+// Only returns a single DocLibraryDetail entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one DocLibraryDetail entity is found.
+// Returns a *NotFoundError when no DocLibraryDetail entities are found.
+func (_q *DocLibraryDetailQuery) Only(ctx context.Context) (*DocLibraryDetail, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -140,14 +139,14 @@ func (_q *DocLibraryQuery) Only(ctx context.Context) (*DocLibrary, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{doclibrary.Label}
+		return nil, &NotFoundError{doclibrarydetail.Label}
 	default:
-		return nil, &NotSingularError{doclibrary.Label}
+		return nil, &NotSingularError{doclibrarydetail.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *DocLibraryQuery) OnlyX(ctx context.Context) *DocLibrary {
+func (_q *DocLibraryDetailQuery) OnlyX(ctx context.Context) *DocLibraryDetail {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -155,10 +154,10 @@ func (_q *DocLibraryQuery) OnlyX(ctx context.Context) *DocLibrary {
 	return node
 }
 
-// OnlyID is like Only, but returns the only DocLibrary ID in the query.
-// Returns a *NotSingularError when more than one DocLibrary ID is found.
+// OnlyID is like Only, but returns the only DocLibraryDetail ID in the query.
+// Returns a *NotSingularError when more than one DocLibraryDetail ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *DocLibraryQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *DocLibraryDetailQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
@@ -167,15 +166,15 @@ func (_q *DocLibraryQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{doclibrary.Label}
+		err = &NotFoundError{doclibrarydetail.Label}
 	default:
-		err = &NotSingularError{doclibrary.Label}
+		err = &NotSingularError{doclibrarydetail.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *DocLibraryQuery) OnlyIDX(ctx context.Context) int {
+func (_q *DocLibraryDetailQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -183,18 +182,18 @@ func (_q *DocLibraryQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of DocLibraries.
-func (_q *DocLibraryQuery) All(ctx context.Context) ([]*DocLibrary, error) {
+// All executes the query and returns a list of DocLibraryDetails.
+func (_q *DocLibraryDetailQuery) All(ctx context.Context) ([]*DocLibraryDetail, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*DocLibrary, *DocLibraryQuery]()
-	return withInterceptors[[]*DocLibrary](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*DocLibraryDetail, *DocLibraryDetailQuery]()
+	return withInterceptors[[]*DocLibraryDetail](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *DocLibraryQuery) AllX(ctx context.Context) []*DocLibrary {
+func (_q *DocLibraryDetailQuery) AllX(ctx context.Context) []*DocLibraryDetail {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -202,20 +201,20 @@ func (_q *DocLibraryQuery) AllX(ctx context.Context) []*DocLibrary {
 	return nodes
 }
 
-// IDs executes the query and returns a list of DocLibrary IDs.
-func (_q *DocLibraryQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of DocLibraryDetail IDs.
+func (_q *DocLibraryDetailQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(doclibrary.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(doclibrarydetail.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *DocLibraryQuery) IDsX(ctx context.Context) []int {
+func (_q *DocLibraryDetailQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -224,16 +223,16 @@ func (_q *DocLibraryQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (_q *DocLibraryQuery) Count(ctx context.Context) (int, error) {
+func (_q *DocLibraryDetailQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*DocLibraryQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*DocLibraryDetailQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *DocLibraryQuery) CountX(ctx context.Context) int {
+func (_q *DocLibraryDetailQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -242,7 +241,7 @@ func (_q *DocLibraryQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *DocLibraryQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *DocLibraryDetailQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -255,7 +254,7 @@ func (_q *DocLibraryQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *DocLibraryQuery) ExistX(ctx context.Context) bool {
+func (_q *DocLibraryDetailQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -263,33 +262,33 @@ func (_q *DocLibraryQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the DocLibraryQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the DocLibraryDetailQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *DocLibraryQuery) Clone() *DocLibraryQuery {
+func (_q *DocLibraryDetailQuery) Clone() *DocLibraryDetailQuery {
 	if _q == nil {
 		return nil
 	}
-	return &DocLibraryQuery{
+	return &DocLibraryDetailQuery{
 		config:      _q.config,
 		ctx:         _q.ctx.Clone(),
-		order:       append([]doclibrary.OrderOption{}, _q.order...),
+		order:       append([]doclibrarydetail.OrderOption{}, _q.order...),
 		inters:      append([]Interceptor{}, _q.inters...),
-		predicates:  append([]predicate.DocLibrary{}, _q.predicates...),
-		withDetails: _q.withDetails.Clone(),
+		predicates:  append([]predicate.DocLibraryDetail{}, _q.predicates...),
+		withLibrary: _q.withLibrary.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
 }
 
-// WithDetails tells the query-builder to eager-load the nodes that are connected to
-// the "details" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *DocLibraryQuery) WithDetails(opts ...func(*DocLibraryDetailQuery)) *DocLibraryQuery {
-	query := (&DocLibraryDetailClient{config: _q.config}).Query()
+// WithLibrary tells the query-builder to eager-load the nodes that are connected to
+// the "library" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *DocLibraryDetailQuery) WithLibrary(opts ...func(*DocLibraryQuery)) *DocLibraryDetailQuery {
+	query := (&DocLibraryClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withDetails = query
+	_q.withLibrary = query
 	return _q
 }
 
@@ -303,15 +302,15 @@ func (_q *DocLibraryQuery) WithDetails(opts ...func(*DocLibraryDetailQuery)) *Do
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.DocLibrary.Query().
-//		GroupBy(doclibrary.FieldCreatedAt).
+//	client.DocLibraryDetail.Query().
+//		GroupBy(doclibrarydetail.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *DocLibraryQuery) GroupBy(field string, fields ...string) *DocLibraryGroupBy {
+func (_q *DocLibraryDetailQuery) GroupBy(field string, fields ...string) *DocLibraryDetailGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &DocLibraryGroupBy{build: _q}
+	grbuild := &DocLibraryDetailGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = doclibrary.Label
+	grbuild.label = doclibrarydetail.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -325,23 +324,23 @@ func (_q *DocLibraryQuery) GroupBy(field string, fields ...string) *DocLibraryGr
 //		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
-//	client.DocLibrary.Query().
-//		Select(doclibrary.FieldCreatedAt).
+//	client.DocLibraryDetail.Query().
+//		Select(doclibrarydetail.FieldCreatedAt).
 //		Scan(ctx, &v)
-func (_q *DocLibraryQuery) Select(fields ...string) *DocLibrarySelect {
+func (_q *DocLibraryDetailQuery) Select(fields ...string) *DocLibraryDetailSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &DocLibrarySelect{DocLibraryQuery: _q}
-	sbuild.label = doclibrary.Label
+	sbuild := &DocLibraryDetailSelect{DocLibraryDetailQuery: _q}
+	sbuild.label = doclibrarydetail.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a DocLibrarySelect configured with the given aggregations.
-func (_q *DocLibraryQuery) Aggregate(fns ...AggregateFunc) *DocLibrarySelect {
+// Aggregate returns a DocLibraryDetailSelect configured with the given aggregations.
+func (_q *DocLibraryDetailQuery) Aggregate(fns ...AggregateFunc) *DocLibraryDetailSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *DocLibraryQuery) prepareQuery(ctx context.Context) error {
+func (_q *DocLibraryDetailQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -353,7 +352,7 @@ func (_q *DocLibraryQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !doclibrary.ValidColumn(f) {
+		if !doclibrarydetail.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -367,19 +366,19 @@ func (_q *DocLibraryQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *DocLibraryQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*DocLibrary, error) {
+func (_q *DocLibraryDetailQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*DocLibraryDetail, error) {
 	var (
-		nodes       = []*DocLibrary{}
+		nodes       = []*DocLibraryDetail{}
 		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
-			_q.withDetails != nil,
+			_q.withLibrary != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*DocLibrary).scanValues(nil, columns)
+		return (*DocLibraryDetail).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &DocLibrary{config: _q.config}
+		node := &DocLibraryDetail{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -393,48 +392,46 @@ func (_q *DocLibraryQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*D
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := _q.withDetails; query != nil {
-		if err := _q.loadDetails(ctx, query, nodes,
-			func(n *DocLibrary) { n.Edges.Details = []*DocLibraryDetail{} },
-			func(n *DocLibrary, e *DocLibraryDetail) { n.Edges.Details = append(n.Edges.Details, e) }); err != nil {
+	if query := _q.withLibrary; query != nil {
+		if err := _q.loadLibrary(ctx, query, nodes, nil,
+			func(n *DocLibraryDetail, e *DocLibrary) { n.Edges.Library = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (_q *DocLibraryQuery) loadDetails(ctx context.Context, query *DocLibraryDetailQuery, nodes []*DocLibrary, init func(*DocLibrary), assign func(*DocLibrary, *DocLibraryDetail)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*DocLibrary)
+func (_q *DocLibraryDetailQuery) loadLibrary(ctx context.Context, query *DocLibraryQuery, nodes []*DocLibraryDetail, init func(*DocLibraryDetail), assign func(*DocLibraryDetail, *DocLibrary)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*DocLibraryDetail)
 	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
+		fk := nodes[i].LibraryID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
 		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(doclibrarydetail.FieldLibraryID)
+	if len(ids) == 0 {
+		return nil
 	}
-	query.Where(predicate.DocLibraryDetail(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(doclibrary.DetailsColumn), fks...))
-	}))
+	query.Where(doclibrary.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.LibraryID
-		node, ok := nodeids[fk]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "library_id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "library_id" returned %v`, n.ID)
 		}
-		assign(node, n)
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
 	}
 	return nil
 }
 
-func (_q *DocLibraryQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *DocLibraryDetailQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -443,8 +440,8 @@ func (_q *DocLibraryQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *DocLibraryQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(doclibrary.Table, doclibrary.Columns, sqlgraph.NewFieldSpec(doclibrary.FieldID, field.TypeInt))
+func (_q *DocLibraryDetailQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(doclibrarydetail.Table, doclibrarydetail.Columns, sqlgraph.NewFieldSpec(doclibrarydetail.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -453,11 +450,14 @@ func (_q *DocLibraryQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, doclibrary.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, doclibrarydetail.FieldID)
 		for i := range fields {
-			if fields[i] != doclibrary.FieldID {
+			if fields[i] != doclibrarydetail.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withLibrary != nil {
+			_spec.Node.AddColumnOnce(doclibrarydetail.FieldLibraryID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {
@@ -483,12 +483,12 @@ func (_q *DocLibraryQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *DocLibraryQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *DocLibraryDetailQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(doclibrary.Table)
+	t1 := builder.Table(doclibrarydetail.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = doclibrary.Columns
+		columns = doclibrarydetail.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -515,28 +515,28 @@ func (_q *DocLibraryQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// DocLibraryGroupBy is the group-by builder for DocLibrary entities.
-type DocLibraryGroupBy struct {
+// DocLibraryDetailGroupBy is the group-by builder for DocLibraryDetail entities.
+type DocLibraryDetailGroupBy struct {
 	selector
-	build *DocLibraryQuery
+	build *DocLibraryDetailQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *DocLibraryGroupBy) Aggregate(fns ...AggregateFunc) *DocLibraryGroupBy {
+func (_g *DocLibraryDetailGroupBy) Aggregate(fns ...AggregateFunc) *DocLibraryDetailGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *DocLibraryGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *DocLibraryDetailGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*DocLibraryQuery, *DocLibraryGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*DocLibraryDetailQuery, *DocLibraryDetailGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *DocLibraryGroupBy) sqlScan(ctx context.Context, root *DocLibraryQuery, v any) error {
+func (_g *DocLibraryDetailGroupBy) sqlScan(ctx context.Context, root *DocLibraryDetailQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -563,28 +563,28 @@ func (_g *DocLibraryGroupBy) sqlScan(ctx context.Context, root *DocLibraryQuery,
 	return sql.ScanSlice(rows, v)
 }
 
-// DocLibrarySelect is the builder for selecting fields of DocLibrary entities.
-type DocLibrarySelect struct {
-	*DocLibraryQuery
+// DocLibraryDetailSelect is the builder for selecting fields of DocLibraryDetail entities.
+type DocLibraryDetailSelect struct {
+	*DocLibraryDetailQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *DocLibrarySelect) Aggregate(fns ...AggregateFunc) *DocLibrarySelect {
+func (_s *DocLibraryDetailSelect) Aggregate(fns ...AggregateFunc) *DocLibraryDetailSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *DocLibrarySelect) Scan(ctx context.Context, v any) error {
+func (_s *DocLibraryDetailSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*DocLibraryQuery, *DocLibrarySelect](ctx, _s.DocLibraryQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*DocLibraryDetailQuery, *DocLibraryDetailSelect](ctx, _s.DocLibraryDetailQuery, _s, _s.inters, v)
 }
 
-func (_s *DocLibrarySelect) sqlScan(ctx context.Context, root *DocLibraryQuery, v any) error {
+func (_s *DocLibraryDetailSelect) sqlScan(ctx context.Context, root *DocLibraryDetailQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {

@@ -6,6 +6,8 @@ import (
 	albumphoto_handler "gobee/internal/handlers/content/albumphoto"
 	category_handler "gobee/internal/handlers/content/category"
 	comment_handler "gobee/internal/handlers/content/comment"
+	doclibrary_handler "gobee/internal/handlers/content/doclibrary"
+	doclibrarydetail_handler "gobee/internal/handlers/content/doclibrarydetail"
 	essay_handler "gobee/internal/handlers/content/essay"
 	flink_handler "gobee/internal/handlers/content/flink"
 	flinkgroup_handler "gobee/internal/handlers/content/flinkgroup"
@@ -36,36 +38,38 @@ import (
 )
 
 type HandlerMap struct {
-	AlbumHandler           album_handler.AlbumHandler
-	AlbumPhotoHandler      albumphoto_handler.AlbumPhotoHandler
-	ApiInterfaceHandler    apiinterface_handler.ApiInterfaceHandler
-	AuthHandler            auth_handler.AuthHandler
-	CategoryHandler        category_handler.CategoryHandler
-	CommentHandler         comment_handler.CommentHandler
-	CommonHandler          common_handler.CommonHandler
-	CouponHandler          coupon_handler.CouponHandler
-	CouponUsageHandler     couponusage_handler.CouponUsageHandler
-	FileHandler            file_handler.FileHandler
-	FlinkHandler           flink_handler.FlinkHandler
-	FlinkGroupHandler      flinkgroup_handler.FlinkGroupHandler
-	FriendCircleHandler    friendcircle_handler.FriendCircleHandler
-	InitializeHandler      initialize_handler.InitializeHandler
-	MemberHandler          member_handler.MemberHandler
-	MemberLevelHandler     memberlevel_handler.MemberLevelHandler
-	MigrationHandler       migration_handler.MigrationHandler
-	NotificationHandler    notification_handler.NotificationHandler
-	PayOrderHandler        payorder_handler.PayOrderHandler
-	PostHandler            post_handler.PostHandler
-	ProductHandler         product_handler.ProductHandler
-	RoleHandler            role_handler.RoleHandler
-	RouteHandler           route_handler.RouteHandler
-	SettingHandler         setting_handler.SettingHandler
-	TagHandler             tag_handler.TagHandler
-	UserHandler            user_handler.UserHandler
-	EssayHandler           essay_handler.EssayHandler
-	StorageStrategyHandler storagestrategy.StorageStrategyHandler
-	VisitHandler           visit_handler.VisitHandler
-	WalletHandler          wallet_handler.WalletHandler
+	AlbumHandler            album_handler.AlbumHandler
+	AlbumPhotoHandler       albumphoto_handler.AlbumPhotoHandler
+	ApiInterfaceHandler     apiinterface_handler.ApiInterfaceHandler
+	AuthHandler             auth_handler.AuthHandler
+	CategoryHandler         category_handler.CategoryHandler
+	CommentHandler          comment_handler.CommentHandler
+	CommonHandler           common_handler.CommonHandler
+	CouponHandler           coupon_handler.CouponHandler
+	CouponUsageHandler      couponusage_handler.CouponUsageHandler
+	DocLibraryHandler       doclibrary_handler.DocLibraryHandler
+	DocLibraryDetailHandler doclibrarydetail_handler.DocLibraryDetailHandler
+	FileHandler             file_handler.FileHandler
+	FlinkHandler            flink_handler.FlinkHandler
+	FlinkGroupHandler       flinkgroup_handler.FlinkGroupHandler
+	FriendCircleHandler     friendcircle_handler.FriendCircleHandler
+	InitializeHandler       initialize_handler.InitializeHandler
+	MemberHandler           member_handler.MemberHandler
+	MemberLevelHandler      memberlevel_handler.MemberLevelHandler
+	MigrationHandler        migration_handler.MigrationHandler
+	NotificationHandler     notification_handler.NotificationHandler
+	PayOrderHandler         payorder_handler.PayOrderHandler
+	PostHandler             post_handler.PostHandler
+	ProductHandler          product_handler.ProductHandler
+	RoleHandler             role_handler.RoleHandler
+	RouteHandler            route_handler.RouteHandler
+	SettingHandler          setting_handler.SettingHandler
+	TagHandler              tag_handler.TagHandler
+	UserHandler             user_handler.UserHandler
+	EssayHandler            essay_handler.EssayHandler
+	StorageStrategyHandler  storagestrategy.StorageStrategyHandler
+	VisitHandler            visit_handler.VisitHandler
+	WalletHandler           wallet_handler.WalletHandler
 }
 
 func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
@@ -78,6 +82,8 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	commonHandler := common_handler.NewCommonHandlerImpl(serviceMap.CommonService)
 	couponHandler := coupon_handler.NewCouponHandlerImpl(serviceMap.CouponService)
 	couponUsageHandler := couponusage_handler.NewCouponUsageHandlerImpl(serviceMap.CouponUsageService)
+	doclibraryHandler := doclibrary_handler.NewDocLibraryHandlerImpl(serviceMap.DocLibraryService)
+	doclibrarydetailHandler := doclibrarydetail_handler.NewDocLibraryDetailHandlerImpl(serviceMap.DocLibraryDetailService)
 	fileHandler := file_handler.NewFileHandlerImpl(serviceMap.FileService)
 	flinkHandler := flink_handler.NewFlinkHandlerImpl(database.DB, serviceMap.FlinkService)
 	flinkGroupHandler := flinkgroup_handler.NewFlinkGroupHandlerImpl(database.DB, serviceMap.FlinkService)
@@ -101,36 +107,38 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	notificationHandler := notification_handler.NewNotificationHandlerImpl(serviceMap.NotificationService)
 
 	handlerMap := HandlerMap{
-		AlbumHandler:           albumHandler,
-		AlbumPhotoHandler:      albnumPhotoHandler,
-		ApiInterfaceHandler:    apiInterfaceHandler,
-		AuthHandler:            authHandler,
-		CategoryHandler:        categoryHandler,
-		CommentHandler:         commentHandler,
-		CommonHandler:          commonHandler,
-		CouponHandler:          couponHandler,
-		CouponUsageHandler:     couponUsageHandler,
-		FileHandler:            fileHandler,
-		FlinkHandler:           flinkHandler,
-		FlinkGroupHandler:      flinkGroupHandler,
-		FriendCircleHandler:    friendCircleHandler,
-		InitializeHandler:      initializeHandler,
-		MemberHandler:          memberHandler,
-		MemberLevelHandler:     memberLevelHandler,
-		MigrationHandler:       migrationHandler,
-		NotificationHandler:    notificationHandler,
-		PayOrderHandler:        payOrderHandler,
-		PostHandler:            postHandler,
-		ProductHandler:         productHandler,
-		RoleHandler:            roleHandler,
-		RouteHandler:           routeHandler,
-		SettingHandler:         settingHandler,
-		TagHandler:             tagHandler,
-		UserHandler:            userHandler,
-		EssayHandler:           essayHandler,
-		StorageStrategyHandler: storageStrategyHandler,
-		VisitHandler:           visitHandler,
-		WalletHandler:          walletHandler,
+		AlbumHandler:            albumHandler,
+		AlbumPhotoHandler:       albnumPhotoHandler,
+		ApiInterfaceHandler:     apiInterfaceHandler,
+		AuthHandler:             authHandler,
+		CategoryHandler:         categoryHandler,
+		CommentHandler:          commentHandler,
+		CommonHandler:           commonHandler,
+		CouponHandler:           couponHandler,
+		CouponUsageHandler:      couponUsageHandler,
+		DocLibraryHandler:       doclibraryHandler,
+		DocLibraryDetailHandler: doclibrarydetailHandler,
+		FileHandler:             fileHandler,
+		FlinkHandler:            flinkHandler,
+		FlinkGroupHandler:       flinkGroupHandler,
+		FriendCircleHandler:     friendCircleHandler,
+		InitializeHandler:       initializeHandler,
+		MemberHandler:           memberHandler,
+		MemberLevelHandler:      memberLevelHandler,
+		MigrationHandler:        migrationHandler,
+		NotificationHandler:     notificationHandler,
+		PayOrderHandler:         payOrderHandler,
+		PostHandler:             postHandler,
+		ProductHandler:          productHandler,
+		RoleHandler:             roleHandler,
+		RouteHandler:            routeHandler,
+		SettingHandler:          settingHandler,
+		TagHandler:              tagHandler,
+		UserHandler:             userHandler,
+		EssayHandler:            essayHandler,
+		StorageStrategyHandler:  storageStrategyHandler,
+		VisitHandler:            visitHandler,
+		WalletHandler:           walletHandler,
 	}
 
 	return handlerMap

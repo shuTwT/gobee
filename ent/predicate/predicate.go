@@ -30,6 +30,9 @@ type CouponUsage func(*sql.Selector)
 // DocLibrary is the predicate function for doclibrary builders.
 type DocLibrary func(*sql.Selector)
 
+// DocLibraryDetail is the predicate function for doclibrarydetail builders.
+type DocLibraryDetail func(*sql.Selector)
+
 // Essay is the predicate function for essay builders.
 type Essay func(*sql.Selector)
 

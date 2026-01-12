@@ -14,6 +14,7 @@ import (
 	"gobee/ent/coupon"
 	"gobee/ent/couponusage"
 	"gobee/ent/doclibrary"
+	"gobee/ent/doclibrarydetail"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
@@ -63,6 +64,7 @@ const (
 	TypeCoupon              = "Coupon"
 	TypeCouponUsage         = "CouponUsage"
 	TypeDocLibrary          = "DocLibrary"
+	TypeDocLibraryDetail    = "DocLibraryDetail"
 	TypeEssay               = "Essay"
 	TypeFLink               = "FLink"
 	TypeFLinkGroup          = "FLinkGroup"
@@ -6948,19 +6950,23 @@ func (m *CouponUsageMutation) ResetEdge(name string) error {
 // DocLibraryMutation represents an operation that mutates the DocLibrary nodes in the graph.
 type DocLibraryMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	created_at    *time.Time
-	updated_at    *time.Time
-	name          *string
-	alias         *string
-	description   *string
-	url           *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*DocLibrary, error)
-	predicates    []predicate.DocLibrary
+	op             Op
+	typ            string
+	id             *int
+	created_at     *time.Time
+	updated_at     *time.Time
+	name           *string
+	alias          *string
+	description    *string
+	source         *doclibrary.Source
+	url            *string
+	clearedFields  map[string]struct{}
+	details        map[int]struct{}
+	removeddetails map[int]struct{}
+	cleareddetails bool
+	done           bool
+	oldValue       func(context.Context) (*DocLibrary, error)
+	predicates     []predicate.DocLibrary
 }
 
 var _ ent.Mutation = (*DocLibraryMutation)(nil)
@@ -7260,6 +7266,42 @@ func (m *DocLibraryMutation) ResetDescription() {
 	delete(m.clearedFields, doclibrary.FieldDescription)
 }
 
+// SetSource sets the "source" field.
+func (m *DocLibraryMutation) SetSource(d doclibrary.Source) {
+	m.source = &d
+}
+
+// Source returns the value of the "source" field in the mutation.
+func (m *DocLibraryMutation) Source() (r doclibrary.Source, exists bool) {
+	v := m.source
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSource returns the old "source" field's value of the DocLibrary entity.
+// If the DocLibrary object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryMutation) OldSource(ctx context.Context) (v doclibrary.Source, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSource is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSource requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSource: %w", err)
+	}
+	return oldValue.Source, nil
+}
+
+// ResetSource resets all changes to the "source" field.
+func (m *DocLibraryMutation) ResetSource() {
+	m.source = nil
+}
+
 // SetURL sets the "url" field.
 func (m *DocLibraryMutation) SetURL(s string) {
 	m.url = &s
@@ -7296,6 +7338,60 @@ func (m *DocLibraryMutation) ResetURL() {
 	m.url = nil
 }
 
+// AddDetailIDs adds the "details" edge to the DocLibraryDetail entity by ids.
+func (m *DocLibraryMutation) AddDetailIDs(ids ...int) {
+	if m.details == nil {
+		m.details = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.details[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDetails clears the "details" edge to the DocLibraryDetail entity.
+func (m *DocLibraryMutation) ClearDetails() {
+	m.cleareddetails = true
+}
+
+// DetailsCleared reports if the "details" edge to the DocLibraryDetail entity was cleared.
+func (m *DocLibraryMutation) DetailsCleared() bool {
+	return m.cleareddetails
+}
+
+// RemoveDetailIDs removes the "details" edge to the DocLibraryDetail entity by IDs.
+func (m *DocLibraryMutation) RemoveDetailIDs(ids ...int) {
+	if m.removeddetails == nil {
+		m.removeddetails = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.details, ids[i])
+		m.removeddetails[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDetails returns the removed IDs of the "details" edge to the DocLibraryDetail entity.
+func (m *DocLibraryMutation) RemovedDetailsIDs() (ids []int) {
+	for id := range m.removeddetails {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DetailsIDs returns the "details" edge IDs in the mutation.
+func (m *DocLibraryMutation) DetailsIDs() (ids []int) {
+	for id := range m.details {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDetails resets all changes to the "details" edge.
+func (m *DocLibraryMutation) ResetDetails() {
+	m.details = nil
+	m.cleareddetails = false
+	m.removeddetails = nil
+}
+
 // Where appends a list predicates to the DocLibraryMutation builder.
 func (m *DocLibraryMutation) Where(ps ...predicate.DocLibrary) {
 	m.predicates = append(m.predicates, ps...)
@@ -7330,7 +7426,7 @@ func (m *DocLibraryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DocLibraryMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, doclibrary.FieldCreatedAt)
 	}
@@ -7345,6 +7441,9 @@ func (m *DocLibraryMutation) Fields() []string {
 	}
 	if m.description != nil {
 		fields = append(fields, doclibrary.FieldDescription)
+	}
+	if m.source != nil {
+		fields = append(fields, doclibrary.FieldSource)
 	}
 	if m.url != nil {
 		fields = append(fields, doclibrary.FieldURL)
@@ -7367,6 +7466,8 @@ func (m *DocLibraryMutation) Field(name string) (ent.Value, bool) {
 		return m.Alias()
 	case doclibrary.FieldDescription:
 		return m.Description()
+	case doclibrary.FieldSource:
+		return m.Source()
 	case doclibrary.FieldURL:
 		return m.URL()
 	}
@@ -7388,6 +7489,8 @@ func (m *DocLibraryMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldAlias(ctx)
 	case doclibrary.FieldDescription:
 		return m.OldDescription(ctx)
+	case doclibrary.FieldSource:
+		return m.OldSource(ctx)
 	case doclibrary.FieldURL:
 		return m.OldURL(ctx)
 	}
@@ -7433,6 +7536,13 @@ func (m *DocLibraryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case doclibrary.FieldSource:
+		v, ok := value.(doclibrary.Source)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSource(v)
 		return nil
 	case doclibrary.FieldURL:
 		v, ok := value.(string)
@@ -7514,6 +7624,9 @@ func (m *DocLibraryMutation) ResetField(name string) error {
 	case doclibrary.FieldDescription:
 		m.ResetDescription()
 		return nil
+	case doclibrary.FieldSource:
+		m.ResetSource()
+		return nil
 	case doclibrary.FieldURL:
 		m.ResetURL()
 		return nil
@@ -7523,50 +7636,1112 @@ func (m *DocLibraryMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DocLibraryMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.details != nil {
+		edges = append(edges, doclibrary.EdgeDetails)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *DocLibraryMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case doclibrary.EdgeDetails:
+		ids := make([]ent.Value, 0, len(m.details))
+		for id := range m.details {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DocLibraryMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removeddetails != nil {
+		edges = append(edges, doclibrary.EdgeDetails)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *DocLibraryMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case doclibrary.EdgeDetails:
+		ids := make([]ent.Value, 0, len(m.removeddetails))
+		for id := range m.removeddetails {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DocLibraryMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.cleareddetails {
+		edges = append(edges, doclibrary.EdgeDetails)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *DocLibraryMutation) EdgeCleared(name string) bool {
+	switch name {
+	case doclibrary.EdgeDetails:
+		return m.cleareddetails
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *DocLibraryMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown DocLibrary unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *DocLibraryMutation) ResetEdge(name string) error {
+	switch name {
+	case doclibrary.EdgeDetails:
+		m.ResetDetails()
+		return nil
+	}
 	return fmt.Errorf("unknown DocLibrary edge %s", name)
+}
+
+// DocLibraryDetailMutation represents an operation that mutates the DocLibraryDetail nodes in the graph.
+type DocLibraryDetailMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int
+	created_at     *time.Time
+	updated_at     *time.Time
+	title          *string
+	version        *string
+	content        *string
+	parent_id      *int
+	addparent_id   *int
+	_path          *string
+	url            *string
+	language       *string
+	clearedFields  map[string]struct{}
+	library        *int
+	clearedlibrary bool
+	done           bool
+	oldValue       func(context.Context) (*DocLibraryDetail, error)
+	predicates     []predicate.DocLibraryDetail
+}
+
+var _ ent.Mutation = (*DocLibraryDetailMutation)(nil)
+
+// doclibrarydetailOption allows management of the mutation configuration using functional options.
+type doclibrarydetailOption func(*DocLibraryDetailMutation)
+
+// newDocLibraryDetailMutation creates new mutation for the DocLibraryDetail entity.
+func newDocLibraryDetailMutation(c config, op Op, opts ...doclibrarydetailOption) *DocLibraryDetailMutation {
+	m := &DocLibraryDetailMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeDocLibraryDetail,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withDocLibraryDetailID sets the ID field of the mutation.
+func withDocLibraryDetailID(id int) doclibrarydetailOption {
+	return func(m *DocLibraryDetailMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *DocLibraryDetail
+		)
+		m.oldValue = func(ctx context.Context) (*DocLibraryDetail, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().DocLibraryDetail.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withDocLibraryDetail sets the old DocLibraryDetail of the mutation.
+func withDocLibraryDetail(node *DocLibraryDetail) doclibrarydetailOption {
+	return func(m *DocLibraryDetailMutation) {
+		m.oldValue = func(context.Context) (*DocLibraryDetail, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m DocLibraryDetailMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m DocLibraryDetailMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of DocLibraryDetail entities.
+func (m *DocLibraryDetailMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *DocLibraryDetailMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *DocLibraryDetailMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().DocLibraryDetail.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *DocLibraryDetailMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *DocLibraryDetailMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *DocLibraryDetailMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *DocLibraryDetailMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *DocLibraryDetailMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *DocLibraryDetailMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetTitle sets the "title" field.
+func (m *DocLibraryDetailMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the value of the "title" field in the mutation.
+func (m *DocLibraryDetailMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitle returns the old "title" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldTitle(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+	}
+	return oldValue.Title, nil
+}
+
+// ResetTitle resets all changes to the "title" field.
+func (m *DocLibraryDetailMutation) ResetTitle() {
+	m.title = nil
+}
+
+// SetVersion sets the "version" field.
+func (m *DocLibraryDetailMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *DocLibraryDetailMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ClearVersion clears the value of the "version" field.
+func (m *DocLibraryDetailMutation) ClearVersion() {
+	m.version = nil
+	m.clearedFields[doclibrarydetail.FieldVersion] = struct{}{}
+}
+
+// VersionCleared returns if the "version" field was cleared in this mutation.
+func (m *DocLibraryDetailMutation) VersionCleared() bool {
+	_, ok := m.clearedFields[doclibrarydetail.FieldVersion]
+	return ok
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *DocLibraryDetailMutation) ResetVersion() {
+	m.version = nil
+	delete(m.clearedFields, doclibrarydetail.FieldVersion)
+}
+
+// SetContent sets the "content" field.
+func (m *DocLibraryDetailMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *DocLibraryDetailMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldContent(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *DocLibraryDetailMutation) ResetContent() {
+	m.content = nil
+}
+
+// SetParentID sets the "parent_id" field.
+func (m *DocLibraryDetailMutation) SetParentID(i int) {
+	m.parent_id = &i
+	m.addparent_id = nil
+}
+
+// ParentID returns the value of the "parent_id" field in the mutation.
+func (m *DocLibraryDetailMutation) ParentID() (r int, exists bool) {
+	v := m.parent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldParentID returns the old "parent_id" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldParentID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldParentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldParentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldParentID: %w", err)
+	}
+	return oldValue.ParentID, nil
+}
+
+// AddParentID adds i to the "parent_id" field.
+func (m *DocLibraryDetailMutation) AddParentID(i int) {
+	if m.addparent_id != nil {
+		*m.addparent_id += i
+	} else {
+		m.addparent_id = &i
+	}
+}
+
+// AddedParentID returns the value that was added to the "parent_id" field in this mutation.
+func (m *DocLibraryDetailMutation) AddedParentID() (r int, exists bool) {
+	v := m.addparent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (m *DocLibraryDetailMutation) ClearParentID() {
+	m.parent_id = nil
+	m.addparent_id = nil
+	m.clearedFields[doclibrarydetail.FieldParentID] = struct{}{}
+}
+
+// ParentIDCleared returns if the "parent_id" field was cleared in this mutation.
+func (m *DocLibraryDetailMutation) ParentIDCleared() bool {
+	_, ok := m.clearedFields[doclibrarydetail.FieldParentID]
+	return ok
+}
+
+// ResetParentID resets all changes to the "parent_id" field.
+func (m *DocLibraryDetailMutation) ResetParentID() {
+	m.parent_id = nil
+	m.addparent_id = nil
+	delete(m.clearedFields, doclibrarydetail.FieldParentID)
+}
+
+// SetPath sets the "path" field.
+func (m *DocLibraryDetailMutation) SetPath(s string) {
+	m._path = &s
+}
+
+// Path returns the value of the "path" field in the mutation.
+func (m *DocLibraryDetailMutation) Path() (r string, exists bool) {
+	v := m._path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPath returns the old "path" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldPath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPath: %w", err)
+	}
+	return oldValue.Path, nil
+}
+
+// ClearPath clears the value of the "path" field.
+func (m *DocLibraryDetailMutation) ClearPath() {
+	m._path = nil
+	m.clearedFields[doclibrarydetail.FieldPath] = struct{}{}
+}
+
+// PathCleared returns if the "path" field was cleared in this mutation.
+func (m *DocLibraryDetailMutation) PathCleared() bool {
+	_, ok := m.clearedFields[doclibrarydetail.FieldPath]
+	return ok
+}
+
+// ResetPath resets all changes to the "path" field.
+func (m *DocLibraryDetailMutation) ResetPath() {
+	m._path = nil
+	delete(m.clearedFields, doclibrarydetail.FieldPath)
+}
+
+// SetURL sets the "url" field.
+func (m *DocLibraryDetailMutation) SetURL(s string) {
+	m.url = &s
+}
+
+// URL returns the value of the "url" field in the mutation.
+func (m *DocLibraryDetailMutation) URL() (r string, exists bool) {
+	v := m.url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURL returns the old "url" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURL: %w", err)
+	}
+	return oldValue.URL, nil
+}
+
+// ClearURL clears the value of the "url" field.
+func (m *DocLibraryDetailMutation) ClearURL() {
+	m.url = nil
+	m.clearedFields[doclibrarydetail.FieldURL] = struct{}{}
+}
+
+// URLCleared returns if the "url" field was cleared in this mutation.
+func (m *DocLibraryDetailMutation) URLCleared() bool {
+	_, ok := m.clearedFields[doclibrarydetail.FieldURL]
+	return ok
+}
+
+// ResetURL resets all changes to the "url" field.
+func (m *DocLibraryDetailMutation) ResetURL() {
+	m.url = nil
+	delete(m.clearedFields, doclibrarydetail.FieldURL)
+}
+
+// SetLanguage sets the "language" field.
+func (m *DocLibraryDetailMutation) SetLanguage(s string) {
+	m.language = &s
+}
+
+// Language returns the value of the "language" field in the mutation.
+func (m *DocLibraryDetailMutation) Language() (r string, exists bool) {
+	v := m.language
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLanguage returns the old "language" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldLanguage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLanguage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLanguage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLanguage: %w", err)
+	}
+	return oldValue.Language, nil
+}
+
+// ClearLanguage clears the value of the "language" field.
+func (m *DocLibraryDetailMutation) ClearLanguage() {
+	m.language = nil
+	m.clearedFields[doclibrarydetail.FieldLanguage] = struct{}{}
+}
+
+// LanguageCleared returns if the "language" field was cleared in this mutation.
+func (m *DocLibraryDetailMutation) LanguageCleared() bool {
+	_, ok := m.clearedFields[doclibrarydetail.FieldLanguage]
+	return ok
+}
+
+// ResetLanguage resets all changes to the "language" field.
+func (m *DocLibraryDetailMutation) ResetLanguage() {
+	m.language = nil
+	delete(m.clearedFields, doclibrarydetail.FieldLanguage)
+}
+
+// SetLibraryID sets the "library_id" field.
+func (m *DocLibraryDetailMutation) SetLibraryID(i int) {
+	m.library = &i
+}
+
+// LibraryID returns the value of the "library_id" field in the mutation.
+func (m *DocLibraryDetailMutation) LibraryID() (r int, exists bool) {
+	v := m.library
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLibraryID returns the old "library_id" field's value of the DocLibraryDetail entity.
+// If the DocLibraryDetail object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocLibraryDetailMutation) OldLibraryID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLibraryID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLibraryID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLibraryID: %w", err)
+	}
+	return oldValue.LibraryID, nil
+}
+
+// ClearLibraryID clears the value of the "library_id" field.
+func (m *DocLibraryDetailMutation) ClearLibraryID() {
+	m.library = nil
+	m.clearedFields[doclibrarydetail.FieldLibraryID] = struct{}{}
+}
+
+// LibraryIDCleared returns if the "library_id" field was cleared in this mutation.
+func (m *DocLibraryDetailMutation) LibraryIDCleared() bool {
+	_, ok := m.clearedFields[doclibrarydetail.FieldLibraryID]
+	return ok
+}
+
+// ResetLibraryID resets all changes to the "library_id" field.
+func (m *DocLibraryDetailMutation) ResetLibraryID() {
+	m.library = nil
+	delete(m.clearedFields, doclibrarydetail.FieldLibraryID)
+}
+
+// ClearLibrary clears the "library" edge to the DocLibrary entity.
+func (m *DocLibraryDetailMutation) ClearLibrary() {
+	m.clearedlibrary = true
+	m.clearedFields[doclibrarydetail.FieldLibraryID] = struct{}{}
+}
+
+// LibraryCleared reports if the "library" edge to the DocLibrary entity was cleared.
+func (m *DocLibraryDetailMutation) LibraryCleared() bool {
+	return m.LibraryIDCleared() || m.clearedlibrary
+}
+
+// LibraryIDs returns the "library" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LibraryID instead. It exists only for internal usage by the builders.
+func (m *DocLibraryDetailMutation) LibraryIDs() (ids []int) {
+	if id := m.library; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLibrary resets all changes to the "library" edge.
+func (m *DocLibraryDetailMutation) ResetLibrary() {
+	m.library = nil
+	m.clearedlibrary = false
+}
+
+// Where appends a list predicates to the DocLibraryDetailMutation builder.
+func (m *DocLibraryDetailMutation) Where(ps ...predicate.DocLibraryDetail) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the DocLibraryDetailMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *DocLibraryDetailMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.DocLibraryDetail, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *DocLibraryDetailMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *DocLibraryDetailMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (DocLibraryDetail).
+func (m *DocLibraryDetailMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *DocLibraryDetailMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_at != nil {
+		fields = append(fields, doclibrarydetail.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, doclibrarydetail.FieldUpdatedAt)
+	}
+	if m.title != nil {
+		fields = append(fields, doclibrarydetail.FieldTitle)
+	}
+	if m.version != nil {
+		fields = append(fields, doclibrarydetail.FieldVersion)
+	}
+	if m.content != nil {
+		fields = append(fields, doclibrarydetail.FieldContent)
+	}
+	if m.parent_id != nil {
+		fields = append(fields, doclibrarydetail.FieldParentID)
+	}
+	if m._path != nil {
+		fields = append(fields, doclibrarydetail.FieldPath)
+	}
+	if m.url != nil {
+		fields = append(fields, doclibrarydetail.FieldURL)
+	}
+	if m.language != nil {
+		fields = append(fields, doclibrarydetail.FieldLanguage)
+	}
+	if m.library != nil {
+		fields = append(fields, doclibrarydetail.FieldLibraryID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *DocLibraryDetailMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case doclibrarydetail.FieldCreatedAt:
+		return m.CreatedAt()
+	case doclibrarydetail.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case doclibrarydetail.FieldTitle:
+		return m.Title()
+	case doclibrarydetail.FieldVersion:
+		return m.Version()
+	case doclibrarydetail.FieldContent:
+		return m.Content()
+	case doclibrarydetail.FieldParentID:
+		return m.ParentID()
+	case doclibrarydetail.FieldPath:
+		return m.Path()
+	case doclibrarydetail.FieldURL:
+		return m.URL()
+	case doclibrarydetail.FieldLanguage:
+		return m.Language()
+	case doclibrarydetail.FieldLibraryID:
+		return m.LibraryID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *DocLibraryDetailMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case doclibrarydetail.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case doclibrarydetail.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case doclibrarydetail.FieldTitle:
+		return m.OldTitle(ctx)
+	case doclibrarydetail.FieldVersion:
+		return m.OldVersion(ctx)
+	case doclibrarydetail.FieldContent:
+		return m.OldContent(ctx)
+	case doclibrarydetail.FieldParentID:
+		return m.OldParentID(ctx)
+	case doclibrarydetail.FieldPath:
+		return m.OldPath(ctx)
+	case doclibrarydetail.FieldURL:
+		return m.OldURL(ctx)
+	case doclibrarydetail.FieldLanguage:
+		return m.OldLanguage(ctx)
+	case doclibrarydetail.FieldLibraryID:
+		return m.OldLibraryID(ctx)
+	}
+	return nil, fmt.Errorf("unknown DocLibraryDetail field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DocLibraryDetailMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case doclibrarydetail.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case doclibrarydetail.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case doclibrarydetail.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
+		return nil
+	case doclibrarydetail.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case doclibrarydetail.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
+	case doclibrarydetail.FieldParentID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetParentID(v)
+		return nil
+	case doclibrarydetail.FieldPath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPath(v)
+		return nil
+	case doclibrarydetail.FieldURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURL(v)
+		return nil
+	case doclibrarydetail.FieldLanguage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLanguage(v)
+		return nil
+	case doclibrarydetail.FieldLibraryID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLibraryID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DocLibraryDetail field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *DocLibraryDetailMutation) AddedFields() []string {
+	var fields []string
+	if m.addparent_id != nil {
+		fields = append(fields, doclibrarydetail.FieldParentID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *DocLibraryDetailMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case doclibrarydetail.FieldParentID:
+		return m.AddedParentID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DocLibraryDetailMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case doclibrarydetail.FieldParentID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddParentID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DocLibraryDetail numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *DocLibraryDetailMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(doclibrarydetail.FieldVersion) {
+		fields = append(fields, doclibrarydetail.FieldVersion)
+	}
+	if m.FieldCleared(doclibrarydetail.FieldParentID) {
+		fields = append(fields, doclibrarydetail.FieldParentID)
+	}
+	if m.FieldCleared(doclibrarydetail.FieldPath) {
+		fields = append(fields, doclibrarydetail.FieldPath)
+	}
+	if m.FieldCleared(doclibrarydetail.FieldURL) {
+		fields = append(fields, doclibrarydetail.FieldURL)
+	}
+	if m.FieldCleared(doclibrarydetail.FieldLanguage) {
+		fields = append(fields, doclibrarydetail.FieldLanguage)
+	}
+	if m.FieldCleared(doclibrarydetail.FieldLibraryID) {
+		fields = append(fields, doclibrarydetail.FieldLibraryID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *DocLibraryDetailMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *DocLibraryDetailMutation) ClearField(name string) error {
+	switch name {
+	case doclibrarydetail.FieldVersion:
+		m.ClearVersion()
+		return nil
+	case doclibrarydetail.FieldParentID:
+		m.ClearParentID()
+		return nil
+	case doclibrarydetail.FieldPath:
+		m.ClearPath()
+		return nil
+	case doclibrarydetail.FieldURL:
+		m.ClearURL()
+		return nil
+	case doclibrarydetail.FieldLanguage:
+		m.ClearLanguage()
+		return nil
+	case doclibrarydetail.FieldLibraryID:
+		m.ClearLibraryID()
+		return nil
+	}
+	return fmt.Errorf("unknown DocLibraryDetail nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *DocLibraryDetailMutation) ResetField(name string) error {
+	switch name {
+	case doclibrarydetail.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case doclibrarydetail.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case doclibrarydetail.FieldTitle:
+		m.ResetTitle()
+		return nil
+	case doclibrarydetail.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case doclibrarydetail.FieldContent:
+		m.ResetContent()
+		return nil
+	case doclibrarydetail.FieldParentID:
+		m.ResetParentID()
+		return nil
+	case doclibrarydetail.FieldPath:
+		m.ResetPath()
+		return nil
+	case doclibrarydetail.FieldURL:
+		m.ResetURL()
+		return nil
+	case doclibrarydetail.FieldLanguage:
+		m.ResetLanguage()
+		return nil
+	case doclibrarydetail.FieldLibraryID:
+		m.ResetLibraryID()
+		return nil
+	}
+	return fmt.Errorf("unknown DocLibraryDetail field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *DocLibraryDetailMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.library != nil {
+		edges = append(edges, doclibrarydetail.EdgeLibrary)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *DocLibraryDetailMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case doclibrarydetail.EdgeLibrary:
+		if id := m.library; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *DocLibraryDetailMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *DocLibraryDetailMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *DocLibraryDetailMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedlibrary {
+		edges = append(edges, doclibrarydetail.EdgeLibrary)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *DocLibraryDetailMutation) EdgeCleared(name string) bool {
+	switch name {
+	case doclibrarydetail.EdgeLibrary:
+		return m.clearedlibrary
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *DocLibraryDetailMutation) ClearEdge(name string) error {
+	switch name {
+	case doclibrarydetail.EdgeLibrary:
+		m.ClearLibrary()
+		return nil
+	}
+	return fmt.Errorf("unknown DocLibraryDetail unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *DocLibraryDetailMutation) ResetEdge(name string) error {
+	switch name {
+	case doclibrarydetail.EdgeLibrary:
+		m.ResetLibrary()
+		return nil
+	}
+	return fmt.Errorf("unknown DocLibraryDetail edge %s", name)
 }
 
 // EssayMutation represents an operation that mutates the Essay nodes in the graph.

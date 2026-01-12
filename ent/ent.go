@@ -14,6 +14,7 @@ import (
 	"gobee/ent/coupon"
 	"gobee/ent/couponusage"
 	"gobee/ent/doclibrary"
+	"gobee/ent/doclibrarydetail"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
@@ -112,6 +113,7 @@ func checkColumn(t, c string) error {
 			coupon.Table:              coupon.ValidColumn,
 			couponusage.Table:         couponusage.ValidColumn,
 			doclibrary.Table:          doclibrary.ValidColumn,
+			doclibrarydetail.Table:    doclibrarydetail.ValidColumn,
 			essay.Table:               essay.ValidColumn,
 			flink.Table:               flink.ValidColumn,
 			flinkgroup.Table:          flinkgroup.ValidColumn,

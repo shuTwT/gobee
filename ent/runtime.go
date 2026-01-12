@@ -11,6 +11,7 @@ import (
 	"gobee/ent/coupon"
 	"gobee/ent/couponusage"
 	"gobee/ent/doclibrary"
+	"gobee/ent/doclibrarydetail"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
@@ -359,6 +360,25 @@ func init() {
 	doclibrary.DefaultUpdatedAt = doclibraryDescUpdatedAt.Default.(func() time.Time)
 	// doclibrary.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	doclibrary.UpdateDefaultUpdatedAt = doclibraryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	doclibrarydetailMixin := schema.DocLibraryDetail{}.Mixin()
+	doclibrarydetailMixinFields0 := doclibrarydetailMixin[0].Fields()
+	_ = doclibrarydetailMixinFields0
+	doclibrarydetailFields := schema.DocLibraryDetail{}.Fields()
+	_ = doclibrarydetailFields
+	// doclibrarydetailDescCreatedAt is the schema descriptor for created_at field.
+	doclibrarydetailDescCreatedAt := doclibrarydetailMixinFields0[1].Descriptor()
+	// doclibrarydetail.DefaultCreatedAt holds the default value on creation for the created_at field.
+	doclibrarydetail.DefaultCreatedAt = doclibrarydetailDescCreatedAt.Default.(func() time.Time)
+	// doclibrarydetailDescUpdatedAt is the schema descriptor for updated_at field.
+	doclibrarydetailDescUpdatedAt := doclibrarydetailMixinFields0[2].Descriptor()
+	// doclibrarydetail.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	doclibrarydetail.DefaultUpdatedAt = doclibrarydetailDescUpdatedAt.Default.(func() time.Time)
+	// doclibrarydetail.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	doclibrarydetail.UpdateDefaultUpdatedAt = doclibrarydetailDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// doclibrarydetailDescLanguage is the schema descriptor for language field.
+	doclibrarydetailDescLanguage := doclibrarydetailFields[6].Descriptor()
+	// doclibrarydetail.DefaultLanguage holds the default value on creation for the language field.
+	doclibrarydetail.DefaultLanguage = doclibrarydetailDescLanguage.Default.(string)
 	essayMixin := schema.Essay{}.Mixin()
 	essayMixinFields0 := essayMixin[0].Fields()
 	_ = essayMixinFields0

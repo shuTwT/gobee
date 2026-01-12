@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -26,6 +27,9 @@ func (DocLibrary) Fields() []ent.Field {
 		field.String("description").
 			Optional().
 			Comment("文档库描述"),
+		field.Enum("source").
+			Values("git", "openapi", "llms_txt", "website").
+			Comment("文档库来源"),
 		field.String("url").
 			Comment("文档库URL"),
 	}
@@ -33,5 +37,7 @@ func (DocLibrary) Fields() []ent.Field {
 
 // Edges of the DocLibrary.
 func (DocLibrary) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("details", DocLibraryDetail.Type),
+	}
 }

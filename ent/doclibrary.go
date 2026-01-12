@@ -27,9 +27,32 @@ type DocLibrary struct {
 	Alias string `json:"alias,omitempty"`
 	// 文档库描述
 	Description string `json:"description,omitempty"`
+	// 文档库来源
+	Source doclibrary.Source `json:"source,omitempty"`
 	// 文档库URL
-	URL          string `json:"url,omitempty"`
+	URL string `json:"url,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the DocLibraryQuery when eager-loading is set.
+	Edges        DocLibraryEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// DocLibraryEdges holds the relations/edges for other nodes in the graph.
+type DocLibraryEdges struct {
+	// Details holds the value of the details edge.
+	Details []*DocLibraryDetail `json:"details,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// DetailsOrErr returns the Details value or an error if the edge
+// was not loaded in eager-loading.
+func (e DocLibraryEdges) DetailsOrErr() ([]*DocLibraryDetail, error) {
+	if e.loadedTypes[0] {
+		return e.Details, nil
+	}
+	return nil, &NotLoadedError{edge: "details"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -39,7 +62,7 @@ func (*DocLibrary) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case doclibrary.FieldID:
 			values[i] = new(sql.NullInt64)
-		case doclibrary.FieldName, doclibrary.FieldAlias, doclibrary.FieldDescription, doclibrary.FieldURL:
+		case doclibrary.FieldName, doclibrary.FieldAlias, doclibrary.FieldDescription, doclibrary.FieldSource, doclibrary.FieldURL:
 			values[i] = new(sql.NullString)
 		case doclibrary.FieldCreatedAt, doclibrary.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -94,6 +117,12 @@ func (_m *DocLibrary) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Description = value.String
 			}
+		case doclibrary.FieldSource:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field source", values[i])
+			} else if value.Valid {
+				_m.Source = doclibrary.Source(value.String)
+			}
 		case doclibrary.FieldURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field url", values[i])
@@ -111,6 +140,11 @@ func (_m *DocLibrary) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *DocLibrary) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryDetails queries the "details" edge of the DocLibrary entity.
+func (_m *DocLibrary) QueryDetails() *DocLibraryDetailQuery {
+	return NewDocLibraryClient(_m.config).QueryDetails(_m)
 }
 
 // Update returns a builder for updating this DocLibrary.
@@ -150,6 +184,9 @@ func (_m *DocLibrary) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(_m.Description)
+	builder.WriteString(", ")
+	builder.WriteString("source=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Source))
 	builder.WriteString(", ")
 	builder.WriteString("url=")
 	builder.WriteString(_m.URL)

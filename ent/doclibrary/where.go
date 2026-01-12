@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -369,6 +370,26 @@ func DescriptionContainsFold(v string) predicate.DocLibrary {
 	return predicate.DocLibrary(sql.FieldContainsFold(FieldDescription, v))
 }
 
+// SourceEQ applies the EQ predicate on the "source" field.
+func SourceEQ(v Source) predicate.DocLibrary {
+	return predicate.DocLibrary(sql.FieldEQ(FieldSource, v))
+}
+
+// SourceNEQ applies the NEQ predicate on the "source" field.
+func SourceNEQ(v Source) predicate.DocLibrary {
+	return predicate.DocLibrary(sql.FieldNEQ(FieldSource, v))
+}
+
+// SourceIn applies the In predicate on the "source" field.
+func SourceIn(vs ...Source) predicate.DocLibrary {
+	return predicate.DocLibrary(sql.FieldIn(FieldSource, vs...))
+}
+
+// SourceNotIn applies the NotIn predicate on the "source" field.
+func SourceNotIn(vs ...Source) predicate.DocLibrary {
+	return predicate.DocLibrary(sql.FieldNotIn(FieldSource, vs...))
+}
+
 // URLEQ applies the EQ predicate on the "url" field.
 func URLEQ(v string) predicate.DocLibrary {
 	return predicate.DocLibrary(sql.FieldEQ(FieldURL, v))
@@ -432,6 +453,29 @@ func URLEqualFold(v string) predicate.DocLibrary {
 // URLContainsFold applies the ContainsFold predicate on the "url" field.
 func URLContainsFold(v string) predicate.DocLibrary {
 	return predicate.DocLibrary(sql.FieldContainsFold(FieldURL, v))
+}
+
+// HasDetails applies the HasEdge predicate on the "details" edge.
+func HasDetails() predicate.DocLibrary {
+	return predicate.DocLibrary(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DetailsTable, DetailsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDetailsWith applies the HasEdge predicate on the "details" edge with a given conditions (other predicates).
+func HasDetailsWith(preds ...predicate.DocLibraryDetail) predicate.DocLibrary {
+	return predicate.DocLibrary(func(s *sql.Selector) {
+		step := newDetailsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

@@ -129,6 +129,24 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		tagApi.Put("/update/:id", handlerMap.TagHandler.UpdateTag).Name("tagUpdate")
 		tagApi.Delete("/delete/:id", handlerMap.TagHandler.DeleteTag).Name("tagDelete")
 	}
+	docLibraryApi := router.Group("/doclibrary")
+	{
+		docLibraryApi.Get("/list", handlerMap.DocLibraryHandler.GetDocLibraryList).Name("docLibraryList")
+		docLibraryApi.Get("/page", handlerMap.DocLibraryHandler.GetDocLibraryPage).Name("docLibraryPage")
+		docLibraryApi.Post("/create", handlerMap.DocLibraryHandler.CreateDocLibrary).Name("docLibraryCreate")
+		docLibraryApi.Put("/update/:id", handlerMap.DocLibraryHandler.UpdateDocLibrary).Name("docLibraryUpdate")
+		docLibraryApi.Get("/query/:id", handlerMap.DocLibraryHandler.GetDocLibrary).Name("docLibraryQuery")
+		docLibraryApi.Delete("/delete/:id", handlerMap.DocLibraryHandler.DeleteDocLibrary).Name("docLibraryDelete")
+	}
+	docLibraryDetailApi := router.Group("/doclibrarydetail")
+	{
+		docLibraryDetailApi.Get("/page", handlerMap.DocLibraryDetailHandler.GetDocLibraryDetailPage).Name("docLibraryDetailPage")
+		docLibraryDetailApi.Post("/create", handlerMap.DocLibraryDetailHandler.CreateDocLibraryDetail).Name("docLibraryDetailCreate")
+		docLibraryDetailApi.Put("/update/:id", handlerMap.DocLibraryDetailHandler.UpdateDocLibraryDetail).Name("docLibraryDetailUpdate")
+		docLibraryDetailApi.Get("/query/:id", handlerMap.DocLibraryDetailHandler.GetDocLibraryDetail).Name("docLibraryDetailQuery")
+		docLibraryDetailApi.Delete("/delete/:id", handlerMap.DocLibraryDetailHandler.DeleteDocLibraryDetail).Name("docLibraryDetailDelete")
+		docLibraryDetailApi.Get("/tree", handlerMap.DocLibraryDetailHandler.GetDocLibraryDetailTree).Name("docLibraryDetailTree")
+	}
 }
 
 // 注册基础设施路由

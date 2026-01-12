@@ -19,6 +19,7 @@ import (
 	"gobee/ent/coupon"
 	"gobee/ent/couponusage"
 	"gobee/ent/doclibrary"
+	"gobee/ent/doclibrarydetail"
 	"gobee/ent/essay"
 	"gobee/ent/file"
 	"gobee/ent/flink"
@@ -71,6 +72,8 @@ type Client struct {
 	CouponUsage *CouponUsageClient
 	// DocLibrary is the client for interacting with the DocLibrary builders.
 	DocLibrary *DocLibraryClient
+	// DocLibraryDetail is the client for interacting with the DocLibraryDetail builders.
+	DocLibraryDetail *DocLibraryDetailClient
 	// Essay is the client for interacting with the Essay builders.
 	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
@@ -138,6 +141,7 @@ func (c *Client) init() {
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponUsage = NewCouponUsageClient(c.config)
 	c.DocLibrary = NewDocLibraryClient(c.config)
+	c.DocLibraryDetail = NewDocLibraryDetailClient(c.config)
 	c.Essay = NewEssayClient(c.config)
 	c.FLink = NewFLinkClient(c.config)
 	c.FLinkGroup = NewFLinkGroupClient(c.config)
@@ -262,6 +266,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Coupon:              NewCouponClient(cfg),
 		CouponUsage:         NewCouponUsageClient(cfg),
 		DocLibrary:          NewDocLibraryClient(cfg),
+		DocLibraryDetail:    NewDocLibraryDetailClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
@@ -313,6 +318,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Coupon:              NewCouponClient(cfg),
 		CouponUsage:         NewCouponUsageClient(cfg),
 		DocLibrary:          NewDocLibraryClient(cfg),
+		DocLibraryDetail:    NewDocLibraryDetailClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
@@ -367,11 +373,11 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
-		c.CouponUsage, c.DocLibrary, c.Essay, c.FLink, c.FLinkGroup, c.File,
-		c.FriendCircleRecord, c.Member, c.MemberLevel, c.Notification,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
-		c.PersonalAccessToken, c.Post, c.Product, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.Tag, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.CouponUsage, c.DocLibrary, c.DocLibraryDetail, c.Essay, c.FLink,
+		c.FLinkGroup, c.File, c.FriendCircleRecord, c.Member, c.MemberLevel,
+		c.Notification, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken,
+		c.PayOrder, c.PersonalAccessToken, c.Post, c.Product, c.Role, c.ScheduleJob,
+		c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -382,11 +388,11 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
-		c.CouponUsage, c.DocLibrary, c.Essay, c.FLink, c.FLinkGroup, c.File,
-		c.FriendCircleRecord, c.Member, c.MemberLevel, c.Notification,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
-		c.PersonalAccessToken, c.Post, c.Product, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.Tag, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.CouponUsage, c.DocLibrary, c.DocLibraryDetail, c.Essay, c.FLink,
+		c.FLinkGroup, c.File, c.FriendCircleRecord, c.Member, c.MemberLevel,
+		c.Notification, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken,
+		c.PayOrder, c.PersonalAccessToken, c.Post, c.Product, c.Role, c.ScheduleJob,
+		c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -411,6 +417,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.CouponUsage.mutate(ctx, m)
 	case *DocLibraryMutation:
 		return c.DocLibrary.mutate(ctx, m)
+	case *DocLibraryDetailMutation:
+		return c.DocLibraryDetail.mutate(ctx, m)
 	case *EssayMutation:
 		return c.Essay.mutate(ctx, m)
 	case *FLinkMutation:
@@ -1519,6 +1527,22 @@ func (c *DocLibraryClient) GetX(ctx context.Context, id int) *DocLibrary {
 	return obj
 }
 
+// QueryDetails queries the details edge of a DocLibrary.
+func (c *DocLibraryClient) QueryDetails(_m *DocLibrary) *DocLibraryDetailQuery {
+	query := (&DocLibraryDetailClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(doclibrary.Table, doclibrary.FieldID, id),
+			sqlgraph.To(doclibrarydetail.Table, doclibrarydetail.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, doclibrary.DetailsTable, doclibrary.DetailsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *DocLibraryClient) Hooks() []Hook {
 	return c.hooks.DocLibrary
@@ -1541,6 +1565,155 @@ func (c *DocLibraryClient) mutate(ctx context.Context, m *DocLibraryMutation) (V
 		return (&DocLibraryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown DocLibrary mutation op: %q", m.Op())
+	}
+}
+
+// DocLibraryDetailClient is a client for the DocLibraryDetail schema.
+type DocLibraryDetailClient struct {
+	config
+}
+
+// NewDocLibraryDetailClient returns a client for the DocLibraryDetail from the given config.
+func NewDocLibraryDetailClient(c config) *DocLibraryDetailClient {
+	return &DocLibraryDetailClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `doclibrarydetail.Hooks(f(g(h())))`.
+func (c *DocLibraryDetailClient) Use(hooks ...Hook) {
+	c.hooks.DocLibraryDetail = append(c.hooks.DocLibraryDetail, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `doclibrarydetail.Intercept(f(g(h())))`.
+func (c *DocLibraryDetailClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DocLibraryDetail = append(c.inters.DocLibraryDetail, interceptors...)
+}
+
+// Create returns a builder for creating a DocLibraryDetail entity.
+func (c *DocLibraryDetailClient) Create() *DocLibraryDetailCreate {
+	mutation := newDocLibraryDetailMutation(c.config, OpCreate)
+	return &DocLibraryDetailCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DocLibraryDetail entities.
+func (c *DocLibraryDetailClient) CreateBulk(builders ...*DocLibraryDetailCreate) *DocLibraryDetailCreateBulk {
+	return &DocLibraryDetailCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DocLibraryDetailClient) MapCreateBulk(slice any, setFunc func(*DocLibraryDetailCreate, int)) *DocLibraryDetailCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DocLibraryDetailCreateBulk{err: fmt.Errorf("calling to DocLibraryDetailClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DocLibraryDetailCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DocLibraryDetailCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DocLibraryDetail.
+func (c *DocLibraryDetailClient) Update() *DocLibraryDetailUpdate {
+	mutation := newDocLibraryDetailMutation(c.config, OpUpdate)
+	return &DocLibraryDetailUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DocLibraryDetailClient) UpdateOne(_m *DocLibraryDetail) *DocLibraryDetailUpdateOne {
+	mutation := newDocLibraryDetailMutation(c.config, OpUpdateOne, withDocLibraryDetail(_m))
+	return &DocLibraryDetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DocLibraryDetailClient) UpdateOneID(id int) *DocLibraryDetailUpdateOne {
+	mutation := newDocLibraryDetailMutation(c.config, OpUpdateOne, withDocLibraryDetailID(id))
+	return &DocLibraryDetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DocLibraryDetail.
+func (c *DocLibraryDetailClient) Delete() *DocLibraryDetailDelete {
+	mutation := newDocLibraryDetailMutation(c.config, OpDelete)
+	return &DocLibraryDetailDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DocLibraryDetailClient) DeleteOne(_m *DocLibraryDetail) *DocLibraryDetailDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DocLibraryDetailClient) DeleteOneID(id int) *DocLibraryDetailDeleteOne {
+	builder := c.Delete().Where(doclibrarydetail.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DocLibraryDetailDeleteOne{builder}
+}
+
+// Query returns a query builder for DocLibraryDetail.
+func (c *DocLibraryDetailClient) Query() *DocLibraryDetailQuery {
+	return &DocLibraryDetailQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDocLibraryDetail},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DocLibraryDetail entity by its id.
+func (c *DocLibraryDetailClient) Get(ctx context.Context, id int) (*DocLibraryDetail, error) {
+	return c.Query().Where(doclibrarydetail.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DocLibraryDetailClient) GetX(ctx context.Context, id int) *DocLibraryDetail {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryLibrary queries the library edge of a DocLibraryDetail.
+func (c *DocLibraryDetailClient) QueryLibrary(_m *DocLibraryDetail) *DocLibraryQuery {
+	query := (&DocLibraryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(doclibrarydetail.Table, doclibrarydetail.FieldID, id),
+			sqlgraph.To(doclibrary.Table, doclibrary.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, doclibrarydetail.LibraryTable, doclibrarydetail.LibraryColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DocLibraryDetailClient) Hooks() []Hook {
+	return c.hooks.DocLibraryDetail
+}
+
+// Interceptors returns the client interceptors.
+func (c *DocLibraryDetailClient) Interceptors() []Interceptor {
+	return c.inters.DocLibraryDetail
+}
+
+func (c *DocLibraryDetailClient) mutate(ctx context.Context, m *DocLibraryDetailMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DocLibraryDetailCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DocLibraryDetailUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DocLibraryDetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DocLibraryDetailDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown DocLibraryDetail mutation op: %q", m.Op())
 	}
 }
 
@@ -4964,16 +5137,16 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 type (
 	hooks struct {
 		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, DocLibrary,
-		Essay, FLink, FLinkGroup, File, FriendCircleRecord, Member, MemberLevel,
-		Notification, Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
-		PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
+		DocLibraryDetail, Essay, FLink, FLinkGroup, File, FriendCircleRecord, Member,
+		MemberLevel, Notification, Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken,
+		PayOrder, PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
 		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Hook
 	}
 	inters struct {
 		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, DocLibrary,
-		Essay, FLink, FLinkGroup, File, FriendCircleRecord, Member, MemberLevel,
-		Notification, Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
-		PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
+		DocLibraryDetail, Essay, FLink, FLinkGroup, File, FriendCircleRecord, Member,
+		MemberLevel, Notification, Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken,
+		PayOrder, PersonalAccessToken, Post, Product, Role, ScheduleJob, Setting,
 		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Interceptor
 	}
 )

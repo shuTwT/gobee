@@ -102,6 +102,26 @@ export default [
                     roles: ['admin', 'common'],
                 },
             },
+            {
+                path: '/content/doclibrary',
+                name: 'DocLibraryManagement',
+                component: () => import('@/views/content/doclibrary/index.vue'),
+                meta: {
+                    title: '文档库管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
+            },
+            {
+                path: '/content/doclibrarydetail',
+                name: 'DocLibraryDetailManagement',
+                component: () => import('@/views/content/doclibrarydetail/index.vue'),
+                meta: {
+                    title: '文档详情管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
+            },
         ]
     }
 ] satisfies RouteRecordRaw[]
