@@ -108,25 +108,8 @@ const getData = () => {
   })
 }
 
-const handleSubmit = async () => {
-  try {
-    const data = await getData()
-    
-    if (props.productId) {
-      await productApi.updateProduct(props.productId, data)
-      window.$message?.success('更新成功')
-    } else {
-      await productApi.createProduct(data)
-      window.$message?.success('创建成功')
-    }
-    
-    emit('confirm')
-  } catch (error) {
-    console.error('提交失败:', error)
-  }
-}
 
-defineExpose({ getData, handleSubmit })
+defineExpose({ getData })
 </script>
 
 <template>

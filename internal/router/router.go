@@ -211,6 +211,30 @@ func initMallRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		walletApi.Get("/page", handlerMap.WalletHandler.QueryWalletPage).Name("walletPage")
 		walletApi.Put("/update/:id", handlerMap.WalletHandler.UpdateWallet).Name("walletUpdate")
 	}
+	couponApi := router.Group("/coupon")
+	{
+		couponApi.Get("/list", handlerMap.CouponHandler.ListCoupons).Name("couponList")
+		couponApi.Get("/page", handlerMap.CouponHandler.ListCouponsPage).Name("couponPage")
+		couponApi.Post("/create", handlerMap.CouponHandler.CreateCoupon).Name("couponCreate")
+		couponApi.Put("/update/:id", handlerMap.CouponHandler.UpdateCoupon).Name("couponUpdate")
+		couponApi.Get("/query/:id", handlerMap.CouponHandler.QueryCoupon).Name("couponQuery")
+		couponApi.Delete("/delete/:id", handlerMap.CouponHandler.DeleteCoupon).Name("couponDelete")
+		couponApi.Put("/batch", handlerMap.CouponHandler.BatchUpdateCoupons).Name("couponBatchUpdate")
+		couponApi.Post("/batch/delete", handlerMap.CouponHandler.BatchDeleteCoupons).Name("couponBatchDelete")
+		couponApi.Get("/search", handlerMap.CouponHandler.SearchCoupons).Name("couponSearch")
+	}
+	couponUsageApi := router.Group("/coupon-usage")
+	{
+		couponUsageApi.Get("/list", handlerMap.CouponUsageHandler.ListCouponUsages).Name("couponUsageList")
+		couponUsageApi.Get("/page", handlerMap.CouponUsageHandler.ListCouponUsagesPage).Name("couponUsagePage")
+		couponUsageApi.Post("/create", handlerMap.CouponUsageHandler.CreateCouponUsage).Name("couponUsageCreate")
+		couponUsageApi.Put("/update/:id", handlerMap.CouponUsageHandler.UpdateCouponUsage).Name("couponUsageUpdate")
+		couponUsageApi.Get("/query/:id", handlerMap.CouponUsageHandler.QueryCouponUsage).Name("couponUsageQuery")
+		couponUsageApi.Delete("/delete/:id", handlerMap.CouponUsageHandler.DeleteCouponUsage).Name("couponUsageDelete")
+		couponUsageApi.Put("/batch", handlerMap.CouponUsageHandler.BatchUpdateCouponUsages).Name("couponUsageBatchUpdate")
+		couponUsageApi.Post("/batch/delete", handlerMap.CouponUsageHandler.BatchDeleteCouponUsages).Name("couponUsageBatchDelete")
+		couponUsageApi.Get("/search", handlerMap.CouponUsageHandler.SearchCouponUsages).Name("couponUsageSearch")
+	}
 }
 
 func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
@@ -237,11 +261,11 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			apiV1.Get("/comment/recent", handlerMap.CommentHandler.RecentComment).Name("recentComment")
 			apiV1.Get("/flink/random", handlerMap.FlinkHandler.RandomFlink).Name("randomFlink")
 			apiV1.Get("/posts/:id/summary/stream", handlerMap.PostHandler.GetSummaryForStream).Name("postSummaryStream")
-			
+
 			apiV1.Get("/post/search", handlerMap.PostHandler.SearchPosts).Name("postSearch")
 			apiV1.Get("/user/search", handlerMap.UserHandler.SearchUsers).Name("userSearch")
 			apiV1.Get("/product/search", handlerMap.ProductHandler.SearchProducts).Name("productSearch")
-			
+
 			apiV1.Use(middleware.FlexibleAuth())
 
 			// 首页统计信息接口

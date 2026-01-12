@@ -24,6 +24,7 @@ const pagination = reactive({
 const dataList = ref<any>([])
 const loading = ref(false)
 const memberLevelMap = ref<Record<number, any>>({})
+const editFormRef = ref()
 
 const columns: DataTableColumns<any> = [
   {
@@ -152,9 +153,20 @@ const openEditDialog = (row: any) => {
         discount_rate: 100,
       },
     },
-    contentRenderer: ({ options }) => h(EditForm, { formInline: options.props!.formInline }),
-    onConfirm: async () => {
-      onSearch()
+    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, formInline: options.props!.formInline }),
+    beforeSure: async (done) => {
+      try {
+        const data = await editFormRef.value?.getData()
+        
+        await memberApi.updateMember(row.id, data)
+        window.$message?.success('更新成功')
+        
+        onSearch()
+        done()
+      } catch (error) {
+        console.error('提交失败:', error)
+        window.$message?.error('提交失败')
+      }
     },
   })
 }

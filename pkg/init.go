@@ -17,6 +17,8 @@ import (
 	permission_service "gobee/internal/services/infra/permission"
 	storagestrategy_service "gobee/internal/services/infra/storagestrategy"
 	visit_service "gobee/internal/services/infra/visit"
+	coupon_service "gobee/internal/services/mall/coupon"
+	couponusage_service "gobee/internal/services/mall/couponusage"
 	member_service "gobee/internal/services/mall/member"
 	memberlevel_service "gobee/internal/services/mall/memberlevel"
 	payorder "gobee/internal/services/mall/payorder"
@@ -42,6 +44,8 @@ type ServiceMap struct {
 	CategoryService        category_service.CategoryService
 	CommentService         comment_service.CommentService
 	CommonService          common_service.CommonService
+	CouponService          coupon_service.CouponService
+	CouponUsageService     couponusage_service.CouponUsageService
 	EssayService           essay_service.EssayService
 	FileService            file_service.FileService
 	FlinkService           flink_service.FlinkService
@@ -69,13 +73,11 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		DBType: dbType,
 		DBUrl:  config.GetString(config.DATABASE_URL),
 	}
-	//初始化数据库
 	db, err := database.InitializeDB(dbConfig, autoMigrate)
 	if err != nil {
 		panic(err)
 	}
 
-	// 初始化 service
 	albumService := album_service.NewAlbumServiceImpl(db)
 	albumPhotoService := albumphoto_service.NewAlbumPhotoServiceImpl(db)
 	apiInterfaceService := api_interface_service.NewApiInterfaceServiceImpl(db)
@@ -83,6 +85,8 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	categoryService := category_service.NewCategoryServiceImpl(db)
 	commentService := comment_service.NewCommentServiceImpl(db)
 	commonService := common_service.NewCommonServiceImpl(db, user_service.NewUserServiceImpl(db), post_service.NewPostServiceImpl(db), comment_service.NewCommentServiceImpl(db))
+	couponService := coupon_service.NewCouponServiceImpl(db)
+	couponUsageService := couponusage_service.NewCouponUsageServiceImpl(db)
 	essayService := essay_service.NewEssayServiceImpl(db)
 	fileService := file_service.NewFileServiceImpl(db)
 	flinkService := flink_service.NewFlinkServiceImpl(db)
@@ -103,7 +107,6 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	migrationService := migration_service.NewMigrationServiceImpl(db)
 	notificationService := notification_service.NewNotificationServiceImpl(db)
 
-	//执行
 	permissionService.LoadPermissionsFromDef(moduleDefs)
 
 	serviceMap := ServiceMap{
@@ -114,6 +117,8 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		CategoryService:        categoryService,
 		CommentService:         commentService,
 		CommonService:          commonService,
+		CouponService:          couponService,
+		CouponUsageService:     couponUsageService,
 		EssayService:           essayService,
 		FileService:            fileService,
 		FlinkService:           flinkService,

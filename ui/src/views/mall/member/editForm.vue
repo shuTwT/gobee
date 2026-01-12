@@ -61,28 +61,7 @@ const getData = (): Promise<typeof formData.value> => {
   })
 }
 
-const handleSubmit = async () => {
-  try {
-    const data = await getData()
-    const updateData = {
-      member_level: data.member_level,
-    }
-    
-    await fetch(`/api/v1/member/update/${props.formInline.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updateData),
-    })
-    
-    emit('confirm')
-  } catch (error) {
-    console.error('提交失败:', error)
-  }
-}
-
-defineExpose({ getData, handleSubmit })
+defineExpose({ getData })
 
 onMounted(() => {
   getMemberLevels()

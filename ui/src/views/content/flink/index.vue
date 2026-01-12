@@ -225,10 +225,6 @@ const handleDelete = async (row: any) => {
   } catch { }
 }
 
-const handleSubmit = async () => {
-  // TODO: 实现提交逻辑
-  message.success('保存成功喵~')
-}
 const onSearchCategory = async () => {
   const res = await useApi(apiClient.api.v1FlinkGroupListList)
   flinkGroups.value = res.data

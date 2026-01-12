@@ -16,6 +16,8 @@ import (
 	migration_handler "gobee/internal/handlers/infra/migration"
 	storagestrategy "gobee/internal/handlers/infra/storagestrategy"
 	visit_handler "gobee/internal/handlers/infra/visit"
+	coupon_handler "gobee/internal/handlers/mall/coupon"
+	couponusage_handler "gobee/internal/handlers/mall/couponusage"
 	member_handler "gobee/internal/handlers/mall/member"
 	memberlevel_handler "gobee/internal/handlers/mall/memberlevel"
 	payorder_handler "gobee/internal/handlers/mall/payorder"
@@ -41,6 +43,8 @@ type HandlerMap struct {
 	CategoryHandler        category_handler.CategoryHandler
 	CommentHandler         comment_handler.CommentHandler
 	CommonHandler          common_handler.CommonHandler
+	CouponHandler          coupon_handler.CouponHandler
+	CouponUsageHandler     couponusage_handler.CouponUsageHandler
 	FileHandler            file_handler.FileHandler
 	FlinkHandler           flink_handler.FlinkHandler
 	FlinkGroupHandler      flinkgroup_handler.FlinkGroupHandler
@@ -72,6 +76,8 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	categoryHandler := category_handler.NewCategoryHandlerImpl(serviceMap.CategoryService)
 	commentHandler := comment_handler.NewCommentHandlerImpl(serviceMap.CommentService)
 	commonHandler := common_handler.NewCommonHandlerImpl(serviceMap.CommonService)
+	couponHandler := coupon_handler.NewCouponHandlerImpl(serviceMap.CouponService)
+	couponUsageHandler := couponusage_handler.NewCouponUsageHandlerImpl(serviceMap.CouponUsageService)
 	fileHandler := file_handler.NewFileHandlerImpl(serviceMap.FileService)
 	flinkHandler := flink_handler.NewFlinkHandlerImpl(database.DB, serviceMap.FlinkService)
 	flinkGroupHandler := flinkgroup_handler.NewFlinkGroupHandlerImpl(database.DB, serviceMap.FlinkService)
@@ -102,6 +108,8 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		CategoryHandler:        categoryHandler,
 		CommentHandler:         commentHandler,
 		CommonHandler:          commonHandler,
+		CouponHandler:          couponHandler,
+		CouponUsageHandler:     couponUsageHandler,
 		FileHandler:            fileHandler,
 		FlinkHandler:           flinkHandler,
 		FlinkGroupHandler:      flinkGroupHandler,
