@@ -22,6 +22,8 @@ type PostListReq struct {
 	TagName      string `json:"tag_name" query:"tag_name" form:"tag_name"`
 	Year         *int   `json:"year" query:"year" form:"year"`
 	Month        *int   `json:"month" query:"month" form:"month"`
+	Limit        *int   `json:"limit" query:"limit" form:"limit" validate:"omitempty,min=1,max=100"`
+	IsPinToTop   *bool  `json:"is_pin_to_top" query:"is_pin_to_top" form:"is_pin_to_top"`
 }
 
 // PostCreateReq represents the request body for creating a post.

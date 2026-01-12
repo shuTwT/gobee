@@ -1217,6 +1217,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/essay/list": {
+            "get": {
+                "description": "获取说说列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "essay"
+                ],
+                "summary": "获取说说列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "数量限制",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.EssayResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/essay/page": {
             "get": {
                 "description": "获取说说分页列表",
@@ -2187,204 +2246,26 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/friend_circle_rules": {
-            "get": {
-                "description": "获取所有朋友圈规则",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "friend_circle_rules"
-                ],
-                "summary": "获取朋友圈规则列表",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/model.FriendCircleRuleResp"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            },
+        "/api/v1/migration/check-duplicate": {
             "post": {
-                "description": "创建新的朋友圈规则",
+                "description": "检查待导入的文件中是否有与数据库中文章标题重复的文件",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "friend_circle_rules"
+                    "migration"
                 ],
-                "summary": "创建朋友圈规则",
+                "summary": "检查重复文件",
                 "parameters": [
                     {
-                        "description": "朋友圈规则保存请求体",
-                        "name": "friend_circle_rule_save_req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.FriendCircleRuleSaveReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/ent.FriendCircleRule"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/friend_circle_rules/page": {
-            "get": {
-                "description": "获取朋友圈规则分页列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "friend_circle_rules"
-                ],
-                "summary": "获取朋友圈规则分页列表",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "每页数量",
-                        "name": "size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.PageResult-model_FriendCircleRuleResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/friend_circle_rules/{id}": {
-            "put": {
-                "description": "更新指定 ID 的朋友圈规则",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "friend_circle_rules"
-                ],
-                "summary": "更新朋友圈规则",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "朋友圈规则 ID",
-                        "name": "id",
-                        "in": "path",
+                        "type": "file",
+                        "description": "Markdown文件",
+                        "name": "files",
+                        "in": "formData",
                         "required": true
-                    },
-                    {
-                        "description": "朋友圈规则保存请求体",
-                        "name": "friend_circle_rule_save_req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.FriendCircleRuleSaveReq"
-                        }
                     }
                 ],
                 "responses": {
@@ -2399,7 +2280,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.FriendCircleRule"
+                                            "$ref": "#/definitions/model.MigrationCheckResult"
                                         }
                                     }
                                 }
@@ -2419,9 +2300,67 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "删除指定 ID 的朋友圈规则",
+            }
+        },
+        "/api/v1/migration/md": {
+            "post": {
+                "description": "批量导入Markdown文件到文章管理",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "migration"
+                ],
+                "summary": "导入Markdown文件",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Markdown文件",
+                        "name": "files",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.MigrationResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/notifications/batch/read": {
+            "post": {
+                "description": "批量将通知标记为已读",
                 "consumes": [
                     "application/json"
                 ],
@@ -2429,13 +2368,71 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "friend_circle_rules"
+                    "notifications"
                 ],
-                "summary": "删除朋友圈规则",
+                "summary": "批量标记为已读",
+                "parameters": [
+                    {
+                        "description": "批量已读请求",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.NotificationBatchReadReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/notifications/delete/:id": {
+            "delete": {
+                "description": "删除指定通知",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "删除通知",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "朋友圈规则 ID",
+                        "description": "通知ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -2454,6 +2451,132 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/notifications/page": {
+            "get": {
+                "description": "查询通知的分页列表，支持按已读/未读状态过滤",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "查询通知分页列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "每页数量",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否已读",
+                        "name": "is_read",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PageResult-ent_Notification"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/notifications/query/:id": {
+            "get": {
+                "description": "查询指定通知的详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "查询通知详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "通知ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ent.Notification"
                                         }
                                     }
                                 }
@@ -2712,6 +2835,105 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/post/month-stats": {
+            "get": {
+                "description": "获取每个月份的文章数量统计",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "获取文章月份统计",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "返回数据条数限制",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.PostMonthStat"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/post/random": {
+            "get": {
+                "description": "随机获取一篇文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "随机获取一篇文章",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ent.Post"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/posts": {
             "get": {
                 "description": "查询所有文章",
@@ -2799,6 +3021,68 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/posts/slug/{slug}": {
+            "get": {
+                "description": "根据Slug查询指定文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "根据Slug查询文章",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "文章Slug",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PostResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
@@ -3106,7 +3390,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/posts/{id}/summary": {
+        "/api/v1/posts/{id}/summary/stream": {
             "get": {
                 "description": "获取指定文章的摘要流",
                 "consumes": [
@@ -3361,6 +3645,61 @@ const docTemplate = `{
                                             "items": {
                                                 "$ref": "#/definitions/ent.Product"
                                             }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products/page": {
+            "get": {
+                "description": "分页查询商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "分页查询商品",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PageResult-ent_Product"
                                         }
                                     }
                                 }
@@ -5356,6 +5695,63 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.Category": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "分类描述",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the CategoryQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.CategoryEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "分类名称",
+                    "type": "string"
+                },
+                "slug": {
+                    "description": "分类别名",
+                    "type": "string"
+                },
+                "sort_order": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.CategoryEdges": {
+            "type": "object",
+            "properties": {
+                "posts": {
+                    "description": "Posts holds the value of the posts edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Post"
+                    }
+                }
+            }
+        },
         "ent.Comment": {
             "type": "object",
             "properties": {
@@ -5544,6 +5940,68 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.File": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the FileQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.FileEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "文件名称",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "文件路径",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "文件大小",
+                    "type": "string"
+                },
+                "storage_strategy_id": {
+                    "description": "存储策略ID",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "文件类型",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "文件地址",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.FileEdges": {
+            "type": "object",
+            "properties": {
+                "storage_strategy": {
+                    "description": "StorageStrategy holds the value of the storage_strategy edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.StorageStrategy"
+                        }
+                    ]
+                }
+            }
+        },
         "ent.FriendCircleRecord": {
             "type": "object",
             "properties": {
@@ -5581,43 +6039,6 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                }
-            }
-        },
-        "ent.FriendCircleRule": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "created_selector": {
-                    "description": "创建时间选择器",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "integer"
-                },
-                "link_selector": {
-                    "description": "链接选择器",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "规则名称",
-                    "type": "string"
-                },
-                "title_selector": {
-                    "description": "标题选择器",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                },
-                "updated_selector": {
-                    "description": "更新时间选择器",
                     "type": "string"
                 }
             }
@@ -5700,6 +6121,39 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.Notification": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "通知内容",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "is_read": {
+                    "description": "是否已读",
+                    "type": "boolean"
+                },
+                "publish_time": {
+                    "description": "发布时间",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "通知标题",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
         "ent.PayOrder": {
             "type": "object",
             "properties": {
@@ -5772,10 +6226,6 @@ const docTemplate = `{
         "ent.Post": {
             "type": "object",
             "properties": {
-                "alias": {
-                    "description": "文章别名",
-                    "type": "string"
-                },
                 "author": {
                     "description": "作者",
                     "type": "string"
@@ -5808,6 +6258,14 @@ const docTemplate = `{
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
                     "type": "string"
                 },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the PostQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.PostEdges"
+                        }
+                    ]
+                },
                 "html_content": {
                     "description": "html文章内容",
                     "type": "string"
@@ -5824,7 +6282,7 @@ const docTemplate = `{
                     "description": "是否自动生成摘要",
                     "type": "boolean"
                 },
-                "is_tip_to_top": {
+                "is_pin_to_top": {
                     "description": "是否置顶",
                     "type": "boolean"
                 },
@@ -5848,12 +6306,16 @@ const docTemplate = `{
                     "description": "md文章内容",
                     "type": "string"
                 },
-                "money": {
-                    "description": "支付金额",
+                "price": {
+                    "description": "文章价格",
                     "type": "integer"
                 },
                 "published_at": {
                     "description": "发布时间",
+                    "type": "string"
+                },
+                "slug": {
+                    "description": "文章别名",
                     "type": "string"
                 },
                 "status": {
@@ -5879,6 +6341,25 @@ const docTemplate = `{
                 "view_count": {
                     "description": "浏览次数",
                     "type": "integer"
+                }
+            }
+        },
+        "ent.PostEdges": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "description": "Categories holds the value of the categories edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Category"
+                    }
+                },
+                "tags": {
+                    "description": "Tags holds the value of the tags edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Tag"
+                    }
                 }
             }
         },
@@ -6082,6 +6563,14 @@ const docTemplate = `{
                     "description": "访问域名",
                     "type": "string"
                 },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the StorageStrategyQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.StorageStrategyEdges"
+                        }
+                    ]
+                },
                 "endpoint": {
                     "description": "端点",
                     "type": "string"
@@ -6121,6 +6610,79 @@ const docTemplate = `{
                 "updated_at": {
                     "description": "UpdatedAt holds the value of the \"updated_at\" field.",
                     "type": "string"
+                }
+            }
+        },
+        "ent.StorageStrategyEdges": {
+            "type": "object",
+            "properties": {
+                "files": {
+                    "description": "Files holds the value of the files edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.File"
+                    }
+                }
+            }
+        },
+        "ent.Tag": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "color": {
+                    "description": "标签颜色",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "标签描述",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the TagQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.TagEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "标签名称",
+                    "type": "string"
+                },
+                "slug": {
+                    "description": "标签别名",
+                    "type": "string"
+                },
+                "sort_order": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.TagEdges": {
+            "type": "object",
+            "properties": {
+                "posts": {
+                    "description": "Posts holds the value of the posts edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Post"
+                    }
                 }
             }
         },
@@ -6386,6 +6948,20 @@ const docTemplate = `{
                 },
                 "status": {
                     "description": "状态",
+                    "type": "string"
+                }
+            }
+        },
+        "model.DuplicateFile": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "post_id": {
+                    "type": "integer"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -6658,72 +7234,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.FriendCircleRuleResp": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "created_selector": {
-                    "description": "创建时间选择器",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "integer"
-                },
-                "link_selector": {
-                    "description": "链接选择器",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "规则名称",
-                    "type": "string"
-                },
-                "title_selector": {
-                    "description": "标题选择器",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                },
-                "updated_selector": {
-                    "description": "更新时间选择器",
-                    "type": "string"
-                }
-            }
-        },
-        "model.FriendCircleRuleSaveReq": {
-            "type": "object",
-            "properties": {
-                "created_selector": {
-                    "description": "创建时间选择器",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "integer"
-                },
-                "link_selector": {
-                    "description": "链接选择器",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "规则名称",
-                    "type": "string"
-                },
-                "title_selector": {
-                    "description": "标题选择器",
-                    "type": "string"
-                },
-                "updated_selector": {
-                    "description": "更新时间选择器",
-                    "type": "string"
-                }
-            }
-        },
         "model.HomeStatistic": {
             "type": "object",
             "properties": {
@@ -6767,49 +7277,25 @@ const docTemplate = `{
         "model.InitializeRequest": {
             "type": "object",
             "required": [
-                "adminEmail",
-                "adminPassword",
-                "adminUsername",
-                "confirmPassword",
-                "dbType"
+                "admin_email",
+                "admin_password",
+                "admin_username",
+                "confirm_password"
             ],
             "properties": {
-                "adminEmail": {
+                "admin_email": {
                     "type": "string"
                 },
-                "adminPassword": {
+                "admin_password": {
                     "type": "string",
                     "minLength": 6
                 },
-                "adminUsername": {
+                "admin_username": {
                     "type": "string"
                 },
-                "confirmPassword": {
+                "confirm_password": {
                     "type": "string",
                     "minLength": 6
-                },
-                "dbHost": {
-                    "type": "string"
-                },
-                "dbName": {
-                    "type": "string"
-                },
-                "dbPassword": {
-                    "type": "string"
-                },
-                "dbPort": {
-                    "type": "integer"
-                },
-                "dbType": {
-                    "type": "string",
-                    "enum": [
-                        "sqlite",
-                        "mysql",
-                        "postgres"
-                    ]
-                },
-                "dbUser": {
-                    "type": "string"
                 }
             }
         },
@@ -6825,6 +7311,61 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "model.MigrationCheckResult": {
+            "type": "object",
+            "properties": {
+                "duplicates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.DuplicateFile"
+                    }
+                },
+                "has_duplicates": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.MigrationResult": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "failed": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.NotificationBatchReadReq": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -6863,6 +7404,34 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.Comment"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PageResult-ent_Notification": {
+            "type": "object",
+            "properties": {
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Notification"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PageResult-ent_Product": {
+            "type": "object",
+            "properties": {
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Product"
                     }
                 },
                 "total": {
@@ -6954,20 +7523,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.PageResult-model_FriendCircleRuleResp": {
-            "type": "object",
-            "properties": {
-                "records": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.FriendCircleRuleResp"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "model.PageResult-model_UserResp": {
             "type": "object",
             "properties": {
@@ -7046,92 +7601,341 @@ const docTemplate = `{
         "model.PostCreateReq": {
             "type": "object",
             "required": [
-                "author",
                 "content",
+                "content_type",
+                "price",
+                "status",
                 "title"
             ],
             "properties": {
-                "alias": {
+                "author": {
+                    "description": "作者",
                     "type": "string"
                 },
-                "author": {
-                    "type": "string"
+                "categories": {
+                    "description": "分类ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "content": {
+                    "description": "文章内容",
+                    "type": "string"
+                },
+                "content_type": {
+                    "description": "内容类型",
                     "type": "string"
                 },
                 "copyright": {
+                    "description": "文章版权",
                     "type": "string"
                 },
                 "cover": {
+                    "description": "文章封面",
+                    "type": "string"
+                },
+                "html_content": {
+                    "description": "html文章内容",
                     "type": "string"
                 },
                 "is_allow_comment": {
+                    "description": "是否允许评论",
                     "type": "boolean"
                 },
                 "is_autogen_summary": {
+                    "description": "是否自动生成摘要",
                     "type": "boolean"
                 },
-                "is_published": {
-                    "type": "boolean"
-                },
-                "is_tip_to_top": {
+                "is_pin_to_top": {
+                    "description": "是否置顶",
                     "type": "boolean"
                 },
                 "is_visible": {
+                    "description": "是否可见",
+                    "type": "boolean"
+                },
+                "is_visible_after_comment": {
+                    "description": "是否评论后可见",
+                    "type": "boolean"
+                },
+                "is_visible_after_pay": {
+                    "description": "是否支付后可见",
                     "type": "boolean"
                 },
                 "keywords": {
+                    "description": "文章关键词",
+                    "type": "string"
+                },
+                "md_content": {
+                    "description": "md文章内容",
+                    "type": "string"
+                },
+                "price": {
+                    "description": "文章价格",
+                    "type": "number",
+                    "minimum": 0
+                },
+                "slug": {
+                    "description": "文章别名",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
                     "type": "string"
                 },
                 "summary": {
+                    "description": "文章摘要",
                     "type": "string"
                 },
+                "tags": {
+                    "description": "标签ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "title": {
+                    "description": "文章标题",
                     "type": "string"
+                }
+            }
+        },
+        "model.PostMonthStat": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "文章数量",
+                    "type": "integer"
+                },
+                "month": {
+                    "description": "MM-YYYY 格式",
+                    "type": "string"
+                }
+            }
+        },
+        "model.PostResp": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "作者",
+                    "type": "string"
+                },
+                "categories": {
+                    "description": "分类ID列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Category"
+                    }
+                },
+                "category_ids": {
+                    "description": "分类ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "comment_count": {
+                    "description": "评论次数",
+                    "type": "integer"
+                },
+                "content": {
+                    "description": "文章内容",
+                    "type": "string"
+                },
+                "content_type": {
+                    "description": "内容类型",
+                    "type": "string"
+                },
+                "copyright": {
+                    "description": "文章版权",
+                    "type": "string"
+                },
+                "cover": {
+                    "description": "文章封面",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "html_content": {
+                    "description": "html文章内容",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "文章ID",
+                    "type": "integer"
+                },
+                "is_allow_comment": {
+                    "description": "是否允许评论",
+                    "type": "boolean"
+                },
+                "is_autogen_summary": {
+                    "description": "是否自动生成摘要",
+                    "type": "boolean"
+                },
+                "is_pin_to_top": {
+                    "description": "是否置顶",
+                    "type": "boolean"
+                },
+                "is_visible": {
+                    "description": "是否可见",
+                    "type": "boolean"
+                },
+                "is_visible_after_comment": {
+                    "description": "是否评论后可见",
+                    "type": "boolean"
+                },
+                "is_visible_after_pay": {
+                    "description": "是否支付后可见",
+                    "type": "boolean"
+                },
+                "keywords": {
+                    "description": "文章关键词",
+                    "type": "string"
+                },
+                "md_content": {
+                    "description": "md文章内容",
+                    "type": "string"
+                },
+                "price": {
+                    "description": "文章价格",
+                    "type": "number"
+                },
+                "published_at": {
+                    "description": "发布时间",
+                    "type": "string"
+                },
+                "slug": {
+                    "description": "文章别名",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "string"
+                },
+                "summary": {
+                    "description": "文章摘要",
+                    "type": "string"
+                },
+                "tag_ids": {
+                    "description": "标签ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "tags": {
+                    "description": "标签ID列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Tag"
+                    }
+                },
+                "title": {
+                    "description": "文章标题",
+                    "type": "string"
+                },
+                "view_count": {
+                    "description": "浏览次数",
+                    "type": "integer"
                 }
             }
         },
         "model.PostUpdateReq": {
             "type": "object",
+            "required": [
+                "content_type",
+                "price",
+                "status"
+            ],
             "properties": {
-                "alias": {
+                "author": {
+                    "description": "作者",
                     "type": "string"
                 },
-                "author": {
-                    "type": "string"
+                "categories": {
+                    "description": "分类ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "content": {
+                    "description": "Slug                  *string ` + "`" + `json:\"slug,omitempty\"` + "`" + `                                           //文章别名",
+                    "type": "string"
+                },
+                "content_type": {
+                    "description": "内容类型",
                     "type": "string"
                 },
                 "copyright": {
+                    "description": "文章版权",
                     "type": "string"
                 },
                 "cover": {
+                    "description": "文章封面",
+                    "type": "string"
+                },
+                "html_content": {
+                    "description": "html文章内容",
                     "type": "string"
                 },
                 "is_allow_comment": {
+                    "description": "是否允许评论",
                     "type": "boolean"
                 },
                 "is_autogen_summary": {
+                    "description": "是否自动生成摘要",
                     "type": "boolean"
                 },
-                "is_published": {
-                    "type": "boolean"
-                },
-                "is_tip_to_top": {
+                "is_pin_to_top": {
+                    "description": "是否置顶",
                     "type": "boolean"
                 },
                 "is_visible": {
+                    "description": "是否可见",
+                    "type": "boolean"
+                },
+                "is_visible_after_comment": {
+                    "description": "是否评论后可见",
+                    "type": "boolean"
+                },
+                "is_visible_after_pay": {
+                    "description": "是否支付后可见",
                     "type": "boolean"
                 },
                 "keywords": {
+                    "description": "文章关键词",
+                    "type": "string"
+                },
+                "md_content": {
+                    "description": "md文章内容",
+                    "type": "string"
+                },
+                "price": {
+                    "description": "文章价格",
+                    "type": "number",
+                    "minimum": 0
+                },
+                "status": {
+                    "description": "状态",
                     "type": "string"
                 },
                 "summary": {
+                    "description": "文章摘要",
                     "type": "string"
                 },
+                "tags": {
+                    "description": "标签ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "title": {
+                    "description": "文章标题",
                     "type": "string"
                 }
             }

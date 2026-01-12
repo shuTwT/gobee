@@ -58,11 +58,20 @@ func (s *PostServiceImpl) QueryPostList(c context.Context, req model.PostListReq
 		query.Where(post.PublishedAtGTE(startDate), post.PublishedAtLT(endDate))
 	}
 
-	posts, err := query.
+	if req.IsPinToTop != nil {
+		query.Where(post.IsPinToTop(*req.IsPinToTop))
+	}
+
+	query = query.
 		WithCategories().
 		WithTags().
-		Order(ent.Desc(post.FieldID)).
-		All(c)
+		Order(ent.Desc(post.FieldID))
+
+	if req.Limit != nil {
+		query.Limit(*req.Limit)
+	}
+
+	posts, err := query.All(c)
 	if err != nil {
 		return nil, err
 	}

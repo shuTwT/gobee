@@ -482,7 +482,7 @@ func simulateAIProcessing(targetText string, ch chan model.AIResponse) {
 // @Success 200 {object} model.HttpSuccess{data=model.AIResponse}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/posts/{id}/summary [get]
+// @Router /api/v1/posts/{id}/summary/stream [get]
 func (h *PostHandlerImpl) GetSummaryForStream(c *fiber.Ctx) error {
 	c.Set("Content-Type", "text/event-stream")
 	c.Set("Cache-Control", "no-cache")
@@ -490,16 +490,28 @@ func (h *PostHandlerImpl) GetSummaryForStream(c *fiber.Ctx) error {
 	c.Set("Transfer-Encoding", "chunked")
 
 	responseChan := make(chan model.AIResponse)
+	var targetStr string
+	post, err := h.postService.GetRandomPost(c.Context())
+	if err != nil {
+		targetStr = "看来遇到了点问题，这不是你的问题"
+	} else {
+		if post.Summary != "" {
+			targetStr = post.Summary
+		} else {
+			targetStr = "你好!我是AI助手,我正在处理你的请求,这是一个流式响应示例,马上就要完成了,处理完成!"
+		}
+	}
 
-	go simulateAIProcessing("你好!我是AI助手,我正在处理你的请求,这是一个流式响应示例,马上就要完成了,处理完成!", responseChan)
+	go simulateAIProcessing(targetStr, responseChan)
 	c.Context().SetBodyStreamWriter(fasthttp.StreamWriter(func(w *bufio.Writer) {
+
 		for response := range responseChan {
 			data, err := json.Marshal(response.Content)
 			if err != nil {
 				continue
 			}
 
-			fmt.Fprintf(w, "%s", string(data))
+			_, err = fmt.Fprintf(w, "%s", string(data))
 
 			err = w.Flush()
 

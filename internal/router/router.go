@@ -109,7 +109,7 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		postApi.Put("/unpublish/:id", handlerMap.PostHandler.UnpublishPost).Name("postUnpublish")
 		postApi.Get("/query/:id", handlerMap.PostHandler.QueryPost).Name("postQuery")
 		postApi.Delete("/delete/:id", handlerMap.PostHandler.DeletePost).Name("postDelete")
-		postApi.Get("/summary/stream/:id", handlerMap.PostHandler.GetSummaryForStream).Name("postSummaryStream")
+
 	}
 	categoryApi := router.Group("/category")
 	{
@@ -237,6 +237,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			apiV1.All("/twikoo", handlerMap.CommentHandler.HandleTwikoo).Name("twikoo")
 			apiV1.Get("/comment/recent", handlerMap.CommentHandler.RecentComment).Name("recentComment")
 			apiV1.Get("/flink/random", handlerMap.FlinkHandler.RandomFlink).Name("randomFlink")
+			apiV1.Get("/posts/:id/summary/stream", handlerMap.PostHandler.GetSummaryForStream).Name("postSummaryStream")
 			// 登录身份验证中间件
 			apiV1.Use(middleware.FlexibleAuth())
 

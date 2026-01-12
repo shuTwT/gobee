@@ -79,6 +79,47 @@ definitions:
         description: 查看次数
         type: integer
     type: object
+  ent.Category:
+    properties:
+      active:
+        description: 是否启用
+        type: boolean
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: 分类描述
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.CategoryEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the CategoryQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: integer
+      name:
+        description: 分类名称
+        type: string
+      slug:
+        description: 分类别名
+        type: string
+      sort_order:
+        description: 排序
+        type: integer
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.CategoryEdges:
+    properties:
+      posts:
+        description: Posts holds the value of the posts edge.
+        items:
+          $ref: '#/definitions/ent.Post'
+        type: array
+    type: object
   ent.Comment:
     properties:
       content:
@@ -214,6 +255,49 @@ definitions:
           $ref: '#/definitions/ent.FLink'
         type: array
     type: object
+  ent.File:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.FileEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the FileQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: integer
+      name:
+        description: 文件名称
+        type: string
+      path:
+        description: 文件路径
+        type: string
+      size:
+        description: 文件大小
+        type: string
+      storage_strategy_id:
+        description: 存储策略ID
+        type: integer
+      type:
+        description: 文件类型
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      url:
+        description: 文件地址
+        type: string
+    type: object
+  ent.FileEdges:
+    properties:
+      storage_strategy:
+        allOf:
+        - $ref: '#/definitions/ent.StorageStrategy'
+        description: StorageStrategy holds the value of the storage_strategy edge.
+    type: object
   ent.FriendCircleRecord:
     properties:
       author:
@@ -242,33 +326,6 @@ definitions:
         type: string
       updated_at:
         description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-    type: object
-  ent.FriendCircleRule:
-    properties:
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      created_selector:
-        description: 创建时间选择器
-        type: string
-      id:
-        description: ID of the ent.
-        type: integer
-      link_selector:
-        description: 链接选择器
-        type: string
-      name:
-        description: 规则名称
-        type: string
-      title_selector:
-        description: 标题选择器
-        type: string
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-      updated_selector:
-        description: 更新时间选择器
         type: string
     type: object
   ent.Member:
@@ -326,6 +383,30 @@ definitions:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
     type: object
+  ent.Notification:
+    properties:
+      content:
+        description: 通知内容
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: integer
+      is_read:
+        description: 是否已读
+        type: boolean
+      publish_time:
+        description: 发布时间
+        type: string
+      title:
+        description: 通知标题
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
   ent.PayOrder:
     properties:
       body:
@@ -379,9 +460,6 @@ definitions:
     type: object
   ent.Post:
     properties:
-      alias:
-        description: 文章别名
-        type: string
       author:
         description: 作者
         type: string
@@ -404,6 +482,12 @@ definitions:
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.PostEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the PostQuery when eager-loading is set.
       html_content:
         description: html文章内容
         type: string
@@ -416,7 +500,7 @@ definitions:
       is_autogen_summary:
         description: 是否自动生成摘要
         type: boolean
-      is_tip_to_top:
+      is_pin_to_top:
         description: 是否置顶
         type: boolean
       is_visible:
@@ -434,11 +518,14 @@ definitions:
       md_content:
         description: md文章内容
         type: string
-      money:
-        description: 支付金额
+      price:
+        description: 文章价格
         type: integer
       published_at:
         description: 发布时间
+        type: string
+      slug:
+        description: 文章别名
         type: string
       status:
         allOf:
@@ -456,6 +543,19 @@ definitions:
       view_count:
         description: 浏览次数
         type: integer
+    type: object
+  ent.PostEdges:
+    properties:
+      categories:
+        description: Categories holds the value of the categories edge.
+        items:
+          $ref: '#/definitions/ent.Category'
+        type: array
+      tags:
+        description: Tags holds the value of the tags edge.
+        items:
+          $ref: '#/definitions/ent.Tag'
+        type: array
     type: object
   ent.Product:
     properties:
@@ -604,6 +704,12 @@ definitions:
       domain:
         description: 访问域名
         type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.StorageStrategyEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the StorageStrategyQuery when eager-loading is set.
       endpoint:
         description: 端点
         type: string
@@ -632,6 +738,58 @@ definitions:
       updated_at:
         description: UpdatedAt holds the value of the "updated_at" field.
         type: string
+    type: object
+  ent.StorageStrategyEdges:
+    properties:
+      files:
+        description: Files holds the value of the files edge.
+        items:
+          $ref: '#/definitions/ent.File'
+        type: array
+    type: object
+  ent.Tag:
+    properties:
+      active:
+        description: 是否启用
+        type: boolean
+      color:
+        description: 标签颜色
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: 标签描述
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.TagEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the TagQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: integer
+      name:
+        description: 标签名称
+        type: string
+      slug:
+        description: 标签别名
+        type: string
+      sort_order:
+        description: 排序
+        type: integer
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.TagEdges:
+    properties:
+      posts:
+        description: Posts holds the value of the posts edge.
+        items:
+          $ref: '#/definitions/ent.Post'
+        type: array
     type: object
   ent.User:
     properties:
@@ -811,6 +969,15 @@ definitions:
         type: array
       status:
         description: 状态
+        type: string
+    type: object
+  model.DuplicateFile:
+    properties:
+      filename:
+        type: string
+      post_id:
+        type: integer
+      title:
         type: string
     type: object
   model.EssayCreateReq:
@@ -1001,54 +1168,6 @@ definitions:
         description: UpdatedAt holds the value of the "updated_at" field.
         type: string
     type: object
-  model.FriendCircleRuleResp:
-    properties:
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      created_selector:
-        description: 创建时间选择器
-        type: string
-      id:
-        description: ID of the ent.
-        type: integer
-      link_selector:
-        description: 链接选择器
-        type: string
-      name:
-        description: 规则名称
-        type: string
-      title_selector:
-        description: 标题选择器
-        type: string
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-      updated_selector:
-        description: 更新时间选择器
-        type: string
-    type: object
-  model.FriendCircleRuleSaveReq:
-    properties:
-      created_selector:
-        description: 创建时间选择器
-        type: string
-      id:
-        description: ID of the ent.
-        type: integer
-      link_selector:
-        description: 链接选择器
-        type: string
-      name:
-        description: 规则名称
-        type: string
-      title_selector:
-        description: 标题选择器
-        type: string
-      updated_selector:
-        description: 更新时间选择器
-        type: string
-    type: object
   model.HomeStatistic:
     properties:
       commentCount:
@@ -1077,38 +1196,21 @@ definitions:
     type: object
   model.InitializeRequest:
     properties:
-      adminEmail:
+      admin_email:
         type: string
-      adminPassword:
+      admin_password:
         minLength: 6
         type: string
-      adminUsername:
+      admin_username:
         type: string
-      confirmPassword:
+      confirm_password:
         minLength: 6
-        type: string
-      dbHost:
-        type: string
-      dbName:
-        type: string
-      dbPassword:
-        type: string
-      dbPort:
-        type: integer
-      dbType:
-        enum:
-        - sqlite
-        - mysql
-        - postgres
-        type: string
-      dbUser:
         type: string
     required:
-    - adminEmail
-    - adminPassword
-    - adminUsername
-    - confirmPassword
-    - dbType
+    - admin_email
+    - admin_password
+    - admin_username
+    - confirm_password
     type: object
   model.LoginRequest:
     properties:
@@ -1119,6 +1221,42 @@ definitions:
     required:
     - email
     - password
+    type: object
+  model.MigrationCheckResult:
+    properties:
+      duplicates:
+        items:
+          $ref: '#/definitions/model.DuplicateFile'
+        type: array
+      has_duplicates:
+        type: boolean
+    type: object
+  model.MigrationResult:
+    properties:
+      errors:
+        items:
+          type: string
+        type: array
+      failed:
+        type: integer
+      message:
+        type: string
+      status:
+        type: string
+      success:
+        type: integer
+      total:
+        type: integer
+    type: object
+  model.NotificationBatchReadReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        minItems: 1
+        type: array
+    required:
+    - ids
     type: object
   model.PageResult-ent_Album:
     properties:
@@ -1143,6 +1281,24 @@ definitions:
       records:
         items:
           $ref: '#/definitions/ent.Comment'
+        type: array
+      total:
+        type: integer
+    type: object
+  model.PageResult-ent_Notification:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/ent.Notification'
+        type: array
+      total:
+        type: integer
+    type: object
+  model.PageResult-ent_Product:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/ent.Product'
         type: array
       total:
         type: integer
@@ -1201,15 +1357,6 @@ definitions:
       total:
         type: integer
     type: object
-  model.PageResult-model_FriendCircleRuleResp:
-    properties:
-      records:
-        items:
-          $ref: '#/definitions/model.FriendCircleRuleResp'
-        type: array
-      total:
-        type: integer
-    type: object
   model.PageResult-model_UserResp:
     properties:
       records:
@@ -1264,65 +1411,256 @@ definitions:
     type: object
   model.PostCreateReq:
     properties:
-      alias:
-        type: string
       author:
+        description: 作者
         type: string
+      categories:
+        description: 分类ID列表
+        items:
+          type: integer
+        type: array
       content:
+        description: 文章内容
+        type: string
+      content_type:
+        description: 内容类型
         type: string
       copyright:
+        description: 文章版权
         type: string
       cover:
+        description: 文章封面
+        type: string
+      html_content:
+        description: html文章内容
         type: string
       is_allow_comment:
+        description: 是否允许评论
         type: boolean
       is_autogen_summary:
+        description: 是否自动生成摘要
         type: boolean
-      is_published:
-        type: boolean
-      is_tip_to_top:
+      is_pin_to_top:
+        description: 是否置顶
         type: boolean
       is_visible:
+        description: 是否可见
+        type: boolean
+      is_visible_after_comment:
+        description: 是否评论后可见
+        type: boolean
+      is_visible_after_pay:
+        description: 是否支付后可见
         type: boolean
       keywords:
+        description: 文章关键词
+        type: string
+      md_content:
+        description: md文章内容
+        type: string
+      price:
+        description: 文章价格
+        minimum: 0
+        type: number
+      slug:
+        description: 文章别名
+        type: string
+      status:
+        description: 状态
         type: string
       summary:
+        description: 文章摘要
         type: string
+      tags:
+        description: 标签ID列表
+        items:
+          type: integer
+        type: array
       title:
+        description: 文章标题
         type: string
     required:
-    - author
     - content
+    - content_type
+    - price
+    - status
     - title
+    type: object
+  model.PostMonthStat:
+    properties:
+      count:
+        description: 文章数量
+        type: integer
+      month:
+        description: MM-YYYY 格式
+        type: string
+    type: object
+  model.PostResp:
+    properties:
+      author:
+        description: 作者
+        type: string
+      categories:
+        description: 分类ID列表
+        items:
+          $ref: '#/definitions/ent.Category'
+        type: array
+      category_ids:
+        description: 分类ID列表
+        items:
+          type: integer
+        type: array
+      comment_count:
+        description: 评论次数
+        type: integer
+      content:
+        description: 文章内容
+        type: string
+      content_type:
+        description: 内容类型
+        type: string
+      copyright:
+        description: 文章版权
+        type: string
+      cover:
+        description: 文章封面
+        type: string
+      created_at:
+        description: 创建时间
+        type: string
+      html_content:
+        description: html文章内容
+        type: string
+      id:
+        description: 文章ID
+        type: integer
+      is_allow_comment:
+        description: 是否允许评论
+        type: boolean
+      is_autogen_summary:
+        description: 是否自动生成摘要
+        type: boolean
+      is_pin_to_top:
+        description: 是否置顶
+        type: boolean
+      is_visible:
+        description: 是否可见
+        type: boolean
+      is_visible_after_comment:
+        description: 是否评论后可见
+        type: boolean
+      is_visible_after_pay:
+        description: 是否支付后可见
+        type: boolean
+      keywords:
+        description: 文章关键词
+        type: string
+      md_content:
+        description: md文章内容
+        type: string
+      price:
+        description: 文章价格
+        type: number
+      published_at:
+        description: 发布时间
+        type: string
+      slug:
+        description: 文章别名
+        type: string
+      status:
+        description: 状态
+        type: string
+      summary:
+        description: 文章摘要
+        type: string
+      tag_ids:
+        description: 标签ID列表
+        items:
+          type: integer
+        type: array
+      tags:
+        description: 标签ID列表
+        items:
+          $ref: '#/definitions/ent.Tag'
+        type: array
+      title:
+        description: 文章标题
+        type: string
+      view_count:
+        description: 浏览次数
+        type: integer
     type: object
   model.PostUpdateReq:
     properties:
-      alias:
-        type: string
       author:
+        description: 作者
         type: string
+      categories:
+        description: 分类ID列表
+        items:
+          type: integer
+        type: array
       content:
+        description: Slug                  *string `json:"slug,omitempty"`                                           //文章别名
+        type: string
+      content_type:
+        description: 内容类型
         type: string
       copyright:
+        description: 文章版权
         type: string
       cover:
+        description: 文章封面
+        type: string
+      html_content:
+        description: html文章内容
         type: string
       is_allow_comment:
+        description: 是否允许评论
         type: boolean
       is_autogen_summary:
+        description: 是否自动生成摘要
         type: boolean
-      is_published:
-        type: boolean
-      is_tip_to_top:
+      is_pin_to_top:
+        description: 是否置顶
         type: boolean
       is_visible:
+        description: 是否可见
+        type: boolean
+      is_visible_after_comment:
+        description: 是否评论后可见
+        type: boolean
+      is_visible_after_pay:
+        description: 是否支付后可见
         type: boolean
       keywords:
+        description: 文章关键词
+        type: string
+      md_content:
+        description: md文章内容
+        type: string
+      price:
+        description: 文章价格
+        minimum: 0
+        type: number
+      status:
+        description: 状态
         type: string
       summary:
+        description: 文章摘要
         type: string
+      tags:
+        description: 标签ID列表
+        items:
+          type: integer
+        type: array
       title:
+        description: 文章标题
         type: string
+    required:
+    - content_type
+    - price
+    - status
     type: object
   model.ProductCreateReq:
     properties:
@@ -2369,6 +2707,42 @@ paths:
       summary: 删除说说
       tags:
       - essay
+  /api/v1/essay/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取说说列表
+      parameters:
+      - default: 10
+        description: 数量限制
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.EssayResp'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取说说列表
+      tags:
+      - essay
   /api/v1/essay/page:
     get:
       consumes:
@@ -2960,11 +3334,17 @@ paths:
       summary: 更新朋友圈记录
       tags:
       - friend_circle_records
-  /api/v1/friend_circle_rules:
-    get:
+  /api/v1/migration/check-duplicate:
+    post:
       consumes:
-      - application/json
-      description: 获取所有朋友圈规则
+      - multipart/form-data
+      description: 检查待导入的文件中是否有与数据库中文章标题重复的文件
+      parameters:
+      - description: Markdown文件
+        in: formData
+        name: files
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -2975,9 +3355,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/model.FriendCircleRuleResp'
-                  type: array
+                  $ref: '#/definitions/model.MigrationCheckResult'
               type: object
         "400":
           description: Bad Request
@@ -2987,20 +3365,55 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 获取朋友圈规则列表
+      summary: 检查重复文件
       tags:
-      - friend_circle_rules
+      - migration
+  /api/v1/migration/md:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 批量导入Markdown文件到文章管理
+      parameters:
+      - description: Markdown文件
+        in: formData
+        name: files
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.MigrationResult'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 导入Markdown文件
+      tags:
+      - migration
+  /api/v1/notifications/batch/read:
     post:
       consumes:
       - application/json
-      description: 创建新的朋友圈规则
+      description: 批量将通知标记为已读
       parameters:
-      - description: 朋友圈规则保存请求体
+      - description: 批量已读请求
         in: body
-        name: friend_circle_rule_save_req
+        name: request
         required: true
         schema:
-          $ref: '#/definitions/model.FriendCircleRuleSaveReq'
+          $ref: '#/definitions/model.NotificationBatchReadReq'
       produces:
       - application/json
       responses:
@@ -3011,7 +3424,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.FriendCircleRule'
+                  type: object
               type: object
         "400":
           description: Bad Request
@@ -3021,16 +3434,16 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 创建朋友圈规则
+      summary: 批量标记为已读
       tags:
-      - friend_circle_rules
-  /api/v1/friend_circle_rules/{id}:
+      - notifications
+  /api/v1/notifications/delete/:id:
     delete:
       consumes:
       - application/json
-      description: 删除指定 ID 的朋友圈规则
+      description: 删除指定通知
       parameters:
-      - description: 朋友圈规则 ID
+      - description: 通知ID
         in: path
         name: id
         required: true
@@ -3055,53 +3468,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 删除朋友圈规则
+      summary: 删除通知
       tags:
-      - friend_circle_rules
-    put:
-      consumes:
-      - application/json
-      description: 更新指定 ID 的朋友圈规则
-      parameters:
-      - description: 朋友圈规则 ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: 朋友圈规则保存请求体
-        in: body
-        name: friend_circle_rule_save_req
-        required: true
-        schema:
-          $ref: '#/definitions/model.FriendCircleRuleSaveReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpSuccess'
-            - properties:
-                data:
-                  $ref: '#/definitions/ent.FriendCircleRule'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 更新朋友圈规则
-      tags:
-      - friend_circle_rules
-  /api/v1/friend_circle_rules/page:
+      - notifications
+  /api/v1/notifications/page:
     get:
       consumes:
       - application/json
-      description: 获取朋友圈规则分页列表
+      description: 查询通知的分页列表，支持按已读/未读状态过滤
       parameters:
       - default: 1
         description: 页码
@@ -3113,6 +3487,11 @@ paths:
         in: query
         name: size
         type: integer
+      - default: false
+        description: 是否已读
+        in: query
+        name: is_read
+        type: boolean
       produces:
       - application/json
       responses:
@@ -3123,7 +3502,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/model.PageResult-model_FriendCircleRuleResp'
+                  $ref: '#/definitions/model.PageResult-ent_Notification'
               type: object
         "400":
           description: Bad Request
@@ -3133,9 +3512,43 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 获取朋友圈规则分页列表
+      summary: 查询通知分页列表
       tags:
-      - friend_circle_rules
+      - notifications
+  /api/v1/notifications/query/:id:
+    get:
+      consumes:
+      - application/json
+      description: 查询指定通知的详细信息
+      parameters:
+      - description: 通知ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.Notification'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询通知详情
+      tags:
+      - notifications
   /api/v1/payorders:
     get:
       consumes:
@@ -3290,6 +3703,65 @@ paths:
       summary: 更新支付订单
       tags:
       - payorders
+  /api/v1/post/month-stats:
+    get:
+      consumes:
+      - application/json
+      description: 获取每个月份的文章数量统计
+      parameters:
+      - description: 返回数据条数限制
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.PostMonthStat'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取文章月份统计
+      tags:
+      - posts
+  /api/v1/post/random:
+    get:
+      consumes:
+      - application/json
+      description: 随机获取一篇文章
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/ent.Post'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 随机获取一篇文章
+      tags:
+      - posts
   /api/v1/posts:
     get:
       consumes:
@@ -3530,7 +4002,7 @@ paths:
       summary: 更新文章设置
       tags:
       - posts
-  /api/v1/posts/{id}/summary:
+  /api/v1/posts/{id}/summary/stream:
     get:
       consumes:
       - application/json
@@ -3596,6 +4068,44 @@ paths:
           schema:
             $ref: '#/definitions/model.HttpError'
       summary: 取消发布文章
+      tags:
+      - posts
+  /api/v1/posts/slug/{slug}:
+    get:
+      consumes:
+      - application/json
+      description: 根据Slug查询指定文章
+      parameters:
+      - description: 文章Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PostResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 根据Slug查询文章
       tags:
       - posts
   /api/v1/products/create:
@@ -3691,6 +4201,39 @@ paths:
           schema:
             $ref: '#/definitions/model.HttpError'
       summary: 查询所有商品
+      tags:
+      - products
+  /api/v1/products/page:
+    get:
+      consumes:
+      - application/json
+      description: 分页查询商品
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-ent_Product'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 分页查询商品
       tags:
       - products
   /api/v1/products/query/{id}:

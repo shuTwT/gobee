@@ -55,7 +55,7 @@ func (h *ProductHandlerImpl) ListProducts(c *fiber.Ctx) error {
 // @Produce json
 // @Param page query int false "页码"
 // @Param size query int false "每页数量"
-// @Success 200 {object} model.HttpSuccess{data=model.PageResult}
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.Product]}
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/products/page [get]
 func (h *ProductHandlerImpl) ListProductsPage(c *fiber.Ctx) error {
