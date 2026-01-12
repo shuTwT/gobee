@@ -51,3 +51,16 @@ type UserProfileResp struct {
 	RoleID              *int      `json:"role_id,omitempty"`
 	Role                *ent.Role `json:"role,omitempty"`
 }
+
+type UserSearchReq struct {
+	Keyword string `json:"keyword" query:"keyword" form:"keyword" validate:"required"`
+	Page    int    `json:"page" query:"page" form:"page" validate:"required,min=1"`
+	Size    int    `json:"page_size" query:"page_size" form:"page_size" validate:"required,min=1,max=100"`
+}
+
+type UserSearchResp struct {
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	RoleID int    `json:"role_id"`
+}

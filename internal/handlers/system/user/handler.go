@@ -25,6 +25,7 @@ type UserHandler interface {
 	GetPersonalAccessToken(c *fiber.Ctx) error
 	CreatePat(c *fiber.Ctx) error
 	GetUserProfile(c *fiber.Ctx) error
+	SearchUsers(c *fiber.Ctx) error
 }
 
 type UserHandlerImpl struct {
@@ -406,4 +407,22 @@ func (h *UserHandlerImpl) GetUserProfile(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(model.NewSuccess("success", result))
+}
+
+func (h *UserHandlerImpl) SearchUsers(c *fiber.Ctx) error {
+	var req model.UserSearchReq
+	if err := c.QueryParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+
+	results, total, err := h.userService.SearchUsers(c.Context(), req)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	pageResult := model.PageResult[*model.UserSearchResp]{
+		Total:   int64(total),
+		Records: results,
+	}
+	return c.JSON(model.NewSuccess("success", pageResult))
 }

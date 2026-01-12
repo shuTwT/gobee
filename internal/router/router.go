@@ -232,13 +232,16 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 
 			apiV1.Get("/api-interface/page", handlerMap.ApiInterfaceHandler.ListApiRoutesPage)
 
-			// 系统设置接口
 			apiV1.Get("/settings", handlerMap.SettingHandler.GetSettings)
 			apiV1.All("/twikoo", handlerMap.CommentHandler.HandleTwikoo).Name("twikoo")
 			apiV1.Get("/comment/recent", handlerMap.CommentHandler.RecentComment).Name("recentComment")
 			apiV1.Get("/flink/random", handlerMap.FlinkHandler.RandomFlink).Name("randomFlink")
 			apiV1.Get("/posts/:id/summary/stream", handlerMap.PostHandler.GetSummaryForStream).Name("postSummaryStream")
-			// 登录身份验证中间件
+			
+			apiV1.Get("/post/search", handlerMap.PostHandler.SearchPosts).Name("postSearch")
+			apiV1.Get("/user/search", handlerMap.UserHandler.SearchUsers).Name("userSearch")
+			apiV1.Get("/product/search", handlerMap.ProductHandler.SearchProducts).Name("productSearch")
+			
 			apiV1.Use(middleware.FlexibleAuth())
 
 			// 首页统计信息接口

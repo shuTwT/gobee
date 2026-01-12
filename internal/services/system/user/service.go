@@ -7,8 +7,11 @@ import (
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/user"
 	"gobee/internal/database"
+	"gobee/pkg/cache"
 	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
+	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -26,6 +29,7 @@ type UserService interface {
 	GetPersonalAccessTokenList(ctx context.Context, userId int) ([]*ent.PersonalAccessToken, error)
 	GetPersonalAccessToken(ctx context.Context, userId int, id int) (*ent.PersonalAccessToken, error)
 	CreatePersonalAccessToken(ctx context.Context, id int, req model.PersonalAccessTokenCreateReq) (*ent.PersonalAccessToken, error)
+	SearchUsers(ctx context.Context, req model.UserSearchReq) ([]*model.UserSearchResp, int, error)
 }
 
 type UserServiceImpl struct {
@@ -256,24 +260,21 @@ func (s *UserServiceImpl) GetPersonalAccessToken(ctx context.Context, userId int
 }
 
 func (s *UserServiceImpl) CreatePersonalAccessToken(ctx context.Context, userId int, req model.PersonalAccessTokenCreateReq) (*ent.PersonalAccessToken, error) {
-	// 查找用户
 	u, _ := s.client.User.Query().
 		Where(user.IDEQ(userId)).
 		Only(ctx)
 
-		// 生成JWT令牌
 	claims := jwt.MapClaims{
 		"id":    u.ID,
 		"email": u.Email,
 		"name":  u.Name,
-		"exp":   req.Expires, // 24小时过期
+		"exp":   req.Expires,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	secret := config.GetString(config.AUTH_PAT_SECRET)
 
-	// 使用密钥签名令牌
-	t, err := token.SignedString([]byte(secret)) // 注意：在生产环境中应该使用环境变量存储密钥
+	t, err := token.SignedString([]byte(secret))
 	if err != nil {
 		return nil, err
 	}
@@ -288,4 +289,84 @@ func (s *UserServiceImpl) CreatePersonalAccessToken(ctx context.Context, userId 
 		return nil, err
 	}
 	return pat, nil
+}
+
+func (s *UserServiceImpl) SearchUsers(ctx context.Context, req model.UserSearchReq) ([]*model.UserSearchResp, int, error) {
+	cacheKey := fmt.Sprintf("user:search:%s:%d:%d", req.Keyword, req.Page, req.Size)
+
+	if cached, found := cache.GetCache().Get(cacheKey); found {
+		if result, ok := cached.([]*model.UserSearchResp); ok {
+			return result, len(result), nil
+		}
+	}
+
+	keyword := strings.ToLower(req.Keyword)
+
+	users, err := s.client.User.Query().
+		Where(
+			user.Or(
+				user.NameContains(keyword),
+				user.EmailContains(keyword),
+			),
+		).
+		All(ctx)
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var results []*model.UserSearchResp
+
+	for _, u := range users {
+		relevance := s.calculateUserRelevance(u, keyword)
+		if relevance > 0 {
+			results = append(results, &model.UserSearchResp{
+				ID:     u.ID,
+				Name:   u.Name,
+				Email:  u.Email,
+				RoleID: u.RoleID,
+			})
+		}
+	}
+
+	total := len(results)
+
+	start := (req.Page - 1) * req.Size
+	end := start + req.Size
+
+	if start >= total {
+		return []*model.UserSearchResp{}, total, nil
+	}
+	if end > total {
+		end = total
+	}
+
+	pagedResults := results[start:end]
+
+	cache.GetCache().Set(cacheKey, pagedResults, 5*time.Minute)
+
+	return pagedResults, total, nil
+}
+
+func (s *UserServiceImpl) calculateUserRelevance(u *ent.User, keyword string) float64 {
+	var relevance float64 = 0
+
+	name := strings.ToLower(u.Name)
+	email := strings.ToLower(u.Email)
+
+	if strings.Contains(name, keyword) {
+		if name == keyword {
+			relevance += 10.0
+		} else if strings.HasPrefix(name, keyword) {
+			relevance += 8.0
+		} else {
+			relevance += 5.0
+		}
+	}
+
+	if strings.Contains(email, keyword) {
+		relevance += 3.0
+	}
+
+	return relevance
 }

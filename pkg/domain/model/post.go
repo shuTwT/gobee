@@ -116,3 +116,22 @@ type PostMonthStat struct {
 type PostMonthStatsReq struct {
 	Limit int `json:"limit" query:"limit" form:"limit" validate:"min=1,max=100"`
 }
+
+type PostSearchReq struct {
+	Keyword string `json:"keyword" query:"keyword" form:"keyword" validate:"required"`
+	Page    int    `json:"page" query:"page" form:"page" validate:"required,min=1"`
+	Size    int    `json:"page_size" query:"page_size" form:"page_size" validate:"required,min=1,max=100"`
+}
+
+type PostSearchResp struct {
+	ID          int        `json:"id"`
+	Title       string     `json:"title"`
+	Summary     string     `json:"summary"`
+	Content     string     `json:"content"`
+	Slug        *string    `json:"slug"`
+	Cover       string     `json:"cover"`
+	Author      string     `json:"author"`
+	PublishedAt *time.Time `json:"published_at"`
+	ViewCount   int        `json:"view_count"`
+	Relevance   float64    `json:"relevance"`
+}

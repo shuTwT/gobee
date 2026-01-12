@@ -31,6 +31,7 @@ type PostHandler interface {
 	GetSummaryForStream(c *fiber.Ctx) error
 	GetPostMonthStats(c *fiber.Ctx) error
 	GetRandomPost(c *fiber.Ctx) error
+	SearchPosts(c *fiber.Ctx) error
 }
 
 type PostHandlerImpl struct {
@@ -569,4 +570,22 @@ func (h *PostHandlerImpl) GetRandomPost(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusNotFound, "No posts found"))
 	}
 	return c.JSON(model.NewSuccess("success", post))
+}
+
+func (h *PostHandlerImpl) SearchPosts(c *fiber.Ctx) error {
+	var req model.PostSearchReq
+	if err := c.QueryParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+
+	results, total, err := h.postService.SearchPosts(c.Context(), req)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	pageResult := model.PageResult[*model.PostSearchResp]{
+		Total:   int64(total),
+		Records: results,
+	}
+	return c.JSON(model.NewSuccess("success", pageResult))
 }

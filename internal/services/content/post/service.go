@@ -8,10 +8,12 @@ import (
 	"gobee/ent/post"
 	"gobee/ent/tag"
 	"gobee/internal/database"
+	"gobee/pkg/cache"
 	"gobee/pkg/domain/model"
 	"gobee/pkg/utils"
 	"math/rand"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -25,6 +27,7 @@ type PostService interface {
 	GetPostCount(c context.Context) (int, error)
 	GetPostMonthStats(c context.Context, req model.PostMonthStatsReq) ([]model.PostMonthStat, error)
 	GetRandomPost(c context.Context) (*ent.Post, error)
+	SearchPosts(c context.Context, req model.PostSearchReq) ([]*model.PostSearchResp, int, error)
 }
 
 type PostServiceImpl struct {
@@ -277,4 +280,116 @@ func (s *PostServiceImpl) GetRandomPost(c context.Context) (*ent.Post, error) {
 	}
 
 	return post, nil
+}
+
+func (s *PostServiceImpl) SearchPosts(c context.Context, req model.PostSearchReq) ([]*model.PostSearchResp, int, error) {
+	cacheKey := fmt.Sprintf("post:search:%s:%d:%d", req.Keyword, req.Page, req.Size)
+
+	if cached, found := cache.GetCache().Get(cacheKey); found {
+		if result, ok := cached.([]*model.PostSearchResp); ok {
+			return result, len(result), nil
+		}
+	}
+
+	keyword := strings.ToLower(req.Keyword)
+
+	posts, err := s.client.Post.Query().
+		Where(
+			post.Or(
+				post.TitleContains(keyword),
+				post.ContentContains(keyword),
+				post.SummaryContains(keyword),
+				post.KeywordsContains(keyword),
+			),
+			post.StatusEQ("published"),
+			post.IsVisible(true),
+		).
+		Order(ent.Desc(post.FieldPublishedAt)).
+		All(c)
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var results []*model.PostSearchResp
+
+	for _, p := range posts {
+		relevance := s.calculateRelevance(p, keyword)
+		if relevance > 0 {
+			results = append(results, &model.PostSearchResp{
+				ID:          p.ID,
+				Title:       p.Title,
+				Summary:     p.Summary,
+				Content:     p.Content,
+				Slug:        p.Slug,
+				Cover:       p.Cover,
+				Author:      p.Author,
+				PublishedAt: p.PublishedAt,
+				ViewCount:   p.ViewCount,
+				Relevance:   relevance,
+			})
+		}
+	}
+
+	sort.Slice(results, func(i, j int) bool {
+		if results[i].Relevance == results[j].Relevance {
+			if results[i].PublishedAt != nil && results[j].PublishedAt != nil {
+				return results[i].PublishedAt.After(*results[j].PublishedAt)
+			}
+			return results[i].ID > results[j].ID
+		}
+		return results[i].Relevance > results[j].Relevance
+	})
+
+	total := len(results)
+
+	start := (req.Page - 1) * req.Size
+	end := start + req.Size
+
+	if start >= total {
+		return []*model.PostSearchResp{}, total, nil
+	}
+	if end > total {
+		end = total
+	}
+
+	pagedResults := results[start:end]
+
+	cache.GetCache().Set(cacheKey, pagedResults, 5*time.Minute)
+
+	return pagedResults, total, nil
+}
+
+func (s *PostServiceImpl) calculateRelevance(p *ent.Post, keyword string) float64 {
+	var relevance float64 = 0
+
+	title := strings.ToLower(p.Title)
+	content := strings.ToLower(p.Content)
+	summary := strings.ToLower(p.Summary)
+	keywords := strings.ToLower(p.Keywords)
+
+	if strings.Contains(title, keyword) {
+		if title == keyword {
+			relevance += 10.0
+		} else if strings.HasPrefix(title, keyword) {
+			relevance += 8.0
+		} else {
+			relevance += 5.0
+		}
+	}
+
+	if strings.Contains(summary, keyword) {
+		relevance += 3.0
+	}
+
+	if strings.Contains(keywords, keyword) {
+		relevance += 2.0
+	}
+
+	if strings.Contains(content, keyword) {
+		count := strings.Count(content, keyword)
+		relevance += float64(count) * 0.5
+	}
+
+	return relevance
 }

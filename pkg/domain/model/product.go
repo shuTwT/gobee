@@ -63,3 +63,24 @@ type ProductUpdateReq struct {
 	MetaKeywords     *string                `json:"meta_keywords,omitempty"`
 	SortOrder        *int                   `json:"sort_order,omitempty"`
 }
+
+type ProductSearchReq struct {
+	Keyword string `json:"keyword" query:"keyword" form:"keyword" validate:"required"`
+	Page    int    `json:"page" query:"page" form:"page" validate:"required,min=1"`
+	Size    int    `json:"page_size" query:"page_size" form:"page_size" validate:"required,min=1,max=100"`
+}
+
+type ProductSearchResp struct {
+	ID               int     `json:"id"`
+	Name             string  `json:"name"`
+	ShortDescription *string `json:"short_description"`
+	Sku              string  `json:"sku"`
+	Price            int     `json:"price"`
+	OriginalPrice    *int    `json:"original_price"`
+	Stock            int     `json:"stock"`
+	Sales            int     `json:"sales"`
+	Brand            *string `json:"brand"`
+	Images           []string `json:"images"`
+	Active           bool    `json:"active"`
+	Relevance        float64 `json:"relevance"`
+}

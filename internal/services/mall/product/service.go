@@ -2,9 +2,14 @@ package product
 
 import (
 	"context"
+	"fmt"
 	"gobee/ent"
 	"gobee/ent/product"
+	"gobee/pkg/cache"
 	"gobee/pkg/domain/model"
+	"sort"
+	"strings"
+	"time"
 )
 
 type ProductService interface {
@@ -16,6 +21,7 @@ type ProductService interface {
 	ListAllProducts(ctx context.Context) ([]*ent.Product, error)
 	BatchUpdateProducts(ctx context.Context, ids []int, req *model.ProductBatchUpdateReq) error
 	BatchDeleteProducts(ctx context.Context, ids []int) error
+	SearchProducts(ctx context.Context, req model.ProductSearchReq) ([]*model.ProductSearchResp, int, error)
 }
 
 type ProductServiceImpl struct {
@@ -242,4 +248,122 @@ func (s *ProductServiceImpl) BatchDeleteProducts(ctx context.Context, ids []int)
 		Where(product.IDIn(ids...)).
 		Exec(ctx)
 	return err
+}
+
+func (s *ProductServiceImpl) SearchProducts(ctx context.Context, req model.ProductSearchReq) ([]*model.ProductSearchResp, int, error) {
+	cacheKey := fmt.Sprintf("product:search:%s:%d:%d", req.Keyword, req.Page, req.Size)
+
+	if cached, found := cache.GetCache().Get(cacheKey); found {
+		if result, ok := cached.([]*model.ProductSearchResp); ok {
+			return result, len(result), nil
+		}
+	}
+
+	keyword := strings.ToLower(req.Keyword)
+
+	products, err := s.client.Product.Query().
+		Where(
+			product.Or(
+				product.NameContains(keyword),
+				product.SkuContains(keyword),
+				product.DescriptionContains(keyword),
+				product.ShortDescriptionContains(keyword),
+				product.BrandContains(keyword),
+			),
+		).
+		Order(ent.Desc(product.FieldCreatedAt)).
+		All(ctx)
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var results []*model.ProductSearchResp
+
+	for _, p := range products {
+		relevance := s.calculateProductRelevance(p, keyword)
+		if relevance > 0 {
+			results = append(results, &model.ProductSearchResp{
+				ID:               p.ID,
+				Name:             p.Name,
+				ShortDescription: &p.ShortDescription,
+				Sku:              p.Sku,
+				Price:            p.Price,
+				OriginalPrice:    &p.OriginalPrice,
+				Stock:            p.Stock,
+				Sales:            p.Sales,
+				Brand:            &p.Brand,
+				Images:           p.Images,
+				Active:           p.Active,
+				Relevance:        relevance,
+			})
+		}
+	}
+
+	sort.Slice(results, func(i, j int) bool {
+		if results[i].Relevance == results[j].Relevance {
+			return results[i].Sales > results[j].Sales
+		}
+		return results[i].Relevance > results[j].Relevance
+	})
+
+	total := len(results)
+
+	start := (req.Page - 1) * req.Size
+	end := start + req.Size
+
+	if start >= total {
+		return []*model.ProductSearchResp{}, total, nil
+	}
+	if end > total {
+		end = total
+	}
+
+	pagedResults := results[start:end]
+
+	cache.GetCache().Set(cacheKey, pagedResults, 5*time.Minute)
+
+	return pagedResults, total, nil
+}
+
+func (s *ProductServiceImpl) calculateProductRelevance(p *ent.Product, keyword string) float64 {
+	var relevance float64 = 0
+
+	name := strings.ToLower(p.Name)
+	sku := strings.ToLower(p.Sku)
+	description := strings.ToLower(p.Description)
+	shortDescription := strings.ToLower(p.ShortDescription)
+	brand := strings.ToLower(p.Brand)
+
+	if strings.Contains(name, keyword) {
+		if name == keyword {
+			relevance += 10.0
+		} else if strings.HasPrefix(name, keyword) {
+			relevance += 8.0
+		} else {
+			relevance += 5.0
+		}
+	}
+
+	if strings.Contains(sku, keyword) {
+		if sku == keyword {
+			relevance += 8.0
+		} else {
+			relevance += 5.0
+		}
+	}
+
+	if strings.Contains(shortDescription, keyword) {
+		relevance += 3.0
+	}
+
+	if strings.Contains(description, keyword) {
+		relevance += 2.0
+	}
+
+	if strings.Contains(brand, keyword) {
+		relevance += 1.0
+	}
+
+	return relevance
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Editor from '@tinymce/tinymce-vue'
-import 'tinymce/tinymce'
+await import ('tinymce/tinymce')
 import '@/utils/tinymce/langs/zh_CN'
 // DOM model
  import 'tinymce/models/dom/model'
@@ -20,8 +20,8 @@ import 'tinymce/plugins/table'
 import 'tinymce/plugins/code'
 import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/wordcount'
-import 'tinymce/skins/content/default/content.js'
-import 'tinymce/skins/ui/oxide/content.js'
+await import ('tinymce/skins/content/default/content.js')
+await import ('tinymce/skins/ui/oxide/content.js')
 import { useRoute } from 'vue-router'
 import * as postApi from '@/api/content/post'
 import { usePostHook } from '../utils/hook'

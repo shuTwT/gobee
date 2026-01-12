@@ -19,6 +19,7 @@ type ProductHandler interface {
 	DeleteProduct(c *fiber.Ctx) error
 	BatchUpdateProducts(c *fiber.Ctx) error
 	BatchDeleteProducts(c *fiber.Ctx) error
+	SearchProducts(c *fiber.Ctx) error
 }
 
 type ProductHandlerImpl struct {
@@ -209,4 +210,22 @@ func (h *ProductHandlerImpl) BatchDeleteProducts(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(model.NewSuccess("success", nil))
+}
+
+func (h *ProductHandlerImpl) SearchProducts(c *fiber.Ctx) error {
+	var req model.ProductSearchReq
+	if err := c.QueryParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+
+	results, total, err := h.productService.SearchProducts(c.Context(), req)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	pageResult := model.PageResult[*model.ProductSearchResp]{
+		Total:   int64(total),
+		Records: results,
+	}
+	return c.JSON(model.NewSuccess("success", pageResult))
 }

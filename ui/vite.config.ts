@@ -55,7 +55,7 @@ export default defineConfig({
           'pinia':['pinia'],
           'axios':['axios'],
           'uppy':['@uppy/core','@uppy/dashboard','@uppy/xhr-upload'],
-          'vendor':['vue','vue-router','@vueuse/core']
+          'vendor':['vue','vue-router','@vueuse/core'],
         }
       }
     }
