@@ -147,6 +147,15 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		docLibraryDetailApi.Delete("/delete/:id", handlerMap.DocLibraryDetailHandler.DeleteDocLibraryDetail).Name("docLibraryDetailDelete")
 		docLibraryDetailApi.Get("/tree", handlerMap.DocLibraryDetailHandler.GetDocLibraryDetailTree).Name("docLibraryDetailTree")
 	}
+	knowledgeBaseApi := router.Group("/knowledgebase")
+	{
+		knowledgeBaseApi.Get("/list", handlerMap.KnowledgeBaseHandler.GetKnowledgeBaseList).Name("knowledgeBaseList")
+		knowledgeBaseApi.Get("/page", handlerMap.KnowledgeBaseHandler.GetKnowledgeBasePage).Name("knowledgeBasePage")
+		knowledgeBaseApi.Post("/create", handlerMap.KnowledgeBaseHandler.CreateKnowledgeBase).Name("knowledgeBaseCreate")
+		knowledgeBaseApi.Put("/update/:id", handlerMap.KnowledgeBaseHandler.UpdateKnowledgeBase).Name("knowledgeBaseUpdate")
+		knowledgeBaseApi.Get("/query/:id", handlerMap.KnowledgeBaseHandler.GetKnowledgeBase).Name("knowledgeBaseQuery")
+		knowledgeBaseApi.Delete("/delete/:id", handlerMap.KnowledgeBaseHandler.DeleteKnowledgeBase).Name("knowledgeBaseDelete")
+	}
 }
 
 // 注册基础设施路由

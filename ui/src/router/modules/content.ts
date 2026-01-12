@@ -122,6 +122,16 @@ export default [
                     roles: ['admin', 'common'],
                 },
             },
+            {
+                path: '/content/knowledgebase',
+                name: 'KnowledgeBaseManagement',
+                component: () => import('@/views/content/knowledgebase/index.vue'),
+                meta: {
+                    title: '知识库管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
+            },
         ]
     }
 ] satisfies RouteRecordRaw[]

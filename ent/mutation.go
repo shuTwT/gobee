@@ -20,6 +20,7 @@ import (
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
 	"gobee/ent/friendcirclerecord"
+	"gobee/ent/knowledgebase"
 	"gobee/ent/member"
 	"gobee/ent/memberlevel"
 	"gobee/ent/notification"
@@ -70,6 +71,7 @@ const (
 	TypeFLinkGroup          = "FLinkGroup"
 	TypeFile                = "File"
 	TypeFriendCircleRecord  = "FriendCircleRecord"
+	TypeKnowledgeBase       = "KnowledgeBase"
 	TypeMember              = "Member"
 	TypeMemberLevel         = "MemberLevel"
 	TypeNotification        = "Notification"
@@ -13286,6 +13288,731 @@ func (m *FriendCircleRecordMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *FriendCircleRecordMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown FriendCircleRecord edge %s", name)
+}
+
+// KnowledgeBaseMutation represents an operation that mutates the KnowledgeBase nodes in the graph.
+type KnowledgeBaseMutation struct {
+	config
+	op                          Op
+	typ                         string
+	id                          *int
+	created_at                  *time.Time
+	updated_at                  *time.Time
+	name                        *string
+	model_provider              *knowledgebase.ModelProvider
+	model                       *string
+	vector_dimension            *int
+	addvector_dimension         *int
+	max_batch_document_count    *int
+	addmax_batch_document_count *int
+	clearedFields               map[string]struct{}
+	done                        bool
+	oldValue                    func(context.Context) (*KnowledgeBase, error)
+	predicates                  []predicate.KnowledgeBase
+}
+
+var _ ent.Mutation = (*KnowledgeBaseMutation)(nil)
+
+// knowledgebaseOption allows management of the mutation configuration using functional options.
+type knowledgebaseOption func(*KnowledgeBaseMutation)
+
+// newKnowledgeBaseMutation creates new mutation for the KnowledgeBase entity.
+func newKnowledgeBaseMutation(c config, op Op, opts ...knowledgebaseOption) *KnowledgeBaseMutation {
+	m := &KnowledgeBaseMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeKnowledgeBase,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withKnowledgeBaseID sets the ID field of the mutation.
+func withKnowledgeBaseID(id int) knowledgebaseOption {
+	return func(m *KnowledgeBaseMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *KnowledgeBase
+		)
+		m.oldValue = func(ctx context.Context) (*KnowledgeBase, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().KnowledgeBase.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withKnowledgeBase sets the old KnowledgeBase of the mutation.
+func withKnowledgeBase(node *KnowledgeBase) knowledgebaseOption {
+	return func(m *KnowledgeBaseMutation) {
+		m.oldValue = func(context.Context) (*KnowledgeBase, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m KnowledgeBaseMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m KnowledgeBaseMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of KnowledgeBase entities.
+func (m *KnowledgeBaseMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *KnowledgeBaseMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *KnowledgeBaseMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().KnowledgeBase.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *KnowledgeBaseMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *KnowledgeBaseMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the KnowledgeBase entity.
+// If the KnowledgeBase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KnowledgeBaseMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *KnowledgeBaseMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *KnowledgeBaseMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *KnowledgeBaseMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the KnowledgeBase entity.
+// If the KnowledgeBase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KnowledgeBaseMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *KnowledgeBaseMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *KnowledgeBaseMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *KnowledgeBaseMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the KnowledgeBase entity.
+// If the KnowledgeBase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KnowledgeBaseMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *KnowledgeBaseMutation) ResetName() {
+	m.name = nil
+}
+
+// SetModelProvider sets the "model_provider" field.
+func (m *KnowledgeBaseMutation) SetModelProvider(kp knowledgebase.ModelProvider) {
+	m.model_provider = &kp
+}
+
+// ModelProvider returns the value of the "model_provider" field in the mutation.
+func (m *KnowledgeBaseMutation) ModelProvider() (r knowledgebase.ModelProvider, exists bool) {
+	v := m.model_provider
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldModelProvider returns the old "model_provider" field's value of the KnowledgeBase entity.
+// If the KnowledgeBase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KnowledgeBaseMutation) OldModelProvider(ctx context.Context) (v knowledgebase.ModelProvider, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldModelProvider is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldModelProvider requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldModelProvider: %w", err)
+	}
+	return oldValue.ModelProvider, nil
+}
+
+// ResetModelProvider resets all changes to the "model_provider" field.
+func (m *KnowledgeBaseMutation) ResetModelProvider() {
+	m.model_provider = nil
+}
+
+// SetModel sets the "model" field.
+func (m *KnowledgeBaseMutation) SetModel(s string) {
+	m.model = &s
+}
+
+// Model returns the value of the "model" field in the mutation.
+func (m *KnowledgeBaseMutation) Model() (r string, exists bool) {
+	v := m.model
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldModel returns the old "model" field's value of the KnowledgeBase entity.
+// If the KnowledgeBase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KnowledgeBaseMutation) OldModel(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldModel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldModel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldModel: %w", err)
+	}
+	return oldValue.Model, nil
+}
+
+// ResetModel resets all changes to the "model" field.
+func (m *KnowledgeBaseMutation) ResetModel() {
+	m.model = nil
+}
+
+// SetVectorDimension sets the "vector_dimension" field.
+func (m *KnowledgeBaseMutation) SetVectorDimension(i int) {
+	m.vector_dimension = &i
+	m.addvector_dimension = nil
+}
+
+// VectorDimension returns the value of the "vector_dimension" field in the mutation.
+func (m *KnowledgeBaseMutation) VectorDimension() (r int, exists bool) {
+	v := m.vector_dimension
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVectorDimension returns the old "vector_dimension" field's value of the KnowledgeBase entity.
+// If the KnowledgeBase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KnowledgeBaseMutation) OldVectorDimension(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVectorDimension is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVectorDimension requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVectorDimension: %w", err)
+	}
+	return oldValue.VectorDimension, nil
+}
+
+// AddVectorDimension adds i to the "vector_dimension" field.
+func (m *KnowledgeBaseMutation) AddVectorDimension(i int) {
+	if m.addvector_dimension != nil {
+		*m.addvector_dimension += i
+	} else {
+		m.addvector_dimension = &i
+	}
+}
+
+// AddedVectorDimension returns the value that was added to the "vector_dimension" field in this mutation.
+func (m *KnowledgeBaseMutation) AddedVectorDimension() (r int, exists bool) {
+	v := m.addvector_dimension
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetVectorDimension resets all changes to the "vector_dimension" field.
+func (m *KnowledgeBaseMutation) ResetVectorDimension() {
+	m.vector_dimension = nil
+	m.addvector_dimension = nil
+}
+
+// SetMaxBatchDocumentCount sets the "max_batch_document_count" field.
+func (m *KnowledgeBaseMutation) SetMaxBatchDocumentCount(i int) {
+	m.max_batch_document_count = &i
+	m.addmax_batch_document_count = nil
+}
+
+// MaxBatchDocumentCount returns the value of the "max_batch_document_count" field in the mutation.
+func (m *KnowledgeBaseMutation) MaxBatchDocumentCount() (r int, exists bool) {
+	v := m.max_batch_document_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxBatchDocumentCount returns the old "max_batch_document_count" field's value of the KnowledgeBase entity.
+// If the KnowledgeBase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KnowledgeBaseMutation) OldMaxBatchDocumentCount(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxBatchDocumentCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxBatchDocumentCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxBatchDocumentCount: %w", err)
+	}
+	return oldValue.MaxBatchDocumentCount, nil
+}
+
+// AddMaxBatchDocumentCount adds i to the "max_batch_document_count" field.
+func (m *KnowledgeBaseMutation) AddMaxBatchDocumentCount(i int) {
+	if m.addmax_batch_document_count != nil {
+		*m.addmax_batch_document_count += i
+	} else {
+		m.addmax_batch_document_count = &i
+	}
+}
+
+// AddedMaxBatchDocumentCount returns the value that was added to the "max_batch_document_count" field in this mutation.
+func (m *KnowledgeBaseMutation) AddedMaxBatchDocumentCount() (r int, exists bool) {
+	v := m.addmax_batch_document_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMaxBatchDocumentCount resets all changes to the "max_batch_document_count" field.
+func (m *KnowledgeBaseMutation) ResetMaxBatchDocumentCount() {
+	m.max_batch_document_count = nil
+	m.addmax_batch_document_count = nil
+}
+
+// Where appends a list predicates to the KnowledgeBaseMutation builder.
+func (m *KnowledgeBaseMutation) Where(ps ...predicate.KnowledgeBase) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the KnowledgeBaseMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *KnowledgeBaseMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.KnowledgeBase, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *KnowledgeBaseMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *KnowledgeBaseMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (KnowledgeBase).
+func (m *KnowledgeBaseMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *KnowledgeBaseMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, knowledgebase.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, knowledgebase.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, knowledgebase.FieldName)
+	}
+	if m.model_provider != nil {
+		fields = append(fields, knowledgebase.FieldModelProvider)
+	}
+	if m.model != nil {
+		fields = append(fields, knowledgebase.FieldModel)
+	}
+	if m.vector_dimension != nil {
+		fields = append(fields, knowledgebase.FieldVectorDimension)
+	}
+	if m.max_batch_document_count != nil {
+		fields = append(fields, knowledgebase.FieldMaxBatchDocumentCount)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *KnowledgeBaseMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case knowledgebase.FieldCreatedAt:
+		return m.CreatedAt()
+	case knowledgebase.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case knowledgebase.FieldName:
+		return m.Name()
+	case knowledgebase.FieldModelProvider:
+		return m.ModelProvider()
+	case knowledgebase.FieldModel:
+		return m.Model()
+	case knowledgebase.FieldVectorDimension:
+		return m.VectorDimension()
+	case knowledgebase.FieldMaxBatchDocumentCount:
+		return m.MaxBatchDocumentCount()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *KnowledgeBaseMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case knowledgebase.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case knowledgebase.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case knowledgebase.FieldName:
+		return m.OldName(ctx)
+	case knowledgebase.FieldModelProvider:
+		return m.OldModelProvider(ctx)
+	case knowledgebase.FieldModel:
+		return m.OldModel(ctx)
+	case knowledgebase.FieldVectorDimension:
+		return m.OldVectorDimension(ctx)
+	case knowledgebase.FieldMaxBatchDocumentCount:
+		return m.OldMaxBatchDocumentCount(ctx)
+	}
+	return nil, fmt.Errorf("unknown KnowledgeBase field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *KnowledgeBaseMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case knowledgebase.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case knowledgebase.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case knowledgebase.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case knowledgebase.FieldModelProvider:
+		v, ok := value.(knowledgebase.ModelProvider)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetModelProvider(v)
+		return nil
+	case knowledgebase.FieldModel:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetModel(v)
+		return nil
+	case knowledgebase.FieldVectorDimension:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVectorDimension(v)
+		return nil
+	case knowledgebase.FieldMaxBatchDocumentCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxBatchDocumentCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown KnowledgeBase field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *KnowledgeBaseMutation) AddedFields() []string {
+	var fields []string
+	if m.addvector_dimension != nil {
+		fields = append(fields, knowledgebase.FieldVectorDimension)
+	}
+	if m.addmax_batch_document_count != nil {
+		fields = append(fields, knowledgebase.FieldMaxBatchDocumentCount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *KnowledgeBaseMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case knowledgebase.FieldVectorDimension:
+		return m.AddedVectorDimension()
+	case knowledgebase.FieldMaxBatchDocumentCount:
+		return m.AddedMaxBatchDocumentCount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *KnowledgeBaseMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case knowledgebase.FieldVectorDimension:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVectorDimension(v)
+		return nil
+	case knowledgebase.FieldMaxBatchDocumentCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxBatchDocumentCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown KnowledgeBase numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *KnowledgeBaseMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *KnowledgeBaseMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *KnowledgeBaseMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown KnowledgeBase nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *KnowledgeBaseMutation) ResetField(name string) error {
+	switch name {
+	case knowledgebase.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case knowledgebase.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case knowledgebase.FieldName:
+		m.ResetName()
+		return nil
+	case knowledgebase.FieldModelProvider:
+		m.ResetModelProvider()
+		return nil
+	case knowledgebase.FieldModel:
+		m.ResetModel()
+		return nil
+	case knowledgebase.FieldVectorDimension:
+		m.ResetVectorDimension()
+		return nil
+	case knowledgebase.FieldMaxBatchDocumentCount:
+		m.ResetMaxBatchDocumentCount()
+		return nil
+	}
+	return fmt.Errorf("unknown KnowledgeBase field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *KnowledgeBaseMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *KnowledgeBaseMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *KnowledgeBaseMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *KnowledgeBaseMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *KnowledgeBaseMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *KnowledgeBaseMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *KnowledgeBaseMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown KnowledgeBase unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *KnowledgeBaseMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown KnowledgeBase edge %s", name)
 }
 
 // MemberMutation represents an operation that mutates the Member nodes in the graph.

@@ -12,6 +12,7 @@ import (
 	essay_service "gobee/internal/services/content/essay"
 	flink_service "gobee/internal/services/content/flink"
 	friend_circle_service "gobee/internal/services/content/friendcircle"
+	knowledgebase_service "gobee/internal/services/content/knowledgebase"
 	post_service "gobee/internal/services/content/post"
 	tag_service "gobee/internal/services/content/tag"
 	file_service "gobee/internal/services/infra/file"
@@ -54,6 +55,7 @@ type ServiceMap struct {
 	FileService             file_service.FileService
 	FlinkService            flink_service.FlinkService
 	FriendCircleService     friend_circle_service.FriendCircleService
+	KnowledgeBaseService    knowledgebase_service.KnowledgeBaseService
 	MemberLevelService      memberlevel_service.MemberLevelService
 	MemberService           member_service.MemberService
 	MigrationService        migration_service.MigrationService
@@ -97,6 +99,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	fileService := file_service.NewFileServiceImpl(db)
 	flinkService := flink_service.NewFlinkServiceImpl(db)
 	friendCircleService := friend_circle_service.NewFriendCircleServiceImpl(db)
+	knowledgeBaseService := knowledgebase_service.NewKnowledgeBaseServiceImpl(db)
 	memberLevelService := memberlevel_service.NewMemberLevelServiceImpl(db)
 	memberService := member_service.NewMemberServiceImpl(db)
 	payOderService := payorder.NewPayOrderServiceImpl(db)
@@ -131,6 +134,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		FileService:             fileService,
 		FlinkService:            flinkService,
 		FriendCircleService:     friendCircleService,
+		KnowledgeBaseService:    knowledgeBaseService,
 		MemberLevelService:      memberLevelService,
 		MemberService:           memberService,
 		MigrationService:        migrationService,

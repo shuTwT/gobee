@@ -48,6 +48,9 @@ type File func(*sql.Selector)
 // FriendCircleRecord is the predicate function for friendcirclerecord builders.
 type FriendCircleRecord func(*sql.Selector)
 
+// KnowledgeBase is the predicate function for knowledgebase builders.
+type KnowledgeBase func(*sql.Selector)
+
 // Member is the predicate function for member builders.
 type Member func(*sql.Selector)
 

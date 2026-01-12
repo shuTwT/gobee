@@ -9,6 +9,36 @@ import {
   useMessage,
 } from 'naive-ui'
 import Editor from '@tinymce/tinymce-vue'
+import 'tinymce/tinymce'
+import '@/utils/tinymce/langs/zh_CN'
+// DOM model
+ import 'tinymce/models/dom/model'
+// Theme
+ import 'tinymce/themes/silver'
+// Toolbar icons
+ import 'tinymce/icons/default'
+// Editor styles
+ import 'tinymce/skins/ui/oxide/skin.min.css'
+// Import plugins
+import 'tinymce/plugins/advlist'
+import 'tinymce/plugins/autolink'
+import 'tinymce/plugins/anchor'
+import 'tinymce/plugins/link'
+import 'tinymce/plugins/image'
+import 'tinymce/plugins/lists'
+import 'tinymce/plugins/table'
+import 'tinymce/plugins/code'
+import 'tinymce/plugins/codesample'
+import 'tinymce/plugins/wordcount'
+import 'tinymce/plugins/charmap'
+import 'tinymce/plugins/searchreplace'
+import 'tinymce/plugins/preview'
+import 'tinymce/plugins/insertdatetime'
+import 'tinymce/plugins/visualblocks'
+import 'tinymce/plugins/fullscreen'
+import 'tinymce/plugins/media'
+import 'tinymce/skins/content/default/content.js'
+import 'tinymce/skins/ui/oxide/content.js'
 import * as doclibrarydetailApi from '@/api/content/doclibrarydetail'
 import dayjs from 'dayjs'
 
@@ -40,17 +70,21 @@ const rightPanelLoading = ref(false)
 const rightPanelSaving = ref(false)
 
 const initConfig = {
+  language: 'zh_CN',
   height: 'calc(100vh - 450px)',
   menubar: true,
+  resize:false,
+  promotion: false, // 官方推荐的关闭方式（见下文）
+  branding:false,
   plugins: [
     'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
     'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-    'insertdatetime', 'media', 'table', 'help', 'wordcount'
+    'insertdatetime', 'media', 'table', 'wordcount'
   ],
   toolbar: 'undo redo | blocks | ' +
     'bold italic backcolor | alignleft aligncenter ' +
     'alignright alignjustify | bullist numlist outdent indent | ' +
-    'removeformat | help',
+    'removeformat ',
   content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; padding: 20px; }',
 }
 
@@ -121,7 +155,7 @@ watch(() => props.selectedNodeId, (newId) => {
     <NSpin :show="rightPanelLoading">
       <div v-if="rightPanelData" class="right-panel-content">
         <div class="document-editor">
-          <Editor v-model="rightPanelData.content" :init="initConfig" />
+          <Editor v-model="rightPanelData.content" :init="initConfig" licenseKey="gpl" />
         </div>
         <NDivider />
       </div>

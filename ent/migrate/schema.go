@@ -310,6 +310,23 @@ var (
 		Columns:    FriendCircleRecordsColumns,
 		PrimaryKey: []*schema.Column{FriendCircleRecordsColumns[0]},
 	}
+	// KnowledgeBasesColumns holds the columns for the "knowledge_bases" table.
+	KnowledgeBasesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "model_provider", Type: field.TypeEnum, Enums: []string{"openai", "anthropic", "google", "azure", "cohere", "huggingface", "local"}},
+		{Name: "model", Type: field.TypeString},
+		{Name: "vector_dimension", Type: field.TypeInt},
+		{Name: "max_batch_document_count", Type: field.TypeInt},
+	}
+	// KnowledgeBasesTable holds the schema information for the "knowledge_bases" table.
+	KnowledgeBasesTable = &schema.Table{
+		Name:       "knowledge_bases",
+		Columns:    KnowledgeBasesColumns,
+		PrimaryKey: []*schema.Column{KnowledgeBasesColumns[0]},
+	}
 	// MembersColumns holds the columns for the "members" table.
 	MembersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -801,6 +818,7 @@ var (
 		FlinkGroupsTable,
 		FilesTable,
 		FriendCircleRecordsTable,
+		KnowledgeBasesTable,
 		MembersTable,
 		MemberLevelsTable,
 		NotificationsTable,

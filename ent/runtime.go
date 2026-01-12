@@ -17,6 +17,7 @@ import (
 	"gobee/ent/flink"
 	"gobee/ent/flinkgroup"
 	"gobee/ent/friendcirclerecord"
+	"gobee/ent/knowledgebase"
 	"gobee/ent/member"
 	"gobee/ent/memberlevel"
 	"gobee/ent/notification"
@@ -558,6 +559,37 @@ func init() {
 	friendcirclerecord.DefaultUpdatedAt = friendcirclerecordDescUpdatedAt.Default.(func() time.Time)
 	// friendcirclerecord.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	friendcirclerecord.UpdateDefaultUpdatedAt = friendcirclerecordDescUpdatedAt.UpdateDefault.(func() time.Time)
+	knowledgebaseMixin := schema.KnowledgeBase{}.Mixin()
+	knowledgebaseMixinFields0 := knowledgebaseMixin[0].Fields()
+	_ = knowledgebaseMixinFields0
+	knowledgebaseFields := schema.KnowledgeBase{}.Fields()
+	_ = knowledgebaseFields
+	// knowledgebaseDescCreatedAt is the schema descriptor for created_at field.
+	knowledgebaseDescCreatedAt := knowledgebaseMixinFields0[1].Descriptor()
+	// knowledgebase.DefaultCreatedAt holds the default value on creation for the created_at field.
+	knowledgebase.DefaultCreatedAt = knowledgebaseDescCreatedAt.Default.(func() time.Time)
+	// knowledgebaseDescUpdatedAt is the schema descriptor for updated_at field.
+	knowledgebaseDescUpdatedAt := knowledgebaseMixinFields0[2].Descriptor()
+	// knowledgebase.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	knowledgebase.DefaultUpdatedAt = knowledgebaseDescUpdatedAt.Default.(func() time.Time)
+	// knowledgebase.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	knowledgebase.UpdateDefaultUpdatedAt = knowledgebaseDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// knowledgebaseDescName is the schema descriptor for name field.
+	knowledgebaseDescName := knowledgebaseFields[0].Descriptor()
+	// knowledgebase.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	knowledgebase.NameValidator = knowledgebaseDescName.Validators[0].(func(string) error)
+	// knowledgebaseDescModel is the schema descriptor for model field.
+	knowledgebaseDescModel := knowledgebaseFields[2].Descriptor()
+	// knowledgebase.ModelValidator is a validator for the "model" field. It is called by the builders before save.
+	knowledgebase.ModelValidator = knowledgebaseDescModel.Validators[0].(func(string) error)
+	// knowledgebaseDescVectorDimension is the schema descriptor for vector_dimension field.
+	knowledgebaseDescVectorDimension := knowledgebaseFields[3].Descriptor()
+	// knowledgebase.VectorDimensionValidator is a validator for the "vector_dimension" field. It is called by the builders before save.
+	knowledgebase.VectorDimensionValidator = knowledgebaseDescVectorDimension.Validators[0].(func(int) error)
+	// knowledgebaseDescMaxBatchDocumentCount is the schema descriptor for max_batch_document_count field.
+	knowledgebaseDescMaxBatchDocumentCount := knowledgebaseFields[4].Descriptor()
+	// knowledgebase.MaxBatchDocumentCountValidator is a validator for the "max_batch_document_count" field. It is called by the builders before save.
+	knowledgebase.MaxBatchDocumentCountValidator = knowledgebaseDescMaxBatchDocumentCount.Validators[0].(func(int) error)
 	memberMixin := schema.Member{}.Mixin()
 	memberMixinFields0 := memberMixin[0].Fields()
 	_ = memberMixinFields0

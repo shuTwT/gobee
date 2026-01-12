@@ -12,6 +12,7 @@ import (
 	flink_handler "gobee/internal/handlers/content/flink"
 	flinkgroup_handler "gobee/internal/handlers/content/flinkgroup"
 	friendcircle_handler "gobee/internal/handlers/content/friendcircle"
+	knowledgebase_handler "gobee/internal/handlers/content/knowledgebase"
 	post_handler "gobee/internal/handlers/content/post"
 	tag_handler "gobee/internal/handlers/content/tag"
 	file_handler "gobee/internal/handlers/infra/file"
@@ -54,6 +55,7 @@ type HandlerMap struct {
 	FlinkGroupHandler       flinkgroup_handler.FlinkGroupHandler
 	FriendCircleHandler     friendcircle_handler.FriendCircleHandler
 	InitializeHandler       initialize_handler.InitializeHandler
+	KnowledgeBaseHandler    knowledgebase_handler.KnowledgeBaseHandler
 	MemberHandler           member_handler.MemberHandler
 	MemberLevelHandler      memberlevel_handler.MemberLevelHandler
 	MigrationHandler        migration_handler.MigrationHandler
@@ -89,6 +91,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	flinkGroupHandler := flinkgroup_handler.NewFlinkGroupHandlerImpl(database.DB, serviceMap.FlinkService)
 	friendCircleHandler := friendcircle_handler.NewFriendCircleHandlerImpl(serviceMap.FriendCircleService)
 	initializeHandler := initialize_handler.NewInitializeHandlerImpl(serviceMap.UserService, serviceMap.SettingService)
+	knowledgeBaseHandler := knowledgebase_handler.NewKnowledgeBaseHandlerImpl(serviceMap.KnowledgeBaseService)
 	payOrderHandler := payorder_handler.NewPayOrderHandlerImpl(database.DB, serviceMap.PayOrderService)
 	postHandler := post_handler.NewPostHandlerImpl(serviceMap.PostService)
 	productHandler := product_handler.NewProductHandlerImpl(serviceMap.ProductService)
@@ -123,6 +126,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		FlinkGroupHandler:       flinkGroupHandler,
 		FriendCircleHandler:     friendCircleHandler,
 		InitializeHandler:       initializeHandler,
+		KnowledgeBaseHandler:    knowledgeBaseHandler,
 		MemberHandler:           memberHandler,
 		MemberLevelHandler:      memberLevelHandler,
 		MigrationHandler:        migrationHandler,
