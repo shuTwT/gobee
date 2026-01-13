@@ -17,6 +17,7 @@ import (
 	tag_handler "gobee/internal/handlers/content/tag"
 	file_handler "gobee/internal/handlers/infra/file"
 	migration_handler "gobee/internal/handlers/infra/migration"
+	schedulejob_handler "gobee/internal/handlers/infra/schedulejob"
 	storagestrategy "gobee/internal/handlers/infra/storagestrategy"
 	visit_handler "gobee/internal/handlers/infra/visit"
 	coupon_handler "gobee/internal/handlers/mall/coupon"
@@ -65,6 +66,7 @@ type HandlerMap struct {
 	ProductHandler          product_handler.ProductHandler
 	RoleHandler             role_handler.RoleHandler
 	RouteHandler            route_handler.RouteHandler
+	ScheduleJobHandler      schedulejob_handler.ScheduleJobHandler
 	SettingHandler          setting_handler.SettingHandler
 	TagHandler              tag_handler.TagHandler
 	UserHandler             user_handler.UserHandler
@@ -108,6 +110,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	memberLevelHandler := memberlevel_handler.NewMemberLevelHandlerImpl(serviceMap.MemberLevelService)
 	migrationHandler := migration_handler.NewMigrationHandlerImpl(serviceMap.MigrationService)
 	notificationHandler := notification_handler.NewNotificationHandlerImpl(serviceMap.NotificationService)
+	scheduleJobHandler := schedulejob_handler.NewScheduleJobHandlerImpl(serviceMap.ScheduleJobService)
 
 	handlerMap := HandlerMap{
 		AlbumHandler:            albumHandler,
@@ -136,6 +139,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		ProductHandler:          productHandler,
 		RoleHandler:             roleHandler,
 		RouteHandler:            routeHandler,
+		ScheduleJobHandler:      scheduleJobHandler,
 		SettingHandler:          settingHandler,
 		TagHandler:              tagHandler,
 		UserHandler:             userHandler,

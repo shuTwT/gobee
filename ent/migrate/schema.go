@@ -589,6 +589,20 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
+		{Name: "type", Type: field.TypeString},
+		{Name: "expression", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "enabled", Type: field.TypeBool, Default: true},
+		{Name: "next_run_time", Type: field.TypeTime, Nullable: true},
+		{Name: "last_run_time", Type: field.TypeTime, Nullable: true},
+		{Name: "execution_type", Type: field.TypeString, Default: "http"},
+		{Name: "http_method", Type: field.TypeString, Nullable: true},
+		{Name: "http_url", Type: field.TypeString, Nullable: true},
+		{Name: "http_headers", Type: field.TypeJSON, Nullable: true},
+		{Name: "http_body", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "http_timeout", Type: field.TypeInt, Default: 30},
+		{Name: "max_retries", Type: field.TypeInt, Default: 3},
+		{Name: "failure_notification", Type: field.TypeBool, Default: false},
 	}
 	// ScheduleJobsTable holds the schema information for the "schedule_jobs" table.
 	ScheduleJobsTable = &schema.Table{

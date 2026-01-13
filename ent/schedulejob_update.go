@@ -48,6 +48,250 @@ func (_u *ScheduleJobUpdate) SetNillableName(v *string) *ScheduleJobUpdate {
 	return _u
 }
 
+// SetType sets the "type" field.
+func (_u *ScheduleJobUpdate) SetType(v string) *ScheduleJobUpdate {
+	_u.mutation.SetType(v)
+	return _u
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableType(v *string) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetType(*v)
+	}
+	return _u
+}
+
+// SetExpression sets the "expression" field.
+func (_u *ScheduleJobUpdate) SetExpression(v string) *ScheduleJobUpdate {
+	_u.mutation.SetExpression(v)
+	return _u
+}
+
+// SetNillableExpression sets the "expression" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableExpression(v *string) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetExpression(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *ScheduleJobUpdate) SetDescription(v string) *ScheduleJobUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableDescription(v *string) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *ScheduleJobUpdate) ClearDescription() *ScheduleJobUpdate {
+	_u.mutation.ClearDescription()
+	return _u
+}
+
+// SetEnabled sets the "enabled" field.
+func (_u *ScheduleJobUpdate) SetEnabled(v bool) *ScheduleJobUpdate {
+	_u.mutation.SetEnabled(v)
+	return _u
+}
+
+// SetNillableEnabled sets the "enabled" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableEnabled(v *bool) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetEnabled(*v)
+	}
+	return _u
+}
+
+// SetNextRunTime sets the "next_run_time" field.
+func (_u *ScheduleJobUpdate) SetNextRunTime(v time.Time) *ScheduleJobUpdate {
+	_u.mutation.SetNextRunTime(v)
+	return _u
+}
+
+// SetNillableNextRunTime sets the "next_run_time" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableNextRunTime(v *time.Time) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetNextRunTime(*v)
+	}
+	return _u
+}
+
+// ClearNextRunTime clears the value of the "next_run_time" field.
+func (_u *ScheduleJobUpdate) ClearNextRunTime() *ScheduleJobUpdate {
+	_u.mutation.ClearNextRunTime()
+	return _u
+}
+
+// SetLastRunTime sets the "last_run_time" field.
+func (_u *ScheduleJobUpdate) SetLastRunTime(v time.Time) *ScheduleJobUpdate {
+	_u.mutation.SetLastRunTime(v)
+	return _u
+}
+
+// SetNillableLastRunTime sets the "last_run_time" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableLastRunTime(v *time.Time) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetLastRunTime(*v)
+	}
+	return _u
+}
+
+// ClearLastRunTime clears the value of the "last_run_time" field.
+func (_u *ScheduleJobUpdate) ClearLastRunTime() *ScheduleJobUpdate {
+	_u.mutation.ClearLastRunTime()
+	return _u
+}
+
+// SetExecutionType sets the "execution_type" field.
+func (_u *ScheduleJobUpdate) SetExecutionType(v string) *ScheduleJobUpdate {
+	_u.mutation.SetExecutionType(v)
+	return _u
+}
+
+// SetNillableExecutionType sets the "execution_type" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableExecutionType(v *string) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetExecutionType(*v)
+	}
+	return _u
+}
+
+// SetHTTPMethod sets the "http_method" field.
+func (_u *ScheduleJobUpdate) SetHTTPMethod(v string) *ScheduleJobUpdate {
+	_u.mutation.SetHTTPMethod(v)
+	return _u
+}
+
+// SetNillableHTTPMethod sets the "http_method" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableHTTPMethod(v *string) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetHTTPMethod(*v)
+	}
+	return _u
+}
+
+// ClearHTTPMethod clears the value of the "http_method" field.
+func (_u *ScheduleJobUpdate) ClearHTTPMethod() *ScheduleJobUpdate {
+	_u.mutation.ClearHTTPMethod()
+	return _u
+}
+
+// SetHTTPURL sets the "http_url" field.
+func (_u *ScheduleJobUpdate) SetHTTPURL(v string) *ScheduleJobUpdate {
+	_u.mutation.SetHTTPURL(v)
+	return _u
+}
+
+// SetNillableHTTPURL sets the "http_url" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableHTTPURL(v *string) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetHTTPURL(*v)
+	}
+	return _u
+}
+
+// ClearHTTPURL clears the value of the "http_url" field.
+func (_u *ScheduleJobUpdate) ClearHTTPURL() *ScheduleJobUpdate {
+	_u.mutation.ClearHTTPURL()
+	return _u
+}
+
+// SetHTTPHeaders sets the "http_headers" field.
+func (_u *ScheduleJobUpdate) SetHTTPHeaders(v map[string]string) *ScheduleJobUpdate {
+	_u.mutation.SetHTTPHeaders(v)
+	return _u
+}
+
+// ClearHTTPHeaders clears the value of the "http_headers" field.
+func (_u *ScheduleJobUpdate) ClearHTTPHeaders() *ScheduleJobUpdate {
+	_u.mutation.ClearHTTPHeaders()
+	return _u
+}
+
+// SetHTTPBody sets the "http_body" field.
+func (_u *ScheduleJobUpdate) SetHTTPBody(v string) *ScheduleJobUpdate {
+	_u.mutation.SetHTTPBody(v)
+	return _u
+}
+
+// SetNillableHTTPBody sets the "http_body" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableHTTPBody(v *string) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetHTTPBody(*v)
+	}
+	return _u
+}
+
+// ClearHTTPBody clears the value of the "http_body" field.
+func (_u *ScheduleJobUpdate) ClearHTTPBody() *ScheduleJobUpdate {
+	_u.mutation.ClearHTTPBody()
+	return _u
+}
+
+// SetHTTPTimeout sets the "http_timeout" field.
+func (_u *ScheduleJobUpdate) SetHTTPTimeout(v int) *ScheduleJobUpdate {
+	_u.mutation.ResetHTTPTimeout()
+	_u.mutation.SetHTTPTimeout(v)
+	return _u
+}
+
+// SetNillableHTTPTimeout sets the "http_timeout" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableHTTPTimeout(v *int) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetHTTPTimeout(*v)
+	}
+	return _u
+}
+
+// AddHTTPTimeout adds value to the "http_timeout" field.
+func (_u *ScheduleJobUpdate) AddHTTPTimeout(v int) *ScheduleJobUpdate {
+	_u.mutation.AddHTTPTimeout(v)
+	return _u
+}
+
+// SetMaxRetries sets the "max_retries" field.
+func (_u *ScheduleJobUpdate) SetMaxRetries(v int) *ScheduleJobUpdate {
+	_u.mutation.ResetMaxRetries()
+	_u.mutation.SetMaxRetries(v)
+	return _u
+}
+
+// SetNillableMaxRetries sets the "max_retries" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableMaxRetries(v *int) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetMaxRetries(*v)
+	}
+	return _u
+}
+
+// AddMaxRetries adds value to the "max_retries" field.
+func (_u *ScheduleJobUpdate) AddMaxRetries(v int) *ScheduleJobUpdate {
+	_u.mutation.AddMaxRetries(v)
+	return _u
+}
+
+// SetFailureNotification sets the "failure_notification" field.
+func (_u *ScheduleJobUpdate) SetFailureNotification(v bool) *ScheduleJobUpdate {
+	_u.mutation.SetFailureNotification(v)
+	return _u
+}
+
+// SetNillableFailureNotification sets the "failure_notification" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableFailureNotification(v *bool) *ScheduleJobUpdate {
+	if v != nil {
+		_u.SetFailureNotification(*v)
+	}
+	return _u
+}
+
 // Mutation returns the ScheduleJobMutation object of the builder.
 func (_u *ScheduleJobUpdate) Mutation() *ScheduleJobMutation {
 	return _u.mutation
@@ -104,6 +348,75 @@ func (_u *ScheduleJobUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(schedulejob.FieldName, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.GetType(); ok {
+		_spec.SetField(schedulejob.FieldType, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Expression(); ok {
+		_spec.SetField(schedulejob.FieldExpression, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(schedulejob.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(schedulejob.FieldDescription, field.TypeString)
+	}
+	if value, ok := _u.mutation.Enabled(); ok {
+		_spec.SetField(schedulejob.FieldEnabled, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.NextRunTime(); ok {
+		_spec.SetField(schedulejob.FieldNextRunTime, field.TypeTime, value)
+	}
+	if _u.mutation.NextRunTimeCleared() {
+		_spec.ClearField(schedulejob.FieldNextRunTime, field.TypeTime)
+	}
+	if value, ok := _u.mutation.LastRunTime(); ok {
+		_spec.SetField(schedulejob.FieldLastRunTime, field.TypeTime, value)
+	}
+	if _u.mutation.LastRunTimeCleared() {
+		_spec.ClearField(schedulejob.FieldLastRunTime, field.TypeTime)
+	}
+	if value, ok := _u.mutation.ExecutionType(); ok {
+		_spec.SetField(schedulejob.FieldExecutionType, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.HTTPMethod(); ok {
+		_spec.SetField(schedulejob.FieldHTTPMethod, field.TypeString, value)
+	}
+	if _u.mutation.HTTPMethodCleared() {
+		_spec.ClearField(schedulejob.FieldHTTPMethod, field.TypeString)
+	}
+	if value, ok := _u.mutation.HTTPURL(); ok {
+		_spec.SetField(schedulejob.FieldHTTPURL, field.TypeString, value)
+	}
+	if _u.mutation.HTTPURLCleared() {
+		_spec.ClearField(schedulejob.FieldHTTPURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.HTTPHeaders(); ok {
+		_spec.SetField(schedulejob.FieldHTTPHeaders, field.TypeJSON, value)
+	}
+	if _u.mutation.HTTPHeadersCleared() {
+		_spec.ClearField(schedulejob.FieldHTTPHeaders, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.HTTPBody(); ok {
+		_spec.SetField(schedulejob.FieldHTTPBody, field.TypeString, value)
+	}
+	if _u.mutation.HTTPBodyCleared() {
+		_spec.ClearField(schedulejob.FieldHTTPBody, field.TypeString)
+	}
+	if value, ok := _u.mutation.HTTPTimeout(); ok {
+		_spec.SetField(schedulejob.FieldHTTPTimeout, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedHTTPTimeout(); ok {
+		_spec.AddField(schedulejob.FieldHTTPTimeout, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.MaxRetries(); ok {
+		_spec.SetField(schedulejob.FieldMaxRetries, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMaxRetries(); ok {
+		_spec.AddField(schedulejob.FieldMaxRetries, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.FailureNotification(); ok {
+		_spec.SetField(schedulejob.FieldFailureNotification, field.TypeBool, value)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{schedulejob.Label}
@@ -140,6 +453,250 @@ func (_u *ScheduleJobUpdateOne) SetName(v string) *ScheduleJobUpdateOne {
 func (_u *ScheduleJobUpdateOne) SetNillableName(v *string) *ScheduleJobUpdateOne {
 	if v != nil {
 		_u.SetName(*v)
+	}
+	return _u
+}
+
+// SetType sets the "type" field.
+func (_u *ScheduleJobUpdateOne) SetType(v string) *ScheduleJobUpdateOne {
+	_u.mutation.SetType(v)
+	return _u
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableType(v *string) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetType(*v)
+	}
+	return _u
+}
+
+// SetExpression sets the "expression" field.
+func (_u *ScheduleJobUpdateOne) SetExpression(v string) *ScheduleJobUpdateOne {
+	_u.mutation.SetExpression(v)
+	return _u
+}
+
+// SetNillableExpression sets the "expression" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableExpression(v *string) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetExpression(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *ScheduleJobUpdateOne) SetDescription(v string) *ScheduleJobUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableDescription(v *string) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *ScheduleJobUpdateOne) ClearDescription() *ScheduleJobUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
+}
+
+// SetEnabled sets the "enabled" field.
+func (_u *ScheduleJobUpdateOne) SetEnabled(v bool) *ScheduleJobUpdateOne {
+	_u.mutation.SetEnabled(v)
+	return _u
+}
+
+// SetNillableEnabled sets the "enabled" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableEnabled(v *bool) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetEnabled(*v)
+	}
+	return _u
+}
+
+// SetNextRunTime sets the "next_run_time" field.
+func (_u *ScheduleJobUpdateOne) SetNextRunTime(v time.Time) *ScheduleJobUpdateOne {
+	_u.mutation.SetNextRunTime(v)
+	return _u
+}
+
+// SetNillableNextRunTime sets the "next_run_time" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableNextRunTime(v *time.Time) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetNextRunTime(*v)
+	}
+	return _u
+}
+
+// ClearNextRunTime clears the value of the "next_run_time" field.
+func (_u *ScheduleJobUpdateOne) ClearNextRunTime() *ScheduleJobUpdateOne {
+	_u.mutation.ClearNextRunTime()
+	return _u
+}
+
+// SetLastRunTime sets the "last_run_time" field.
+func (_u *ScheduleJobUpdateOne) SetLastRunTime(v time.Time) *ScheduleJobUpdateOne {
+	_u.mutation.SetLastRunTime(v)
+	return _u
+}
+
+// SetNillableLastRunTime sets the "last_run_time" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableLastRunTime(v *time.Time) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetLastRunTime(*v)
+	}
+	return _u
+}
+
+// ClearLastRunTime clears the value of the "last_run_time" field.
+func (_u *ScheduleJobUpdateOne) ClearLastRunTime() *ScheduleJobUpdateOne {
+	_u.mutation.ClearLastRunTime()
+	return _u
+}
+
+// SetExecutionType sets the "execution_type" field.
+func (_u *ScheduleJobUpdateOne) SetExecutionType(v string) *ScheduleJobUpdateOne {
+	_u.mutation.SetExecutionType(v)
+	return _u
+}
+
+// SetNillableExecutionType sets the "execution_type" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableExecutionType(v *string) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetExecutionType(*v)
+	}
+	return _u
+}
+
+// SetHTTPMethod sets the "http_method" field.
+func (_u *ScheduleJobUpdateOne) SetHTTPMethod(v string) *ScheduleJobUpdateOne {
+	_u.mutation.SetHTTPMethod(v)
+	return _u
+}
+
+// SetNillableHTTPMethod sets the "http_method" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableHTTPMethod(v *string) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetHTTPMethod(*v)
+	}
+	return _u
+}
+
+// ClearHTTPMethod clears the value of the "http_method" field.
+func (_u *ScheduleJobUpdateOne) ClearHTTPMethod() *ScheduleJobUpdateOne {
+	_u.mutation.ClearHTTPMethod()
+	return _u
+}
+
+// SetHTTPURL sets the "http_url" field.
+func (_u *ScheduleJobUpdateOne) SetHTTPURL(v string) *ScheduleJobUpdateOne {
+	_u.mutation.SetHTTPURL(v)
+	return _u
+}
+
+// SetNillableHTTPURL sets the "http_url" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableHTTPURL(v *string) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetHTTPURL(*v)
+	}
+	return _u
+}
+
+// ClearHTTPURL clears the value of the "http_url" field.
+func (_u *ScheduleJobUpdateOne) ClearHTTPURL() *ScheduleJobUpdateOne {
+	_u.mutation.ClearHTTPURL()
+	return _u
+}
+
+// SetHTTPHeaders sets the "http_headers" field.
+func (_u *ScheduleJobUpdateOne) SetHTTPHeaders(v map[string]string) *ScheduleJobUpdateOne {
+	_u.mutation.SetHTTPHeaders(v)
+	return _u
+}
+
+// ClearHTTPHeaders clears the value of the "http_headers" field.
+func (_u *ScheduleJobUpdateOne) ClearHTTPHeaders() *ScheduleJobUpdateOne {
+	_u.mutation.ClearHTTPHeaders()
+	return _u
+}
+
+// SetHTTPBody sets the "http_body" field.
+func (_u *ScheduleJobUpdateOne) SetHTTPBody(v string) *ScheduleJobUpdateOne {
+	_u.mutation.SetHTTPBody(v)
+	return _u
+}
+
+// SetNillableHTTPBody sets the "http_body" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableHTTPBody(v *string) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetHTTPBody(*v)
+	}
+	return _u
+}
+
+// ClearHTTPBody clears the value of the "http_body" field.
+func (_u *ScheduleJobUpdateOne) ClearHTTPBody() *ScheduleJobUpdateOne {
+	_u.mutation.ClearHTTPBody()
+	return _u
+}
+
+// SetHTTPTimeout sets the "http_timeout" field.
+func (_u *ScheduleJobUpdateOne) SetHTTPTimeout(v int) *ScheduleJobUpdateOne {
+	_u.mutation.ResetHTTPTimeout()
+	_u.mutation.SetHTTPTimeout(v)
+	return _u
+}
+
+// SetNillableHTTPTimeout sets the "http_timeout" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableHTTPTimeout(v *int) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetHTTPTimeout(*v)
+	}
+	return _u
+}
+
+// AddHTTPTimeout adds value to the "http_timeout" field.
+func (_u *ScheduleJobUpdateOne) AddHTTPTimeout(v int) *ScheduleJobUpdateOne {
+	_u.mutation.AddHTTPTimeout(v)
+	return _u
+}
+
+// SetMaxRetries sets the "max_retries" field.
+func (_u *ScheduleJobUpdateOne) SetMaxRetries(v int) *ScheduleJobUpdateOne {
+	_u.mutation.ResetMaxRetries()
+	_u.mutation.SetMaxRetries(v)
+	return _u
+}
+
+// SetNillableMaxRetries sets the "max_retries" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableMaxRetries(v *int) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetMaxRetries(*v)
+	}
+	return _u
+}
+
+// AddMaxRetries adds value to the "max_retries" field.
+func (_u *ScheduleJobUpdateOne) AddMaxRetries(v int) *ScheduleJobUpdateOne {
+	_u.mutation.AddMaxRetries(v)
+	return _u
+}
+
+// SetFailureNotification sets the "failure_notification" field.
+func (_u *ScheduleJobUpdateOne) SetFailureNotification(v bool) *ScheduleJobUpdateOne {
+	_u.mutation.SetFailureNotification(v)
+	return _u
+}
+
+// SetNillableFailureNotification sets the "failure_notification" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableFailureNotification(v *bool) *ScheduleJobUpdateOne {
+	if v != nil {
+		_u.SetFailureNotification(*v)
 	}
 	return _u
 }
@@ -229,6 +786,75 @@ func (_u *ScheduleJobUpdateOne) sqlSave(ctx context.Context) (_node *ScheduleJob
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(schedulejob.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.GetType(); ok {
+		_spec.SetField(schedulejob.FieldType, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Expression(); ok {
+		_spec.SetField(schedulejob.FieldExpression, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(schedulejob.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(schedulejob.FieldDescription, field.TypeString)
+	}
+	if value, ok := _u.mutation.Enabled(); ok {
+		_spec.SetField(schedulejob.FieldEnabled, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.NextRunTime(); ok {
+		_spec.SetField(schedulejob.FieldNextRunTime, field.TypeTime, value)
+	}
+	if _u.mutation.NextRunTimeCleared() {
+		_spec.ClearField(schedulejob.FieldNextRunTime, field.TypeTime)
+	}
+	if value, ok := _u.mutation.LastRunTime(); ok {
+		_spec.SetField(schedulejob.FieldLastRunTime, field.TypeTime, value)
+	}
+	if _u.mutation.LastRunTimeCleared() {
+		_spec.ClearField(schedulejob.FieldLastRunTime, field.TypeTime)
+	}
+	if value, ok := _u.mutation.ExecutionType(); ok {
+		_spec.SetField(schedulejob.FieldExecutionType, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.HTTPMethod(); ok {
+		_spec.SetField(schedulejob.FieldHTTPMethod, field.TypeString, value)
+	}
+	if _u.mutation.HTTPMethodCleared() {
+		_spec.ClearField(schedulejob.FieldHTTPMethod, field.TypeString)
+	}
+	if value, ok := _u.mutation.HTTPURL(); ok {
+		_spec.SetField(schedulejob.FieldHTTPURL, field.TypeString, value)
+	}
+	if _u.mutation.HTTPURLCleared() {
+		_spec.ClearField(schedulejob.FieldHTTPURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.HTTPHeaders(); ok {
+		_spec.SetField(schedulejob.FieldHTTPHeaders, field.TypeJSON, value)
+	}
+	if _u.mutation.HTTPHeadersCleared() {
+		_spec.ClearField(schedulejob.FieldHTTPHeaders, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.HTTPBody(); ok {
+		_spec.SetField(schedulejob.FieldHTTPBody, field.TypeString, value)
+	}
+	if _u.mutation.HTTPBodyCleared() {
+		_spec.ClearField(schedulejob.FieldHTTPBody, field.TypeString)
+	}
+	if value, ok := _u.mutation.HTTPTimeout(); ok {
+		_spec.SetField(schedulejob.FieldHTTPTimeout, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedHTTPTimeout(); ok {
+		_spec.AddField(schedulejob.FieldHTTPTimeout, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.MaxRetries(); ok {
+		_spec.SetField(schedulejob.FieldMaxRetries, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMaxRetries(); ok {
+		_spec.AddField(schedulejob.FieldMaxRetries, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.FailureNotification(); ok {
+		_spec.SetField(schedulejob.FieldFailureNotification, field.TypeBool, value)
 	}
 	_node = &ScheduleJob{config: _u.config}
 	_spec.Assign = _node.assignValues

@@ -54,6 +54,178 @@ func (_c *ScheduleJobCreate) SetName(v string) *ScheduleJobCreate {
 	return _c
 }
 
+// SetType sets the "type" field.
+func (_c *ScheduleJobCreate) SetType(v string) *ScheduleJobCreate {
+	_c.mutation.SetType(v)
+	return _c
+}
+
+// SetExpression sets the "expression" field.
+func (_c *ScheduleJobCreate) SetExpression(v string) *ScheduleJobCreate {
+	_c.mutation.SetExpression(v)
+	return _c
+}
+
+// SetDescription sets the "description" field.
+func (_c *ScheduleJobCreate) SetDescription(v string) *ScheduleJobCreate {
+	_c.mutation.SetDescription(v)
+	return _c
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableDescription(v *string) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetDescription(*v)
+	}
+	return _c
+}
+
+// SetEnabled sets the "enabled" field.
+func (_c *ScheduleJobCreate) SetEnabled(v bool) *ScheduleJobCreate {
+	_c.mutation.SetEnabled(v)
+	return _c
+}
+
+// SetNillableEnabled sets the "enabled" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableEnabled(v *bool) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetEnabled(*v)
+	}
+	return _c
+}
+
+// SetNextRunTime sets the "next_run_time" field.
+func (_c *ScheduleJobCreate) SetNextRunTime(v time.Time) *ScheduleJobCreate {
+	_c.mutation.SetNextRunTime(v)
+	return _c
+}
+
+// SetNillableNextRunTime sets the "next_run_time" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableNextRunTime(v *time.Time) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetNextRunTime(*v)
+	}
+	return _c
+}
+
+// SetLastRunTime sets the "last_run_time" field.
+func (_c *ScheduleJobCreate) SetLastRunTime(v time.Time) *ScheduleJobCreate {
+	_c.mutation.SetLastRunTime(v)
+	return _c
+}
+
+// SetNillableLastRunTime sets the "last_run_time" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableLastRunTime(v *time.Time) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetLastRunTime(*v)
+	}
+	return _c
+}
+
+// SetExecutionType sets the "execution_type" field.
+func (_c *ScheduleJobCreate) SetExecutionType(v string) *ScheduleJobCreate {
+	_c.mutation.SetExecutionType(v)
+	return _c
+}
+
+// SetNillableExecutionType sets the "execution_type" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableExecutionType(v *string) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetExecutionType(*v)
+	}
+	return _c
+}
+
+// SetHTTPMethod sets the "http_method" field.
+func (_c *ScheduleJobCreate) SetHTTPMethod(v string) *ScheduleJobCreate {
+	_c.mutation.SetHTTPMethod(v)
+	return _c
+}
+
+// SetNillableHTTPMethod sets the "http_method" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableHTTPMethod(v *string) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetHTTPMethod(*v)
+	}
+	return _c
+}
+
+// SetHTTPURL sets the "http_url" field.
+func (_c *ScheduleJobCreate) SetHTTPURL(v string) *ScheduleJobCreate {
+	_c.mutation.SetHTTPURL(v)
+	return _c
+}
+
+// SetNillableHTTPURL sets the "http_url" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableHTTPURL(v *string) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetHTTPURL(*v)
+	}
+	return _c
+}
+
+// SetHTTPHeaders sets the "http_headers" field.
+func (_c *ScheduleJobCreate) SetHTTPHeaders(v map[string]string) *ScheduleJobCreate {
+	_c.mutation.SetHTTPHeaders(v)
+	return _c
+}
+
+// SetHTTPBody sets the "http_body" field.
+func (_c *ScheduleJobCreate) SetHTTPBody(v string) *ScheduleJobCreate {
+	_c.mutation.SetHTTPBody(v)
+	return _c
+}
+
+// SetNillableHTTPBody sets the "http_body" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableHTTPBody(v *string) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetHTTPBody(*v)
+	}
+	return _c
+}
+
+// SetHTTPTimeout sets the "http_timeout" field.
+func (_c *ScheduleJobCreate) SetHTTPTimeout(v int) *ScheduleJobCreate {
+	_c.mutation.SetHTTPTimeout(v)
+	return _c
+}
+
+// SetNillableHTTPTimeout sets the "http_timeout" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableHTTPTimeout(v *int) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetHTTPTimeout(*v)
+	}
+	return _c
+}
+
+// SetMaxRetries sets the "max_retries" field.
+func (_c *ScheduleJobCreate) SetMaxRetries(v int) *ScheduleJobCreate {
+	_c.mutation.SetMaxRetries(v)
+	return _c
+}
+
+// SetNillableMaxRetries sets the "max_retries" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableMaxRetries(v *int) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetMaxRetries(*v)
+	}
+	return _c
+}
+
+// SetFailureNotification sets the "failure_notification" field.
+func (_c *ScheduleJobCreate) SetFailureNotification(v bool) *ScheduleJobCreate {
+	_c.mutation.SetFailureNotification(v)
+	return _c
+}
+
+// SetNillableFailureNotification sets the "failure_notification" field if the given value is not nil.
+func (_c *ScheduleJobCreate) SetNillableFailureNotification(v *bool) *ScheduleJobCreate {
+	if v != nil {
+		_c.SetFailureNotification(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ScheduleJobCreate) SetID(v int) *ScheduleJobCreate {
 	_c.mutation.SetID(v)
@@ -103,6 +275,26 @@ func (_c *ScheduleJobCreate) defaults() {
 		v := schedulejob.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := _c.mutation.Enabled(); !ok {
+		v := schedulejob.DefaultEnabled
+		_c.mutation.SetEnabled(v)
+	}
+	if _, ok := _c.mutation.ExecutionType(); !ok {
+		v := schedulejob.DefaultExecutionType
+		_c.mutation.SetExecutionType(v)
+	}
+	if _, ok := _c.mutation.HTTPTimeout(); !ok {
+		v := schedulejob.DefaultHTTPTimeout
+		_c.mutation.SetHTTPTimeout(v)
+	}
+	if _, ok := _c.mutation.MaxRetries(); !ok {
+		v := schedulejob.DefaultMaxRetries
+		_c.mutation.SetMaxRetries(v)
+	}
+	if _, ok := _c.mutation.FailureNotification(); !ok {
+		v := schedulejob.DefaultFailureNotification
+		_c.mutation.SetFailureNotification(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -115,6 +307,27 @@ func (_c *ScheduleJobCreate) check() error {
 	}
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "ScheduleJob.name"`)}
+	}
+	if _, ok := _c.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "ScheduleJob.type"`)}
+	}
+	if _, ok := _c.mutation.Expression(); !ok {
+		return &ValidationError{Name: "expression", err: errors.New(`ent: missing required field "ScheduleJob.expression"`)}
+	}
+	if _, ok := _c.mutation.Enabled(); !ok {
+		return &ValidationError{Name: "enabled", err: errors.New(`ent: missing required field "ScheduleJob.enabled"`)}
+	}
+	if _, ok := _c.mutation.ExecutionType(); !ok {
+		return &ValidationError{Name: "execution_type", err: errors.New(`ent: missing required field "ScheduleJob.execution_type"`)}
+	}
+	if _, ok := _c.mutation.HTTPTimeout(); !ok {
+		return &ValidationError{Name: "http_timeout", err: errors.New(`ent: missing required field "ScheduleJob.http_timeout"`)}
+	}
+	if _, ok := _c.mutation.MaxRetries(); !ok {
+		return &ValidationError{Name: "max_retries", err: errors.New(`ent: missing required field "ScheduleJob.max_retries"`)}
+	}
+	if _, ok := _c.mutation.FailureNotification(); !ok {
+		return &ValidationError{Name: "failure_notification", err: errors.New(`ent: missing required field "ScheduleJob.failure_notification"`)}
 	}
 	return nil
 }
@@ -159,6 +372,62 @@ func (_c *ScheduleJobCreate) createSpec() (*ScheduleJob, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(schedulejob.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := _c.mutation.GetType(); ok {
+		_spec.SetField(schedulejob.FieldType, field.TypeString, value)
+		_node.Type = value
+	}
+	if value, ok := _c.mutation.Expression(); ok {
+		_spec.SetField(schedulejob.FieldExpression, field.TypeString, value)
+		_node.Expression = value
+	}
+	if value, ok := _c.mutation.Description(); ok {
+		_spec.SetField(schedulejob.FieldDescription, field.TypeString, value)
+		_node.Description = value
+	}
+	if value, ok := _c.mutation.Enabled(); ok {
+		_spec.SetField(schedulejob.FieldEnabled, field.TypeBool, value)
+		_node.Enabled = value
+	}
+	if value, ok := _c.mutation.NextRunTime(); ok {
+		_spec.SetField(schedulejob.FieldNextRunTime, field.TypeTime, value)
+		_node.NextRunTime = value
+	}
+	if value, ok := _c.mutation.LastRunTime(); ok {
+		_spec.SetField(schedulejob.FieldLastRunTime, field.TypeTime, value)
+		_node.LastRunTime = value
+	}
+	if value, ok := _c.mutation.ExecutionType(); ok {
+		_spec.SetField(schedulejob.FieldExecutionType, field.TypeString, value)
+		_node.ExecutionType = value
+	}
+	if value, ok := _c.mutation.HTTPMethod(); ok {
+		_spec.SetField(schedulejob.FieldHTTPMethod, field.TypeString, value)
+		_node.HTTPMethod = value
+	}
+	if value, ok := _c.mutation.HTTPURL(); ok {
+		_spec.SetField(schedulejob.FieldHTTPURL, field.TypeString, value)
+		_node.HTTPURL = value
+	}
+	if value, ok := _c.mutation.HTTPHeaders(); ok {
+		_spec.SetField(schedulejob.FieldHTTPHeaders, field.TypeJSON, value)
+		_node.HTTPHeaders = value
+	}
+	if value, ok := _c.mutation.HTTPBody(); ok {
+		_spec.SetField(schedulejob.FieldHTTPBody, field.TypeString, value)
+		_node.HTTPBody = value
+	}
+	if value, ok := _c.mutation.HTTPTimeout(); ok {
+		_spec.SetField(schedulejob.FieldHTTPTimeout, field.TypeInt, value)
+		_node.HTTPTimeout = value
+	}
+	if value, ok := _c.mutation.MaxRetries(); ok {
+		_spec.SetField(schedulejob.FieldMaxRetries, field.TypeInt, value)
+		_node.MaxRetries = value
+	}
+	if value, ok := _c.mutation.FailureNotification(); ok {
+		_spec.SetField(schedulejob.FieldFailureNotification, field.TypeBool, value)
+		_node.FailureNotification = value
 	}
 	return _node, _spec
 }

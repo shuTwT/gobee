@@ -178,6 +178,14 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		fileApi.Delete("/delete/:id", handlerMap.FileHandler.DeleteFile).Name("fileDelete")
 		fileApi.Post("/upload", handlerMap.FileHandler.Upload).Name("fileUpload")
 	}
+	scheduleJobApi := router.Group("/schedule-job")
+	{
+		scheduleJobApi.Post("/create", handlerMap.ScheduleJobHandler.CreateScheduleJob).Name("scheduleJobCreate")
+		scheduleJobApi.Get("/page", handlerMap.ScheduleJobHandler.ListScheduleJobPage).Name("scheduleJobPage")
+		scheduleJobApi.Get("/query/:id", handlerMap.ScheduleJobHandler.QueryScheduleJob).Name("scheduleJobQuery")
+		scheduleJobApi.Put("/update/:id", handlerMap.ScheduleJobHandler.UpdateScheduleJob).Name("scheduleJobUpdate")
+		scheduleJobApi.Delete("/delete/:id", handlerMap.ScheduleJobHandler.DeleteScheduleJob).Name("scheduleJobDelete")
+	}
 	migrationApi := router.Group("/migration")
 	{
 		migrationApi.Post("/md", handlerMap.MigrationHandler.ImportMarkdown).Name("migrationMd")

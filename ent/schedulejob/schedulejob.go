@@ -19,6 +19,34 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
+	// FieldExpression holds the string denoting the expression field in the database.
+	FieldExpression = "expression"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
+	// FieldEnabled holds the string denoting the enabled field in the database.
+	FieldEnabled = "enabled"
+	// FieldNextRunTime holds the string denoting the next_run_time field in the database.
+	FieldNextRunTime = "next_run_time"
+	// FieldLastRunTime holds the string denoting the last_run_time field in the database.
+	FieldLastRunTime = "last_run_time"
+	// FieldExecutionType holds the string denoting the execution_type field in the database.
+	FieldExecutionType = "execution_type"
+	// FieldHTTPMethod holds the string denoting the http_method field in the database.
+	FieldHTTPMethod = "http_method"
+	// FieldHTTPURL holds the string denoting the http_url field in the database.
+	FieldHTTPURL = "http_url"
+	// FieldHTTPHeaders holds the string denoting the http_headers field in the database.
+	FieldHTTPHeaders = "http_headers"
+	// FieldHTTPBody holds the string denoting the http_body field in the database.
+	FieldHTTPBody = "http_body"
+	// FieldHTTPTimeout holds the string denoting the http_timeout field in the database.
+	FieldHTTPTimeout = "http_timeout"
+	// FieldMaxRetries holds the string denoting the max_retries field in the database.
+	FieldMaxRetries = "max_retries"
+	// FieldFailureNotification holds the string denoting the failure_notification field in the database.
+	FieldFailureNotification = "failure_notification"
 	// Table holds the table name of the schedulejob in the database.
 	Table = "schedule_jobs"
 )
@@ -29,6 +57,20 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldName,
+	FieldType,
+	FieldExpression,
+	FieldDescription,
+	FieldEnabled,
+	FieldNextRunTime,
+	FieldLastRunTime,
+	FieldExecutionType,
+	FieldHTTPMethod,
+	FieldHTTPURL,
+	FieldHTTPHeaders,
+	FieldHTTPBody,
+	FieldHTTPTimeout,
+	FieldMaxRetries,
+	FieldFailureNotification,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -48,6 +90,16 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultEnabled holds the default value on creation for the "enabled" field.
+	DefaultEnabled bool
+	// DefaultExecutionType holds the default value on creation for the "execution_type" field.
+	DefaultExecutionType string
+	// DefaultHTTPTimeout holds the default value on creation for the "http_timeout" field.
+	DefaultHTTPTimeout int
+	// DefaultMaxRetries holds the default value on creation for the "max_retries" field.
+	DefaultMaxRetries int
+	// DefaultFailureNotification holds the default value on creation for the "failure_notification" field.
+	DefaultFailureNotification bool
 )
 
 // OrderOption defines the ordering options for the ScheduleJob queries.
@@ -71,4 +123,69 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByExpression orders the results by the expression field.
+func ByExpression(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpression, opts...).ToFunc()
+}
+
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
+// ByEnabled orders the results by the enabled field.
+func ByEnabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEnabled, opts...).ToFunc()
+}
+
+// ByNextRunTime orders the results by the next_run_time field.
+func ByNextRunTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNextRunTime, opts...).ToFunc()
+}
+
+// ByLastRunTime orders the results by the last_run_time field.
+func ByLastRunTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastRunTime, opts...).ToFunc()
+}
+
+// ByExecutionType orders the results by the execution_type field.
+func ByExecutionType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExecutionType, opts...).ToFunc()
+}
+
+// ByHTTPMethod orders the results by the http_method field.
+func ByHTTPMethod(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHTTPMethod, opts...).ToFunc()
+}
+
+// ByHTTPURL orders the results by the http_url field.
+func ByHTTPURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHTTPURL, opts...).ToFunc()
+}
+
+// ByHTTPBody orders the results by the http_body field.
+func ByHTTPBody(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHTTPBody, opts...).ToFunc()
+}
+
+// ByHTTPTimeout orders the results by the http_timeout field.
+func ByHTTPTimeout(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHTTPTimeout, opts...).ToFunc()
+}
+
+// ByMaxRetries orders the results by the max_retries field.
+func ByMaxRetries(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMaxRetries, opts...).ToFunc()
+}
+
+// ByFailureNotification orders the results by the failure_notification field.
+func ByFailureNotification(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFailureNotification, opts...).ToFunc()
 }

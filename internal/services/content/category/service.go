@@ -29,8 +29,7 @@ func NewCategoryServiceImpl(client *ent.Client) *CategoryServiceImpl {
 }
 
 func (s *CategoryServiceImpl) QueryCategory(c *fiber.Ctx, id int) (*ent.Category, error) {
-	client := database.DB
-	category, err := client.Category.Query().
+	category, err := s.client.Category.Query().
 		Where(category.ID(id)).
 		Only(c.Context())
 	if err != nil {
@@ -40,8 +39,8 @@ func (s *CategoryServiceImpl) QueryCategory(c *fiber.Ctx, id int) (*ent.Category
 }
 
 func (s *CategoryServiceImpl) QueryCategoryList(c *fiber.Ctx) ([]model.CategoryResp, error) {
-	client := database.DB
-	categories, err := client.Category.Query().
+
+	categories, err := s.client.Category.Query().
 		All(c.Context())
 	if err != nil {
 		return nil, err
@@ -49,7 +48,7 @@ func (s *CategoryServiceImpl) QueryCategoryList(c *fiber.Ctx) ([]model.CategoryR
 
 	var resp []model.CategoryResp
 	for _, cat := range categories {
-		postCount, err := client.Post.Query().
+		postCount, err := s.client.Post.Query().
 			Where(post.HasCategoriesWith(category.ID(cat.ID))).
 			Count(c.Context())
 		if err != nil {
@@ -90,8 +89,7 @@ func (s *CategoryServiceImpl) QueryCategoryPage(c *fiber.Ctx, pageQuery model.Pa
 }
 
 func (s *CategoryServiceImpl) CreateCategory(c context.Context, createReq model.CategoryCreateReq) (*ent.Category, error) {
-	client := database.DB
-	category, err := client.Category.Create().
+	category, err := s.client.Category.Create().
 		SetName(createReq.Name).
 		SetNillableDescription(createReq.Description).
 		SetNillableSlug(createReq.Slug).
@@ -105,8 +103,8 @@ func (s *CategoryServiceImpl) CreateCategory(c context.Context, createReq model.
 }
 
 func (s *CategoryServiceImpl) UpdateCategory(c *fiber.Ctx, id int, updateReq *model.CategoryUpdateReq) (*ent.Category, error) {
-	client := database.DB
-	update := client.Category.UpdateOneID(id)
+
+	update := s.client.Category.UpdateOneID(id)
 
 	if updateReq.Name != nil {
 		update.SetName(*updateReq.Name)

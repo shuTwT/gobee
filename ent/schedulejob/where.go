@@ -69,6 +69,71 @@ func Name(v string) predicate.ScheduleJob {
 	return predicate.ScheduleJob(sql.FieldEQ(FieldName, v))
 }
 
+// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
+func Type(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldType, v))
+}
+
+// Expression applies equality check predicate on the "expression" field. It's identical to ExpressionEQ.
+func Expression(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldExpression, v))
+}
+
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldDescription, v))
+}
+
+// Enabled applies equality check predicate on the "enabled" field. It's identical to EnabledEQ.
+func Enabled(v bool) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldEnabled, v))
+}
+
+// NextRunTime applies equality check predicate on the "next_run_time" field. It's identical to NextRunTimeEQ.
+func NextRunTime(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldNextRunTime, v))
+}
+
+// LastRunTime applies equality check predicate on the "last_run_time" field. It's identical to LastRunTimeEQ.
+func LastRunTime(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldLastRunTime, v))
+}
+
+// ExecutionType applies equality check predicate on the "execution_type" field. It's identical to ExecutionTypeEQ.
+func ExecutionType(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldExecutionType, v))
+}
+
+// HTTPMethod applies equality check predicate on the "http_method" field. It's identical to HTTPMethodEQ.
+func HTTPMethod(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldHTTPMethod, v))
+}
+
+// HTTPURL applies equality check predicate on the "http_url" field. It's identical to HTTPURLEQ.
+func HTTPURL(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldHTTPURL, v))
+}
+
+// HTTPBody applies equality check predicate on the "http_body" field. It's identical to HTTPBodyEQ.
+func HTTPBody(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldHTTPBody, v))
+}
+
+// HTTPTimeout applies equality check predicate on the "http_timeout" field. It's identical to HTTPTimeoutEQ.
+func HTTPTimeout(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldHTTPTimeout, v))
+}
+
+// MaxRetries applies equality check predicate on the "max_retries" field. It's identical to MaxRetriesEQ.
+func MaxRetries(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldMaxRetries, v))
+}
+
+// FailureNotification applies equality check predicate on the "failure_notification" field. It's identical to FailureNotificationEQ.
+func FailureNotification(v bool) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldFailureNotification, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.ScheduleJob {
 	return predicate.ScheduleJob(sql.FieldEQ(FieldCreatedAt, v))
@@ -212,6 +277,711 @@ func NameEqualFold(v string) predicate.ScheduleJob {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.ScheduleJob {
 	return predicate.ScheduleJob(sql.FieldContainsFold(FieldName, v))
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldType, v))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldType, v))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldType, vs...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldType, vs...))
+}
+
+// TypeGT applies the GT predicate on the "type" field.
+func TypeGT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldType, v))
+}
+
+// TypeGTE applies the GTE predicate on the "type" field.
+func TypeGTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldType, v))
+}
+
+// TypeLT applies the LT predicate on the "type" field.
+func TypeLT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldType, v))
+}
+
+// TypeLTE applies the LTE predicate on the "type" field.
+func TypeLTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldType, v))
+}
+
+// TypeContains applies the Contains predicate on the "type" field.
+func TypeContains(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContains(FieldType, v))
+}
+
+// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
+func TypeHasPrefix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasPrefix(FieldType, v))
+}
+
+// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
+func TypeHasSuffix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasSuffix(FieldType, v))
+}
+
+// TypeEqualFold applies the EqualFold predicate on the "type" field.
+func TypeEqualFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEqualFold(FieldType, v))
+}
+
+// TypeContainsFold applies the ContainsFold predicate on the "type" field.
+func TypeContainsFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContainsFold(FieldType, v))
+}
+
+// ExpressionEQ applies the EQ predicate on the "expression" field.
+func ExpressionEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldExpression, v))
+}
+
+// ExpressionNEQ applies the NEQ predicate on the "expression" field.
+func ExpressionNEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldExpression, v))
+}
+
+// ExpressionIn applies the In predicate on the "expression" field.
+func ExpressionIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldExpression, vs...))
+}
+
+// ExpressionNotIn applies the NotIn predicate on the "expression" field.
+func ExpressionNotIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldExpression, vs...))
+}
+
+// ExpressionGT applies the GT predicate on the "expression" field.
+func ExpressionGT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldExpression, v))
+}
+
+// ExpressionGTE applies the GTE predicate on the "expression" field.
+func ExpressionGTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldExpression, v))
+}
+
+// ExpressionLT applies the LT predicate on the "expression" field.
+func ExpressionLT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldExpression, v))
+}
+
+// ExpressionLTE applies the LTE predicate on the "expression" field.
+func ExpressionLTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldExpression, v))
+}
+
+// ExpressionContains applies the Contains predicate on the "expression" field.
+func ExpressionContains(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContains(FieldExpression, v))
+}
+
+// ExpressionHasPrefix applies the HasPrefix predicate on the "expression" field.
+func ExpressionHasPrefix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasPrefix(FieldExpression, v))
+}
+
+// ExpressionHasSuffix applies the HasSuffix predicate on the "expression" field.
+func ExpressionHasSuffix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasSuffix(FieldExpression, v))
+}
+
+// ExpressionEqualFold applies the EqualFold predicate on the "expression" field.
+func ExpressionEqualFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEqualFold(FieldExpression, v))
+}
+
+// ExpressionContainsFold applies the ContainsFold predicate on the "expression" field.
+func ExpressionContainsFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContainsFold(FieldExpression, v))
+}
+
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotNull(FieldDescription))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// EnabledEQ applies the EQ predicate on the "enabled" field.
+func EnabledEQ(v bool) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldEnabled, v))
+}
+
+// EnabledNEQ applies the NEQ predicate on the "enabled" field.
+func EnabledNEQ(v bool) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldEnabled, v))
+}
+
+// NextRunTimeEQ applies the EQ predicate on the "next_run_time" field.
+func NextRunTimeEQ(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldNextRunTime, v))
+}
+
+// NextRunTimeNEQ applies the NEQ predicate on the "next_run_time" field.
+func NextRunTimeNEQ(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldNextRunTime, v))
+}
+
+// NextRunTimeIn applies the In predicate on the "next_run_time" field.
+func NextRunTimeIn(vs ...time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldNextRunTime, vs...))
+}
+
+// NextRunTimeNotIn applies the NotIn predicate on the "next_run_time" field.
+func NextRunTimeNotIn(vs ...time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldNextRunTime, vs...))
+}
+
+// NextRunTimeGT applies the GT predicate on the "next_run_time" field.
+func NextRunTimeGT(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldNextRunTime, v))
+}
+
+// NextRunTimeGTE applies the GTE predicate on the "next_run_time" field.
+func NextRunTimeGTE(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldNextRunTime, v))
+}
+
+// NextRunTimeLT applies the LT predicate on the "next_run_time" field.
+func NextRunTimeLT(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldNextRunTime, v))
+}
+
+// NextRunTimeLTE applies the LTE predicate on the "next_run_time" field.
+func NextRunTimeLTE(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldNextRunTime, v))
+}
+
+// NextRunTimeIsNil applies the IsNil predicate on the "next_run_time" field.
+func NextRunTimeIsNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIsNull(FieldNextRunTime))
+}
+
+// NextRunTimeNotNil applies the NotNil predicate on the "next_run_time" field.
+func NextRunTimeNotNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotNull(FieldNextRunTime))
+}
+
+// LastRunTimeEQ applies the EQ predicate on the "last_run_time" field.
+func LastRunTimeEQ(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldLastRunTime, v))
+}
+
+// LastRunTimeNEQ applies the NEQ predicate on the "last_run_time" field.
+func LastRunTimeNEQ(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldLastRunTime, v))
+}
+
+// LastRunTimeIn applies the In predicate on the "last_run_time" field.
+func LastRunTimeIn(vs ...time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldLastRunTime, vs...))
+}
+
+// LastRunTimeNotIn applies the NotIn predicate on the "last_run_time" field.
+func LastRunTimeNotIn(vs ...time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldLastRunTime, vs...))
+}
+
+// LastRunTimeGT applies the GT predicate on the "last_run_time" field.
+func LastRunTimeGT(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldLastRunTime, v))
+}
+
+// LastRunTimeGTE applies the GTE predicate on the "last_run_time" field.
+func LastRunTimeGTE(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldLastRunTime, v))
+}
+
+// LastRunTimeLT applies the LT predicate on the "last_run_time" field.
+func LastRunTimeLT(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldLastRunTime, v))
+}
+
+// LastRunTimeLTE applies the LTE predicate on the "last_run_time" field.
+func LastRunTimeLTE(v time.Time) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldLastRunTime, v))
+}
+
+// LastRunTimeIsNil applies the IsNil predicate on the "last_run_time" field.
+func LastRunTimeIsNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIsNull(FieldLastRunTime))
+}
+
+// LastRunTimeNotNil applies the NotNil predicate on the "last_run_time" field.
+func LastRunTimeNotNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotNull(FieldLastRunTime))
+}
+
+// ExecutionTypeEQ applies the EQ predicate on the "execution_type" field.
+func ExecutionTypeEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldExecutionType, v))
+}
+
+// ExecutionTypeNEQ applies the NEQ predicate on the "execution_type" field.
+func ExecutionTypeNEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldExecutionType, v))
+}
+
+// ExecutionTypeIn applies the In predicate on the "execution_type" field.
+func ExecutionTypeIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldExecutionType, vs...))
+}
+
+// ExecutionTypeNotIn applies the NotIn predicate on the "execution_type" field.
+func ExecutionTypeNotIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldExecutionType, vs...))
+}
+
+// ExecutionTypeGT applies the GT predicate on the "execution_type" field.
+func ExecutionTypeGT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldExecutionType, v))
+}
+
+// ExecutionTypeGTE applies the GTE predicate on the "execution_type" field.
+func ExecutionTypeGTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldExecutionType, v))
+}
+
+// ExecutionTypeLT applies the LT predicate on the "execution_type" field.
+func ExecutionTypeLT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldExecutionType, v))
+}
+
+// ExecutionTypeLTE applies the LTE predicate on the "execution_type" field.
+func ExecutionTypeLTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldExecutionType, v))
+}
+
+// ExecutionTypeContains applies the Contains predicate on the "execution_type" field.
+func ExecutionTypeContains(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContains(FieldExecutionType, v))
+}
+
+// ExecutionTypeHasPrefix applies the HasPrefix predicate on the "execution_type" field.
+func ExecutionTypeHasPrefix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasPrefix(FieldExecutionType, v))
+}
+
+// ExecutionTypeHasSuffix applies the HasSuffix predicate on the "execution_type" field.
+func ExecutionTypeHasSuffix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasSuffix(FieldExecutionType, v))
+}
+
+// ExecutionTypeEqualFold applies the EqualFold predicate on the "execution_type" field.
+func ExecutionTypeEqualFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEqualFold(FieldExecutionType, v))
+}
+
+// ExecutionTypeContainsFold applies the ContainsFold predicate on the "execution_type" field.
+func ExecutionTypeContainsFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContainsFold(FieldExecutionType, v))
+}
+
+// HTTPMethodEQ applies the EQ predicate on the "http_method" field.
+func HTTPMethodEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldHTTPMethod, v))
+}
+
+// HTTPMethodNEQ applies the NEQ predicate on the "http_method" field.
+func HTTPMethodNEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldHTTPMethod, v))
+}
+
+// HTTPMethodIn applies the In predicate on the "http_method" field.
+func HTTPMethodIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldHTTPMethod, vs...))
+}
+
+// HTTPMethodNotIn applies the NotIn predicate on the "http_method" field.
+func HTTPMethodNotIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldHTTPMethod, vs...))
+}
+
+// HTTPMethodGT applies the GT predicate on the "http_method" field.
+func HTTPMethodGT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldHTTPMethod, v))
+}
+
+// HTTPMethodGTE applies the GTE predicate on the "http_method" field.
+func HTTPMethodGTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldHTTPMethod, v))
+}
+
+// HTTPMethodLT applies the LT predicate on the "http_method" field.
+func HTTPMethodLT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldHTTPMethod, v))
+}
+
+// HTTPMethodLTE applies the LTE predicate on the "http_method" field.
+func HTTPMethodLTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldHTTPMethod, v))
+}
+
+// HTTPMethodContains applies the Contains predicate on the "http_method" field.
+func HTTPMethodContains(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContains(FieldHTTPMethod, v))
+}
+
+// HTTPMethodHasPrefix applies the HasPrefix predicate on the "http_method" field.
+func HTTPMethodHasPrefix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasPrefix(FieldHTTPMethod, v))
+}
+
+// HTTPMethodHasSuffix applies the HasSuffix predicate on the "http_method" field.
+func HTTPMethodHasSuffix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasSuffix(FieldHTTPMethod, v))
+}
+
+// HTTPMethodIsNil applies the IsNil predicate on the "http_method" field.
+func HTTPMethodIsNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIsNull(FieldHTTPMethod))
+}
+
+// HTTPMethodNotNil applies the NotNil predicate on the "http_method" field.
+func HTTPMethodNotNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotNull(FieldHTTPMethod))
+}
+
+// HTTPMethodEqualFold applies the EqualFold predicate on the "http_method" field.
+func HTTPMethodEqualFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEqualFold(FieldHTTPMethod, v))
+}
+
+// HTTPMethodContainsFold applies the ContainsFold predicate on the "http_method" field.
+func HTTPMethodContainsFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContainsFold(FieldHTTPMethod, v))
+}
+
+// HTTPURLEQ applies the EQ predicate on the "http_url" field.
+func HTTPURLEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldHTTPURL, v))
+}
+
+// HTTPURLNEQ applies the NEQ predicate on the "http_url" field.
+func HTTPURLNEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldHTTPURL, v))
+}
+
+// HTTPURLIn applies the In predicate on the "http_url" field.
+func HTTPURLIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldHTTPURL, vs...))
+}
+
+// HTTPURLNotIn applies the NotIn predicate on the "http_url" field.
+func HTTPURLNotIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldHTTPURL, vs...))
+}
+
+// HTTPURLGT applies the GT predicate on the "http_url" field.
+func HTTPURLGT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldHTTPURL, v))
+}
+
+// HTTPURLGTE applies the GTE predicate on the "http_url" field.
+func HTTPURLGTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldHTTPURL, v))
+}
+
+// HTTPURLLT applies the LT predicate on the "http_url" field.
+func HTTPURLLT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldHTTPURL, v))
+}
+
+// HTTPURLLTE applies the LTE predicate on the "http_url" field.
+func HTTPURLLTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldHTTPURL, v))
+}
+
+// HTTPURLContains applies the Contains predicate on the "http_url" field.
+func HTTPURLContains(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContains(FieldHTTPURL, v))
+}
+
+// HTTPURLHasPrefix applies the HasPrefix predicate on the "http_url" field.
+func HTTPURLHasPrefix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasPrefix(FieldHTTPURL, v))
+}
+
+// HTTPURLHasSuffix applies the HasSuffix predicate on the "http_url" field.
+func HTTPURLHasSuffix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasSuffix(FieldHTTPURL, v))
+}
+
+// HTTPURLIsNil applies the IsNil predicate on the "http_url" field.
+func HTTPURLIsNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIsNull(FieldHTTPURL))
+}
+
+// HTTPURLNotNil applies the NotNil predicate on the "http_url" field.
+func HTTPURLNotNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotNull(FieldHTTPURL))
+}
+
+// HTTPURLEqualFold applies the EqualFold predicate on the "http_url" field.
+func HTTPURLEqualFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEqualFold(FieldHTTPURL, v))
+}
+
+// HTTPURLContainsFold applies the ContainsFold predicate on the "http_url" field.
+func HTTPURLContainsFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContainsFold(FieldHTTPURL, v))
+}
+
+// HTTPHeadersIsNil applies the IsNil predicate on the "http_headers" field.
+func HTTPHeadersIsNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIsNull(FieldHTTPHeaders))
+}
+
+// HTTPHeadersNotNil applies the NotNil predicate on the "http_headers" field.
+func HTTPHeadersNotNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotNull(FieldHTTPHeaders))
+}
+
+// HTTPBodyEQ applies the EQ predicate on the "http_body" field.
+func HTTPBodyEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldHTTPBody, v))
+}
+
+// HTTPBodyNEQ applies the NEQ predicate on the "http_body" field.
+func HTTPBodyNEQ(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldHTTPBody, v))
+}
+
+// HTTPBodyIn applies the In predicate on the "http_body" field.
+func HTTPBodyIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldHTTPBody, vs...))
+}
+
+// HTTPBodyNotIn applies the NotIn predicate on the "http_body" field.
+func HTTPBodyNotIn(vs ...string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldHTTPBody, vs...))
+}
+
+// HTTPBodyGT applies the GT predicate on the "http_body" field.
+func HTTPBodyGT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldHTTPBody, v))
+}
+
+// HTTPBodyGTE applies the GTE predicate on the "http_body" field.
+func HTTPBodyGTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldHTTPBody, v))
+}
+
+// HTTPBodyLT applies the LT predicate on the "http_body" field.
+func HTTPBodyLT(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldHTTPBody, v))
+}
+
+// HTTPBodyLTE applies the LTE predicate on the "http_body" field.
+func HTTPBodyLTE(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldHTTPBody, v))
+}
+
+// HTTPBodyContains applies the Contains predicate on the "http_body" field.
+func HTTPBodyContains(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContains(FieldHTTPBody, v))
+}
+
+// HTTPBodyHasPrefix applies the HasPrefix predicate on the "http_body" field.
+func HTTPBodyHasPrefix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasPrefix(FieldHTTPBody, v))
+}
+
+// HTTPBodyHasSuffix applies the HasSuffix predicate on the "http_body" field.
+func HTTPBodyHasSuffix(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldHasSuffix(FieldHTTPBody, v))
+}
+
+// HTTPBodyIsNil applies the IsNil predicate on the "http_body" field.
+func HTTPBodyIsNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIsNull(FieldHTTPBody))
+}
+
+// HTTPBodyNotNil applies the NotNil predicate on the "http_body" field.
+func HTTPBodyNotNil() predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotNull(FieldHTTPBody))
+}
+
+// HTTPBodyEqualFold applies the EqualFold predicate on the "http_body" field.
+func HTTPBodyEqualFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEqualFold(FieldHTTPBody, v))
+}
+
+// HTTPBodyContainsFold applies the ContainsFold predicate on the "http_body" field.
+func HTTPBodyContainsFold(v string) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldContainsFold(FieldHTTPBody, v))
+}
+
+// HTTPTimeoutEQ applies the EQ predicate on the "http_timeout" field.
+func HTTPTimeoutEQ(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldHTTPTimeout, v))
+}
+
+// HTTPTimeoutNEQ applies the NEQ predicate on the "http_timeout" field.
+func HTTPTimeoutNEQ(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldHTTPTimeout, v))
+}
+
+// HTTPTimeoutIn applies the In predicate on the "http_timeout" field.
+func HTTPTimeoutIn(vs ...int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldHTTPTimeout, vs...))
+}
+
+// HTTPTimeoutNotIn applies the NotIn predicate on the "http_timeout" field.
+func HTTPTimeoutNotIn(vs ...int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldHTTPTimeout, vs...))
+}
+
+// HTTPTimeoutGT applies the GT predicate on the "http_timeout" field.
+func HTTPTimeoutGT(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldHTTPTimeout, v))
+}
+
+// HTTPTimeoutGTE applies the GTE predicate on the "http_timeout" field.
+func HTTPTimeoutGTE(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldHTTPTimeout, v))
+}
+
+// HTTPTimeoutLT applies the LT predicate on the "http_timeout" field.
+func HTTPTimeoutLT(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldHTTPTimeout, v))
+}
+
+// HTTPTimeoutLTE applies the LTE predicate on the "http_timeout" field.
+func HTTPTimeoutLTE(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldHTTPTimeout, v))
+}
+
+// MaxRetriesEQ applies the EQ predicate on the "max_retries" field.
+func MaxRetriesEQ(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldMaxRetries, v))
+}
+
+// MaxRetriesNEQ applies the NEQ predicate on the "max_retries" field.
+func MaxRetriesNEQ(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldMaxRetries, v))
+}
+
+// MaxRetriesIn applies the In predicate on the "max_retries" field.
+func MaxRetriesIn(vs ...int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldIn(FieldMaxRetries, vs...))
+}
+
+// MaxRetriesNotIn applies the NotIn predicate on the "max_retries" field.
+func MaxRetriesNotIn(vs ...int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNotIn(FieldMaxRetries, vs...))
+}
+
+// MaxRetriesGT applies the GT predicate on the "max_retries" field.
+func MaxRetriesGT(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGT(FieldMaxRetries, v))
+}
+
+// MaxRetriesGTE applies the GTE predicate on the "max_retries" field.
+func MaxRetriesGTE(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldGTE(FieldMaxRetries, v))
+}
+
+// MaxRetriesLT applies the LT predicate on the "max_retries" field.
+func MaxRetriesLT(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLT(FieldMaxRetries, v))
+}
+
+// MaxRetriesLTE applies the LTE predicate on the "max_retries" field.
+func MaxRetriesLTE(v int) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldLTE(FieldMaxRetries, v))
+}
+
+// FailureNotificationEQ applies the EQ predicate on the "failure_notification" field.
+func FailureNotificationEQ(v bool) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldEQ(FieldFailureNotification, v))
+}
+
+// FailureNotificationNEQ applies the NEQ predicate on the "failure_notification" field.
+func FailureNotificationNEQ(v bool) predicate.ScheduleJob {
+	return predicate.ScheduleJob(sql.FieldNEQ(FieldFailureNotification, v))
 }
 
 // And groups predicates with the AND operator between them.

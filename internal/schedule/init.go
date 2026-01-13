@@ -38,7 +38,7 @@ func InitializeSchedule() (gocron.Scheduler, error) {
 				),
 				gocron.NewTask(
 					func(a string, b int) {
-						t.Execute(context.TODO())
+						_ = t.Execute(context.TODO())
 					},
 					"hello",
 					1,

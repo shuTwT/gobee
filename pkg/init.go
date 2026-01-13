@@ -18,6 +18,7 @@ import (
 	file_service "gobee/internal/services/infra/file"
 	migration_service "gobee/internal/services/infra/migration"
 	permission_service "gobee/internal/services/infra/permission"
+	schedulejob_service "gobee/internal/services/infra/schedulejob"
 	storagestrategy_service "gobee/internal/services/infra/storagestrategy"
 	visit_service "gobee/internal/services/infra/visit"
 	coupon_service "gobee/internal/services/mall/coupon"
@@ -65,6 +66,7 @@ type ServiceMap struct {
 	PostService             post_service.PostService
 	ProductService          product_service.ProductService
 	RoleService             role_service.RoleService
+	ScheduleJobService      schedulejob_service.ScheduleJobService
 	SettingService          setting_service.SettingService
 	StorageStrategyService  storagestrategy_service.StorageStrategyService
 	TagService              tag_service.TagService
@@ -115,6 +117,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	walletService := wallet_service.NewWalletServiceImpl(db)
 	migrationService := migration_service.NewMigrationServiceImpl(db)
 	notificationService := notification_service.NewNotificationServiceImpl(db)
+	scheduleJobService := schedulejob_service.NewScheduleJobServiceImpl(db)
 
 	permissionService.LoadPermissionsFromDef(moduleDefs)
 
@@ -144,6 +147,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		PostService:             postService,
 		ProductService:          productService,
 		RoleService:             roleService,
+		ScheduleJobService:      scheduleJobService,
 		SettingService:          settingService,
 		StorageStrategyService:  storageStrategyService,
 		TagService:              tagService,

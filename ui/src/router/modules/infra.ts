@@ -33,6 +33,16 @@ export default [
                 },
             },
             {
+                path: '/infra/schedule-job',
+                name: 'ScheduleJobManagement',
+                component: () => import('@/views/infra/schedulejob/index.vue'),
+                meta: {
+                    title: '定时任务管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
+            },
+            {
                 path: '/infra/migration',
                 name: 'MigrationManagement',
                 component: () => import('@/views/infra/migration/index.vue'),
