@@ -198,6 +198,16 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		visitLogApi.Delete("/delete/:id", handlerMap.VisitHandler.DeleteVisitLog).Name("visitLogDelete")
 		visitLogApi.Post("/batch/delete", handlerMap.VisitHandler.BatchDeleteVisitLog).Name("visitLogBatchDelete")
 	}
+	pluginApi := router.Group("/plugin")
+	{
+		pluginApi.Post("/create", handlerMap.PluginHandler.CreatePlugin).Name("pluginCreate")
+		pluginApi.Get("/page", handlerMap.PluginHandler.ListPluginPage).Name("pluginPage")
+		pluginApi.Get("/query/:id", handlerMap.PluginHandler.QueryPlugin).Name("pluginQuery")
+		pluginApi.Delete("/delete/:id", handlerMap.PluginHandler.DeletePlugin).Name("pluginDelete")
+		pluginApi.Post("/:id/start", handlerMap.PluginHandler.StartPlugin).Name("pluginStart")
+		pluginApi.Post("/:id/stop", handlerMap.PluginHandler.StopPlugin).Name("pluginStop")
+		pluginApi.Post("/:id/restart", handlerMap.PluginHandler.RestartPlugin).Name("pluginRestart")
+	}
 }
 
 // 注册商城路由

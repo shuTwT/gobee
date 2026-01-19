@@ -29,6 +29,7 @@ import (
 	"gobee/ent/oauth2refreshtoken"
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
+	"gobee/ent/plugin"
 	"gobee/ent/post"
 	"gobee/ent/product"
 	"gobee/ent/role"
@@ -129,6 +130,7 @@ func checkColumn(t, c string) error {
 			oauth2refreshtoken.Table:  oauth2refreshtoken.ValidColumn,
 			payorder.Table:            payorder.ValidColumn,
 			personalaccesstoken.Table: personalaccesstoken.ValidColumn,
+			plugin.Table:              plugin.ValidColumn,
 			post.Table:                post.ValidColumn,
 			product.Table:             product.ValidColumn,
 			role.Table:                role.ValidColumn,

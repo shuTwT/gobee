@@ -17,6 +17,7 @@ import (
 	tag_handler "gobee/internal/handlers/content/tag"
 	file_handler "gobee/internal/handlers/infra/file"
 	migration_handler "gobee/internal/handlers/infra/migration"
+	plugin_handler "gobee/internal/handlers/infra/plugin"
 	schedulejob_handler "gobee/internal/handlers/infra/schedulejob"
 	storagestrategy "gobee/internal/handlers/infra/storagestrategy"
 	visit_handler "gobee/internal/handlers/infra/visit"
@@ -62,6 +63,7 @@ type HandlerMap struct {
 	MigrationHandler        migration_handler.MigrationHandler
 	NotificationHandler     notification_handler.NotificationHandler
 	PayOrderHandler         payorder_handler.PayOrderHandler
+	PluginHandler           plugin_handler.PluginHandler
 	PostHandler             post_handler.PostHandler
 	ProductHandler          product_handler.ProductHandler
 	RoleHandler             role_handler.RoleHandler
@@ -110,6 +112,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	memberLevelHandler := memberlevel_handler.NewMemberLevelHandlerImpl(serviceMap.MemberLevelService)
 	migrationHandler := migration_handler.NewMigrationHandlerImpl(serviceMap.MigrationService)
 	notificationHandler := notification_handler.NewNotificationHandlerImpl(serviceMap.NotificationService)
+	pluginHandler := plugin_handler.NewPluginHandlerImpl(serviceMap.PluginService)
 	scheduleJobHandler := schedulejob_handler.NewScheduleJobHandlerImpl(serviceMap.ScheduleJobService)
 
 	handlerMap := HandlerMap{
@@ -135,6 +138,7 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 		MigrationHandler:        migrationHandler,
 		NotificationHandler:     notificationHandler,
 		PayOrderHandler:         payOrderHandler,
+		PluginHandler:           pluginHandler,
 		PostHandler:             postHandler,
 		ProductHandler:          productHandler,
 		RoleHandler:             roleHandler,

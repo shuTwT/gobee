@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"context"
 	"embed"
+	"fmt"
+
 	"gobee/internal/handlers"
 	"gobee/internal/router"
 	"gobee/pkg"
@@ -48,8 +51,13 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	router.InitFrontendRes(app, frontendRes)
 
 	handlerMap := handlers.InitHandler(serviceMap)
-
 	router.Initialize(app, handlerMap)
+
+	go func() {
+		if err := serviceMap.PluginService.AutoStartPlugins(context.Background()); err != nil {
+			fmt.Printf("自动启动插件失败: %v\n", err)
+		}
+	}()
 
 	return app
 }

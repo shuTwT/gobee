@@ -58,6 +58,8 @@ type Tx struct {
 	PayOrder *PayOrderClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
+	// Plugin is the client for interacting with the Plugin builders.
+	Plugin *PluginClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
 	// Product is the client for interacting with the Product builders.
@@ -234,6 +236,7 @@ func (tx *Tx) init() {
 	tx.Oauth2RefreshToken = NewOauth2RefreshTokenClient(tx.config)
 	tx.PayOrder = NewPayOrderClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
+	tx.Plugin = NewPluginClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
 	tx.Product = NewProductClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)

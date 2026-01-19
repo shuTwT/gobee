@@ -496,6 +496,34 @@ var (
 		Columns:    PersonalAccessTokensColumns,
 		PrimaryKey: []*schema.Column{PersonalAccessTokensColumns[0]},
 	}
+	// PluginsColumns holds the columns for the "plugins" table.
+	PluginsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "key", Type: field.TypeString, Unique: true, Size: 100},
+		{Name: "name", Type: field.TypeString, Size: 100},
+		{Name: "version", Type: field.TypeString, Size: 20},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "bin_path", Type: field.TypeString, Size: 255},
+		{Name: "protocol_version", Type: field.TypeUint, Default: 1},
+		{Name: "magic_cookie_key", Type: field.TypeString, Size: 100, Default: "GO_PLUGIN"},
+		{Name: "magic_cookie_value", Type: field.TypeString, Size: 255},
+		{Name: "dependencies", Type: field.TypeJSON, Nullable: true},
+		{Name: "config", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "enabled", Type: field.TypeBool, Default: true},
+		{Name: "auto_start", Type: field.TypeBool, Default: false},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"stopped", "running", "error", "loading"}, Default: "stopped"},
+		{Name: "last_error", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "last_started_at", Type: field.TypeTime, Nullable: true},
+		{Name: "last_stopped_at", Type: field.TypeTime, Nullable: true},
+	}
+	// PluginsTable holds the schema information for the "plugins" table.
+	PluginsTable = &schema.Table{
+		Name:       "plugins",
+		Columns:    PluginsColumns,
+		PrimaryKey: []*schema.Column{PluginsColumns[0]},
+	}
 	// PostsColumns holds the columns for the "posts" table.
 	PostsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -841,6 +869,7 @@ var (
 		Oauth2refreshTokensTable,
 		PayOrdersTable,
 		PersonalAccessTokensTable,
+		PluginsTable,
 		PostsTable,
 		ProductsTable,
 		RolesTable,

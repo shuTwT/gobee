@@ -75,6 +75,9 @@ type PayOrder func(*sql.Selector)
 // PersonalAccessToken is the predicate function for personalaccesstoken builders.
 type PersonalAccessToken func(*sql.Selector)
 
+// Plugin is the predicate function for plugin builders.
+type Plugin func(*sql.Selector)
+
 // Post is the predicate function for post builders.
 type Post func(*sql.Selector)
 

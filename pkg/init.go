@@ -18,6 +18,7 @@ import (
 	file_service "gobee/internal/services/infra/file"
 	migration_service "gobee/internal/services/infra/migration"
 	permission_service "gobee/internal/services/infra/permission"
+	plugin_service "gobee/internal/services/infra/plugin"
 	schedulejob_service "gobee/internal/services/infra/schedulejob"
 	storagestrategy_service "gobee/internal/services/infra/storagestrategy"
 	visit_service "gobee/internal/services/infra/visit"
@@ -63,6 +64,7 @@ type ServiceMap struct {
 	NotificationService     notification_service.NotificationService
 	PayOrderService         payorder.PayOrderService
 	PermissionService       permission_service.PermissionService
+	PluginService           plugin_service.PluginService
 	PostService             post_service.PostService
 	ProductService          product_service.ProductService
 	RoleService             role_service.RoleService
@@ -106,6 +108,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 	memberService := member_service.NewMemberServiceImpl(db)
 	payOderService := payorder.NewPayOrderServiceImpl(db)
 	permissionService := permission_service.NewPermissionServiceImpl(db)
+	pluginService := plugin_service.NewPluginServiceImpl(db)
 	postService := post_service.NewPostServiceImpl(db)
 	productService := product_service.NewProductServiceImpl(db)
 	roleService := role_service.NewRoleServiceImpl(db)
@@ -144,6 +147,7 @@ func InitializeServices(moduleDefs embed.FS) ServiceMap {
 		NotificationService:     notificationService,
 		PayOrderService:         payOderService,
 		PermissionService:       permissionService,
+		PluginService:           pluginService,
 		PostService:             postService,
 		ProductService:          productService,
 		RoleService:             roleService,

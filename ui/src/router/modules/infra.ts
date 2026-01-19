@@ -61,6 +61,16 @@ export default [
                     showLink: true,
                     roles: ['admin', 'common'],
                 },
+            },
+            {
+                path: '/infra/plugin',
+                name: 'PluginManagement',
+                component: () => import('@/views/infra/plugin/index.vue'),
+                meta: {
+                    title: '插件管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
             }
         ]
     }

@@ -26,6 +26,7 @@ import (
 	"gobee/ent/oauth2refreshtoken"
 	"gobee/ent/payorder"
 	"gobee/ent/personalaccesstoken"
+	"gobee/ent/plugin"
 	"gobee/ent/post"
 	"gobee/ent/product"
 	"gobee/ent/role"
@@ -1008,6 +1009,137 @@ func init() {
 	personalaccesstokenDescName := personalaccesstokenFields[0].Descriptor()
 	// personalaccesstoken.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	personalaccesstoken.NameValidator = personalaccesstokenDescName.Validators[0].(func(string) error)
+	pluginMixin := schema.Plugin{}.Mixin()
+	pluginMixinFields0 := pluginMixin[0].Fields()
+	_ = pluginMixinFields0
+	pluginFields := schema.Plugin{}.Fields()
+	_ = pluginFields
+	// pluginDescCreatedAt is the schema descriptor for created_at field.
+	pluginDescCreatedAt := pluginMixinFields0[1].Descriptor()
+	// plugin.DefaultCreatedAt holds the default value on creation for the created_at field.
+	plugin.DefaultCreatedAt = pluginDescCreatedAt.Default.(func() time.Time)
+	// pluginDescUpdatedAt is the schema descriptor for updated_at field.
+	pluginDescUpdatedAt := pluginMixinFields0[2].Descriptor()
+	// plugin.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	plugin.DefaultUpdatedAt = pluginDescUpdatedAt.Default.(func() time.Time)
+	// plugin.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	plugin.UpdateDefaultUpdatedAt = pluginDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// pluginDescKey is the schema descriptor for key field.
+	pluginDescKey := pluginFields[0].Descriptor()
+	// plugin.KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	plugin.KeyValidator = func() func(string) error {
+		validators := pluginDescKey.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(key string) error {
+			for _, fn := range fns {
+				if err := fn(key); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// pluginDescName is the schema descriptor for name field.
+	pluginDescName := pluginFields[1].Descriptor()
+	// plugin.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	plugin.NameValidator = func() func(string) error {
+		validators := pluginDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// pluginDescVersion is the schema descriptor for version field.
+	pluginDescVersion := pluginFields[2].Descriptor()
+	// plugin.VersionValidator is a validator for the "version" field. It is called by the builders before save.
+	plugin.VersionValidator = func() func(string) error {
+		validators := pluginDescVersion.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(version string) error {
+			for _, fn := range fns {
+				if err := fn(version); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// pluginDescDescription is the schema descriptor for description field.
+	pluginDescDescription := pluginFields[3].Descriptor()
+	// plugin.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	plugin.DescriptionValidator = pluginDescDescription.Validators[0].(func(string) error)
+	// pluginDescBinPath is the schema descriptor for bin_path field.
+	pluginDescBinPath := pluginFields[4].Descriptor()
+	// plugin.BinPathValidator is a validator for the "bin_path" field. It is called by the builders before save.
+	plugin.BinPathValidator = func() func(string) error {
+		validators := pluginDescBinPath.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(bin_path string) error {
+			for _, fn := range fns {
+				if err := fn(bin_path); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// pluginDescProtocolVersion is the schema descriptor for protocol_version field.
+	pluginDescProtocolVersion := pluginFields[5].Descriptor()
+	// plugin.DefaultProtocolVersion holds the default value on creation for the protocol_version field.
+	plugin.DefaultProtocolVersion = pluginDescProtocolVersion.Default.(uint)
+	// pluginDescMagicCookieKey is the schema descriptor for magic_cookie_key field.
+	pluginDescMagicCookieKey := pluginFields[6].Descriptor()
+	// plugin.DefaultMagicCookieKey holds the default value on creation for the magic_cookie_key field.
+	plugin.DefaultMagicCookieKey = pluginDescMagicCookieKey.Default.(string)
+	// plugin.MagicCookieKeyValidator is a validator for the "magic_cookie_key" field. It is called by the builders before save.
+	plugin.MagicCookieKeyValidator = pluginDescMagicCookieKey.Validators[0].(func(string) error)
+	// pluginDescMagicCookieValue is the schema descriptor for magic_cookie_value field.
+	pluginDescMagicCookieValue := pluginFields[7].Descriptor()
+	// plugin.MagicCookieValueValidator is a validator for the "magic_cookie_value" field. It is called by the builders before save.
+	plugin.MagicCookieValueValidator = func() func(string) error {
+		validators := pluginDescMagicCookieValue.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(magic_cookie_value string) error {
+			for _, fn := range fns {
+				if err := fn(magic_cookie_value); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// pluginDescEnabled is the schema descriptor for enabled field.
+	pluginDescEnabled := pluginFields[10].Descriptor()
+	// plugin.DefaultEnabled holds the default value on creation for the enabled field.
+	plugin.DefaultEnabled = pluginDescEnabled.Default.(bool)
+	// pluginDescAutoStart is the schema descriptor for auto_start field.
+	pluginDescAutoStart := pluginFields[11].Descriptor()
+	// plugin.DefaultAutoStart holds the default value on creation for the auto_start field.
+	plugin.DefaultAutoStart = pluginDescAutoStart.Default.(bool)
+	// pluginDescLastError is the schema descriptor for last_error field.
+	pluginDescLastError := pluginFields[13].Descriptor()
+	// plugin.LastErrorValidator is a validator for the "last_error" field. It is called by the builders before save.
+	plugin.LastErrorValidator = pluginDescLastError.Validators[0].(func(string) error)
 	postMixin := schema.Post{}.Mixin()
 	postMixinFields0 := postMixin[0].Fields()
 	_ = postMixinFields0
