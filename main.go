@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/mattn/go-sqlite3"
 
-	"gobee/cmd"
+	server "gobee/cmd/server"
 	"gobee/internal/database"
 	"gobee/internal/schedule"
 
@@ -33,7 +33,7 @@ var frontendRes embed.FS
 // @BasePath /
 func main() {
 	logger.NewLogger()
-	app := cmd.InitializeApp(moduleDefs, frontendRes)
+	app := server.InitializeApp(moduleDefs, frontendRes)
 	defer database.CloseDB()
 	if !fiber.IsChild() {
 		// 主进程程初始化定时任务

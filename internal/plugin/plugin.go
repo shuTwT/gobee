@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	plugin_interface "gobee/pkg/plugin"
+	plugin_shared "gobee/pkg/plugin/shared"
 
 	hclog "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
@@ -20,7 +20,7 @@ var handshakeConfig = plugin.HandshakeConfig{
 }
 
 var pluginMap = map[string]plugin.Plugin{
-	"greeter": &plugin_interface.GreeterPlugin{},
+	"greeter": &plugin_shared.GreeterPlugin{},
 }
 
 func RunPlugin() {
@@ -52,6 +52,6 @@ func RunPlugin() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	greeter := raw.(plugin_interface.Greeter)
+	greeter := raw.(plugin_shared.Greeter)
 	fmt.Println(greeter.Init())
 }
