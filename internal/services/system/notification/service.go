@@ -3,7 +3,6 @@ package notification
 import (
 	"gobee/ent"
 	"gobee/ent/notification"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
@@ -48,8 +47,7 @@ func (s *NotificationServiceImpl) QueryNotificationPage(c *fiber.Ctx, req model.
 }
 
 func (s *NotificationServiceImpl) QueryNotification(c *fiber.Ctx, id int) (*ent.Notification, error) {
-	client := database.DB
-	return client.Notification.Query().Where(notification.IDEQ(id)).First(c.Context())
+	return s.client.Notification.Query().Where(notification.IDEQ(id)).First(c.Context())
 }
 
 func (s *NotificationServiceImpl) DeleteNotification(c *fiber.Ctx, id int) error {

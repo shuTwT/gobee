@@ -5,7 +5,6 @@ import (
 	"gobee/ent"
 	"gobee/ent/category"
 	"gobee/ent/post"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
@@ -70,13 +69,12 @@ func (s *CategoryServiceImpl) QueryCategoryList(c *fiber.Ctx) ([]model.CategoryR
 }
 
 func (s *CategoryServiceImpl) QueryCategoryPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Category, error) {
-	client := database.DB
-	count, err := client.Category.Query().Count(c.UserContext())
+	count, err := s.client.Category.Query().Count(c.UserContext())
 	if err != nil {
 		return 0, nil, err
 	}
 
-	categories, err := client.Category.Query().
+	categories, err := s.client.Category.Query().
 		Order(ent.Desc(category.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
@@ -135,8 +133,7 @@ func (s *CategoryServiceImpl) UpdateCategory(c *fiber.Ctx, id int, updateReq *mo
 }
 
 func (s *CategoryServiceImpl) DeleteCategory(c *fiber.Ctx, id int) error {
-	client := database.DB
-	err := client.Category.DeleteOneID(id).Exec(c.Context())
+	err := s.client.Category.DeleteOneID(id).Exec(c.Context())
 	if err != nil {
 		return err
 	}

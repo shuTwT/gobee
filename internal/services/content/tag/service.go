@@ -5,7 +5,6 @@ import (
 	"gobee/ent"
 	"gobee/ent/post"
 	"gobee/ent/tag"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,8 +28,7 @@ func NewTagServiceImpl(client *ent.Client) *TagServiceImpl {
 }
 
 func (s *TagServiceImpl) QueryTag(c *fiber.Ctx, id int) (*ent.Tag, error) {
-	client := database.DB
-	tag, err := client.Tag.Query().
+	tag, err := s.client.Tag.Query().
 		Where(tag.ID(id)).
 		Only(c.Context())
 	if err != nil {
@@ -40,8 +38,7 @@ func (s *TagServiceImpl) QueryTag(c *fiber.Ctx, id int) (*ent.Tag, error) {
 }
 
 func (s *TagServiceImpl) QueryTagList(c *fiber.Ctx) ([]model.TagResp, error) {
-	client := database.DB
-	tags, err := client.Tag.Query().
+	tags, err := s.client.Tag.Query().
 		Order(ent.Desc(tag.FieldID)).
 		All(c.Context())
 	if err != nil {
@@ -50,7 +47,7 @@ func (s *TagServiceImpl) QueryTagList(c *fiber.Ctx) ([]model.TagResp, error) {
 
 	var resp []model.TagResp
 	for _, t := range tags {
-		postCount, err := client.Post.Query().
+		postCount, err := s.client.Post.Query().
 			Where(post.HasTagsWith(tag.ID(t.ID))).
 			Count(c.Context())
 		if err != nil {
@@ -73,13 +70,12 @@ func (s *TagServiceImpl) QueryTagList(c *fiber.Ctx) ([]model.TagResp, error) {
 }
 
 func (s *TagServiceImpl) QueryTagPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Tag, error) {
-	client := database.DB
-	count, err := client.Tag.Query().Count(c.UserContext())
+	count, err := s.client.Tag.Query().Count(c.UserContext())
 	if err != nil {
 		return 0, nil, err
 	}
 
-	tags, err := client.Tag.Query().
+	tags, err := s.client.Tag.Query().
 		Order(ent.Desc(tag.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
@@ -92,8 +88,7 @@ func (s *TagServiceImpl) QueryTagPage(c *fiber.Ctx, pageQuery model.PageQuery) (
 }
 
 func (s *TagServiceImpl) CreateTag(c context.Context, createReq model.TagCreateReq) (*ent.Tag, error) {
-	client := database.DB
-	tag, err := client.Tag.Create().
+	tag, err := s.client.Tag.Create().
 		SetName(createReq.Name).
 		SetNillableDescription(createReq.Description).
 		SetNillableSlug(createReq.Slug).
@@ -108,8 +103,7 @@ func (s *TagServiceImpl) CreateTag(c context.Context, createReq model.TagCreateR
 }
 
 func (s *TagServiceImpl) UpdateTag(c *fiber.Ctx, id int, updateReq model.TagUpdateReq) (*ent.Tag, error) {
-	client := database.DB
-	update := client.Tag.UpdateOneID(id)
+	update := s.client.Tag.UpdateOneID(id)
 
 	if updateReq.Name != nil {
 		update.SetNillableName(updateReq.Name)
@@ -144,8 +138,7 @@ func (s *TagServiceImpl) UpdateTag(c *fiber.Ctx, id int, updateReq model.TagUpda
 }
 
 func (s *TagServiceImpl) DeleteTag(c *fiber.Ctx, id int) error {
-	client := database.DB
-	err := client.Tag.DeleteOneID(id).Exec(c.Context())
+	err := s.client.Tag.DeleteOneID(id).Exec(c.Context())
 	if err != nil {
 		return err
 	}

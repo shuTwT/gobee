@@ -3,7 +3,6 @@ package memberlevel
 import (
 	"gobee/ent"
 	"gobee/ent/memberlevel"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,8 +26,7 @@ func NewMemberLevelServiceImpl(client *ent.Client) *MemberLevelServiceImpl {
 }
 
 func (s *MemberLevelServiceImpl) QueryMemberLevel(c *fiber.Ctx, id int) (*ent.MemberLevel, error) {
-	client := database.DB
-	ml, err := client.MemberLevel.Query().
+	ml, err := s.client.MemberLevel.Query().
 		Where(memberlevel.ID(id)).
 		Only(c.Context())
 	if err != nil {
@@ -38,8 +36,7 @@ func (s *MemberLevelServiceImpl) QueryMemberLevel(c *fiber.Ctx, id int) (*ent.Me
 }
 
 func (s *MemberLevelServiceImpl) QueryMemberLevelList(c *fiber.Ctx) ([]*ent.MemberLevel, error) {
-	client := database.DB
-	memberLevels, err := client.MemberLevel.Query().
+	memberLevels, err := s.client.MemberLevel.Query().
 		Order(ent.Desc(memberlevel.FieldID)).
 		All(c.Context())
 	if err != nil {
@@ -49,13 +46,12 @@ func (s *MemberLevelServiceImpl) QueryMemberLevelList(c *fiber.Ctx) ([]*ent.Memb
 }
 
 func (s *MemberLevelServiceImpl) QueryMemberLevelPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.MemberLevel, error) {
-	client := database.DB
-	count, err := client.MemberLevel.Query().Count(c.UserContext())
+	count, err := s.client.MemberLevel.Query().Count(c.UserContext())
 	if err != nil {
 		return 0, nil, err
 	}
 
-	memberLevels, err := client.MemberLevel.Query().
+	memberLevels, err := s.client.MemberLevel.Query().
 		Order(ent.Desc(memberlevel.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
@@ -68,9 +64,8 @@ func (s *MemberLevelServiceImpl) QueryMemberLevelPage(c *fiber.Ctx, pageQuery mo
 }
 
 func (s *MemberLevelServiceImpl) CreateMemberLevel(c *fiber.Ctx, createReq *model.MemberLevelCreateReq) (*ent.MemberLevel, error) {
-	client := database.DB
 
-	ml, err := client.MemberLevel.Create().
+	ml, err := s.client.MemberLevel.Create().
 		SetName(createReq.Name).
 		SetDescription(createReq.Description).
 		SetLevel(createReq.Level).
@@ -87,8 +82,7 @@ func (s *MemberLevelServiceImpl) CreateMemberLevel(c *fiber.Ctx, createReq *mode
 }
 
 func (s *MemberLevelServiceImpl) UpdateMemberLevel(c *fiber.Ctx, id int, updateReq *model.MemberLevelUpdateReq) (*ent.MemberLevel, error) {
-	client := database.DB
-	update := client.MemberLevel.UpdateOneID(id)
+	update := s.client.MemberLevel.UpdateOneID(id)
 
 	if updateReq.Name != nil {
 		update.SetName(*updateReq.Name)
@@ -135,8 +129,7 @@ func (s *MemberLevelServiceImpl) UpdateMemberLevel(c *fiber.Ctx, id int, updateR
 }
 
 func (s *MemberLevelServiceImpl) DeleteMemberLevel(c *fiber.Ctx, id int) error {
-	client := database.DB
-	err := client.MemberLevel.DeleteOneID(id).Exec(c.Context())
+	err := s.client.MemberLevel.DeleteOneID(id).Exec(c.Context())
 	if err != nil {
 		return err
 	}

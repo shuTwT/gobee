@@ -6,7 +6,6 @@ import (
 
 	"gobee/ent"
 	"gobee/ent/member"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,8 +28,7 @@ func NewMemberServiceImpl(client *ent.Client) *MemberServiceImpl {
 }
 
 func (s *MemberServiceImpl) QueryMember(c *fiber.Ctx, userId int) (*ent.Member, error) {
-	client := database.DB
-	m, err := client.Member.Query().
+	m, err := s.client.Member.Query().
 		Where(member.UserIDEQ(userId)).
 		Only(c.Context())
 	if err != nil {
@@ -40,13 +38,12 @@ func (s *MemberServiceImpl) QueryMember(c *fiber.Ctx, userId int) (*ent.Member, 
 }
 
 func (s *MemberServiceImpl) QueryMemberPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Member, error) {
-	client := database.DB
-	count, err := client.Member.Query().Count(c.UserContext())
+	count, err := s.client.Member.Query().Count(c.UserContext())
 	if err != nil {
 		return 0, nil, err
 	}
 
-	members, err := client.Member.Query().
+	members, err := s.client.Member.Query().
 		Order(ent.Desc(member.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
@@ -59,8 +56,7 @@ func (s *MemberServiceImpl) QueryMemberPage(c *fiber.Ctx, pageQuery model.PageQu
 }
 
 func (s *MemberServiceImpl) CreateMember(c context.Context, userId int, memberLevel int, memberNo string) (*ent.Member, error) {
-	client := database.DB
-	m, err := client.Member.Create().
+	m, err := s.client.Member.Create().
 		SetUserID(userId).
 		SetMemberLevel(memberLevel).
 		SetMemberNo(memberNo).
@@ -72,8 +68,7 @@ func (s *MemberServiceImpl) CreateMember(c context.Context, userId int, memberLe
 }
 
 func (s *MemberServiceImpl) UpdateMember(c *fiber.Ctx, id int, updateReq *model.MemberUpdateReq) (*ent.Member, error) {
-	client := database.DB
-	update := client.Member.UpdateOneID(id)
+	update := s.client.Member.UpdateOneID(id)
 
 	if updateReq.MemberLevel != nil {
 		update.SetMemberLevel(*updateReq.MemberLevel)
@@ -115,8 +110,7 @@ func (s *MemberServiceImpl) UpdateMember(c *fiber.Ctx, id int, updateReq *model.
 }
 
 func (s *MemberServiceImpl) DeleteMember(c *fiber.Ctx, id int) error {
-	client := database.DB
-	err := client.Member.DeleteOneID(id).Exec(c.Context())
+	err := s.client.Member.DeleteOneID(id).Exec(c.Context())
 	if err != nil {
 		return err
 	}

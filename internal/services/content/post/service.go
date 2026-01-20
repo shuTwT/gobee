@@ -7,7 +7,6 @@ import (
 	"gobee/ent/category"
 	"gobee/ent/post"
 	"gobee/ent/tag"
-	"gobee/internal/database"
 	"gobee/pkg/cache"
 	"gobee/pkg/domain/model"
 	"gobee/pkg/utils"
@@ -212,8 +211,7 @@ func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, updateReq
 }
 
 func (s *PostServiceImpl) GetPostCount(c context.Context) (int, error) {
-	client := database.DB
-	count, err := client.Post.Query().Count(c)
+	count, err := s.client.Post.Query().Count(c)
 	if err != nil {
 		return 0, err
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"gobee/ent"
 	"gobee/ent/wallet"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
@@ -28,8 +27,7 @@ func NewWalletServiceImpl(client *ent.Client) *WalletServiceImpl {
 }
 
 func (s *WalletServiceImpl) QueryWallet(c *fiber.Ctx, userId int) (*ent.Wallet, error) {
-	client := database.DB
-	w, err := client.Wallet.Query().
+	w, err := s.client.Wallet.Query().
 		Where(wallet.UserIDEQ(userId)).
 		Only(c.Context())
 	if err != nil {
@@ -39,13 +37,12 @@ func (s *WalletServiceImpl) QueryWallet(c *fiber.Ctx, userId int) (*ent.Wallet, 
 }
 
 func (s *WalletServiceImpl) QueryWalletPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Wallet, error) {
-	client := database.DB
-	count, err := client.Wallet.Query().Count(c.UserContext())
+	count, err := s.client.Wallet.Query().Count(c.UserContext())
 	if err != nil {
 		return 0, nil, err
 	}
 
-	wallets, err := client.Wallet.Query().
+	wallets, err := s.client.Wallet.Query().
 		Order(ent.Desc(wallet.FieldID)).
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
@@ -58,8 +55,7 @@ func (s *WalletServiceImpl) QueryWalletPage(c *fiber.Ctx, pageQuery model.PageQu
 }
 
 func (s *WalletServiceImpl) CreateWallet(c context.Context, userId int) (*ent.Wallet, error) {
-	client := database.DB
-	w, err := client.Wallet.Create().
+	w, err := s.client.Wallet.Create().
 		SetUserID(userId).
 		Save(c)
 	if err != nil {
@@ -69,8 +65,8 @@ func (s *WalletServiceImpl) CreateWallet(c context.Context, userId int) (*ent.Wa
 }
 
 func (s *WalletServiceImpl) UpdateWalletBalance(c context.Context, walletId int, balance int) (*ent.Wallet, error) {
-	client := database.DB
-	w, err := client.Wallet.UpdateOneID(walletId).
+
+	w, err := s.client.Wallet.UpdateOneID(walletId).
 		SetBalance(balance).
 		Save(c)
 	if err != nil {
@@ -80,8 +76,8 @@ func (s *WalletServiceImpl) UpdateWalletBalance(c context.Context, walletId int,
 }
 
 func (s *WalletServiceImpl) FreezeWallet(c context.Context, walletId int, amount int) (*ent.Wallet, error) {
-	client := database.DB
-	w, err := client.Wallet.UpdateOneID(walletId).
+
+	w, err := s.client.Wallet.UpdateOneID(walletId).
 		AddFrozenAmount(amount).
 		AddBalance(-amount).
 		Save(c)
@@ -92,8 +88,7 @@ func (s *WalletServiceImpl) FreezeWallet(c context.Context, walletId int, amount
 }
 
 func (s *WalletServiceImpl) UnfreezeWallet(c context.Context, walletId int, amount int) (*ent.Wallet, error) {
-	client := database.DB
-	w, err := client.Wallet.UpdateOneID(walletId).
+	w, err := s.client.Wallet.UpdateOneID(walletId).
 		AddFrozenAmount(-amount).
 		AddBalance(amount).
 		Save(c)

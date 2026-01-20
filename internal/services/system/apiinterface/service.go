@@ -4,7 +4,6 @@ import (
 	"context"
 	"gobee/ent"
 	"gobee/ent/apiperms"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 	"log"
 	"strings"
@@ -56,11 +55,10 @@ func (s *ApiInterfaceServiceImpl) GetAppRoutes(app *fiber.App) []model.ApiRoute 
  * @Description: 同步路由
  */
 func (s *ApiInterfaceServiceImpl) SyncRoutes(app *fiber.App) {
-	client := database.DB
 	routeList := s.GetAppRoutes(app)
 	for _, route := range routeList {
 		// 检查路由是否已存在
-		exists, err := client.ApiPerms.Query().Where(apiperms.Path(route.Path), apiperms.Method(route.Method)).Exist(context.Background())
+		exists, err := s.client.ApiPerms.Query().Where(apiperms.Path(route.Path), apiperms.Method(route.Method)).Exist(context.Background())
 		if err != nil {
 			log.Printf("SyncRoutes error: %v", err)
 			continue
@@ -68,7 +66,7 @@ func (s *ApiInterfaceServiceImpl) SyncRoutes(app *fiber.App) {
 		if exists {
 			continue
 		}
-		_, err = client.ApiPerms.Create().
+		_, err = s.client.ApiPerms.Create().
 			SetName(route.Name).
 			SetPath(route.Path).
 			SetMethod(route.Method).

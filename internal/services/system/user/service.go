@@ -6,7 +6,6 @@ import (
 	"gobee/ent"
 	"gobee/ent/personalaccesstoken"
 	"gobee/ent/user"
-	"gobee/internal/database"
 	"gobee/pkg/cache"
 	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
@@ -50,8 +49,7 @@ func (s *UserServiceImpl) ListUser(c *fiber.Ctx) ([]*ent.User, error) {
 }
 
 func (s *UserServiceImpl) ListUserPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.User, error) {
-	client := database.DB
-	count, err := client.User.Query().Count(c.UserContext())
+	count, err := s.client.User.Query().Count(c.UserContext())
 
 	if err != nil {
 		c.JSON(model.NewError(fiber.StatusInternalServerError,
@@ -60,7 +58,7 @@ func (s *UserServiceImpl) ListUserPage(c *fiber.Ctx, pageQuery model.PageQuery) 
 		return 0, nil, err
 	}
 
-	users, err := client.User.Query().
+	users, err := s.client.User.Query().
 		Offset((pageQuery.Page - 1) * pageQuery.Size).
 		Limit(pageQuery.Size).
 		All(c.Context())
@@ -223,8 +221,7 @@ func (s *UserServiceImpl) UpdateUser(ctx context.Context, id int, req model.User
 }
 
 func (s *UserServiceImpl) GetUserCount(ctx context.Context) (int, error) {
-	client := database.DB
-	count, err := client.User.Query().Count(ctx)
+	count, err := s.client.User.Query().Count(ctx)
 	if err != nil {
 		return 0, err
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"gobee/ent"
 	"gobee/ent/comment"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
 	"github.com/medama-io/go-useragent"
@@ -52,8 +51,7 @@ func (s *CommentServiceImpl) ListCommentPage(c context.Context, pageQuery model.
 }
 
 func (s *CommentServiceImpl) ListComment(c context.Context, url string) ([]*ent.Comment, error) {
-	client := database.DB
-	comments, err := client.Comment.Query().
+	comments, err := s.client.Comment.Query().
 		Order(ent.Desc(comment.FieldID)).
 		Where(comment.URLEQ(url)).
 		All(c)
@@ -64,8 +62,7 @@ func (s *CommentServiceImpl) ListComment(c context.Context, url string) ([]*ent.
 }
 
 func (s *CommentServiceImpl) GetComment(c context.Context, id int) (*ent.Comment, error) {
-	client := database.DB
-	comment, err := client.Comment.Query().
+	comment, err := s.client.Comment.Query().
 		Where(comment.IDEQ(id)).
 		First(c)
 	if err != nil {
@@ -75,9 +72,8 @@ func (s *CommentServiceImpl) GetComment(c context.Context, id int) (*ent.Comment
 }
 
 func (s *CommentServiceImpl) CountComment(c context.Context, includeReply bool, urls []string) (int64, error) {
-	client := database.DB
 	if includeReply {
-		count, err := client.Comment.Query().
+		count, err := s.client.Comment.Query().
 			Where(comment.URLIn(urls...)).
 			Where(comment.Or(comment.ParentIDIsNil(), comment.ParentIDNotIn(0))).
 			Count(c)
@@ -86,7 +82,7 @@ func (s *CommentServiceImpl) CountComment(c context.Context, includeReply bool, 
 		}
 		return int64(count), nil
 	}
-	count, err := client.Comment.Query().
+	count, err := s.client.Comment.Query().
 		Where(comment.URLIn(urls...)).
 		Where(comment.ParentIDIsNil()).
 		Count(c)
@@ -97,8 +93,7 @@ func (s *CommentServiceImpl) CountComment(c context.Context, includeReply bool, 
 }
 
 func (s *CommentServiceImpl) CreateComment(c context.Context, comment string, href string, link string, mail string, nick string, ua string, url string, ipAddress string) (*int, error) {
-	client := database.DB
-	entity, err := client.Comment.Create().
+	entity, err := s.client.Comment.Create().
 		SetContent(comment).
 		SetUserAgent(ua).
 		SetURL(url).
@@ -118,8 +113,7 @@ func (s *CommentServiceImpl) ParseUserAgent(ua string) (browser string, os strin
 }
 
 func (s *CommentServiceImpl) GetRecentComment(c context.Context, pageSize int) ([]*ent.Comment, error) {
-	client := database.DB
-	comments, err := client.Comment.Query().
+	comments, err := s.client.Comment.Query().
 		Order(ent.Desc(comment.FieldCreatedAt)).
 		Limit(pageSize).
 		All(c)
@@ -130,8 +124,7 @@ func (s *CommentServiceImpl) GetRecentComment(c context.Context, pageSize int) (
 }
 
 func (s *CommentServiceImpl) GetCommentCount(c context.Context) (int, error) {
-	client := database.DB
-	count, err := client.Comment.Query().Count(c)
+	count, err := s.client.Comment.Query().Count(c)
 	if err != nil {
 		return 0, err
 	}

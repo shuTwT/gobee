@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"gobee/ent"
 	"gobee/ent/role"
-	"gobee/internal/database"
 	"gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
@@ -50,8 +49,7 @@ func (s *RoleServiceImpl) QueryRolePage(c *fiber.Ctx, req model.PageQuery) ([]*e
 }
 
 func (s *RoleServiceImpl) QueryRole(c *fiber.Ctx, id int) (*ent.Role, error) {
-	client := database.DB
-	return client.Role.Query().Where(role.IDEQ(id)).First(c.Context())
+	return s.client.Role.Query().Where(role.IDEQ(id)).First(c.Context())
 
 }
 
