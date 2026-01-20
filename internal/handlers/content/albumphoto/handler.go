@@ -1,10 +1,11 @@
 package albumphoto
 
 import (
-	"gobee/ent"
-	albumphotoservice "gobee/internal/services/content/albumphoto"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	albumphotoservice "github.com/shuTwT/gobee/internal/services/content/albumphoto"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

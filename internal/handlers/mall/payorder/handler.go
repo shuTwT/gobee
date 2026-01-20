@@ -5,10 +5,10 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"gobee/ent"
-	"gobee/ent/payorder"
-	payorder_service "gobee/internal/services/mall/payorder"
-	"gobee/pkg/domain/model"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/payorder"
+	payorder_service "github.com/shuTwT/gobee/internal/services/mall/payorder"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type PayOrderHandler interface {

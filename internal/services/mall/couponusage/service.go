@@ -2,10 +2,11 @@ package couponusage
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/couponusage"
-	"gobee/pkg/domain/model"
 	"time"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/couponusage"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type CouponUsageService interface {

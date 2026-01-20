@@ -3,11 +3,12 @@ package schedule
 import (
 	"context"
 	"fmt"
-	"gobee/ent"
-	friendcircle_job "gobee/internal/job/friendcircle"
-	"gobee/pkg"
-	schedule_model "gobee/pkg/domain/model/schedule"
 	"log"
+
+	"github.com/shuTwT/gobee/ent"
+	friendcircle_job "github.com/shuTwT/gobee/internal/job/friendcircle"
+	"github.com/shuTwT/gobee/pkg"
+	schedule_model "github.com/shuTwT/gobee/pkg/domain/model/schedule"
 
 	"github.com/go-co-op/gocron/v2"
 )

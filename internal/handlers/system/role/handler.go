@@ -1,10 +1,11 @@
 package role
 
 import (
-	"gobee/ent"
-	role_service "gobee/internal/services/system/role"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	role_service "github.com/shuTwT/gobee/internal/services/system/role"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

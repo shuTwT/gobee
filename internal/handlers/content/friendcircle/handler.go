@@ -1,9 +1,10 @@
 package friendcircle
 
 import (
-	friendcircle "gobee/internal/services/content/friendcircle"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	friendcircle "github.com/shuTwT/gobee/internal/services/content/friendcircle"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -1,10 +1,11 @@
 package flinkgroup
 
 import (
-	"gobee/ent"
-	"gobee/internal/services/content/flink"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/services/content/flink"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

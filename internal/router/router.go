@@ -1,9 +1,9 @@
 package router
 
 import (
-	"gobee/ent"
-	"gobee/internal/handlers"
-	"gobee/internal/middleware"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/handlers"
+	"github.com/shuTwT/gobee/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )

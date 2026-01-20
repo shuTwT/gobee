@@ -1,7 +1,7 @@
 package route
 
 import (
-	"gobee/pkg/domain/model"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

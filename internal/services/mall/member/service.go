@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"gobee/ent"
-	"gobee/ent/member"
-	"gobee/pkg/domain/model"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/member"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -2,9 +2,10 @@ package album
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/album"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/album"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type AlbumService interface {

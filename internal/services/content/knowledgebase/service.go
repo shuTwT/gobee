@@ -3,9 +3,10 @@ package knowledgebase
 import (
 	"context"
 	"fmt"
-	"gobee/ent"
-	"gobee/ent/knowledgebase"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/knowledgebase"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type KnowledgeBaseService interface {

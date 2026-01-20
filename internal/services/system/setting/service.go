@@ -2,8 +2,9 @@ package setting
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/setting"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/setting"
 )
 
 var SettingKeys = struct {

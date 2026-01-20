@@ -1,11 +1,12 @@
 package product
 
 import (
-	"gobee/ent"
-	"gobee/pkg/domain/model"
 	"strconv"
 
-	product_service "gobee/internal/services/mall/product"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/pkg/domain/model"
+
+	product_service "github.com/shuTwT/gobee/internal/services/mall/product"
 
 	"github.com/gofiber/fiber/v2"
 )

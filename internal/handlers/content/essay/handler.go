@@ -1,10 +1,11 @@
 package essay
 
 import (
-	"gobee/internal/middleware"
-	"gobee/internal/services/content/essay"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/internal/middleware"
+	"github.com/shuTwT/gobee/internal/services/content/essay"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -3,9 +3,10 @@ package role
 import (
 	"context"
 	"fmt"
-	"gobee/ent"
-	"gobee/ent/role"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/role"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type RoleService interface {

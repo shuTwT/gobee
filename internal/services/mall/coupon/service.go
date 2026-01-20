@@ -2,10 +2,11 @@ package coupon
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/coupon"
-	"gobee/pkg/domain/model"
 	"time"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/coupon"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type CouponService interface {

@@ -1,11 +1,12 @@
 package schedulejob
 
 import (
-	"gobee/ent"
-	"gobee/internal/services/infra/schedulejob"
-	"gobee/pkg/domain/model"
 	"log/slog"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/services/infra/schedulejob"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

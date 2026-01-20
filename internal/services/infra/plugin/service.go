@@ -16,9 +16,9 @@ import (
 	"sync"
 	"time"
 
-	"gobee/ent"
-	plugin_ent "gobee/ent/plugin"
-	"gobee/pkg/domain/model"
+	"github.com/shuTwT/gobee/ent"
+	plugin_ent "github.com/shuTwT/gobee/ent/plugin"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	plugin_lib "github.com/hashicorp/go-plugin"
 	"gopkg.in/yaml.v3"

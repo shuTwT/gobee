@@ -1,10 +1,11 @@
 package visit
 
 import (
-	"gobee/ent"
-	"gobee/internal/services/infra/visit"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/services/infra/visit"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

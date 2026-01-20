@@ -2,8 +2,9 @@ package albumphoto
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/albumphoto"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/albumphoto"
 )
 
 type AlbumPhotoService interface {

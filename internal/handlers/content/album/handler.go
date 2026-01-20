@@ -1,10 +1,11 @@
 package album
 
 import (
-	"gobee/ent"
-	"gobee/internal/services/content/album"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/services/content/album"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

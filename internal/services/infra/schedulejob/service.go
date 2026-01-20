@@ -3,9 +3,10 @@ package schedulejob
 import (
 	"context"
 	"errors"
-	"gobee/ent"
-	"gobee/ent/schedulejob"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/schedulejob"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type ScheduleJobService interface {

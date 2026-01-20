@@ -1,11 +1,12 @@
 package couponusage
 
 import (
-	"gobee/ent"
-	"gobee/pkg/domain/model"
 	"strconv"
 
-	couponusage_service "gobee/internal/services/mall/couponusage"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/pkg/domain/model"
+
+	couponusage_service "github.com/shuTwT/gobee/internal/services/mall/couponusage"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -2,9 +2,10 @@ package doclibrary
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/doclibrary"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/doclibrary"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type DocLibraryService interface {

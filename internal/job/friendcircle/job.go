@@ -4,16 +4,18 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	"gobee/ent"
-	"gobee/ent/flink"
-	friend_circle_service "gobee/internal/services/content/friendcircle"
-	schedule_model "gobee/pkg/domain/model/schedule"
 	"time"
 
-	"gobee/pkg/domain/model/rss"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/flink"
+	friend_circle_service "github.com/shuTwT/gobee/internal/services/content/friendcircle"
+	schedule_model "github.com/shuTwT/gobee/pkg/domain/model/schedule"
+
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/shuTwT/gobee/pkg/domain/model/rss"
 )
 
 type FriendCircleJob struct {

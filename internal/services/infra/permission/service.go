@@ -3,10 +3,11 @@ package permission
 import (
 	"embed"
 	"fmt"
-	"gobee/ent"
-	"gobee/pkg/domain/model"
 	"io/fs"
 	"log"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/pelletier/go-toml/v2"
 )

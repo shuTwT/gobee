@@ -2,11 +2,12 @@ package flink
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/flink"
-	"gobee/ent/flinkgroup"
-	"gobee/ent/predicate"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/flink"
+	"github.com/shuTwT/gobee/ent/flinkgroup"
+	"github.com/shuTwT/gobee/ent/predicate"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type FlinkService interface {

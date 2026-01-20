@@ -2,10 +2,11 @@ package category
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/category"
-	"gobee/ent/post"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/category"
+	"github.com/shuTwT/gobee/ent/post"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

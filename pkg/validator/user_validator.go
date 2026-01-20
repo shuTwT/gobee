@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 
-	"gobee/ent"
-	"gobee/ent/user"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/user"
 )
 
 func ValidateEmailUniqueness(ctx context.Context, db *ent.Client, email string) error {

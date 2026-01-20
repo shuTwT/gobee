@@ -1,9 +1,10 @@
 package config
 
 import (
-	"gobee/internal/infra/logger"
 	"os"
 	"path/filepath"
+
+	"github.com/shuTwT/gobee/internal/infra/logger"
 
 	"github.com/spf13/viper"
 )

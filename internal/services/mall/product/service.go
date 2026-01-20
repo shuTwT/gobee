@@ -3,13 +3,14 @@ package product
 import (
 	"context"
 	"fmt"
-	"gobee/ent"
-	"gobee/ent/product"
-	"gobee/pkg/cache"
-	"gobee/pkg/domain/model"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/product"
+	"github.com/shuTwT/gobee/pkg/cache"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type ProductService interface {

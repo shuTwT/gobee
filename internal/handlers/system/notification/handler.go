@@ -1,10 +1,11 @@
 package notification
 
 import (
-	"gobee/ent"
-	notification_service "gobee/internal/services/system/notification"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	notification_service "github.com/shuTwT/gobee/internal/services/system/notification"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

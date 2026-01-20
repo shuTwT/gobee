@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	"gobee/ent"
-	"gobee/ent/personalaccesstoken"
-	"gobee/pkg/config"
-	"gobee/pkg/domain/model"
 	"strings"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/personalaccesstoken"
+	"github.com/shuTwT/gobee/pkg/config"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"

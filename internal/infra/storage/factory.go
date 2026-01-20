@@ -2,10 +2,11 @@ package storage
 
 import (
 	"fmt"
-	"gobee/ent"
-	"gobee/internal/infra/storage/ftp"
-	"gobee/internal/infra/storage/local"
-	"gobee/internal/infra/storage/s3"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/infra/storage/ftp"
+	"github.com/shuTwT/gobee/internal/infra/storage/local"
+	"github.com/shuTwT/gobee/internal/infra/storage/s3"
 )
 
 // StorageType 存储类型枚举

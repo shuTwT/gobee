@@ -1,9 +1,10 @@
 package knowledgebase
 
 import (
-	"gobee/internal/services/content/knowledgebase"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/internal/services/content/knowledgebase"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

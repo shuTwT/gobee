@@ -2,9 +2,10 @@ package visit
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/visitlog"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/visitlog"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

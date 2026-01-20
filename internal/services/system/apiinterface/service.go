@@ -2,11 +2,12 @@ package apiinterface
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/apiperms"
-	"gobee/pkg/domain/model"
 	"log"
 	"strings"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/apiperms"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

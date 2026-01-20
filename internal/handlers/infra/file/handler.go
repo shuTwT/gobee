@@ -1,12 +1,13 @@
 package file
 
 import (
-	"gobee/ent"
-	"gobee/internal/infra/storage"
-	"gobee/internal/services/infra/file"
-	"gobee/internal/services/infra/storagestrategy"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/infra/storage"
+	"github.com/shuTwT/gobee/internal/services/infra/file"
+	"github.com/shuTwT/gobee/internal/services/infra/storagestrategy"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

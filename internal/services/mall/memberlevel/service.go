@@ -1,9 +1,9 @@
 package memberlevel
 
 import (
-	"gobee/ent"
-	"gobee/ent/memberlevel"
-	"gobee/pkg/domain/model"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/memberlevel"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

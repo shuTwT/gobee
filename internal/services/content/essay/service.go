@@ -2,9 +2,10 @@ package essay
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/essay"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/essay"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type EssayService interface {

@@ -1,11 +1,12 @@
 package tag
 
 import (
-	"gobee/ent"
-	"gobee/pkg/domain/model"
 	"strconv"
 
-	tag_service "gobee/internal/services/content/tag"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/pkg/domain/model"
+
+	tag_service "github.com/shuTwT/gobee/internal/services/content/tag"
 
 	"github.com/gofiber/fiber/v2"
 )

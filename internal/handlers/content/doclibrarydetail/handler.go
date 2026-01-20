@@ -1,10 +1,12 @@
 package doclibrarydetail
 
 import (
-	"gobee/ent"
-	"gobee/internal/services/content/doclibrarydetail"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/internal/services/content/doclibrarydetail"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

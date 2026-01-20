@@ -1,12 +1,13 @@
 package flink
 
 import (
-	"gobee/ent"
-	"gobee/ent/flink"
-	flink_service "gobee/internal/services/content/flink"
-	"gobee/pkg/domain/model"
 	"log"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/flink"
+	flink_service "github.com/shuTwT/gobee/internal/services/content/flink"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/gofiber/fiber/v2"

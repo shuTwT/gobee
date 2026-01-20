@@ -2,9 +2,10 @@ package comment
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/comment"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/comment"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/medama-io/go-useragent"
 )

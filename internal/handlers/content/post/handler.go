@@ -4,12 +4,13 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"gobee/internal/infra/logger"
-	"gobee/pkg/domain/model"
 	"strconv"
 	"time"
 
-	post_service "gobee/internal/services/content/post"
+	"github.com/shuTwT/gobee/internal/infra/logger"
+	"github.com/shuTwT/gobee/pkg/domain/model"
+
+	post_service "github.com/shuTwT/gobee/internal/services/content/post"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"

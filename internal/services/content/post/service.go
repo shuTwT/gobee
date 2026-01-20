@@ -3,17 +3,19 @@ package post
 import (
 	"context"
 	"fmt"
-	"gobee/ent"
-	"gobee/ent/category"
-	"gobee/ent/post"
-	"gobee/ent/tag"
-	"gobee/pkg/cache"
-	"gobee/pkg/domain/model"
-	"gobee/pkg/utils"
+
 	"math/rand"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/category"
+	"github.com/shuTwT/gobee/ent/post"
+	"github.com/shuTwT/gobee/ent/tag"
+	"github.com/shuTwT/gobee/pkg/cache"
+	"github.com/shuTwT/gobee/pkg/domain/model"
+	"github.com/shuTwT/gobee/pkg/utils"
 )
 
 type PostService interface {

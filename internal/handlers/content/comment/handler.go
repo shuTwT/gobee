@@ -1,10 +1,11 @@
 package comment
 
 import (
-	comment_service "gobee/internal/services/content/comment"
-	"gobee/pkg/domain/model"
 	"strconv"
 	"time"
+
+	comment_service "github.com/shuTwT/gobee/internal/services/content/comment"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

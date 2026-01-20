@@ -3,9 +3,9 @@ package wallet
 import (
 	"strconv"
 
-	"gobee/ent"
-	wallet_service "gobee/internal/services/mall/wallet"
-	"gobee/pkg/domain/model"
+	"github.com/shuTwT/gobee/ent"
+	wallet_service "github.com/shuTwT/gobee/internal/services/mall/wallet"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -2,40 +2,41 @@ package pkg
 
 import (
 	"embed"
-	"gobee/ent"
-	album_service "gobee/internal/services/content/album"
-	albumphoto_service "gobee/internal/services/content/albumphoto"
-	category_service "gobee/internal/services/content/category"
-	comment_service "gobee/internal/services/content/comment"
-	doclibrary_service "gobee/internal/services/content/doclibrary"
-	doclibrarydetail_service "gobee/internal/services/content/doclibrarydetail"
-	essay_service "gobee/internal/services/content/essay"
-	flink_service "gobee/internal/services/content/flink"
-	friend_circle_service "gobee/internal/services/content/friendcircle"
-	knowledgebase_service "gobee/internal/services/content/knowledgebase"
-	post_service "gobee/internal/services/content/post"
-	tag_service "gobee/internal/services/content/tag"
-	file_service "gobee/internal/services/infra/file"
-	migration_service "gobee/internal/services/infra/migration"
-	permission_service "gobee/internal/services/infra/permission"
-	plugin_service "gobee/internal/services/infra/plugin"
-	schedulejob_service "gobee/internal/services/infra/schedulejob"
-	storagestrategy_service "gobee/internal/services/infra/storagestrategy"
-	visit_service "gobee/internal/services/infra/visit"
-	coupon_service "gobee/internal/services/mall/coupon"
-	couponusage_service "gobee/internal/services/mall/couponusage"
-	member_service "gobee/internal/services/mall/member"
-	memberlevel_service "gobee/internal/services/mall/memberlevel"
-	payorder "gobee/internal/services/mall/payorder"
-	product_service "gobee/internal/services/mall/product"
-	wallet_service "gobee/internal/services/mall/wallet"
-	api_interface_service "gobee/internal/services/system/apiinterface"
-	auth_service "gobee/internal/services/system/auth"
-	common_service "gobee/internal/services/system/common"
-	notification_service "gobee/internal/services/system/notification"
-	role_service "gobee/internal/services/system/role"
-	setting_service "gobee/internal/services/system/setting"
-	user_service "gobee/internal/services/system/user"
+
+	"github.com/shuTwT/gobee/ent"
+	album_service "github.com/shuTwT/gobee/internal/services/content/album"
+	albumphoto_service "github.com/shuTwT/gobee/internal/services/content/albumphoto"
+	category_service "github.com/shuTwT/gobee/internal/services/content/category"
+	comment_service "github.com/shuTwT/gobee/internal/services/content/comment"
+	doclibrary_service "github.com/shuTwT/gobee/internal/services/content/doclibrary"
+	doclibrarydetail_service "github.com/shuTwT/gobee/internal/services/content/doclibrarydetail"
+	essay_service "github.com/shuTwT/gobee/internal/services/content/essay"
+	flink_service "github.com/shuTwT/gobee/internal/services/content/flink"
+	friend_circle_service "github.com/shuTwT/gobee/internal/services/content/friendcircle"
+	knowledgebase_service "github.com/shuTwT/gobee/internal/services/content/knowledgebase"
+	post_service "github.com/shuTwT/gobee/internal/services/content/post"
+	tag_service "github.com/shuTwT/gobee/internal/services/content/tag"
+	file_service "github.com/shuTwT/gobee/internal/services/infra/file"
+	migration_service "github.com/shuTwT/gobee/internal/services/infra/migration"
+	permission_service "github.com/shuTwT/gobee/internal/services/infra/permission"
+	plugin_service "github.com/shuTwT/gobee/internal/services/infra/plugin"
+	schedulejob_service "github.com/shuTwT/gobee/internal/services/infra/schedulejob"
+	storagestrategy_service "github.com/shuTwT/gobee/internal/services/infra/storagestrategy"
+	visit_service "github.com/shuTwT/gobee/internal/services/infra/visit"
+	coupon_service "github.com/shuTwT/gobee/internal/services/mall/coupon"
+	couponusage_service "github.com/shuTwT/gobee/internal/services/mall/couponusage"
+	member_service "github.com/shuTwT/gobee/internal/services/mall/member"
+	memberlevel_service "github.com/shuTwT/gobee/internal/services/mall/memberlevel"
+	payorder_service "github.com/shuTwT/gobee/internal/services/mall/payorder"
+	product_service "github.com/shuTwT/gobee/internal/services/mall/product"
+	wallet_service "github.com/shuTwT/gobee/internal/services/mall/wallet"
+	api_interface_service "github.com/shuTwT/gobee/internal/services/system/apiinterface"
+	auth_service "github.com/shuTwT/gobee/internal/services/system/auth"
+	common_service "github.com/shuTwT/gobee/internal/services/system/common"
+	notification_service "github.com/shuTwT/gobee/internal/services/system/notification"
+	role_service "github.com/shuTwT/gobee/internal/services/system/role"
+	setting_service "github.com/shuTwT/gobee/internal/services/system/setting"
+	user_service "github.com/shuTwT/gobee/internal/services/system/user"
 )
 
 type ServiceMap struct {
@@ -59,7 +60,7 @@ type ServiceMap struct {
 	MemberService           member_service.MemberService
 	MigrationService        migration_service.MigrationService
 	NotificationService     notification_service.NotificationService
-	PayOrderService         payorder.PayOrderService
+	PayOrderService         payorder_service.PayOrderService
 	PermissionService       permission_service.PermissionService
 	PluginService           plugin_service.PluginService
 	PostService             post_service.PostService
@@ -94,7 +95,7 @@ func InitializeServices(moduleDefs embed.FS, db *ent.Client) ServiceMap {
 	knowledgeBaseService := knowledgebase_service.NewKnowledgeBaseServiceImpl(db)
 	memberLevelService := memberlevel_service.NewMemberLevelServiceImpl(db)
 	memberService := member_service.NewMemberServiceImpl(db)
-	payOderService := payorder.NewPayOrderServiceImpl(db)
+	payOderService := payorder_service.NewPayOrderServiceImpl(db)
 	permissionService := permission_service.NewPermissionServiceImpl(db)
 	pluginService := plugin_service.NewPluginServiceImpl(db)
 	postService := post_service.NewPostServiceImpl(db)

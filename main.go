@@ -6,10 +6,10 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
-	server "gobee/cmd/server"
+	server "github.com/shuTwT/gobee/cmd/server"
 
-	_ "gobee/docs"
-	"gobee/internal/infra/logger"
+	_ "github.com/shuTwT/gobee/docs"
+	"github.com/shuTwT/gobee/internal/infra/logger"
 )
 
 //go:embed assets/moduleDefs

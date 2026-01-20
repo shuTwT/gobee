@@ -3,14 +3,15 @@ package services
 import (
 	"context"
 	"fmt"
-	"gobee/ent"
-	"gobee/ent/personalaccesstoken"
-	"gobee/ent/user"
-	"gobee/pkg/cache"
-	"gobee/pkg/config"
-	"gobee/pkg/domain/model"
 	"strings"
 	"time"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/personalaccesstoken"
+	"github.com/shuTwT/gobee/ent/user"
+	"github.com/shuTwT/gobee/pkg/cache"
+	"github.com/shuTwT/gobee/pkg/config"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"

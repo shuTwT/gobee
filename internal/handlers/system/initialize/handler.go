@@ -2,11 +2,12 @@ package initialize
 
 import (
 	"fmt"
-	"gobee/ent"
-	setting_service "gobee/internal/services/system/setting"
-	user_service "gobee/internal/services/system/user"
-	"gobee/pkg/config"
-	"gobee/pkg/domain/model"
+
+	"github.com/shuTwT/gobee/ent"
+	setting_service "github.com/shuTwT/gobee/internal/services/system/setting"
+	user_service "github.com/shuTwT/gobee/internal/services/system/user"
+	"github.com/shuTwT/gobee/pkg/config"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

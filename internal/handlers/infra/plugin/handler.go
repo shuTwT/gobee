@@ -2,12 +2,13 @@ package plugin
 
 import (
 	"fmt"
-	"gobee/ent"
-	"gobee/internal/services/infra/plugin"
-	"gobee/pkg/domain/model"
 	"log/slog"
 	"strconv"
 	"time"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/services/infra/plugin"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

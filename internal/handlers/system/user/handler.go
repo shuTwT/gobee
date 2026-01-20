@@ -5,11 +5,11 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"gobee/ent"
-	"gobee/internal/middleware"
-	role_service "gobee/internal/services/system/role"
-	user_service "gobee/internal/services/system/user"
-	"gobee/pkg/domain/model"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/middleware"
+	role_service "github.com/shuTwT/gobee/internal/services/system/role"
+	user_service "github.com/shuTwT/gobee/internal/services/system/user"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type UserHandler interface {

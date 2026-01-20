@@ -1,11 +1,12 @@
 package coupon
 
 import (
-	"gobee/ent"
-	"gobee/pkg/domain/model"
 	"strconv"
 
-	coupon_service "gobee/internal/services/mall/coupon"
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/pkg/domain/model"
+
+	coupon_service "github.com/shuTwT/gobee/internal/services/mall/coupon"
 
 	"github.com/gofiber/fiber/v2"
 )

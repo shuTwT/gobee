@@ -1,10 +1,11 @@
 package category
 
 import (
-	"gobee/ent"
-	category_service "gobee/internal/services/content/category"
-	"gobee/pkg/domain/model"
 	"strconv"
+
+	"github.com/shuTwT/gobee/ent"
+	category_service "github.com/shuTwT/gobee/internal/services/content/category"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 
 	"github.com/gofiber/fiber/v2"
 )

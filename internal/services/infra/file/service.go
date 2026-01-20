@@ -2,8 +2,9 @@ package file
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/file"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/file"
 )
 
 type FileService interface {

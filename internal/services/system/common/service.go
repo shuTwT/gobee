@@ -2,11 +2,13 @@ package common
 
 import (
 	"context"
-	"gobee/ent"
-	comment_service "gobee/internal/services/content/comment"
-	post_service "gobee/internal/services/content/post"
-	user_service "gobee/internal/services/system/user"
-	"gobee/pkg/domain/model"
+
+	comment_service "github.com/shuTwT/gobee/internal/services/content/comment"
+	post_service "github.com/shuTwT/gobee/internal/services/content/post"
+	user_service "github.com/shuTwT/gobee/internal/services/system/user"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
 type CommonService interface {

@@ -2,8 +2,9 @@ package friendcircle
 
 import (
 	"context"
-	"gobee/ent"
-	"gobee/ent/friendcirclerecord"
+
+	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/ent/friendcirclerecord"
 )
 
 type FriendCircleService interface {

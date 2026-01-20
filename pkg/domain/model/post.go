@@ -1,8 +1,9 @@
 package model
 
 import (
-	"gobee/ent"
 	"time"
+
+	"github.com/shuTwT/gobee/ent"
 )
 
 type PostPageReq struct {
