@@ -47,7 +47,7 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) (*fiber.App, *ent.
 
 	app := fiber.New(fiber.Config{
 		AppName:       "Fiber HTML Template Demo",
-		Prefork:       true,    // 启用多进程（Prefork 模式）
+		Prefork:       false,   // 启用多进程（Prefork 模式）
 		CaseSensitive: true,    // 路由大小写敏感
 		StrictRouting: true,    // 严格匹配带 / 和不带 / 的路由
 		ServerHeader:  "Fiber", // 返回响应头中的 Server 字段
