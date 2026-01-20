@@ -4,7 +4,9 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"log/slog"
 
+	"gobee/ent"
 	"gobee/internal/database"
 	"gobee/internal/handlers"
 	"gobee/internal/router"
@@ -18,7 +20,7 @@ import (
 	"github.com/gofiber/swagger"
 )
 
-func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
+func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) (*fiber.App, *ent.Client) {
 	config.Init()
 	dbType := config.GetString(config.DATABASE_TYPE)
 	dbConfig := database.DBConfig{
@@ -29,7 +31,6 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
 	serviceMap := pkg.InitializeServices(moduleDefs, db)
 
@@ -75,10 +76,14 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	router.Initialize(app, handlerMap, db)
 
 	go func() {
+		if fiber.IsChild() {
+			return
+		}
 		if err := serviceMap.PluginService.AutoStartPlugins(context.Background()); err != nil {
 			fmt.Printf("自动启动插件失败: %v\n", err)
 		}
+		slog.Info("自动启动插件成功")
 	}()
 
-	return app
+	return app, db
 }

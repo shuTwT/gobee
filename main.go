@@ -30,7 +30,8 @@ var frontendRes embed.FS
 // @BasePath /
 func main() {
 	logger.NewLogger()
-	app := server.InitializeApp(moduleDefs, frontendRes)
+	app, db := server.InitializeApp(moduleDefs, frontendRes)
+	defer db.Close()
 
 	log.Fatal(app.Listen(":13000"))
 }
