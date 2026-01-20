@@ -4,6 +4,7 @@ import (
 	"embed"
 
 	"github.com/shuTwT/gobee/ent"
+	"github.com/shuTwT/gobee/internal/schedule/manager"
 	album_service "github.com/shuTwT/gobee/internal/services/content/album"
 	albumphoto_service "github.com/shuTwT/gobee/internal/services/content/albumphoto"
 	category_service "github.com/shuTwT/gobee/internal/services/content/category"
@@ -75,7 +76,7 @@ type ServiceMap struct {
 	WalletService           wallet_service.WalletService
 }
 
-func InitializeServices(moduleDefs embed.FS, db *ent.Client) ServiceMap {
+func InitializeServices(moduleDefs embed.FS, db *ent.Client, scheduleManager *manager.ScheduleManager) ServiceMap {
 
 	albumService := album_service.NewAlbumServiceImpl(db)
 	albumPhotoService := albumphoto_service.NewAlbumPhotoServiceImpl(db)
@@ -109,7 +110,7 @@ func InitializeServices(moduleDefs embed.FS, db *ent.Client) ServiceMap {
 	walletService := wallet_service.NewWalletServiceImpl(db)
 	migrationService := migration_service.NewMigrationServiceImpl(db)
 	notificationService := notification_service.NewNotificationServiceImpl(db)
-	scheduleJobService := schedulejob_service.NewScheduleJobServiceImpl(db)
+	scheduleJobService := schedulejob_service.NewScheduleJobServiceImpl(db, scheduleManager)
 
 	permissionService.LoadPermissionsFromDef(moduleDefs)
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/shuTwT/gobee/ent"
 	"github.com/shuTwT/gobee/ent/schedulejob"
+	schedule_manager "github.com/shuTwT/gobee/internal/schedule/manager"
 	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 
@@ -19,11 +20,12 @@ type ScheduleJobService interface {
 }
 
 type ScheduleJobServiceImpl struct {
-	client *ent.Client
+	client          *ent.Client
+	scheduleManager *schedule_manager.ScheduleManager
 }
 
-func NewScheduleJobServiceImpl(client *ent.Client) *ScheduleJobServiceImpl {
-	return &ScheduleJobServiceImpl{client: client}
+func NewScheduleJobServiceImpl(client *ent.Client, scheduleManager *schedule_manager.ScheduleManager) *ScheduleJobServiceImpl {
+	return &ScheduleJobServiceImpl{client: client, scheduleManager: scheduleManager}
 }
 
 func (s *ScheduleJobServiceImpl) ListScheduleJob(ctx context.Context) ([]*ent.ScheduleJob, error) {
@@ -85,6 +87,12 @@ func (s *ScheduleJobServiceImpl) CreateScheduleJob(ctx context.Context, req *mod
 		return nil, err
 	}
 
+	if job.Enabled {
+		if err := s.scheduleManager.AddJobToScheduler(job); err != nil {
+			return nil, err
+		}
+	}
+
 	return job, nil
 }
 
@@ -140,6 +148,10 @@ func (s *ScheduleJobServiceImpl) UpdateScheduleJob(ctx context.Context, id int, 
 		return nil, err
 	}
 
+	if err := s.scheduleManager.UpdateJobInScheduler(job); err != nil {
+		return nil, err
+	}
+
 	return job, nil
 }
 
@@ -148,6 +160,11 @@ func (s *ScheduleJobServiceImpl) DeleteScheduleJob(ctx context.Context, id int) 
 	if err != nil {
 		return err
 	}
+
+	if err := s.scheduleManager.RemoveJobFromScheduler(id); err != nil {
+		return err
+	}
+
 	return nil
 }
 

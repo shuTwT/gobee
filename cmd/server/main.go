@@ -11,6 +11,7 @@ import (
 	"github.com/shuTwT/gobee/internal/handlers"
 	"github.com/shuTwT/gobee/internal/router"
 	"github.com/shuTwT/gobee/internal/schedule"
+	"github.com/shuTwT/gobee/internal/schedule/manager"
 	"github.com/shuTwT/gobee/pkg"
 	"github.com/shuTwT/gobee/pkg/config"
 
@@ -32,13 +33,15 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) (*fiber.App, *ent.
 		panic(err)
 	}
 
-	serviceMap := pkg.InitializeServices(moduleDefs, db)
+	scheduleManager := manager.NewScheduleManager()
+
+	serviceMap := pkg.InitializeServices(moduleDefs, db, scheduleManager)
 
 	if !fiber.IsChild() {
 		// 主进程程初始化定时任务
-		scheduler, err := schedule.InitializeSchedule(db, serviceMap)
+		err := schedule.InitializeSchedule(db, scheduleManager, serviceMap.FriendCircleService)
 		if err != nil {
-			defer scheduler.Shutdown()
+			defer scheduleManager.Shutdown()
 		}
 	}
 
