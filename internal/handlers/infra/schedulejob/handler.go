@@ -140,12 +140,7 @@ func (h *ScheduleJobHandlerImpl) buildScheduleJobResp(job *ent.ScheduleJob) *mod
 		Enabled:             job.Enabled,
 		NextRunTime:         job.NextRunTime,
 		LastRunTime:         job.LastRunTime,
-		ExecutionType:       job.ExecutionType,
-		HTTPMethod:          job.HTTPMethod,
-		HTTPURL:             job.HTTPURL,
-		HTTPHeaders:         job.HTTPHeaders,
-		HTTPBody:            job.HTTPBody,
-		HTTPTimeout:         job.HTTPTimeout,
+		JobName:             job.JobName,
 		MaxRetries:          job.MaxRetries,
 		FailureNotification: job.FailureNotification,
 	}

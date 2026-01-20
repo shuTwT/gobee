@@ -623,12 +623,7 @@ var (
 		{Name: "enabled", Type: field.TypeBool, Default: true},
 		{Name: "next_run_time", Type: field.TypeTime, Nullable: true},
 		{Name: "last_run_time", Type: field.TypeTime, Nullable: true},
-		{Name: "execution_type", Type: field.TypeString, Default: "http"},
-		{Name: "http_method", Type: field.TypeString, Nullable: true},
-		{Name: "http_url", Type: field.TypeString, Nullable: true},
-		{Name: "http_headers", Type: field.TypeJSON, Nullable: true},
-		{Name: "http_body", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "http_timeout", Type: field.TypeInt, Default: 30},
+		{Name: "job_name", Type: field.TypeString},
 		{Name: "max_retries", Type: field.TypeInt, Default: 3},
 		{Name: "failure_notification", Type: field.TypeBool, Default: false},
 	}

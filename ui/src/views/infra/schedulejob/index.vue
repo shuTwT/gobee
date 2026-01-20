@@ -46,7 +46,6 @@ const typeOptions = [
   { label: '全部', value: '' },
   { label: 'Cron', value: 'cron' },
   { label: '间隔', value: 'interval' },
-  { label: '一次性', value: 'once' },
 ]
 
 const enabledOptions = [
@@ -80,7 +79,6 @@ const columns: DataTableColumns<ScheduleJob> = [
       const typeMap = {
         cron: 'Cron',
         interval: '间隔',
-        once: '一次性',
       }
       return h(NTag, { type: 'info' }, { default: () => typeMap[row.type] || row.type })
     },
@@ -94,17 +92,11 @@ const columns: DataTableColumns<ScheduleJob> = [
     },
   },
   {
-    title: '执行类型',
-    key: 'execution_type',
-    width: 100,
-    render(row) {
-      const typeMap = {
-        http: 'HTTP',
-        internal: '内部',
-        command: '命令',
-        mq: '消息队列',
-      }
-      return h(NTag, { type: 'success' }, { default: () => typeMap[row.execution_type] || row.execution_type })
+    title: '内部任务',
+    key: 'job_name',
+    width: 120,
+    ellipsis: {
+      tooltip: true,
     },
   },
   {
@@ -225,11 +217,6 @@ const resetSearch = () => {
 const openEditDialog = (title = '新增', row?: ScheduleJob) => {
   const formRef = ref<any>()
   
-  const headersToArray = (headers: Record<string, string> | undefined) => {
-    if (!headers) return []
-    return Object.entries(headers).map(([key, value]) => ({ key, value }))
-  }
-  
   addDialog({
     title: `${title}定时任务`,
     props: {
@@ -240,12 +227,7 @@ const openEditDialog = (title = '新增', row?: ScheduleJob) => {
         expression: row?.expression || '',
         description: row?.description || '',
         enabled: row?.enabled !== undefined ? row.enabled : true,
-        execution_type: row?.execution_type || 'http',
-        http_method: row?.http_method || 'POST',
-        http_url: row?.http_url || '',
-        http_headers: headersToArray(row?.http_headers),
-        http_body: row?.http_body || '',
-        http_timeout: row?.http_timeout || 30,
+        job_name: row?.job_name || 'friendCircle',
         max_retries: row?.max_retries || 3,
         failure_notification: row?.failure_notification || false,
       },

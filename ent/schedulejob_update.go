@@ -150,110 +150,17 @@ func (_u *ScheduleJobUpdate) ClearLastRunTime() *ScheduleJobUpdate {
 	return _u
 }
 
-// SetExecutionType sets the "execution_type" field.
-func (_u *ScheduleJobUpdate) SetExecutionType(v string) *ScheduleJobUpdate {
-	_u.mutation.SetExecutionType(v)
+// SetJobName sets the "job_name" field.
+func (_u *ScheduleJobUpdate) SetJobName(v string) *ScheduleJobUpdate {
+	_u.mutation.SetJobName(v)
 	return _u
 }
 
-// SetNillableExecutionType sets the "execution_type" field if the given value is not nil.
-func (_u *ScheduleJobUpdate) SetNillableExecutionType(v *string) *ScheduleJobUpdate {
+// SetNillableJobName sets the "job_name" field if the given value is not nil.
+func (_u *ScheduleJobUpdate) SetNillableJobName(v *string) *ScheduleJobUpdate {
 	if v != nil {
-		_u.SetExecutionType(*v)
+		_u.SetJobName(*v)
 	}
-	return _u
-}
-
-// SetHTTPMethod sets the "http_method" field.
-func (_u *ScheduleJobUpdate) SetHTTPMethod(v string) *ScheduleJobUpdate {
-	_u.mutation.SetHTTPMethod(v)
-	return _u
-}
-
-// SetNillableHTTPMethod sets the "http_method" field if the given value is not nil.
-func (_u *ScheduleJobUpdate) SetNillableHTTPMethod(v *string) *ScheduleJobUpdate {
-	if v != nil {
-		_u.SetHTTPMethod(*v)
-	}
-	return _u
-}
-
-// ClearHTTPMethod clears the value of the "http_method" field.
-func (_u *ScheduleJobUpdate) ClearHTTPMethod() *ScheduleJobUpdate {
-	_u.mutation.ClearHTTPMethod()
-	return _u
-}
-
-// SetHTTPURL sets the "http_url" field.
-func (_u *ScheduleJobUpdate) SetHTTPURL(v string) *ScheduleJobUpdate {
-	_u.mutation.SetHTTPURL(v)
-	return _u
-}
-
-// SetNillableHTTPURL sets the "http_url" field if the given value is not nil.
-func (_u *ScheduleJobUpdate) SetNillableHTTPURL(v *string) *ScheduleJobUpdate {
-	if v != nil {
-		_u.SetHTTPURL(*v)
-	}
-	return _u
-}
-
-// ClearHTTPURL clears the value of the "http_url" field.
-func (_u *ScheduleJobUpdate) ClearHTTPURL() *ScheduleJobUpdate {
-	_u.mutation.ClearHTTPURL()
-	return _u
-}
-
-// SetHTTPHeaders sets the "http_headers" field.
-func (_u *ScheduleJobUpdate) SetHTTPHeaders(v map[string]string) *ScheduleJobUpdate {
-	_u.mutation.SetHTTPHeaders(v)
-	return _u
-}
-
-// ClearHTTPHeaders clears the value of the "http_headers" field.
-func (_u *ScheduleJobUpdate) ClearHTTPHeaders() *ScheduleJobUpdate {
-	_u.mutation.ClearHTTPHeaders()
-	return _u
-}
-
-// SetHTTPBody sets the "http_body" field.
-func (_u *ScheduleJobUpdate) SetHTTPBody(v string) *ScheduleJobUpdate {
-	_u.mutation.SetHTTPBody(v)
-	return _u
-}
-
-// SetNillableHTTPBody sets the "http_body" field if the given value is not nil.
-func (_u *ScheduleJobUpdate) SetNillableHTTPBody(v *string) *ScheduleJobUpdate {
-	if v != nil {
-		_u.SetHTTPBody(*v)
-	}
-	return _u
-}
-
-// ClearHTTPBody clears the value of the "http_body" field.
-func (_u *ScheduleJobUpdate) ClearHTTPBody() *ScheduleJobUpdate {
-	_u.mutation.ClearHTTPBody()
-	return _u
-}
-
-// SetHTTPTimeout sets the "http_timeout" field.
-func (_u *ScheduleJobUpdate) SetHTTPTimeout(v int) *ScheduleJobUpdate {
-	_u.mutation.ResetHTTPTimeout()
-	_u.mutation.SetHTTPTimeout(v)
-	return _u
-}
-
-// SetNillableHTTPTimeout sets the "http_timeout" field if the given value is not nil.
-func (_u *ScheduleJobUpdate) SetNillableHTTPTimeout(v *int) *ScheduleJobUpdate {
-	if v != nil {
-		_u.SetHTTPTimeout(*v)
-	}
-	return _u
-}
-
-// AddHTTPTimeout adds value to the "http_timeout" field.
-func (_u *ScheduleJobUpdate) AddHTTPTimeout(v int) *ScheduleJobUpdate {
-	_u.mutation.AddHTTPTimeout(v)
 	return _u
 }
 
@@ -375,38 +282,8 @@ func (_u *ScheduleJobUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if _u.mutation.LastRunTimeCleared() {
 		_spec.ClearField(schedulejob.FieldLastRunTime, field.TypeTime)
 	}
-	if value, ok := _u.mutation.ExecutionType(); ok {
-		_spec.SetField(schedulejob.FieldExecutionType, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.HTTPMethod(); ok {
-		_spec.SetField(schedulejob.FieldHTTPMethod, field.TypeString, value)
-	}
-	if _u.mutation.HTTPMethodCleared() {
-		_spec.ClearField(schedulejob.FieldHTTPMethod, field.TypeString)
-	}
-	if value, ok := _u.mutation.HTTPURL(); ok {
-		_spec.SetField(schedulejob.FieldHTTPURL, field.TypeString, value)
-	}
-	if _u.mutation.HTTPURLCleared() {
-		_spec.ClearField(schedulejob.FieldHTTPURL, field.TypeString)
-	}
-	if value, ok := _u.mutation.HTTPHeaders(); ok {
-		_spec.SetField(schedulejob.FieldHTTPHeaders, field.TypeJSON, value)
-	}
-	if _u.mutation.HTTPHeadersCleared() {
-		_spec.ClearField(schedulejob.FieldHTTPHeaders, field.TypeJSON)
-	}
-	if value, ok := _u.mutation.HTTPBody(); ok {
-		_spec.SetField(schedulejob.FieldHTTPBody, field.TypeString, value)
-	}
-	if _u.mutation.HTTPBodyCleared() {
-		_spec.ClearField(schedulejob.FieldHTTPBody, field.TypeString)
-	}
-	if value, ok := _u.mutation.HTTPTimeout(); ok {
-		_spec.SetField(schedulejob.FieldHTTPTimeout, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedHTTPTimeout(); ok {
-		_spec.AddField(schedulejob.FieldHTTPTimeout, field.TypeInt, value)
+	if value, ok := _u.mutation.JobName(); ok {
+		_spec.SetField(schedulejob.FieldJobName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.MaxRetries(); ok {
 		_spec.SetField(schedulejob.FieldMaxRetries, field.TypeInt, value)
@@ -559,110 +436,17 @@ func (_u *ScheduleJobUpdateOne) ClearLastRunTime() *ScheduleJobUpdateOne {
 	return _u
 }
 
-// SetExecutionType sets the "execution_type" field.
-func (_u *ScheduleJobUpdateOne) SetExecutionType(v string) *ScheduleJobUpdateOne {
-	_u.mutation.SetExecutionType(v)
+// SetJobName sets the "job_name" field.
+func (_u *ScheduleJobUpdateOne) SetJobName(v string) *ScheduleJobUpdateOne {
+	_u.mutation.SetJobName(v)
 	return _u
 }
 
-// SetNillableExecutionType sets the "execution_type" field if the given value is not nil.
-func (_u *ScheduleJobUpdateOne) SetNillableExecutionType(v *string) *ScheduleJobUpdateOne {
+// SetNillableJobName sets the "job_name" field if the given value is not nil.
+func (_u *ScheduleJobUpdateOne) SetNillableJobName(v *string) *ScheduleJobUpdateOne {
 	if v != nil {
-		_u.SetExecutionType(*v)
+		_u.SetJobName(*v)
 	}
-	return _u
-}
-
-// SetHTTPMethod sets the "http_method" field.
-func (_u *ScheduleJobUpdateOne) SetHTTPMethod(v string) *ScheduleJobUpdateOne {
-	_u.mutation.SetHTTPMethod(v)
-	return _u
-}
-
-// SetNillableHTTPMethod sets the "http_method" field if the given value is not nil.
-func (_u *ScheduleJobUpdateOne) SetNillableHTTPMethod(v *string) *ScheduleJobUpdateOne {
-	if v != nil {
-		_u.SetHTTPMethod(*v)
-	}
-	return _u
-}
-
-// ClearHTTPMethod clears the value of the "http_method" field.
-func (_u *ScheduleJobUpdateOne) ClearHTTPMethod() *ScheduleJobUpdateOne {
-	_u.mutation.ClearHTTPMethod()
-	return _u
-}
-
-// SetHTTPURL sets the "http_url" field.
-func (_u *ScheduleJobUpdateOne) SetHTTPURL(v string) *ScheduleJobUpdateOne {
-	_u.mutation.SetHTTPURL(v)
-	return _u
-}
-
-// SetNillableHTTPURL sets the "http_url" field if the given value is not nil.
-func (_u *ScheduleJobUpdateOne) SetNillableHTTPURL(v *string) *ScheduleJobUpdateOne {
-	if v != nil {
-		_u.SetHTTPURL(*v)
-	}
-	return _u
-}
-
-// ClearHTTPURL clears the value of the "http_url" field.
-func (_u *ScheduleJobUpdateOne) ClearHTTPURL() *ScheduleJobUpdateOne {
-	_u.mutation.ClearHTTPURL()
-	return _u
-}
-
-// SetHTTPHeaders sets the "http_headers" field.
-func (_u *ScheduleJobUpdateOne) SetHTTPHeaders(v map[string]string) *ScheduleJobUpdateOne {
-	_u.mutation.SetHTTPHeaders(v)
-	return _u
-}
-
-// ClearHTTPHeaders clears the value of the "http_headers" field.
-func (_u *ScheduleJobUpdateOne) ClearHTTPHeaders() *ScheduleJobUpdateOne {
-	_u.mutation.ClearHTTPHeaders()
-	return _u
-}
-
-// SetHTTPBody sets the "http_body" field.
-func (_u *ScheduleJobUpdateOne) SetHTTPBody(v string) *ScheduleJobUpdateOne {
-	_u.mutation.SetHTTPBody(v)
-	return _u
-}
-
-// SetNillableHTTPBody sets the "http_body" field if the given value is not nil.
-func (_u *ScheduleJobUpdateOne) SetNillableHTTPBody(v *string) *ScheduleJobUpdateOne {
-	if v != nil {
-		_u.SetHTTPBody(*v)
-	}
-	return _u
-}
-
-// ClearHTTPBody clears the value of the "http_body" field.
-func (_u *ScheduleJobUpdateOne) ClearHTTPBody() *ScheduleJobUpdateOne {
-	_u.mutation.ClearHTTPBody()
-	return _u
-}
-
-// SetHTTPTimeout sets the "http_timeout" field.
-func (_u *ScheduleJobUpdateOne) SetHTTPTimeout(v int) *ScheduleJobUpdateOne {
-	_u.mutation.ResetHTTPTimeout()
-	_u.mutation.SetHTTPTimeout(v)
-	return _u
-}
-
-// SetNillableHTTPTimeout sets the "http_timeout" field if the given value is not nil.
-func (_u *ScheduleJobUpdateOne) SetNillableHTTPTimeout(v *int) *ScheduleJobUpdateOne {
-	if v != nil {
-		_u.SetHTTPTimeout(*v)
-	}
-	return _u
-}
-
-// AddHTTPTimeout adds value to the "http_timeout" field.
-func (_u *ScheduleJobUpdateOne) AddHTTPTimeout(v int) *ScheduleJobUpdateOne {
-	_u.mutation.AddHTTPTimeout(v)
 	return _u
 }
 
@@ -814,38 +598,8 @@ func (_u *ScheduleJobUpdateOne) sqlSave(ctx context.Context) (_node *ScheduleJob
 	if _u.mutation.LastRunTimeCleared() {
 		_spec.ClearField(schedulejob.FieldLastRunTime, field.TypeTime)
 	}
-	if value, ok := _u.mutation.ExecutionType(); ok {
-		_spec.SetField(schedulejob.FieldExecutionType, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.HTTPMethod(); ok {
-		_spec.SetField(schedulejob.FieldHTTPMethod, field.TypeString, value)
-	}
-	if _u.mutation.HTTPMethodCleared() {
-		_spec.ClearField(schedulejob.FieldHTTPMethod, field.TypeString)
-	}
-	if value, ok := _u.mutation.HTTPURL(); ok {
-		_spec.SetField(schedulejob.FieldHTTPURL, field.TypeString, value)
-	}
-	if _u.mutation.HTTPURLCleared() {
-		_spec.ClearField(schedulejob.FieldHTTPURL, field.TypeString)
-	}
-	if value, ok := _u.mutation.HTTPHeaders(); ok {
-		_spec.SetField(schedulejob.FieldHTTPHeaders, field.TypeJSON, value)
-	}
-	if _u.mutation.HTTPHeadersCleared() {
-		_spec.ClearField(schedulejob.FieldHTTPHeaders, field.TypeJSON)
-	}
-	if value, ok := _u.mutation.HTTPBody(); ok {
-		_spec.SetField(schedulejob.FieldHTTPBody, field.TypeString, value)
-	}
-	if _u.mutation.HTTPBodyCleared() {
-		_spec.ClearField(schedulejob.FieldHTTPBody, field.TypeString)
-	}
-	if value, ok := _u.mutation.HTTPTimeout(); ok {
-		_spec.SetField(schedulejob.FieldHTTPTimeout, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedHTTPTimeout(); ok {
-		_spec.AddField(schedulejob.FieldHTTPTimeout, field.TypeInt, value)
+	if value, ok := _u.mutation.JobName(); ok {
+		_spec.SetField(schedulejob.FieldJobName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.MaxRetries(); ok {
 		_spec.SetField(schedulejob.FieldMaxRetries, field.TypeInt, value)

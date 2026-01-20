@@ -1433,20 +1433,12 @@ func init() {
 	schedulejobDescEnabled := schedulejobFields[4].Descriptor()
 	// schedulejob.DefaultEnabled holds the default value on creation for the enabled field.
 	schedulejob.DefaultEnabled = schedulejobDescEnabled.Default.(bool)
-	// schedulejobDescExecutionType is the schema descriptor for execution_type field.
-	schedulejobDescExecutionType := schedulejobFields[7].Descriptor()
-	// schedulejob.DefaultExecutionType holds the default value on creation for the execution_type field.
-	schedulejob.DefaultExecutionType = schedulejobDescExecutionType.Default.(string)
-	// schedulejobDescHTTPTimeout is the schema descriptor for http_timeout field.
-	schedulejobDescHTTPTimeout := schedulejobFields[12].Descriptor()
-	// schedulejob.DefaultHTTPTimeout holds the default value on creation for the http_timeout field.
-	schedulejob.DefaultHTTPTimeout = schedulejobDescHTTPTimeout.Default.(int)
 	// schedulejobDescMaxRetries is the schema descriptor for max_retries field.
-	schedulejobDescMaxRetries := schedulejobFields[13].Descriptor()
+	schedulejobDescMaxRetries := schedulejobFields[8].Descriptor()
 	// schedulejob.DefaultMaxRetries holds the default value on creation for the max_retries field.
 	schedulejob.DefaultMaxRetries = schedulejobDescMaxRetries.Default.(int)
 	// schedulejobDescFailureNotification is the schema descriptor for failure_notification field.
-	schedulejobDescFailureNotification := schedulejobFields[14].Descriptor()
+	schedulejobDescFailureNotification := schedulejobFields[9].Descriptor()
 	// schedulejob.DefaultFailureNotification holds the default value on creation for the failure_notification field.
 	schedulejob.DefaultFailureNotification = schedulejobDescFailureNotification.Default.(bool)
 	settingMixin := schema.Setting{}.Mixin()

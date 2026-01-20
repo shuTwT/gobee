@@ -6,18 +6,13 @@ export interface ScheduleJob {
   created_at: string
   updated_at: string
   name: string
-  type: 'cron' | 'interval' | 'once'
+  type: 'cron' | 'interval'
   expression: string
   description: string
   enabled: boolean
   next_run_time: string
   last_run_time: string
-  execution_type: 'http' | 'internal' | 'command' | 'mq'
-  http_method?: string
-  http_url?: string
-  http_headers?: Record<string, string>
-  http_body?: string
-  http_timeout: number
+  job_name: string
   max_retries: number
   failure_notification: boolean
 }
@@ -28,12 +23,7 @@ export interface CreateScheduleJobParams {
   expression: string
   description?: string
   enabled: boolean
-  execution_type: ScheduleJob['execution_type']
-  http_method?: string
-  http_url?: string
-  http_headers?: Record<string, string>
-  http_body?: string
-  http_timeout?: number
+  job_name: string
   max_retries: number
   failure_notification: boolean
 }

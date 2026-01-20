@@ -31,18 +31,8 @@ const (
 	FieldNextRunTime = "next_run_time"
 	// FieldLastRunTime holds the string denoting the last_run_time field in the database.
 	FieldLastRunTime = "last_run_time"
-	// FieldExecutionType holds the string denoting the execution_type field in the database.
-	FieldExecutionType = "execution_type"
-	// FieldHTTPMethod holds the string denoting the http_method field in the database.
-	FieldHTTPMethod = "http_method"
-	// FieldHTTPURL holds the string denoting the http_url field in the database.
-	FieldHTTPURL = "http_url"
-	// FieldHTTPHeaders holds the string denoting the http_headers field in the database.
-	FieldHTTPHeaders = "http_headers"
-	// FieldHTTPBody holds the string denoting the http_body field in the database.
-	FieldHTTPBody = "http_body"
-	// FieldHTTPTimeout holds the string denoting the http_timeout field in the database.
-	FieldHTTPTimeout = "http_timeout"
+	// FieldJobName holds the string denoting the job_name field in the database.
+	FieldJobName = "job_name"
 	// FieldMaxRetries holds the string denoting the max_retries field in the database.
 	FieldMaxRetries = "max_retries"
 	// FieldFailureNotification holds the string denoting the failure_notification field in the database.
@@ -63,12 +53,7 @@ var Columns = []string{
 	FieldEnabled,
 	FieldNextRunTime,
 	FieldLastRunTime,
-	FieldExecutionType,
-	FieldHTTPMethod,
-	FieldHTTPURL,
-	FieldHTTPHeaders,
-	FieldHTTPBody,
-	FieldHTTPTimeout,
+	FieldJobName,
 	FieldMaxRetries,
 	FieldFailureNotification,
 }
@@ -92,10 +77,6 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultEnabled holds the default value on creation for the "enabled" field.
 	DefaultEnabled bool
-	// DefaultExecutionType holds the default value on creation for the "execution_type" field.
-	DefaultExecutionType string
-	// DefaultHTTPTimeout holds the default value on creation for the "http_timeout" field.
-	DefaultHTTPTimeout int
 	// DefaultMaxRetries holds the default value on creation for the "max_retries" field.
 	DefaultMaxRetries int
 	// DefaultFailureNotification holds the default value on creation for the "failure_notification" field.
@@ -155,29 +136,9 @@ func ByLastRunTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastRunTime, opts...).ToFunc()
 }
 
-// ByExecutionType orders the results by the execution_type field.
-func ByExecutionType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldExecutionType, opts...).ToFunc()
-}
-
-// ByHTTPMethod orders the results by the http_method field.
-func ByHTTPMethod(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldHTTPMethod, opts...).ToFunc()
-}
-
-// ByHTTPURL orders the results by the http_url field.
-func ByHTTPURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldHTTPURL, opts...).ToFunc()
-}
-
-// ByHTTPBody orders the results by the http_body field.
-func ByHTTPBody(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldHTTPBody, opts...).ToFunc()
-}
-
-// ByHTTPTimeout orders the results by the http_timeout field.
-func ByHTTPTimeout(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldHTTPTimeout, opts...).ToFunc()
+// ByJobName orders the results by the job_name field.
+func ByJobName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldJobName, opts...).ToFunc()
 }
 
 // ByMaxRetries orders the results by the max_retries field.

@@ -71,33 +71,13 @@ func (s *ScheduleJobServiceImpl) CreateScheduleJob(ctx context.Context, req *mod
 		SetName(req.Name).
 		SetType(req.Type).
 		SetExpression(req.Expression).
-		SetExecutionType(req.ExecutionType).
+		SetJobName(req.JobName).
 		SetEnabled(req.Enabled).
 		SetMaxRetries(req.MaxRetries).
 		SetFailureNotification(req.FailureNotification)
 
 	if req.Description != nil {
 		builder.SetDescription(*req.Description)
-	}
-
-	if req.HTTPMethod != nil {
-		builder.SetHTTPMethod(*req.HTTPMethod)
-	}
-
-	if req.HTTPURL != nil {
-		builder.SetHTTPURL(*req.HTTPURL)
-	}
-
-	if req.HTTPHeaders != nil {
-		builder.SetHTTPHeaders(req.HTTPHeaders)
-	}
-
-	if req.HTTPBody != nil {
-		builder.SetHTTPBody(*req.HTTPBody)
-	}
-
-	if req.HTTPTimeout != nil {
-		builder.SetHTTPTimeout(*req.HTTPTimeout)
 	}
 
 	job, err := builder.Save(ctx)
@@ -143,28 +123,8 @@ func (s *ScheduleJobServiceImpl) UpdateScheduleJob(ctx context.Context, id int, 
 		builder.SetEnabled(*req.Enabled)
 	}
 
-	if req.ExecutionType != nil {
-		builder.SetExecutionType(*req.ExecutionType)
-	}
-
-	if req.HTTPMethod != nil {
-		builder.SetHTTPMethod(*req.HTTPMethod)
-	}
-
-	if req.HTTPURL != nil {
-		builder.SetHTTPURL(*req.HTTPURL)
-	}
-
-	if req.HTTPHeaders != nil {
-		builder.SetHTTPHeaders(req.HTTPHeaders)
-	}
-
-	if req.HTTPBody != nil {
-		builder.SetHTTPBody(*req.HTTPBody)
-	}
-
-	if req.HTTPTimeout != nil {
-		builder.SetHTTPTimeout(*req.HTTPTimeout)
+	if req.JobName != nil {
+		builder.SetJobName(*req.JobName)
 	}
 
 	if req.MaxRetries != nil {
@@ -201,8 +161,8 @@ func validateCreateScheduleJobReq(req *model.CreateScheduleJobReq) error {
 	if req.Expression == "" {
 		return errors.New("调度表达式不能为空")
 	}
-	if req.ExecutionType == "" {
-		return errors.New("执行类型不能为空")
+	if req.JobName == "" {
+		return errors.New("内部任务名称不能为空")
 	}
 	return nil
 }

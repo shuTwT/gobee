@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -24,7 +23,7 @@ type ScheduleJob struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// 任务名称
 	Name string `json:"name,omitempty"`
-	// 任务类型: cron, interval, once
+	// 任务类型: cron, interval
 	Type string `json:"type,omitempty"`
 	// 调度表达式: cron表达式或时间间隔
 	Expression string `json:"expression,omitempty"`
@@ -36,18 +35,8 @@ type ScheduleJob struct {
 	NextRunTime time.Time `json:"next_run_time,omitempty"`
 	// 上次执行时间
 	LastRunTime time.Time `json:"last_run_time,omitempty"`
-	// 执行类型: http, internal, command, mq
-	ExecutionType string `json:"execution_type,omitempty"`
-	// HTTP方法: GET, POST, PUT, DELETE
-	HTTPMethod string `json:"http_method,omitempty"`
-	// HTTP URL
-	HTTPURL string `json:"http_url,omitempty"`
-	// HTTP请求头
-	HTTPHeaders map[string]string `json:"http_headers,omitempty"`
-	// HTTP请求体
-	HTTPBody string `json:"http_body,omitempty"`
-	// HTTP超时时间(秒)
-	HTTPTimeout int `json:"http_timeout,omitempty"`
+	// 内部任务名称
+	JobName string `json:"job_name,omitempty"`
 	// 最大重试次数
 	MaxRetries int `json:"max_retries,omitempty"`
 	// 失败是否通知
@@ -60,13 +49,11 @@ func (*ScheduleJob) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case schedulejob.FieldHTTPHeaders:
-			values[i] = new([]byte)
 		case schedulejob.FieldEnabled, schedulejob.FieldFailureNotification:
 			values[i] = new(sql.NullBool)
-		case schedulejob.FieldID, schedulejob.FieldHTTPTimeout, schedulejob.FieldMaxRetries:
+		case schedulejob.FieldID, schedulejob.FieldMaxRetries:
 			values[i] = new(sql.NullInt64)
-		case schedulejob.FieldName, schedulejob.FieldType, schedulejob.FieldExpression, schedulejob.FieldDescription, schedulejob.FieldExecutionType, schedulejob.FieldHTTPMethod, schedulejob.FieldHTTPURL, schedulejob.FieldHTTPBody:
+		case schedulejob.FieldName, schedulejob.FieldType, schedulejob.FieldExpression, schedulejob.FieldDescription, schedulejob.FieldJobName:
 			values[i] = new(sql.NullString)
 		case schedulejob.FieldCreatedAt, schedulejob.FieldUpdatedAt, schedulejob.FieldNextRunTime, schedulejob.FieldLastRunTime:
 			values[i] = new(sql.NullTime)
@@ -145,43 +132,11 @@ func (_m *ScheduleJob) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.LastRunTime = value.Time
 			}
-		case schedulejob.FieldExecutionType:
+		case schedulejob.FieldJobName:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field execution_type", values[i])
+				return fmt.Errorf("unexpected type %T for field job_name", values[i])
 			} else if value.Valid {
-				_m.ExecutionType = value.String
-			}
-		case schedulejob.FieldHTTPMethod:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field http_method", values[i])
-			} else if value.Valid {
-				_m.HTTPMethod = value.String
-			}
-		case schedulejob.FieldHTTPURL:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field http_url", values[i])
-			} else if value.Valid {
-				_m.HTTPURL = value.String
-			}
-		case schedulejob.FieldHTTPHeaders:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field http_headers", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.HTTPHeaders); err != nil {
-					return fmt.Errorf("unmarshal field http_headers: %w", err)
-				}
-			}
-		case schedulejob.FieldHTTPBody:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field http_body", values[i])
-			} else if value.Valid {
-				_m.HTTPBody = value.String
-			}
-		case schedulejob.FieldHTTPTimeout:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field http_timeout", values[i])
-			} else if value.Valid {
-				_m.HTTPTimeout = int(value.Int64)
+				_m.JobName = value.String
 			}
 		case schedulejob.FieldMaxRetries:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -258,23 +213,8 @@ func (_m *ScheduleJob) String() string {
 	builder.WriteString("last_run_time=")
 	builder.WriteString(_m.LastRunTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("execution_type=")
-	builder.WriteString(_m.ExecutionType)
-	builder.WriteString(", ")
-	builder.WriteString("http_method=")
-	builder.WriteString(_m.HTTPMethod)
-	builder.WriteString(", ")
-	builder.WriteString("http_url=")
-	builder.WriteString(_m.HTTPURL)
-	builder.WriteString(", ")
-	builder.WriteString("http_headers=")
-	builder.WriteString(fmt.Sprintf("%v", _m.HTTPHeaders))
-	builder.WriteString(", ")
-	builder.WriteString("http_body=")
-	builder.WriteString(_m.HTTPBody)
-	builder.WriteString(", ")
-	builder.WriteString("http_timeout=")
-	builder.WriteString(fmt.Sprintf("%v", _m.HTTPTimeout))
+	builder.WriteString("job_name=")
+	builder.WriteString(_m.JobName)
 	builder.WriteString(", ")
 	builder.WriteString("max_retries=")
 	builder.WriteString(fmt.Sprintf("%v", _m.MaxRetries))

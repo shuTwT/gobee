@@ -27803,13 +27803,7 @@ type ScheduleJobMutation struct {
 	enabled              *bool
 	next_run_time        *time.Time
 	last_run_time        *time.Time
-	execution_type       *string
-	http_method          *string
-	http_url             *string
-	http_headers         *map[string]string
-	http_body            *string
-	http_timeout         *int
-	addhttp_timeout      *int
+	job_name             *string
 	max_retries          *int
 	addmax_retries       *int
 	failure_notification *bool
@@ -28286,292 +28280,40 @@ func (m *ScheduleJobMutation) ResetLastRunTime() {
 	delete(m.clearedFields, schedulejob.FieldLastRunTime)
 }
 
-// SetExecutionType sets the "execution_type" field.
-func (m *ScheduleJobMutation) SetExecutionType(s string) {
-	m.execution_type = &s
+// SetJobName sets the "job_name" field.
+func (m *ScheduleJobMutation) SetJobName(s string) {
+	m.job_name = &s
 }
 
-// ExecutionType returns the value of the "execution_type" field in the mutation.
-func (m *ScheduleJobMutation) ExecutionType() (r string, exists bool) {
-	v := m.execution_type
+// JobName returns the value of the "job_name" field in the mutation.
+func (m *ScheduleJobMutation) JobName() (r string, exists bool) {
+	v := m.job_name
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldExecutionType returns the old "execution_type" field's value of the ScheduleJob entity.
+// OldJobName returns the old "job_name" field's value of the ScheduleJob entity.
 // If the ScheduleJob object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScheduleJobMutation) OldExecutionType(ctx context.Context) (v string, err error) {
+func (m *ScheduleJobMutation) OldJobName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldExecutionType is only allowed on UpdateOne operations")
+		return v, errors.New("OldJobName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldExecutionType requires an ID field in the mutation")
+		return v, errors.New("OldJobName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldExecutionType: %w", err)
+		return v, fmt.Errorf("querying old value for OldJobName: %w", err)
 	}
-	return oldValue.ExecutionType, nil
+	return oldValue.JobName, nil
 }
 
-// ResetExecutionType resets all changes to the "execution_type" field.
-func (m *ScheduleJobMutation) ResetExecutionType() {
-	m.execution_type = nil
-}
-
-// SetHTTPMethod sets the "http_method" field.
-func (m *ScheduleJobMutation) SetHTTPMethod(s string) {
-	m.http_method = &s
-}
-
-// HTTPMethod returns the value of the "http_method" field in the mutation.
-func (m *ScheduleJobMutation) HTTPMethod() (r string, exists bool) {
-	v := m.http_method
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldHTTPMethod returns the old "http_method" field's value of the ScheduleJob entity.
-// If the ScheduleJob object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScheduleJobMutation) OldHTTPMethod(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldHTTPMethod is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldHTTPMethod requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHTTPMethod: %w", err)
-	}
-	return oldValue.HTTPMethod, nil
-}
-
-// ClearHTTPMethod clears the value of the "http_method" field.
-func (m *ScheduleJobMutation) ClearHTTPMethod() {
-	m.http_method = nil
-	m.clearedFields[schedulejob.FieldHTTPMethod] = struct{}{}
-}
-
-// HTTPMethodCleared returns if the "http_method" field was cleared in this mutation.
-func (m *ScheduleJobMutation) HTTPMethodCleared() bool {
-	_, ok := m.clearedFields[schedulejob.FieldHTTPMethod]
-	return ok
-}
-
-// ResetHTTPMethod resets all changes to the "http_method" field.
-func (m *ScheduleJobMutation) ResetHTTPMethod() {
-	m.http_method = nil
-	delete(m.clearedFields, schedulejob.FieldHTTPMethod)
-}
-
-// SetHTTPURL sets the "http_url" field.
-func (m *ScheduleJobMutation) SetHTTPURL(s string) {
-	m.http_url = &s
-}
-
-// HTTPURL returns the value of the "http_url" field in the mutation.
-func (m *ScheduleJobMutation) HTTPURL() (r string, exists bool) {
-	v := m.http_url
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldHTTPURL returns the old "http_url" field's value of the ScheduleJob entity.
-// If the ScheduleJob object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScheduleJobMutation) OldHTTPURL(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldHTTPURL is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldHTTPURL requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHTTPURL: %w", err)
-	}
-	return oldValue.HTTPURL, nil
-}
-
-// ClearHTTPURL clears the value of the "http_url" field.
-func (m *ScheduleJobMutation) ClearHTTPURL() {
-	m.http_url = nil
-	m.clearedFields[schedulejob.FieldHTTPURL] = struct{}{}
-}
-
-// HTTPURLCleared returns if the "http_url" field was cleared in this mutation.
-func (m *ScheduleJobMutation) HTTPURLCleared() bool {
-	_, ok := m.clearedFields[schedulejob.FieldHTTPURL]
-	return ok
-}
-
-// ResetHTTPURL resets all changes to the "http_url" field.
-func (m *ScheduleJobMutation) ResetHTTPURL() {
-	m.http_url = nil
-	delete(m.clearedFields, schedulejob.FieldHTTPURL)
-}
-
-// SetHTTPHeaders sets the "http_headers" field.
-func (m *ScheduleJobMutation) SetHTTPHeaders(value map[string]string) {
-	m.http_headers = &value
-}
-
-// HTTPHeaders returns the value of the "http_headers" field in the mutation.
-func (m *ScheduleJobMutation) HTTPHeaders() (r map[string]string, exists bool) {
-	v := m.http_headers
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldHTTPHeaders returns the old "http_headers" field's value of the ScheduleJob entity.
-// If the ScheduleJob object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScheduleJobMutation) OldHTTPHeaders(ctx context.Context) (v map[string]string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldHTTPHeaders is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldHTTPHeaders requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHTTPHeaders: %w", err)
-	}
-	return oldValue.HTTPHeaders, nil
-}
-
-// ClearHTTPHeaders clears the value of the "http_headers" field.
-func (m *ScheduleJobMutation) ClearHTTPHeaders() {
-	m.http_headers = nil
-	m.clearedFields[schedulejob.FieldHTTPHeaders] = struct{}{}
-}
-
-// HTTPHeadersCleared returns if the "http_headers" field was cleared in this mutation.
-func (m *ScheduleJobMutation) HTTPHeadersCleared() bool {
-	_, ok := m.clearedFields[schedulejob.FieldHTTPHeaders]
-	return ok
-}
-
-// ResetHTTPHeaders resets all changes to the "http_headers" field.
-func (m *ScheduleJobMutation) ResetHTTPHeaders() {
-	m.http_headers = nil
-	delete(m.clearedFields, schedulejob.FieldHTTPHeaders)
-}
-
-// SetHTTPBody sets the "http_body" field.
-func (m *ScheduleJobMutation) SetHTTPBody(s string) {
-	m.http_body = &s
-}
-
-// HTTPBody returns the value of the "http_body" field in the mutation.
-func (m *ScheduleJobMutation) HTTPBody() (r string, exists bool) {
-	v := m.http_body
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldHTTPBody returns the old "http_body" field's value of the ScheduleJob entity.
-// If the ScheduleJob object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScheduleJobMutation) OldHTTPBody(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldHTTPBody is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldHTTPBody requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHTTPBody: %w", err)
-	}
-	return oldValue.HTTPBody, nil
-}
-
-// ClearHTTPBody clears the value of the "http_body" field.
-func (m *ScheduleJobMutation) ClearHTTPBody() {
-	m.http_body = nil
-	m.clearedFields[schedulejob.FieldHTTPBody] = struct{}{}
-}
-
-// HTTPBodyCleared returns if the "http_body" field was cleared in this mutation.
-func (m *ScheduleJobMutation) HTTPBodyCleared() bool {
-	_, ok := m.clearedFields[schedulejob.FieldHTTPBody]
-	return ok
-}
-
-// ResetHTTPBody resets all changes to the "http_body" field.
-func (m *ScheduleJobMutation) ResetHTTPBody() {
-	m.http_body = nil
-	delete(m.clearedFields, schedulejob.FieldHTTPBody)
-}
-
-// SetHTTPTimeout sets the "http_timeout" field.
-func (m *ScheduleJobMutation) SetHTTPTimeout(i int) {
-	m.http_timeout = &i
-	m.addhttp_timeout = nil
-}
-
-// HTTPTimeout returns the value of the "http_timeout" field in the mutation.
-func (m *ScheduleJobMutation) HTTPTimeout() (r int, exists bool) {
-	v := m.http_timeout
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldHTTPTimeout returns the old "http_timeout" field's value of the ScheduleJob entity.
-// If the ScheduleJob object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScheduleJobMutation) OldHTTPTimeout(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldHTTPTimeout is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldHTTPTimeout requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHTTPTimeout: %w", err)
-	}
-	return oldValue.HTTPTimeout, nil
-}
-
-// AddHTTPTimeout adds i to the "http_timeout" field.
-func (m *ScheduleJobMutation) AddHTTPTimeout(i int) {
-	if m.addhttp_timeout != nil {
-		*m.addhttp_timeout += i
-	} else {
-		m.addhttp_timeout = &i
-	}
-}
-
-// AddedHTTPTimeout returns the value that was added to the "http_timeout" field in this mutation.
-func (m *ScheduleJobMutation) AddedHTTPTimeout() (r int, exists bool) {
-	v := m.addhttp_timeout
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetHTTPTimeout resets all changes to the "http_timeout" field.
-func (m *ScheduleJobMutation) ResetHTTPTimeout() {
-	m.http_timeout = nil
-	m.addhttp_timeout = nil
+// ResetJobName resets all changes to the "job_name" field.
+func (m *ScheduleJobMutation) ResetJobName() {
+	m.job_name = nil
 }
 
 // SetMaxRetries sets the "max_retries" field.
@@ -28700,7 +28442,7 @@ func (m *ScheduleJobMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ScheduleJobMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, schedulejob.FieldCreatedAt)
 	}
@@ -28728,23 +28470,8 @@ func (m *ScheduleJobMutation) Fields() []string {
 	if m.last_run_time != nil {
 		fields = append(fields, schedulejob.FieldLastRunTime)
 	}
-	if m.execution_type != nil {
-		fields = append(fields, schedulejob.FieldExecutionType)
-	}
-	if m.http_method != nil {
-		fields = append(fields, schedulejob.FieldHTTPMethod)
-	}
-	if m.http_url != nil {
-		fields = append(fields, schedulejob.FieldHTTPURL)
-	}
-	if m.http_headers != nil {
-		fields = append(fields, schedulejob.FieldHTTPHeaders)
-	}
-	if m.http_body != nil {
-		fields = append(fields, schedulejob.FieldHTTPBody)
-	}
-	if m.http_timeout != nil {
-		fields = append(fields, schedulejob.FieldHTTPTimeout)
+	if m.job_name != nil {
+		fields = append(fields, schedulejob.FieldJobName)
 	}
 	if m.max_retries != nil {
 		fields = append(fields, schedulejob.FieldMaxRetries)
@@ -28778,18 +28505,8 @@ func (m *ScheduleJobMutation) Field(name string) (ent.Value, bool) {
 		return m.NextRunTime()
 	case schedulejob.FieldLastRunTime:
 		return m.LastRunTime()
-	case schedulejob.FieldExecutionType:
-		return m.ExecutionType()
-	case schedulejob.FieldHTTPMethod:
-		return m.HTTPMethod()
-	case schedulejob.FieldHTTPURL:
-		return m.HTTPURL()
-	case schedulejob.FieldHTTPHeaders:
-		return m.HTTPHeaders()
-	case schedulejob.FieldHTTPBody:
-		return m.HTTPBody()
-	case schedulejob.FieldHTTPTimeout:
-		return m.HTTPTimeout()
+	case schedulejob.FieldJobName:
+		return m.JobName()
 	case schedulejob.FieldMaxRetries:
 		return m.MaxRetries()
 	case schedulejob.FieldFailureNotification:
@@ -28821,18 +28538,8 @@ func (m *ScheduleJobMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldNextRunTime(ctx)
 	case schedulejob.FieldLastRunTime:
 		return m.OldLastRunTime(ctx)
-	case schedulejob.FieldExecutionType:
-		return m.OldExecutionType(ctx)
-	case schedulejob.FieldHTTPMethod:
-		return m.OldHTTPMethod(ctx)
-	case schedulejob.FieldHTTPURL:
-		return m.OldHTTPURL(ctx)
-	case schedulejob.FieldHTTPHeaders:
-		return m.OldHTTPHeaders(ctx)
-	case schedulejob.FieldHTTPBody:
-		return m.OldHTTPBody(ctx)
-	case schedulejob.FieldHTTPTimeout:
-		return m.OldHTTPTimeout(ctx)
+	case schedulejob.FieldJobName:
+		return m.OldJobName(ctx)
 	case schedulejob.FieldMaxRetries:
 		return m.OldMaxRetries(ctx)
 	case schedulejob.FieldFailureNotification:
@@ -28909,47 +28616,12 @@ func (m *ScheduleJobMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLastRunTime(v)
 		return nil
-	case schedulejob.FieldExecutionType:
+	case schedulejob.FieldJobName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetExecutionType(v)
-		return nil
-	case schedulejob.FieldHTTPMethod:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetHTTPMethod(v)
-		return nil
-	case schedulejob.FieldHTTPURL:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetHTTPURL(v)
-		return nil
-	case schedulejob.FieldHTTPHeaders:
-		v, ok := value.(map[string]string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetHTTPHeaders(v)
-		return nil
-	case schedulejob.FieldHTTPBody:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetHTTPBody(v)
-		return nil
-	case schedulejob.FieldHTTPTimeout:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetHTTPTimeout(v)
+		m.SetJobName(v)
 		return nil
 	case schedulejob.FieldMaxRetries:
 		v, ok := value.(int)
@@ -28973,9 +28645,6 @@ func (m *ScheduleJobMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *ScheduleJobMutation) AddedFields() []string {
 	var fields []string
-	if m.addhttp_timeout != nil {
-		fields = append(fields, schedulejob.FieldHTTPTimeout)
-	}
 	if m.addmax_retries != nil {
 		fields = append(fields, schedulejob.FieldMaxRetries)
 	}
@@ -28987,8 +28656,6 @@ func (m *ScheduleJobMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ScheduleJobMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case schedulejob.FieldHTTPTimeout:
-		return m.AddedHTTPTimeout()
 	case schedulejob.FieldMaxRetries:
 		return m.AddedMaxRetries()
 	}
@@ -29000,13 +28667,6 @@ func (m *ScheduleJobMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ScheduleJobMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case schedulejob.FieldHTTPTimeout:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddHTTPTimeout(v)
-		return nil
 	case schedulejob.FieldMaxRetries:
 		v, ok := value.(int)
 		if !ok {
@@ -29031,18 +28691,6 @@ func (m *ScheduleJobMutation) ClearedFields() []string {
 	if m.FieldCleared(schedulejob.FieldLastRunTime) {
 		fields = append(fields, schedulejob.FieldLastRunTime)
 	}
-	if m.FieldCleared(schedulejob.FieldHTTPMethod) {
-		fields = append(fields, schedulejob.FieldHTTPMethod)
-	}
-	if m.FieldCleared(schedulejob.FieldHTTPURL) {
-		fields = append(fields, schedulejob.FieldHTTPURL)
-	}
-	if m.FieldCleared(schedulejob.FieldHTTPHeaders) {
-		fields = append(fields, schedulejob.FieldHTTPHeaders)
-	}
-	if m.FieldCleared(schedulejob.FieldHTTPBody) {
-		fields = append(fields, schedulejob.FieldHTTPBody)
-	}
 	return fields
 }
 
@@ -29065,18 +28713,6 @@ func (m *ScheduleJobMutation) ClearField(name string) error {
 		return nil
 	case schedulejob.FieldLastRunTime:
 		m.ClearLastRunTime()
-		return nil
-	case schedulejob.FieldHTTPMethod:
-		m.ClearHTTPMethod()
-		return nil
-	case schedulejob.FieldHTTPURL:
-		m.ClearHTTPURL()
-		return nil
-	case schedulejob.FieldHTTPHeaders:
-		m.ClearHTTPHeaders()
-		return nil
-	case schedulejob.FieldHTTPBody:
-		m.ClearHTTPBody()
 		return nil
 	}
 	return fmt.Errorf("unknown ScheduleJob nullable field %s", name)
@@ -29113,23 +28749,8 @@ func (m *ScheduleJobMutation) ResetField(name string) error {
 	case schedulejob.FieldLastRunTime:
 		m.ResetLastRunTime()
 		return nil
-	case schedulejob.FieldExecutionType:
-		m.ResetExecutionType()
-		return nil
-	case schedulejob.FieldHTTPMethod:
-		m.ResetHTTPMethod()
-		return nil
-	case schedulejob.FieldHTTPURL:
-		m.ResetHTTPURL()
-		return nil
-	case schedulejob.FieldHTTPHeaders:
-		m.ResetHTTPHeaders()
-		return nil
-	case schedulejob.FieldHTTPBody:
-		m.ResetHTTPBody()
-		return nil
-	case schedulejob.FieldHTTPTimeout:
-		m.ResetHTTPTimeout()
+	case schedulejob.FieldJobName:
+		m.ResetJobName()
 		return nil
 	case schedulejob.FieldMaxRetries:
 		m.ResetMaxRetries()
