@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Language } from '@vicons/ionicons5'
+import deltaQrcode from '@/assets/imgs/svg/delta-qrcode.svg'
 const currentLanguage = ref('zh-CN')
 const languageOptions = [
   { label: '简体中文', key: 'zh-CN' },
@@ -12,43 +13,41 @@ const handleLanguageChange = (key: string) => {
 }
 </script>
 <template>
-  <div
-    class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4"
-  >
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
     <!-- 语言切换 -->
     <div class="flex justify-end mb-4 absolute top-4 right-4">
       <n-dropdown trigger="click" :options="languageOptions" @select="handleLanguageChange">
         <n-button text>
           <template #icon>
-            <n-icon><Language /></n-icon>
+            <n-icon>
+              <Language />
+            </n-icon>
           </template>
           {{ currentLanguage === 'zh-CN' ? '简体中文' : 'English' }}
         </n-button>
       </n-dropdown>
     </div>
-    <div class="w-full max-w-md">
-      <!-- Logo -->
-      <div class="text-center mb-8">
-        <div
-          class="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center"
-        >
-          <span class="text-white text-2xl font-bold">G</span>
+    <div class="flex h-[580px]">
+
+      <!-- 登录卡片左侧的图片 -->
+      <div class="w-[300px] h-full">
+        <div class="w-[300px] h-full translate-x-[10px]">
+          <n-image src="/console/login-form-bg.webp" :preview-disabled="true" class="w-full h-full object-cover"></n-image>
         </div>
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">GoBee</h1>
-        <p class="text-gray-600">欢迎来到我们的平台</p>
       </div>
 
       <!-- 登录卡片 -->
-      <n-card class="shadow-xl rounded-2xl">
-        <div class="p-6">
-          <slot/>
+      <n-card class="shadow-xl rounded-2xl" style="width:400px">
+        <div class="p-6 relative">
+          <slot />
         </div>
       </n-card>
 
-      <!-- 底部信息 -->
-      <div class="text-center mt-6 text-gray-500 text-sm">
-        <p>© 2024 GoBee. All rights reserved.</p>
-      </div>
+
+    </div>
+    <!-- 底部信息 -->
+    <div class="text-center mt-6 text-gray-500 text-sm absolute bottom-4">
+      <p>© 2024 GoBee. All rights reserved.</p>
     </div>
   </div>
 </template>

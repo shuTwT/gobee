@@ -2,14 +2,17 @@
 import type { FormInst } from 'naive-ui'
 import type { AiSetting } from '../utils/types';
 import * as settingApi from '@/api/system/setting'
+import * as channelApi from '@/api/ai/channel'
+
+
 
 const message = useMessage()
-const aiModelOptions = [
+const aiModelOptions = ref([
   { label: 'GPT-3.5 Turbo', value: 'gpt-3.5-turbo' },
   { label: 'GPT-4', value: 'gpt-4' },
   { label: 'GPT-4 Turbo', value: 'gpt-4-turbo' },
   { label: 'GPT-4o', value: 'gpt-4o' }
-]
+])
 const aiFormRef = ref<FormInst|null>(null)
 const defaultForm = {
   openai_api_key: '',
@@ -64,6 +67,19 @@ const onSearch=(async()=>{
   aiForm.value = Object.assign({},defaultForm,res.data)
 })
 
+const refreshModelList = async () => {
+  try {
+    const res = await channelApi.getModelList(aiForm.value.openai_api_url,aiForm.value.openai_api_key)
+
+    aiModelOptions.value = res.data.data.map(item => ({
+      label: item.id,
+      value: item.id
+    }))
+  } catch {
+    message.error('刷新模型列表失败')
+  }
+}
+
 onMounted(()=>{
   onSearch()
 })
@@ -91,7 +107,7 @@ onMounted(()=>{
     <n-form-item label="AI模型" path="aiModel">
       <div class="w-full flex">
        <n-select v-model:value="aiForm.ai_model" :options="aiModelOptions" /> 
-       <n-button>刷新</n-button>
+       <n-button @click="refreshModelList">刷新</n-button>
       </div>
       
     </n-form-item>

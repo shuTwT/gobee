@@ -15,9 +15,11 @@ import { LogoGithub, LogoGoogle } from '@vicons/ionicons5'
 import { useUserStore } from '@/stores/modules/user'
 import { initRouter } from '@/router/utils'
 import LoginLayout from './components/loginLayout.vue'
+import deltaQrcode from '@/assets/imgs/svg/delta-qrcode.svg?no-inline'
 
 const message = useMessage()
 const router = useRouter()
+const dialog = useDialog()
 
 const loginForm = reactive({
   email: '',
@@ -29,7 +31,7 @@ const loading = ref(false)
 
 const handleLogin = async () => {
   if (!loginForm.email || !loginForm.password) {
-    alert('请输入用户名和密码')
+    message.warning('请输入用户名和密码')
     return
   }
 
@@ -93,21 +95,23 @@ onMounted(() => {
   <LoginLayout>
     <div class="p-6">
 
+      <span class="absolute right-0 top-0  overflow-hidden">
+        <div class="absolute top-0 left-0 bottom-0  bg-white rotate-45 translate-x-[-50%] translate-y-[22%]"
+          style="width:120px;"></div>
+        <img class="cursor-pointer" :src="deltaQrcode" style="width:64px;height:64px;">
+      </span>
+
+
+
       <!-- 用户名密码登录 -->
       <n-form :model="loginForm" class="space-y-4">
         <n-form-item label="邮箱" path="email">
           <n-input v-model:value="loginForm.email" placeholder="请输入邮箱" size="large" clearable>
             <template #prefix>
               <n-icon class="text-gray-400">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="w-5 h-5"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
                   <path
-                    d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 8.75 8.75 0 0 1-2.528 5.962.5.5 0 0 1-.668-.186 6.5 6.5 0 0 0-1.332-2.745.5.5 0 0 1 .186-.668A8.75 8.75 0 0 1 12 2.5Z"
-                  />
+                    d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 8.75 8.75 0 0 1-2.528 5.962.5.5 0 0 1-.668-.186 6.5 6.5 0 0 0-1.332-2.745.5.5 0 0 1 .186-.668A8.75 8.75 0 0 1 12 2.5Z" />
                 </svg>
               </n-icon>
             </template>
@@ -115,28 +119,14 @@ onMounted(() => {
         </n-form-item>
 
         <n-form-item label="密码" path="password">
-          <n-input
-            v-model:value="loginForm.password"
-            type="password"
-            placeholder="请输入密码"
-            size="large"
-            show-password-on="click"
-            clearable
-            @keyup.enter="handleLogin"
-          >
+          <n-input v-model:value="loginForm.password" type="password" placeholder="请输入密码" size="large"
+            show-password-on="click" clearable @keyup.enter="handleLogin">
             <template #prefix>
               <n-icon class="text-gray-400">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="w-5 h-5"
-                >
-                  <path
-                    fill-rule="evenodd"
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                  <path fill-rule="evenodd"
                     d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3A5.25 5.25 0 0 0 12 1.5Zm-3.75 5.25v3h7.5v-3a3.75 3.75 0 1 0-7.5 0Z"
-                    clip-rule="evenodd"
-                  />
+                    clip-rule="evenodd" />
                 </svg>
               </n-icon>
             </template>
@@ -144,14 +134,8 @@ onMounted(() => {
         </n-form-item>
 
         <n-form-item>
-          <n-button
-            type="primary"
-            size="large"
-            :loading="loading"
-            :disabled="loading"
-            @click="handleLogin"
-            class="!w-full"
-          >
+          <n-button type="primary" size="large" :loading="loading" :disabled="loading" @click="handleLogin"
+            class="!w-full">
             登录
           </n-button>
         </n-form-item>
@@ -165,26 +149,22 @@ onMounted(() => {
       <!-- 社交登录 -->
       <div class="mb-6">
         <n-space justify="center" :wrap="false" :size="16">
-          <n-button
-            quaternary
-            size="large"
-            @click="handleSocialLogin('github')"
-            class="border border-gray-300 hover:border-gray-400 flex-1"
-          >
+          <n-button quaternary size="large" @click="handleSocialLogin('github')"
+            class="border border-gray-300 hover:border-gray-400 flex-1">
             <template #icon>
-              <n-icon><LogoGithub /></n-icon>
+              <n-icon>
+                <LogoGithub />
+              </n-icon>
             </template>
             GitHub
           </n-button>
 
-          <n-button
-            quaternary
-            size="large"
-            @click="handleSocialLogin('gitee')"
-            class="border border-gray-300 hover:border-gray-400 flex-1"
-          >
+          <n-button quaternary size="large" @click="handleSocialLogin('gitee')"
+            class="border border-gray-300 hover:border-gray-400 flex-1">
             <template #icon>
-              <n-icon><LogoGoogle /></n-icon>
+              <n-icon>
+                <LogoGoogle />
+              </n-icon>
             </template>
             Google
           </n-button>
@@ -201,4 +181,3 @@ onMounted(() => {
     </div>
   </LoginLayout>
 </template>
-
