@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"gobee/ent"
 	"gobee/ent/flink"
-	"gobee/internal/database"
 	friend_circle_service "gobee/internal/services/content/friendcircle"
 	schedule_model "gobee/pkg/domain/model/schedule"
 	"time"
@@ -18,18 +17,18 @@ import (
 )
 
 type FriendCircleJob struct {
-	friendCircleService friend_circle_service.FriendCircleService
+	DbClient            *ent.Client
+	FriendCircleService friend_circle_service.FriendCircleService
 }
 
 func (job FriendCircleJob) Execute(c context.Context) error {
-	dbClient := database.DB
 	// 朋友圈规则
 	// rules, err := dbClient.FriendCircleRule.Query().All(c)
 	// if err != nil {
 	// 	return err
 	// }
 	// 遍历友链
-	flinks, err := dbClient.FLink.Query().Where(
+	flinks, err := job.DbClient.FLink.Query().Where(
 		flink.EnableFriendCircleEQ(true),
 		flink.FriendCircleRuleIDNotNil(),
 	).All(c)
@@ -109,9 +108,9 @@ func (job FriendCircleJob) VisitRss(httpClient *http.Client, baseUrl string, fli
 						fmt.Printf("文章总数：%d\n", len(v.Channel.Items))
 						for _, item := range v.Channel.Items[:5] { // 仅打印前5篇，避免输出过长
 							var exist bool
-							exist, err = job.friendCircleService.ExistsRecord(context.TODO(), item.Link)
+							exist, err = job.FriendCircleService.ExistsRecord(context.TODO(), item.Link)
 							if err == nil && !exist {
-								job.friendCircleService.InsertRecord(context.TODO(), flink.Name, flink.AvatarURL, item.Title, item.Link, item.PubDate)
+								job.FriendCircleService.InsertRecord(context.TODO(), flink.Name, flink.AvatarURL, item.Title, item.Link, item.PubDate)
 							}
 						}
 					case rss.AtomFeed:
@@ -137,9 +136,9 @@ func (job FriendCircleJob) VisitRss(httpClient *http.Client, baseUrl string, fli
 								}
 							}
 							var exist bool
-							exist, err = job.friendCircleService.ExistsRecord(context.TODO(), entryLink)
+							exist, err = job.FriendCircleService.ExistsRecord(context.TODO(), entryLink)
 							if err == nil && !exist {
-								job.friendCircleService.InsertRecord(context.TODO(), flink.Name, flink.AvatarURL, entry.Title, entryLink, entry.Updated)
+								job.FriendCircleService.InsertRecord(context.TODO(), flink.Name, flink.AvatarURL, entry.Title, entryLink, entry.Updated)
 							}
 						}
 

@@ -6,8 +6,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"gobee/ent"
-	"gobee/ent/user"
-	"gobee/internal/database"
 	"gobee/internal/middleware"
 	role_service "gobee/internal/services/system/role"
 	user_service "gobee/internal/services/system/user"
@@ -99,7 +97,7 @@ func (h *UserHandlerImpl) ListUserPage(c *fiber.Ctx) error {
 			Email:  user.Email,
 			RoleID: &user.RoleID,
 		}
-		role, _ := h.roleService.QueryRole(c, user.RoleID)
+		role, _ := h.roleService.QueryRole(c.Context(), user.RoleID)
 		userResp.Role = role
 		userRespList = append(userRespList, userResp)
 	}
@@ -374,11 +372,8 @@ func (h *UserHandlerImpl) GetUserProfile(c *fiber.Ctx) error {
 		))
 	}
 	userId := loginUser.ID
-	client := database.DB
 
-	user, err := client.User.Query().
-		Where(user.ID(userId)).
-		Only(c.Context())
+	user, err := h.userService.QueryUserById(c.Context(), userId)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return c.JSON(model.NewError(fiber.StatusNotFound,
@@ -389,7 +384,7 @@ func (h *UserHandlerImpl) GetUserProfile(c *fiber.Ctx) error {
 			err.Error(),
 		))
 	}
-	role, err := client.User.QueryRole(user).Only(c.Context())
+	role, err := h.roleService.QueryRole(c.Context(), user.RoleID)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),

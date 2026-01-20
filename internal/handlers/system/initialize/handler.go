@@ -3,7 +3,6 @@ package initialize
 import (
 	"fmt"
 	"gobee/ent"
-	"gobee/internal/database"
 	setting_service "gobee/internal/services/system/setting"
 	user_service "gobee/internal/services/system/user"
 	"gobee/pkg/config"
@@ -18,12 +17,13 @@ type InitializeHandler interface {
 }
 
 type InitializeHandlerImpl struct {
+	client         *ent.Client
 	userService    user_service.UserService
 	settingService setting_service.SettingService
 }
 
-func NewInitializeHandlerImpl(userService user_service.UserService, settingService setting_service.SettingService) *InitializeHandlerImpl {
-	return &InitializeHandlerImpl{userService: userService, settingService: settingService}
+func NewInitializeHandlerImpl(client *ent.Client, userService user_service.UserService, settingService setting_service.SettingService) *InitializeHandlerImpl {
+	return &InitializeHandlerImpl{client: client, userService: userService, settingService: settingService}
 }
 
 func (h *InitializeHandlerImpl) PreInit(c *fiber.Ctx) error {
@@ -54,7 +54,7 @@ func (h *InitializeHandlerImpl) Initialize(c *fiber.Ctx) error {
 	}
 
 	// 检查系统是否已初始化
-	isInitialized, err := h.settingService.IsSystemInitialized(c.UserContext(), database.DB)
+	isInitialized, err := h.settingService.IsSystemInitialized(c.UserContext())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("检查系统初始化状态失败: %v", err)))
 	}
@@ -63,7 +63,7 @@ func (h *InitializeHandlerImpl) Initialize(c *fiber.Ctx) error {
 	}
 
 	// 创建角色e
-	initRole(c)
+	h.initRole(c)
 	// 创建超级管理员账户
 	adminUser, err := h.userService.CreateUser(c.UserContext(), model.UserCreateReq{
 		Name:     req.AdminUsername,
@@ -77,29 +77,28 @@ func (h *InitializeHandlerImpl) Initialize(c *fiber.Ctx) error {
 	fmt.Printf("超级管理员账户创建成功: %s\n", adminUser.Name)
 
 	// 标记系统已初始化
-	if err := h.settingService.SetSystemInitialized(c.UserContext(), database.DB); err != nil {
+	if err := h.settingService.SetSystemInitialized(c.UserContext()); err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, fmt.Sprintf("标记系统初始化状态失败: %v", err)))
 	}
 
 	return c.JSON(model.NewSuccess("系统初始化成功", nil))
 }
 
-func initRole(c *fiber.Ctx) *ent.Role {
-	client := database.DB
+func (h *InitializeHandlerImpl) initRole(c *fiber.Ctx) *ent.Role {
 	// 初始化角色
-	role := client.Role.Create().
+	role := h.client.Role.Create().
 		SetID(1).
 		SetName("超级管理员").
 		SetCode("superAdmin").
 		SetIsDefault(true).
 		SaveX(c.UserContext())
-	client.Role.Create().
+	h.client.Role.Create().
 		SetID(2).
 		SetName("访客").
 		SetCode("guest").
 		SetIsDefault(true).
 		SaveX(c.UserContext())
-	client.Role.Create().
+	h.client.Role.Create().
 		SetID(3).
 		SetName("普通用户").
 		SetCode("common").

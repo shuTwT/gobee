@@ -1,21 +1,20 @@
 package role
 
 import (
+	"context"
 	"fmt"
 	"gobee/ent"
 	"gobee/ent/role"
 	"gobee/pkg/domain/model"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 type RoleService interface {
-	QueryRoleList(c *fiber.Ctx) ([]*ent.Role, error)
-	QueryRolePage(c *fiber.Ctx, req model.PageQuery) ([]*ent.Role, int, error)
-	QueryRole(c *fiber.Ctx, id int) (*ent.Role, error)
-	CreateRole(c *fiber.Ctx, req model.RoleCreateReq) (*ent.Role, error)
-	UpdateRole(c *fiber.Ctx, id int, req model.RoleUpdateReq) (*ent.Role, error)
-	DeleteRole(c *fiber.Ctx, id int) error
+	QueryRoleList(c context.Context) ([]*ent.Role, error)
+	QueryRolePage(c context.Context, req model.PageQuery) ([]*ent.Role, int, error)
+	QueryRole(c context.Context, id int) (*ent.Role, error)
+	CreateRole(c context.Context, req model.RoleCreateReq) (*ent.Role, error)
+	UpdateRole(c context.Context, id int, req model.RoleUpdateReq) (*ent.Role, error)
+	DeleteRole(c context.Context, id int) error
 }
 
 type RoleServiceImpl struct {
@@ -26,14 +25,14 @@ func NewRoleServiceImpl(client *ent.Client) *RoleServiceImpl {
 	return &RoleServiceImpl{client: client}
 }
 
-func (s *RoleServiceImpl) QueryRoleList(c *fiber.Ctx) ([]*ent.Role, error) {
+func (s *RoleServiceImpl) QueryRoleList(c context.Context) ([]*ent.Role, error) {
 	return s.client.Role.Query().
 		Order(ent.Desc(role.FieldID)).
-		All(c.Context())
+		All(c)
 }
 
-func (s *RoleServiceImpl) QueryRolePage(c *fiber.Ctx, req model.PageQuery) ([]*ent.Role, int, error) {
-	count, err := s.client.Role.Query().Count(c.Context())
+func (s *RoleServiceImpl) QueryRolePage(c context.Context, req model.PageQuery) ([]*ent.Role, int, error) {
+	count, err := s.client.Role.Query().Count(c)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -41,23 +40,23 @@ func (s *RoleServiceImpl) QueryRolePage(c *fiber.Ctx, req model.PageQuery) ([]*e
 		Order(ent.Desc(role.FieldID)).
 		Limit(req.Size).
 		Offset((req.Page - 1) * req.Size).
-		All(c.Context())
+		All(c)
 	if err != nil {
 		return nil, 0, err
 	}
 	return roles, count, nil
 }
 
-func (s *RoleServiceImpl) QueryRole(c *fiber.Ctx, id int) (*ent.Role, error) {
-	return s.client.Role.Query().Where(role.IDEQ(id)).First(c.Context())
+func (s *RoleServiceImpl) QueryRole(c context.Context, id int) (*ent.Role, error) {
+	return s.client.Role.Query().Where(role.IDEQ(id)).First(c)
 
 }
 
-func (s *RoleServiceImpl) CreateRole(c *fiber.Ctx, req model.RoleCreateReq) (*ent.Role, error) {
+func (s *RoleServiceImpl) CreateRole(c context.Context, req model.RoleCreateReq) (*ent.Role, error) {
 	// 检查角色代码是否已存在
 	exists, err := s.client.Role.Query().
 		Where(role.CodeEQ(req.Code)).
-		Exist(c.Context())
+		Exist(c)
 	if err != nil {
 		return nil, err
 	}
@@ -68,18 +67,18 @@ func (s *RoleServiceImpl) CreateRole(c *fiber.Ctx, req model.RoleCreateReq) (*en
 	role, err := s.client.Role.Create().
 		SetName(req.Name).
 		SetCode(req.Code).
-		Save(c.Context())
+		Save(c)
 	if err != nil {
 		return nil, err
 	}
 	return role, nil
 }
 
-func (s *RoleServiceImpl) UpdateRole(c *fiber.Ctx, id int, req model.RoleUpdateReq) (*ent.Role, error) {
+func (s *RoleServiceImpl) UpdateRole(c context.Context, id int, req model.RoleUpdateReq) (*ent.Role, error) {
 	// 检查角色代码是否已存在
 	exists, err := s.client.Role.Query().
 		Where(role.CodeEQ(req.Code)).
-		Exist(c.Context())
+		Exist(c)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +102,7 @@ func (s *RoleServiceImpl) UpdateRole(c *fiber.Ctx, id int, req model.RoleUpdateR
 
 	update.SetDescription(req.Description)
 
-	newRole, err := update.Save(c.Context())
+	newRole, err := update.Save(c)
 	if err != nil {
 		return nil, err
 	}
@@ -111,6 +110,6 @@ func (s *RoleServiceImpl) UpdateRole(c *fiber.Ctx, id int, req model.RoleUpdateR
 	return newRole, nil
 }
 
-func (s *RoleServiceImpl) DeleteRole(c *fiber.Ctx, id int) error {
-	return s.client.Role.DeleteOneID(id).Exec(c.Context())
+func (s *RoleServiceImpl) DeleteRole(c context.Context, id int) error {
+	return s.client.Role.DeleteOneID(id).Exec(c)
 }

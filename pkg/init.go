@@ -2,7 +2,7 @@ package pkg
 
 import (
 	"embed"
-	"gobee/internal/database"
+	"gobee/ent"
 	album_service "gobee/internal/services/content/album"
 	albumphoto_service "gobee/internal/services/content/albumphoto"
 	category_service "gobee/internal/services/content/category"
@@ -36,10 +36,7 @@ import (
 	role_service "gobee/internal/services/system/role"
 	setting_service "gobee/internal/services/system/setting"
 	user_service "gobee/internal/services/system/user"
-	"gobee/pkg/config"
 )
-
-const autoMigrate = true
 
 type ServiceMap struct {
 	AlbumService            album_service.AlbumService
@@ -77,16 +74,7 @@ type ServiceMap struct {
 	WalletService           wallet_service.WalletService
 }
 
-func InitializeServices(moduleDefs embed.FS) ServiceMap {
-	dbType := config.GetString(config.DATABASE_TYPE)
-	dbConfig := database.DBConfig{
-		DBType: dbType,
-		DBUrl:  config.GetString(config.DATABASE_URL),
-	}
-	db, err := database.InitializeDB(dbConfig, autoMigrate)
-	if err != nil {
-		panic(err)
-	}
+func InitializeServices(moduleDefs embed.FS, db *ent.Client) ServiceMap {
 
 	albumService := album_service.NewAlbumServiceImpl(db)
 	albumPhotoService := albumphoto_service.NewAlbumPhotoServiceImpl(db)

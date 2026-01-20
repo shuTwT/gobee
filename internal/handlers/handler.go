@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"gobee/internal/database"
+	"gobee/ent"
 	album_handler "gobee/internal/handlers/content/album"
 	albumphoto_handler "gobee/internal/handlers/content/albumphoto"
 	category_handler "gobee/internal/handlers/content/category"
@@ -78,7 +78,7 @@ type HandlerMap struct {
 	WalletHandler           wallet_handler.WalletHandler
 }
 
-func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
+func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 	albumHandler := album_handler.NewAlbumHandlerImpl(serviceMap.AlbumService)
 	albnumPhotoHandler := albumphoto_handler.NewAlbumPhotoHandlerImpl(serviceMap.AlbumPhotoService)
 	apiInterfaceHandler := apiinterface_handler.NewApiInterfaceHandlerImpl(serviceMap.ApiInterfaceService)
@@ -90,13 +90,13 @@ func InitHandler(serviceMap pkg.ServiceMap) HandlerMap {
 	couponUsageHandler := couponusage_handler.NewCouponUsageHandlerImpl(serviceMap.CouponUsageService)
 	doclibraryHandler := doclibrary_handler.NewDocLibraryHandlerImpl(serviceMap.DocLibraryService)
 	doclibrarydetailHandler := doclibrarydetail_handler.NewDocLibraryDetailHandlerImpl(serviceMap.DocLibraryDetailService)
-	fileHandler := file_handler.NewFileHandlerImpl(serviceMap.FileService)
-	flinkHandler := flink_handler.NewFlinkHandlerImpl(database.DB, serviceMap.FlinkService)
-	flinkGroupHandler := flinkgroup_handler.NewFlinkGroupHandlerImpl(database.DB, serviceMap.FlinkService)
+	fileHandler := file_handler.NewFileHandlerImpl(serviceMap.FileService, serviceMap.StorageStrategyService)
+	flinkHandler := flink_handler.NewFlinkHandlerImpl(db, serviceMap.FlinkService)
+	flinkGroupHandler := flinkgroup_handler.NewFlinkGroupHandlerImpl(db, serviceMap.FlinkService)
 	friendCircleHandler := friendcircle_handler.NewFriendCircleHandlerImpl(serviceMap.FriendCircleService)
-	initializeHandler := initialize_handler.NewInitializeHandlerImpl(serviceMap.UserService, serviceMap.SettingService)
+	initializeHandler := initialize_handler.NewInitializeHandlerImpl(db, serviceMap.UserService, serviceMap.SettingService)
 	knowledgeBaseHandler := knowledgebase_handler.NewKnowledgeBaseHandlerImpl(serviceMap.KnowledgeBaseService)
-	payOrderHandler := payorder_handler.NewPayOrderHandlerImpl(database.DB, serviceMap.PayOrderService)
+	payOrderHandler := payorder_handler.NewPayOrderHandlerImpl(db, serviceMap.PayOrderService)
 	postHandler := post_handler.NewPostHandlerImpl(serviceMap.PostService)
 	productHandler := product_handler.NewProductHandlerImpl(serviceMap.ProductService)
 	roleHandler := role_handler.NewRoleHandlerImpl(serviceMap.RoleService)

@@ -7,14 +7,12 @@ import (
 
 	"gobee/ent"
 	"gobee/ent/payorder"
-	"gobee/internal/database"
 	payorder_service "gobee/internal/services/mall/payorder"
 	"gobee/pkg/domain/model"
 )
 
 type PayOrderHandler interface {
 	ListPayOrderPage(c *fiber.Ctx) error
-	CreatePayOrder(c *fiber.Ctx) error
 	UpdatePayOrder(c *fiber.Ctx) error
 	QueryPayOrder(c *fiber.Ctx) error
 	DeletePayOrder(c *fiber.Ctx) error
@@ -52,44 +50,6 @@ func (h *PayOrderHandlerImpl) ListPayOrderPage(c *fiber.Ctx) error {
 		Records: orders,
 	}
 	return c.JSON(model.NewSuccess("success", pageResult))
-}
-
-// @Summary 创建支付订单
-// @Description 创建一个新的支付订单
-// @Tags payorders
-// @Accept json
-// @Produce json
-// @Param payorder body ent.PayOrder true "支付订单信息"
-// @Success 201 {object} ent.PayOrder
-// @Failure 400 {object} model.HttpError
-// @Failure 500 {object} model.HttpError
-// @Router /api/v1/payorders [post]
-func (h *PayOrderHandlerImpl) CreatePayOrder(c *fiber.Ctx) error {
-	client := database.DB
-	var order *model.PayOrderCreateReq
-	if err := c.BodyParser(&order); err != nil {
-		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
-	}
-
-	newOrder, err := client.PayOrder.Create().
-		SetChannelType(order.ChannelType).
-		SetOrderID(order.OrderID).
-		SetOutTradeNo(order.OutTradeNo).
-		SetTotalFee(order.TotalFee).
-		SetSubject(order.Subject).
-		SetBody(order.Body).
-		SetNotifyURL(order.NotifyURL).
-		SetReturnURL(order.ReturnURL).
-		SetExtra(order.Extra).
-		SetPayURL(order.PayURL).
-		SetState(order.State).
-		SetErrorMsg(order.ErrorMsg).
-		SetRaw(order.Raw).
-		Save(c.Context())
-	if err != nil {
-		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-	}
-	return c.JSON(model.NewSuccess("success", newOrder))
 }
 
 // @Summary 更新支付订单
@@ -201,6 +161,16 @@ func (h *PayOrderHandlerImpl) DeletePayOrder(c *fiber.Ctx) error {
 	))
 }
 
+// @Summary 提交支付订单
+// @Description 提交一个新的支付订单
+// @Tags payorders
+// @Accept json
+// @Produce json
+// @Param payorder body model.PayOrderSubmitReq true "支付订单提交请求"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/payorders/submit [post]
 func (h *PayOrderHandlerImpl) SubmitPayOrder(c *fiber.Ctx) error {
 	var req model.PayOrderSubmitReq
 	if err := c.BodyParser(&req); err != nil {

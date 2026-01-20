@@ -5,8 +5,10 @@ import (
 	"embed"
 	"fmt"
 
+	"gobee/internal/database"
 	"gobee/internal/handlers"
 	"gobee/internal/router"
+	"gobee/internal/schedule"
 	"gobee/pkg"
 	"gobee/pkg/config"
 
@@ -18,7 +20,26 @@ import (
 
 func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 	config.Init()
-	serviceMap := pkg.InitializeServices(moduleDefs)
+	dbType := config.GetString(config.DATABASE_TYPE)
+	dbConfig := database.DBConfig{
+		DBType: dbType,
+		DBUrl:  config.GetString(config.DATABASE_URL),
+	}
+	db, err := database.InitializeDB(dbConfig, true)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	serviceMap := pkg.InitializeServices(moduleDefs, db)
+
+	if !fiber.IsChild() {
+		// 主进程程初始化定时任务
+		scheduler, err := schedule.InitializeSchedule(db, serviceMap)
+		if err != nil {
+			defer scheduler.Shutdown()
+		}
+	}
 
 	app := fiber.New(fiber.Config{
 		AppName:       "Fiber HTML Template Demo",
@@ -50,8 +71,8 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) *fiber.App {
 
 	router.InitFrontendRes(app, frontendRes)
 
-	handlerMap := handlers.InitHandler(serviceMap)
-	router.Initialize(app, handlerMap)
+	handlerMap := handlers.InitHandler(serviceMap, db)
+	router.Initialize(app, handlerMap, db)
 
 	go func() {
 		if err := serviceMap.PluginService.AutoStartPlugins(context.Background()); err != nil {

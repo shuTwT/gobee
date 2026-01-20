@@ -14,6 +14,8 @@ type StorageStrategyService interface {
 	QueryStorageStrategy(ctx context.Context, id int) (*ent.StorageStrategy, error)
 	DeleteStorageStrategy(ctx context.Context, id int) error
 	SetDefaultStorageStrategy(ctx context.Context, id int) error
+	GetMasterStorageStrategy(ctx context.Context) (*ent.StorageStrategy, error)
+	GetStorageStrategyByID(ctx context.Context, id int) (*ent.StorageStrategy, error)
 }
 
 type StorageStrategyServiceImpl struct {
@@ -121,4 +123,26 @@ func (s *StorageStrategyServiceImpl) SetDefaultStorageStrategy(ctx context.Conte
 		return err
 	}
 	return nil
+}
+
+// GetMasterStorageStrategy 获取主存储策略
+func (s *StorageStrategyServiceImpl) GetMasterStorageStrategy(ctx context.Context) (*ent.StorageStrategy, error) {
+	strategy, err := s.client.StorageStrategy.Query().
+		Where(storagestrategy.Master(true)).
+		First(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return strategy, nil
+}
+
+// GetStorageStrategyByID 根据ID获取存储策略
+func (s *StorageStrategyServiceImpl) GetStorageStrategyByID(ctx context.Context, id int) (*ent.StorageStrategy, error) {
+	strategy, err := s.client.StorageStrategy.Query().
+		Where(storagestrategy.ID(id)).
+		First(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return strategy, nil
 }

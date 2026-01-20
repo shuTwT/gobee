@@ -4,12 +4,9 @@ import (
 	"embed"
 	"log"
 
-	"github.com/gofiber/fiber/v2"
 	_ "github.com/mattn/go-sqlite3"
 
 	server "gobee/cmd/server"
-	"gobee/internal/database"
-	"gobee/internal/schedule"
 
 	_ "gobee/docs"
 	"gobee/internal/infra/logger"
@@ -34,14 +31,6 @@ var frontendRes embed.FS
 func main() {
 	logger.NewLogger()
 	app := server.InitializeApp(moduleDefs, frontendRes)
-	defer database.CloseDB()
-	if !fiber.IsChild() {
-		// 主进程程初始化定时任务
-		scheduler, err := schedule.InitializeSchedule()
-		if err != nil {
-			defer scheduler.Shutdown()
-		}
-	}
 
 	log.Fatal(app.Listen(":13000"))
 }

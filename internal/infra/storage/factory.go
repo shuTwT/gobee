@@ -1,11 +1,8 @@
 package storage
 
 import (
-	"context"
 	"fmt"
 	"gobee/ent"
-	"gobee/ent/storagestrategy"
-	"gobee/internal/database"
 	"gobee/internal/infra/storage/ftp"
 	"gobee/internal/infra/storage/local"
 	"gobee/internal/infra/storage/s3"
@@ -69,15 +66,9 @@ func ClearCache() {
 }
 
 // 获取上传器，如果不存在就新建
-func GetUploader(strategy *ent.StorageStrategy) (Uploader, error) {
-	if uploader, ok := uploaderCache[strategy.ID]; ok {
+func GetUploader(storageStrategy *ent.StorageStrategy) (Uploader, error) {
+	if uploader, ok := uploaderCache[storageStrategy.ID]; ok {
 		return uploader, nil
-	}
-
-	// 从数据库获取配置
-	storageStrategy, err := GetStorageStrategyByID(strategy.ID)
-	if err != nil {
-		return nil, err
 	}
 
 	var config StorageConfig
@@ -106,31 +97,7 @@ func GetUploader(strategy *ent.StorageStrategy) (Uploader, error) {
 	}
 
 	// 缓存上传器
-	uploaderCache[strategy.ID] = uploader
+	uploaderCache[storageStrategy.ID] = uploader
 
 	return uploader, nil
-}
-
-/**
- * GetMasterStorageStrategy 获取主存储策略
- * @return (*ent.StorageStrategy, error)
- */
-func GetMasterStorageStrategy() (*ent.StorageStrategy, error) {
-	client := database.DB
-	// 找到 master 为 true 的
-	strategy, err := client.StorageStrategy.Query().Where(storagestrategy.Master(true)).First(context.Background())
-	if err != nil {
-		return nil, err
-	}
-	return strategy, nil
-}
-
-func GetStorageStrategyByID(id int) (*ent.StorageStrategy, error) {
-	client := database.DB
-	// 找到 master 为 true 的
-	strategy, err := client.StorageStrategy.Query().Where(storagestrategy.ID(id)).First(context.Background())
-	if err != nil {
-		return nil, err
-	}
-	return strategy, nil
 }

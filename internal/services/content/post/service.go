@@ -20,13 +20,17 @@ type PostService interface {
 	QueryPostList(c context.Context, req model.PostListReq) ([]*ent.Post, error)
 	QueryPostPage(c context.Context, req model.PostPageReq) ([]*ent.Post, int, error)
 	QueryPostBySlug(c context.Context, slug string) (*ent.Post, error)
+	QueryPostById(c context.Context, id int) (*ent.Post, error)
 	CreatePost(c context.Context, title string, content string) (*ent.Post, error)
 	UpdatePostContent(c context.Context, id int, content string) (*ent.Post, error)
 	UpdatePostSetting(c context.Context, id int, post model.PostUpdateReq) (*ent.Post, error)
+	DeletePost(c context.Context, id int) error
 	GetPostCount(c context.Context) (int, error)
 	GetPostMonthStats(c context.Context, req model.PostMonthStatsReq) ([]model.PostMonthStat, error)
 	GetRandomPost(c context.Context) (*ent.Post, error)
 	SearchPosts(c context.Context, req model.PostSearchReq) ([]*model.PostSearchResp, int, error)
+	PublishPost(c context.Context, id int) (*ent.Post, error)
+	UnpublishPost(c context.Context, id int) (*ent.Post, error)
 }
 
 type PostServiceImpl struct {
@@ -160,6 +164,18 @@ func (s *PostServiceImpl) QueryPostBySlug(c context.Context, slug string) (*ent.
 	return post, nil
 }
 
+func (s *PostServiceImpl) QueryPostById(c context.Context, id int) (*ent.Post, error) {
+	post, err := s.client.Post.Query().
+		Where(post.ID(id)).
+		WithCategories().
+		WithTags().
+		Only(c)
+	if err != nil {
+		return nil, err
+	}
+	return post, nil
+}
+
 func (s *PostServiceImpl) UpdatePostContent(c context.Context, id int, content string) (*ent.Post, error) {
 	newPost, err := s.client.Post.UpdateOneID(id).
 		SetContent(content).
@@ -208,6 +224,10 @@ func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, updateReq
 		AddTagIDs(updateReq.Tags...).
 		Save(c)
 	return newPost, err
+}
+
+func (s *PostServiceImpl) DeletePost(c context.Context, id int) error {
+	return s.client.Post.DeleteOneID(id).Exec(c)
 }
 
 func (s *PostServiceImpl) GetPostCount(c context.Context) (int, error) {
@@ -390,4 +410,25 @@ func (s *PostServiceImpl) calculateRelevance(p *ent.Post, keyword string) float6
 	}
 
 	return relevance
+}
+
+func (s *PostServiceImpl) PublishPost(c context.Context, id int) (*ent.Post, error) {
+	post, err := s.client.Post.UpdateOneID(id).
+		SetStatus("published").
+		SetPublishedAt(time.Now()).
+		Save(c)
+	if err != nil {
+		return nil, err
+	}
+	return post, nil
+}
+
+func (s *PostServiceImpl) UnpublishPost(c context.Context, id int) (*ent.Post, error) {
+	post, err := s.client.Post.UpdateOneID(id).
+		SetStatus("draft").
+		Save(c)
+	if err != nil {
+		return nil, err
+	}
+	return post, nil
 }

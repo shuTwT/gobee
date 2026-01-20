@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"gobee/ent"
-	"gobee/internal/database"
 	wallet_service "gobee/internal/services/mall/wallet"
 	"gobee/pkg/domain/model"
 
@@ -107,7 +106,6 @@ func (h *WalletHandlerImpl) QueryWalletPage(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/wallet/update/{id} [put]
 func (h *WalletHandlerImpl) UpdateWallet(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
@@ -115,28 +113,14 @@ func (h *WalletHandlerImpl) UpdateWallet(c *fiber.Ctx) error {
 		))
 	}
 
-	var walletData *model.WalletUpdateReq
+	var walletData model.WalletUpdateReq
 	if err = c.BodyParser(&walletData); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			err.Error(),
 		))
 	}
 
-	update := client.Wallet.UpdateOneID(id)
-
-	if walletData.Password != "" {
-		update.SetPassword(walletData.Password)
-	}
-
-	if walletData.Remark != "" {
-		update.SetRemark(walletData.Remark)
-	}
-
-	if walletData.Active != nil {
-		update.SetActive(*walletData.Active)
-	}
-
-	updatedWallet, err := update.Save(c.Context())
+	updatedWallet, err := h.walletService.UpdateWallet(c.Context(), id, walletData)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),

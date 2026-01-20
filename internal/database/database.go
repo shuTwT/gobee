@@ -11,8 +11,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var DB *ent.Client
-
 type DBConfig struct {
 	DBType string
 
@@ -39,7 +37,6 @@ func InitializeDB(cfg DBConfig, autoMigrate bool) (*ent.Client, error) {
 		log.Fatalf("failed opening connection to %s: %v", cfg.DBType, err)
 		return nil, err
 	}
-	DB = client
 
 	// 主进程执行迁移
 	if autoMigrate && !fiber.IsChild() {
@@ -49,8 +46,4 @@ func InitializeDB(cfg DBConfig, autoMigrate bool) (*ent.Client, error) {
 		}
 	}
 	return client, nil
-}
-
-func CloseDB() error {
-	return DB.Close()
 }

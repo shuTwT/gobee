@@ -37,7 +37,7 @@ func NewRoleHandlerImpl(roleService role_service.RoleService) *RoleHandlerImpl {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/roles [get]
 func (h *RoleHandlerImpl) ListRole(c *fiber.Ctx) error {
-	roles, err := h.roleService.QueryRoleList(c)
+	roles, err := h.roleService.QueryRoleList(c.Context())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -68,7 +68,7 @@ func (h *RoleHandlerImpl) ListRolePage(c *fiber.Ctx) error {
 		))
 	}
 
-	roles, count, err := h.roleService.QueryRolePage(c, pageQuery)
+	roles, count, err := h.roleService.QueryRolePage(c.Context(), pageQuery)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -99,7 +99,7 @@ func (h *RoleHandlerImpl) CreateRole(c *fiber.Ctx) error {
 		))
 	}
 
-	role, err := h.roleService.CreateRole(c, roleData)
+	role, err := h.roleService.CreateRole(c.Context(), roleData)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -135,7 +135,7 @@ func (h *RoleHandlerImpl) UpdateRole(c *fiber.Ctx) error {
 		))
 	}
 
-	role, err := h.roleService.UpdateRole(c, id, roleData)
+	role, err := h.roleService.UpdateRole(c.Context(), id, roleData)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -162,7 +162,7 @@ func (h *RoleHandlerImpl) QueryRole(c *fiber.Ctx) error {
 			"Invalid ID format",
 		))
 	}
-	role, err := h.roleService.QueryRole(c, id)
+	role, err := h.roleService.QueryRole(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),
@@ -188,7 +188,7 @@ func (h *RoleHandlerImpl) DeleteRole(c *fiber.Ctx) error {
 			"Invalid ID format",
 		))
 	}
-	err = h.roleService.DeleteRole(c, id)
+	err = h.roleService.DeleteRole(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError,
 			err.Error(),

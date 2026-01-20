@@ -2,7 +2,6 @@ package setting_handler
 
 import (
 	"encoding/json"
-	"gobee/internal/database"
 	setting_service "gobee/internal/services/system/setting"
 	"gobee/pkg/domain/model"
 
@@ -35,17 +34,16 @@ func NewSettingHandlerImpl(settingService setting_service.SettingService) *Setti
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/settings [get]
 func (h *SettingHandlerImpl) GetSettings(c *fiber.Ctx) error {
-	client := database.DB
 	ctx := c.Context()
 
 	// 获取所有系统设置
-	settings, err := h.settingService.GetAllSettings(ctx, client)
+	settings, err := h.settingService.GetAllSettings(ctx)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
 	// 检查系统是否已初始化
-	initialized, err := h.settingService.IsSystemInitialized(ctx, client)
+	initialized, err := h.settingService.IsSystemInitialized(ctx)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -72,14 +70,13 @@ func (h *SettingHandlerImpl) GetSettings(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/settings/json/{key} [get]
 func (h *SettingHandlerImpl) GetJsonSettingsMap(c *fiber.Ctx) error {
-	client := database.DB
 	ctx := c.Context()
 
 	key := c.Params("key")
 
 	var exist bool
 	var err error
-	exist, err = h.settingService.ExistSettingByKey(ctx, client, key)
+	exist, err = h.settingService.ExistSettingByKey(ctx, key)
 	if err != nil {
 		log.Errorf("Error getting setting by key %s: %v", key, err)
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
@@ -89,7 +86,7 @@ func (h *SettingHandlerImpl) GetJsonSettingsMap(c *fiber.Ctx) error {
 	}
 
 	// 获取所有系统设置
-	setting, err := h.settingService.GetSettingByKey(ctx, client, key)
+	setting, err := h.settingService.GetSettingByKey(ctx, key)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -114,7 +111,6 @@ func (h *SettingHandlerImpl) GetJsonSettingsMap(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/settings/{key} [post]
 func (h *SettingHandlerImpl) SaveSettings(c *fiber.Ctx) error {
-	client := database.DB
 	ctx := c.Context()
 
 	key := c.Params("key")
@@ -127,7 +123,7 @@ func (h *SettingHandlerImpl) SaveSettings(c *fiber.Ctx) error {
 
 	var exist bool
 	var err error
-	exist, err = h.settingService.ExistSettingByKey(ctx, client, key)
+	exist, err = h.settingService.ExistSettingByKey(ctx, key)
 	if err != nil {
 		log.Errorf("Error getting setting by key %s: %v", key, err)
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
@@ -138,9 +134,9 @@ func (h *SettingHandlerImpl) SaveSettings(c *fiber.Ctx) error {
 	}
 
 	if exist {
-		err = h.settingService.UpdateSettingByKey(ctx, client, key, string(value))
+		err = h.settingService.UpdateSettingByKey(ctx, key, string(value))
 	} else {
-		err = h.settingService.CreateSettingIfNotExist(ctx, client, key, string(value))
+		err = h.settingService.CreateSettingIfNotExist(ctx, key, string(value))
 	}
 	if err != nil {
 		log.Errorf("Error updating/creating setting by key %s: %v", key, err)

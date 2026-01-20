@@ -4,6 +4,7 @@ import (
 	"gobee/ent"
 	"gobee/internal/infra/storage"
 	"gobee/internal/services/infra/file"
+	"gobee/internal/services/infra/storagestrategy"
 	"gobee/pkg/domain/model"
 	"strconv"
 
@@ -19,11 +20,12 @@ type FileHandler interface {
 }
 
 type FileHandlerImpl struct {
-	fileService file.FileService
+	fileService    file.FileService
+	storageService storagestrategy.StorageStrategyService
 }
 
-func NewFileHandlerImpl(fileService file.FileService) *FileHandlerImpl {
-	return &FileHandlerImpl{fileService: fileService}
+func NewFileHandlerImpl(fileService file.FileService, storageService storagestrategy.StorageStrategyService) *FileHandlerImpl {
+	return &FileHandlerImpl{fileService: fileService, storageService: storageService}
 }
 
 func (h *FileHandlerImpl) ListFile(c *fiber.Ctx) error {
@@ -164,7 +166,7 @@ func (h *FileHandlerImpl) Upload(c *fiber.Ctx) error {
 	for _, file := range files {
 
 		// 获取存储策略
-		strategy, err := storage.GetStorageStrategyByID(storageStrategyID)
+		strategy, err := h.storageService.GetStorageStrategyByID(c.Context(), storageStrategyID)
 		if err != nil {
 			return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 		}

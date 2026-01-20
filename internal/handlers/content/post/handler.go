@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"gobee/ent/post"
-	"gobee/internal/database"
 	"gobee/internal/infra/logger"
 	"gobee/pkg/domain/model"
 	"strconv"
@@ -259,15 +257,12 @@ func (h *PostHandlerImpl) UpdatePostSetting(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/posts/{id}/publish [put]
 func (h *PostHandlerImpl) PublishPost(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	newPost, err := client.Post.UpdateOneID(id).
-		SetStatus("published").
-		Save(c.Context())
+	newPost, err := h.postService.PublishPost(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -285,15 +280,12 @@ func (h *PostHandlerImpl) PublishPost(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/posts/{id}/unpublish [put]
 func (h *PostHandlerImpl) UnpublishPost(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	newPost, err := client.Post.UpdateOneID(id).
-		SetStatus("draft").
-		Save(c.Context())
+	newPost, err := h.postService.UnpublishPost(c.Context(), id)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -311,15 +303,12 @@ func (h *PostHandlerImpl) UnpublishPost(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/posts/{id} [get]
 func (h *PostHandlerImpl) QueryPost(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	post, err := client.Post.Query().WithCategories().WithTags().
-		Where(post.ID(id)).
-		First(c.Context())
+	post, err := h.postService.QueryPostById(c.Context(), id)
 	postResp := model.PostResp{
 		ID:                    post.ID,
 		Title:                 post.Title,
@@ -449,13 +438,12 @@ func (h *PostHandlerImpl) QueryPostBySlug(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/posts/{id} [delete]
 func (h *PostHandlerImpl) DeletePost(c *fiber.Ctx) error {
-	client := database.DB
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest,
 			"Invalid ID format"))
 	}
-	if err := client.Post.DeleteOneID(id).Exec(c.Context()); err != nil {
+	if err := h.postService.DeletePost(c.Context(), id); err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("success", nil))

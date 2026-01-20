@@ -1,6 +1,7 @@
 package router
 
 import (
+	"gobee/ent"
 	"gobee/internal/handlers"
 	"gobee/internal/middleware"
 
@@ -243,7 +244,6 @@ func initMallRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	payOrderApi := router.Group("/pay-order")
 	{
 		payOrderApi.Get("/page", handlerMap.PayOrderHandler.ListPayOrderPage).Name("payOrderPage")
-		payOrderApi.Put("/create", handlerMap.PayOrderHandler.CreatePayOrder).Name("payOrderCreate")
 		payOrderApi.Put("/update/:id", handlerMap.PayOrderHandler.UpdatePayOrder).Name("payOrderUpdate")
 		payOrderApi.Get("/query/:id", handlerMap.PayOrderHandler.QueryPayOrder).Name("payOrderQuery")
 		payOrderApi.Delete("/delete/:id", handlerMap.PayOrderHandler.DeletePayOrder).Name("payOrderDelete")
@@ -282,7 +282,7 @@ func initMallRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	}
 }
 
-func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
+func Initialize(router *fiber.App, handlerMap handlers.HandlerMap, dbClient *ent.Client) {
 	router.Use(middleware.Security)
 	router.Get("/api/preinit", handlerMap.InitializeHandler.PreInit)
 	router.Post("/api/initialize", handlerMap.InitializeHandler.Initialize)
@@ -311,7 +311,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap) {
 			apiV1.Get("/user/search", handlerMap.UserHandler.SearchUsers).Name("userSearch")
 			apiV1.Get("/product/search", handlerMap.ProductHandler.SearchProducts).Name("productSearch")
 
-			apiV1.Use(middleware.FlexibleAuth())
+			apiV1.Use(middleware.FlexibleAuth(dbClient))
 
 			// 首页统计信息接口
 			apiV1.Get("/common/statistic", handlerMap.CommonHandler.GetHomeStatistics).Name("homeStatistic")

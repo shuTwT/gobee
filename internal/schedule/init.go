@@ -3,7 +3,9 @@ package schedule
 import (
 	"context"
 	"fmt"
+	"gobee/ent"
 	friendcircle_job "gobee/internal/job/friendcircle"
+	"gobee/pkg"
 	schedule_model "gobee/pkg/domain/model/schedule"
 	"log"
 
@@ -19,9 +21,12 @@ func ClearCache() {
 }
 
 // 初始化调度
-func InitializeSchedule() (gocron.Scheduler, error) {
+func InitializeSchedule(db *ent.Client, serviceMap pkg.ServiceMap) (gocron.Scheduler, error) {
 	jobCache = map[string]schedule_model.Job{
-		"friendCircle": friendcircle_job.FriendCircleJob{},
+		"friendCircle": friendcircle_job.FriendCircleJob{
+			DbClient:            db,
+			FriendCircleService: serviceMap.FriendCircleService,
+		},
 	}
 	// 创建调度器
 	scheduler, err := gocron.NewScheduler()

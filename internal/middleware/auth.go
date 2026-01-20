@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"gobee/ent"
 	"gobee/ent/personalaccesstoken"
-	"gobee/internal/database"
 	"gobee/pkg/config"
 	"gobee/pkg/domain/model"
 	"strings"
@@ -47,7 +47,8 @@ func jwtSuccess(c *fiber.Ctx) error {
 }
 
 // FlexibleAuth 支持JWT或个人访问令牌任意一种认证方式
-func FlexibleAuth() fiber.Handler {
+func FlexibleAuth(dbClient *ent.Client) fiber.Handler {
+	var client = dbClient
 	return func(c *fiber.Ctx) error {
 		authToken := c.Get("Authorization")
 
@@ -90,7 +91,6 @@ func FlexibleAuth() fiber.Handler {
 			if err == nil && token.Valid {
 				claims := token.Claims.(jwt.MapClaims)
 
-				client := database.DB
 				pat, err := client.PersonalAccessToken.Query().
 					Where(personalaccesstoken.Token(tokenString)).
 					First(c.Context())
@@ -130,17 +130,52 @@ func GetCurrentUser(c *fiber.Ctx) *model.LoginUser {
 }
 
 // PersonalAccessTokenProtected 使用个人访问令牌保护需要认证的路由
-func PersonalAccessTokenProtected() fiber.Handler {
-	secret := config.GetString(config.AUTH_PAT_SECRET)
-	return jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{
-			JWTAlg: "HS256",
-			Key:    []byte(secret),
-		},
-		TokenLookup:    "header:accessToken",
-		ErrorHandler:   patError,
-		SuccessHandler: patSuccess,
-	})
+func PersonalAccessTokenProtected(dbClient *ent.Client) fiber.Handler {
+	var client = dbClient
+	return func(c *fiber.Ctx) error {
+		authToken := c.Get("Authorization")
+		if authToken == "" {
+			return c.JSON(model.NewError(fiber.StatusUnauthorized, "Authentication required"))
+		}
+		tokenString := strings.TrimPrefix(authToken, "Bearer ")
+		if tokenString == "" {
+			return c.JSON(model.NewError(fiber.StatusUnauthorized, "Invalid token format"))
+		}
+		patSecret := config.GetString(config.AUTH_PAT_SECRET)
+
+		hasAuth := false
+
+		if !hasAuth {
+			token, err := jwt.ParseWithClaims(tokenString, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+				return []byte(patSecret), nil
+			})
+
+			if err == nil && token.Valid {
+				claims := token.Claims.(jwt.MapClaims)
+
+				pat, err := client.PersonalAccessToken.Query().
+					Where(personalaccesstoken.Token(tokenString)).
+					First(c.Context())
+
+				if err == nil {
+					if pat.Expires.IsZero() || pat.Expires.After(c.Context().Time()) {
+						c.Locals("userId", claims["id"])
+						c.Locals("userEmail", claims["email"])
+						c.Locals("userName", claims["name"])
+						c.Locals("patId", pat.ID)
+						c.Locals("authSuccess", true)
+						c.Locals("authType", "pat")
+						hasAuth = true
+					}
+				}
+			}
+		}
+		if hasAuth {
+			return c.Next()
+		}
+
+		return c.JSON(model.NewError(fiber.StatusUnauthorized, "Authentication required"))
+	}
 }
 
 // patError 处理个人访问令牌JWT错误
@@ -148,43 +183,4 @@ func patError(c *fiber.Ctx, err error) error {
 	c.Locals("authFailed", true)
 	c.Locals("authType", "pat")
 	return nil
-}
-
-// patSuccess 处理个人访问令牌验证成功
-func patSuccess(c *fiber.Ctx) error {
-	token := c.Locals("user").(*jwt.Token)
-	claims := token.Claims.(jwt.MapClaims)
-
-	tokenString := c.Get("accessToken")
-	if tokenString == "" {
-		c.Locals("authFailed", true)
-		c.Locals("authType", "pat")
-		return c.JSON(model.NewError(fiber.StatusUnauthorized, "Personal access token not found"))
-	}
-
-	client := database.DB
-	pat, err := client.PersonalAccessToken.Query().
-		Where(personalaccesstoken.Token(tokenString)).
-		First(c.Context())
-
-	if err != nil {
-		c.Locals("authFailed", true)
-		c.Locals("authType", "pat")
-		return c.JSON(model.NewError(fiber.StatusUnauthorized, "Personal access token not found or expired"))
-	}
-
-	if !pat.Expires.IsZero() && pat.Expires.Before(c.Context().Time()) {
-		c.Locals("authFailed", true)
-		c.Locals("authType", "pat")
-		return c.JSON(model.NewError(fiber.StatusUnauthorized, "Personal access token has expired"))
-	}
-
-	c.Locals("userId", claims["id"])
-	c.Locals("userEmail", claims["email"])
-	c.Locals("userName", claims["name"])
-	c.Locals("patId", pat.ID)
-	c.Locals("authSuccess", true)
-	c.Locals("authType", "pat")
-
-	return c.Next()
 }

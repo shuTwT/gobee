@@ -13,6 +13,7 @@ type WalletService interface {
 	QueryWallet(c *fiber.Ctx, userId int) (*ent.Wallet, error)
 	QueryWalletPage(c *fiber.Ctx, pageQuery model.PageQuery) (int, []*ent.Wallet, error)
 	CreateWallet(c context.Context, userId int) (*ent.Wallet, error)
+	UpdateWallet(c context.Context, walletId int, walletData model.WalletUpdateReq) (*ent.Wallet, error)
 	UpdateWalletBalance(c context.Context, walletId int, balance int) (*ent.Wallet, error)
 	FreezeWallet(c context.Context, walletId int, amount int) (*ent.Wallet, error)
 	UnfreezeWallet(c context.Context, walletId int, amount int) (*ent.Wallet, error)
@@ -62,6 +63,28 @@ func (s *WalletServiceImpl) CreateWallet(c context.Context, userId int) (*ent.Wa
 		return nil, err
 	}
 	return w, nil
+}
+
+func (s *WalletServiceImpl) UpdateWallet(c context.Context, id int, updateReq model.WalletUpdateReq) (*ent.Wallet, error) {
+	update := s.client.Wallet.UpdateOneID(id)
+
+	if updateReq.Password != "" {
+		update.SetPassword(updateReq.Password)
+	}
+
+	if updateReq.Remark != "" {
+		update.SetRemark(updateReq.Remark)
+	}
+
+	if updateReq.Active != nil {
+		update.SetActive(*updateReq.Active)
+	}
+
+	updatedWallet, err := update.Save(c)
+	if err != nil {
+		return nil, err
+	}
+	return updatedWallet, nil
 }
 
 func (s *WalletServiceImpl) UpdateWalletBalance(c context.Context, walletId int, balance int) (*ent.Wallet, error) {
