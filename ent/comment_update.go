@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/comment"
-	"gobee/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/comment"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // CommentUpdate is the builder for updating Comment entities.

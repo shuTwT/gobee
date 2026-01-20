@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/member"
-	"gobee/ent/memberlevel"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/member"
+	"github.com/shuTwT/gobee/ent/memberlevel"
 )
 
 // MemberLevelCreate is the builder for creating a MemberLevel entity.

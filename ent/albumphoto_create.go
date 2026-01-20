@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/albumphoto"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/albumphoto"
 )
 
 // AlbumPhotoCreate is the builder for creating a AlbumPhoto entity.

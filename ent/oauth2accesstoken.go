@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/oauth2accesstoken"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/oauth2accesstoken"
 )
 
 // Oauth2AccessToken is the model entity for the Oauth2AccessToken schema.

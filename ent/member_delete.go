@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/member"
-	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/member"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // MemberDelete is the builder for deleting a Member entity.

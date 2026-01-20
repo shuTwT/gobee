@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/category"
-	"gobee/ent/post"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/category"
+	"github.com/shuTwT/gobee/ent/post"
 )
 
 // CategoryCreate is the builder for creating a Category entity.

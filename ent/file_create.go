@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/file"
-	"gobee/ent/storagestrategy"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/file"
+	"github.com/shuTwT/gobee/ent/storagestrategy"
 )
 
 // FileCreate is the builder for creating a File entity.

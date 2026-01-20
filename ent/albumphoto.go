@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/albumphoto"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/albumphoto"
 )
 
 // AlbumPhoto is the model entity for the AlbumPhoto schema.

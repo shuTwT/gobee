@@ -6,14 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/file"
-	"gobee/ent/predicate"
-	"gobee/ent/storagestrategy"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/file"
+	"github.com/shuTwT/gobee/ent/predicate"
+	"github.com/shuTwT/gobee/ent/storagestrategy"
 )
 
 // StorageStrategyUpdate is the builder for updating StorageStrategy entities.

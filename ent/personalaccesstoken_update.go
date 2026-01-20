@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/personalaccesstoken"
-	"gobee/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/personalaccesstoken"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // PersonalAccessTokenUpdate is the builder for updating PersonalAccessToken entities.

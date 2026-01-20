@@ -5,14 +5,14 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/predicate"
-	"gobee/ent/visitlog"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/predicate"
+	"github.com/shuTwT/gobee/ent/visitlog"
 )
 
 // VisitLogQuery is the builder for querying VisitLog entities.

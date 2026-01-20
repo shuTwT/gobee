@@ -5,14 +5,14 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/knowledgebase"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/knowledgebase"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // KnowledgeBaseQuery is the builder for querying KnowledgeBase entities.

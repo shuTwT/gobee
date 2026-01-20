@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/tag"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/tag"
 )
 
 // Tag is the model entity for the Tag schema.

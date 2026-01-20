@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/role"
-	"gobee/ent/user"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/role"
+	"github.com/shuTwT/gobee/ent/user"
 )
 
 // RoleCreate is the builder for creating a Role entity.

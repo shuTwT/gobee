@@ -5,14 +5,14 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/essay"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/essay"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // EssayQuery is the builder for querying Essay entities.

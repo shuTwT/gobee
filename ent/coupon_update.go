@@ -6,14 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/coupon"
-	"gobee/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/coupon"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // CouponUpdate is the builder for updating Coupon entities.

@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/coupon"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/coupon"
 )
 
 // CouponCreate is the builder for creating a Coupon entity.

@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/category"
-	"gobee/ent/post"
-	"gobee/ent/tag"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/category"
+	"github.com/shuTwT/gobee/ent/post"
+	"github.com/shuTwT/gobee/ent/tag"
 )
 
 // PostCreate is the builder for creating a Post entity.

@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/plugin"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/plugin"
 )
 
 // PluginCreate is the builder for creating a Plugin entity.

@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/storagestrategy"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/storagestrategy"
 )
 
 // StorageStrategy is the model entity for the StorageStrategy schema.

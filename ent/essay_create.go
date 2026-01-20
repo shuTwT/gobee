@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/essay"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/essay"
 )
 
 // EssayCreate is the builder for creating a Essay entity.

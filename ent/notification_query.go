@@ -5,14 +5,14 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/notification"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/notification"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // NotificationQuery is the builder for querying Notification entities.

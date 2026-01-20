@@ -6,15 +6,15 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
-	"gobee/ent/doclibrary"
-	"gobee/ent/doclibrarydetail"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/doclibrary"
+	"github.com/shuTwT/gobee/ent/doclibrarydetail"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // DocLibraryQuery is the builder for querying DocLibrary entities.

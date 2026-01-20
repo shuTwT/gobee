@@ -5,14 +5,14 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/plugin"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/plugin"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // PluginQuery is the builder for querying Plugin entities.

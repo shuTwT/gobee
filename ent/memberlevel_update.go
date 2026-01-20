@@ -6,15 +6,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/member"
-	"gobee/ent/memberlevel"
-	"gobee/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/member"
+	"github.com/shuTwT/gobee/ent/memberlevel"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // MemberLevelUpdate is the builder for updating MemberLevel entities.

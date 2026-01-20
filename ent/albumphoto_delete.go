@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/albumphoto"
-	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/albumphoto"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // AlbumPhotoDelete is the builder for deleting a AlbumPhoto entity.

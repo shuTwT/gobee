@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/plugin"
-	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/plugin"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // PluginDelete is the builder for deleting a Plugin entity.

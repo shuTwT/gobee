@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/predicate"
-	"gobee/ent/wallet"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/predicate"
+	"github.com/shuTwT/gobee/ent/wallet"
 )
 
 // WalletDelete is the builder for deleting a Wallet entity.

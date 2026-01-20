@@ -6,15 +6,15 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
-	"gobee/ent/category"
-	"gobee/ent/post"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/category"
+	"github.com/shuTwT/gobee/ent/post"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // CategoryQuery is the builder for querying Category entities.

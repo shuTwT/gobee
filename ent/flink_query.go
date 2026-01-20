@@ -5,15 +5,15 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/flink"
-	"gobee/ent/flinkgroup"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/flink"
+	"github.com/shuTwT/gobee/ent/flinkgroup"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // FLinkQuery is the builder for querying FLink entities.

@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/predicate"
-	"gobee/ent/setting"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/predicate"
+	"github.com/shuTwT/gobee/ent/setting"
 )
 
 // SettingUpdate is the builder for updating Setting entities.

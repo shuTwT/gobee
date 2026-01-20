@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/payorder"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/payorder"
 )
 
 // PayOrderCreate is the builder for creating a PayOrder entity.

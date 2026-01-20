@@ -6,14 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/member"
-	"gobee/ent/role"
-	"gobee/ent/user"
-	"gobee/ent/wallet"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/member"
+	"github.com/shuTwT/gobee/ent/role"
+	"github.com/shuTwT/gobee/ent/user"
+	"github.com/shuTwT/gobee/ent/wallet"
 )
 
 // UserCreate is the builder for creating a User entity.

@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/friendcirclerecord"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/friendcirclerecord"
 )
 
 // FriendCircleRecordCreate is the builder for creating a FriendCircleRecord entity.

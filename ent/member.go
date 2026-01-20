@@ -4,13 +4,13 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/member"
-	"gobee/ent/user"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/member"
+	"github.com/shuTwT/gobee/ent/user"
 )
 
 // Member is the model entity for the Member schema.

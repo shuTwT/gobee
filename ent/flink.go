@@ -4,13 +4,13 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/flink"
-	"gobee/ent/flinkgroup"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/flink"
+	"github.com/shuTwT/gobee/ent/flinkgroup"
 )
 
 // FLink is the model entity for the FLink schema.

@@ -6,15 +6,15 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
-	"gobee/ent/file"
-	"gobee/ent/predicate"
-	"gobee/ent/storagestrategy"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/file"
+	"github.com/shuTwT/gobee/ent/predicate"
+	"github.com/shuTwT/gobee/ent/storagestrategy"
 )
 
 // StorageStrategyQuery is the builder for querying StorageStrategy entities.

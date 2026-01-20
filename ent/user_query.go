@@ -6,17 +6,17 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
-	"gobee/ent/member"
-	"gobee/ent/predicate"
-	"gobee/ent/role"
-	"gobee/ent/user"
-	"gobee/ent/wallet"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/member"
+	"github.com/shuTwT/gobee/ent/predicate"
+	"github.com/shuTwT/gobee/ent/role"
+	"github.com/shuTwT/gobee/ent/user"
+	"github.com/shuTwT/gobee/ent/wallet"
 )
 
 // UserQuery is the builder for querying User entities.

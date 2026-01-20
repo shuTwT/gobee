@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/notification"
-	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/notification"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // NotificationDelete is the builder for deleting a Notification entity.

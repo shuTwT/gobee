@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/personalaccesstoken"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/personalaccesstoken"
 )
 
 // PersonalAccessToken is the model entity for the PersonalAccessToken schema.

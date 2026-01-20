@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/flinkgroup"
-	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/flinkgroup"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // FLinkGroupDelete is the builder for deleting a FLinkGroup entity.

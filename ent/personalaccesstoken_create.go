@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/personalaccesstoken"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/personalaccesstoken"
 )
 
 // PersonalAccessTokenCreate is the builder for creating a PersonalAccessToken entity.

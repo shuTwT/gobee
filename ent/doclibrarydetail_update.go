@@ -6,14 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/doclibrary"
-	"gobee/ent/doclibrarydetail"
-	"gobee/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/doclibrary"
+	"github.com/shuTwT/gobee/ent/doclibrarydetail"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // DocLibraryDetailUpdate is the builder for updating DocLibraryDetail entities.

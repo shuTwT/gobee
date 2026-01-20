@@ -6,14 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/plugin"
-	"gobee/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/plugin"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // PluginUpdate is the builder for updating Plugin entities.

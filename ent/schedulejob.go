@@ -5,12 +5,12 @@ package ent
 import (
 	"encoding/json"
 	"fmt"
-	"gobee/ent/schedulejob"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/schedulejob"
 )
 
 // ScheduleJob is the model entity for the ScheduleJob schema.

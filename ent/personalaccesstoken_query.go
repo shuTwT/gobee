@@ -5,14 +5,14 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/personalaccesstoken"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/personalaccesstoken"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // PersonalAccessTokenQuery is the builder for querying PersonalAccessToken entities.

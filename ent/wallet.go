@@ -4,13 +4,13 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/user"
-	"gobee/ent/wallet"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/user"
+	"github.com/shuTwT/gobee/ent/wallet"
 )
 
 // Wallet is the model entity for the Wallet schema.

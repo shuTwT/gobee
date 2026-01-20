@@ -6,14 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/apiperms"
-	"gobee/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/apiperms"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // ApiPermsUpdate is the builder for updating ApiPerms entities.

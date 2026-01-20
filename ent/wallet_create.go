@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/user"
-	"gobee/ent/wallet"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/user"
+	"github.com/shuTwT/gobee/ent/wallet"
 )
 
 // WalletCreate is the builder for creating a Wallet entity.

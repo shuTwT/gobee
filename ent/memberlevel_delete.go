@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/memberlevel"
-	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/memberlevel"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // MemberLevelDelete is the builder for deleting a MemberLevel entity.

@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/category"
-	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/category"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // CategoryDelete is the builder for deleting a Category entity.

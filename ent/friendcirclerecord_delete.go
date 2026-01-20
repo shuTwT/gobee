@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/friendcirclerecord"
-	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/friendcirclerecord"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // FriendCircleRecordDelete is the builder for deleting a FriendCircleRecord entity.

@@ -5,15 +5,15 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/doclibrary"
-	"gobee/ent/doclibrarydetail"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/doclibrary"
+	"github.com/shuTwT/gobee/ent/doclibrarydetail"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // DocLibraryDetailQuery is the builder for querying DocLibraryDetail entities.

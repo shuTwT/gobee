@@ -5,14 +5,14 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gobee/ent/oauth2refreshtoken"
-	"gobee/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/oauth2refreshtoken"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // Oauth2RefreshTokenQuery is the builder for querying Oauth2RefreshToken entities.

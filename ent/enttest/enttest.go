@@ -5,13 +5,12 @@ package enttest
 import (
 	"context"
 
-	"gobee/ent"
+	"github.com/shuTwT/gobee/ent"
 	// required by schema hooks.
-	_ "gobee/ent/runtime"
-
-	"gobee/ent/migrate"
+	_ "github.com/shuTwT/gobee/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
+	"github.com/shuTwT/gobee/ent/migrate"
 )
 
 type (

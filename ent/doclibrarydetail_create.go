@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/doclibrary"
-	"gobee/ent/doclibrarydetail"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/doclibrary"
+	"github.com/shuTwT/gobee/ent/doclibrarydetail"
 )
 
 // DocLibraryDetailCreate is the builder for creating a DocLibraryDetail entity.

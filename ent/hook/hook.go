@@ -5,7 +5,8 @@ package hook
 import (
 	"context"
 	"fmt"
-	"gobee/ent"
+
+	"github.com/shuTwT/gobee/ent"
 )
 
 // The AlbumFunc type is an adapter to allow the use of ordinary

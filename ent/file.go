@@ -4,13 +4,13 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/file"
-	"gobee/ent/storagestrategy"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/file"
+	"github.com/shuTwT/gobee/ent/storagestrategy"
 )
 
 // File is the model entity for the File schema.

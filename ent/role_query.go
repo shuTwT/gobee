@@ -6,15 +6,15 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
-	"gobee/ent/predicate"
-	"gobee/ent/role"
-	"gobee/ent/user"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/predicate"
+	"github.com/shuTwT/gobee/ent/role"
+	"github.com/shuTwT/gobee/ent/user"
 )
 
 // RoleQuery is the builder for querying Role entities.

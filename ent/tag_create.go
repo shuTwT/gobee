@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/post"
-	"gobee/ent/tag"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/post"
+	"github.com/shuTwT/gobee/ent/tag"
 )
 
 // TagCreate is the builder for creating a Tag entity.

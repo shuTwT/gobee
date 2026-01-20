@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/post"
-	"gobee/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/post"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // PostDelete is the builder for deleting a Post entity.

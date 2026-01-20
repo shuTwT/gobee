@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gobee/ent/friendcirclerecord"
-	"gobee/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/friendcirclerecord"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // FriendCircleRecordUpdate is the builder for updating FriendCircleRecord entities.

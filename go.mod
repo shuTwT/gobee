@@ -1,4 +1,4 @@
-module gobee
+module github.com/shuTwT/gobee
 
 go 1.25.0
 

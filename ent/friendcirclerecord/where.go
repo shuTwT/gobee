@@ -3,10 +3,10 @@
 package friendcirclerecord
 
 import (
-	"gobee/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"gobee/ent/predicate"
-	"gobee/ent/visitlog"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/gobee/ent/predicate"
+	"github.com/shuTwT/gobee/ent/visitlog"
 )
 
 // VisitLogDelete is the builder for deleting a VisitLog entity.

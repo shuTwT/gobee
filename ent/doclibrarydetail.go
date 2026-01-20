@@ -4,13 +4,13 @@ package ent
 
 import (
 	"fmt"
-	"gobee/ent/doclibrary"
-	"gobee/ent/doclibrarydetail"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shuTwT/gobee/ent/doclibrary"
+	"github.com/shuTwT/gobee/ent/doclibrarydetail"
 )
 
 // DocLibraryDetail is the model entity for the DocLibraryDetail schema.
