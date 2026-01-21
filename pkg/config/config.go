@@ -30,6 +30,11 @@ const (
 	PAY_EPAY_MERCHANT_KEY = "pay.epay_merchant_key"
 	PAY_EPAY_NOTIFY_URL   = "pay.epay_notify_url"
 	PAY_EPAY_RETURN_URL   = "pay.epay_return_url"
+	// Redis 相关
+	Redis_Enable   = "redis.enable"
+	REDIS_ADDR     = "redis.addr"
+	REDIS_PASSWORD = "redis.password"
+	REDIS_DB       = "redis.db"
 )
 
 func Init() {
@@ -48,6 +53,11 @@ func Init() {
 	viper.SetDefault(PAY_EPAY_MERCHANT_KEY, "your-merchant-key")
 	viper.SetDefault(PAY_EPAY_NOTIFY_URL, "https://api.shhsu.com/api/v1/payorder/notify")
 	viper.SetDefault(PAY_EPAY_RETURN_URL, "https://api.shhsu.com/api/v1/payorder/return")
+	// Redis 相关
+	viper.SetDefault(Redis_Enable, false)
+	viper.SetDefault(REDIS_ADDR, "localhost:6379")
+	viper.SetDefault(REDIS_PASSWORD, "")
+	viper.SetDefault(REDIS_DB, 0)
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")

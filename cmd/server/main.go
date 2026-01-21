@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/shuTwT/gobee/ent"
-	"github.com/shuTwT/gobee/internal/database"
 	"github.com/shuTwT/gobee/internal/handlers"
+	"github.com/shuTwT/gobee/internal/infra/database"
 	"github.com/shuTwT/gobee/internal/infra/schedule"
 	"github.com/shuTwT/gobee/internal/infra/schedule/manager"
 	"github.com/shuTwT/gobee/internal/router"
@@ -21,7 +20,7 @@ import (
 	"github.com/gofiber/swagger"
 )
 
-func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) (*fiber.App, *ent.Client) {
+func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) (*fiber.App, func()) {
 	config.Init()
 	dbType := config.GetString(config.DATABASE_TYPE)
 	dbConfig := database.DBConfig{
@@ -31,6 +30,21 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) (*fiber.App, *ent.
 	db, err := database.InitializeDB(dbConfig, true)
 	if err != nil {
 		panic(err)
+	}
+
+	// 初始化 Redis 客户端
+	rdb, err := database.NewRedisClient(context.Background())
+
+	cleanup := func() {
+		err := db.Close()
+		if err != nil {
+			slog.Error("Failed to close database connection", "error", err.Error())
+		}
+		if rdb != nil {
+			if err := rdb.Close(); err != nil {
+				slog.Error("Failed to close Redis connection", "error", err.Error())
+			}
+		}
 	}
 
 	scheduleManager := manager.NewScheduleManager()
@@ -88,5 +102,5 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) (*fiber.App, *ent.
 		slog.Info("自动启动插件成功")
 	}()
 
-	return app, db
+	return app, cleanup
 }
