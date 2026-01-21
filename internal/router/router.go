@@ -157,6 +157,12 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		knowledgeBaseApi.Get("/query/:id", handlerMap.KnowledgeBaseHandler.GetKnowledgeBase).Name("knowledgeBaseQuery")
 		knowledgeBaseApi.Delete("/delete/:id", handlerMap.KnowledgeBaseHandler.DeleteKnowledgeBase).Name("knowledgeBaseDelete")
 	}
+	flinkApplicationApi := router.Group("/flink-application")
+	{
+		flinkApplicationApi.Get("/page", handlerMap.FlinkApplicationHandler.ListFlinkApplicationPage).Name("flinkApplicationPage")
+		flinkApplicationApi.Get("/query/:id", handlerMap.FlinkApplicationHandler.QueryFlinkApplication).Name("flinkApplicationQuery")
+		flinkApplicationApi.Put("/update/:id", handlerMap.FlinkApplicationHandler.ApproveFlinkApplication).Name("flinkApplicationUpdate")
+	}
 }
 
 // 注册基础设施路由
@@ -319,6 +325,8 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap, dbClient *ent
 			apiV1.Get("/post/search", handlerMap.PostHandler.SearchPosts).Name("postSearch")
 			apiV1.Get("/user/search", handlerMap.UserHandler.SearchUsers).Name("userSearch")
 			apiV1.Get("/product/search", handlerMap.ProductHandler.SearchProducts).Name("productSearch")
+
+			apiV1.Post("/flink-application/create", handlerMap.FlinkApplicationHandler.CreateFlinkApplication).Name("flinkApplicationCreate")
 
 			apiV1.Use(middleware.FlexibleAuth(dbClient))
 

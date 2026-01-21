@@ -252,6 +252,29 @@ var (
 			},
 		},
 	}
+	// FlinkApplicationsColumns holds the columns for the "flink_applications" table.
+	FlinkApplicationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "website_url", Type: field.TypeString},
+		{Name: "application_type", Type: field.TypeString},
+		{Name: "website_name", Type: field.TypeString},
+		{Name: "website_logo", Type: field.TypeString},
+		{Name: "website_description", Type: field.TypeString},
+		{Name: "contact_email", Type: field.TypeString},
+		{Name: "snapshot_url", Type: field.TypeString, Nullable: true},
+		{Name: "original_website_url", Type: field.TypeString, Nullable: true},
+		{Name: "modification_reason", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeInt, Default: 0},
+		{Name: "reject_reason", Type: field.TypeString, Nullable: true},
+	}
+	// FlinkApplicationsTable holds the schema information for the "flink_applications" table.
+	FlinkApplicationsTable = &schema.Table{
+		Name:       "flink_applications",
+		Columns:    FlinkApplicationsColumns,
+		PrimaryKey: []*schema.Column{FlinkApplicationsColumns[0]},
+	}
 	// FlinkGroupsColumns holds the columns for the "flink_groups" table.
 	FlinkGroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -869,6 +892,7 @@ var (
 		DocLibraryDetailsTable,
 		EssaysTable,
 		FlinksTable,
+		FlinkApplicationsTable,
 		FlinkGroupsTable,
 		FilesTable,
 		FriendCircleRecordsTable,

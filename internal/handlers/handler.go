@@ -10,6 +10,7 @@ import (
 	doclibrarydetail_handler "github.com/shuTwT/gobee/internal/handlers/content/doclibrarydetail"
 	essay_handler "github.com/shuTwT/gobee/internal/handlers/content/essay"
 	flink_handler "github.com/shuTwT/gobee/internal/handlers/content/flink"
+	flinkapplication_handler "github.com/shuTwT/gobee/internal/handlers/content/flinkapplication"
 	flinkgroup_handler "github.com/shuTwT/gobee/internal/handlers/content/flinkgroup"
 	friendcircle_handler "github.com/shuTwT/gobee/internal/handlers/content/friendcircle"
 	knowledgebase_handler "github.com/shuTwT/gobee/internal/handlers/content/knowledgebase"
@@ -56,6 +57,7 @@ type HandlerMap struct {
 	FileHandler             file_handler.FileHandler
 	LicenseHandler          license_handler.LicenseHandler
 	FlinkHandler            flink_handler.FlinkHandler
+	FlinkApplicationHandler flinkapplication_handler.FlinkApplicationHandler
 	FlinkGroupHandler       flinkgroup_handler.FlinkGroupHandler
 	FriendCircleHandler     friendcircle_handler.FriendCircleHandler
 	InitializeHandler       initialize_handler.InitializeHandler
@@ -95,6 +97,7 @@ func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 	fileHandler := file_handler.NewFileHandlerImpl(serviceMap.FileService, serviceMap.StorageStrategyService)
 	licenseHandler := license_handler.NewLicenseHandlerImpl(serviceMap.LicenseService)
 	flinkHandler := flink_handler.NewFlinkHandlerImpl(db, serviceMap.FlinkService)
+	flinkApplicationHandler := flinkapplication_handler.NewFlinkApplicationHandlerImpl(db, serviceMap.FlinkApplicationService)
 	flinkGroupHandler := flinkgroup_handler.NewFlinkGroupHandlerImpl(db, serviceMap.FlinkService)
 	friendCircleHandler := friendcircle_handler.NewFriendCircleHandlerImpl(serviceMap.FriendCircleService)
 	initializeHandler := initialize_handler.NewInitializeHandlerImpl(db, serviceMap.UserService, serviceMap.SettingService)
@@ -132,6 +135,7 @@ func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 		DocLibraryDetailHandler: doclibrarydetailHandler,
 		FileHandler:             fileHandler,
 		FlinkHandler:            flinkHandler,
+		FlinkApplicationHandler: flinkApplicationHandler,
 		FlinkGroupHandler:       flinkGroupHandler,
 		FriendCircleHandler:     friendCircleHandler,
 		InitializeHandler:       initializeHandler,

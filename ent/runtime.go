@@ -17,6 +17,7 @@ import (
 	"github.com/shuTwT/gobee/ent/essay"
 	"github.com/shuTwT/gobee/ent/file"
 	"github.com/shuTwT/gobee/ent/flink"
+	"github.com/shuTwT/gobee/ent/flinkapplication"
 	"github.com/shuTwT/gobee/ent/flinkgroup"
 	"github.com/shuTwT/gobee/ent/friendcirclerecord"
 	"github.com/shuTwT/gobee/ent/knowledgebase"
@@ -471,6 +472,49 @@ func init() {
 	flinkDescEnableFriendCircle := flinkFields[9].Descriptor()
 	// flink.DefaultEnableFriendCircle holds the default value on creation for the enable_friend_circle field.
 	flink.DefaultEnableFriendCircle = flinkDescEnableFriendCircle.Default.(bool)
+	flinkapplicationMixin := schema.FLinkApplication{}.Mixin()
+	flinkapplicationMixinFields0 := flinkapplicationMixin[0].Fields()
+	_ = flinkapplicationMixinFields0
+	flinkapplicationFields := schema.FLinkApplication{}.Fields()
+	_ = flinkapplicationFields
+	// flinkapplicationDescCreatedAt is the schema descriptor for created_at field.
+	flinkapplicationDescCreatedAt := flinkapplicationMixinFields0[1].Descriptor()
+	// flinkapplication.DefaultCreatedAt holds the default value on creation for the created_at field.
+	flinkapplication.DefaultCreatedAt = flinkapplicationDescCreatedAt.Default.(func() time.Time)
+	// flinkapplicationDescUpdatedAt is the schema descriptor for updated_at field.
+	flinkapplicationDescUpdatedAt := flinkapplicationMixinFields0[2].Descriptor()
+	// flinkapplication.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	flinkapplication.DefaultUpdatedAt = flinkapplicationDescUpdatedAt.Default.(func() time.Time)
+	// flinkapplication.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	flinkapplication.UpdateDefaultUpdatedAt = flinkapplicationDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// flinkapplicationDescWebsiteURL is the schema descriptor for website_url field.
+	flinkapplicationDescWebsiteURL := flinkapplicationFields[0].Descriptor()
+	// flinkapplication.WebsiteURLValidator is a validator for the "website_url" field. It is called by the builders before save.
+	flinkapplication.WebsiteURLValidator = flinkapplicationDescWebsiteURL.Validators[0].(func(string) error)
+	// flinkapplicationDescApplicationType is the schema descriptor for application_type field.
+	flinkapplicationDescApplicationType := flinkapplicationFields[1].Descriptor()
+	// flinkapplication.ApplicationTypeValidator is a validator for the "application_type" field. It is called by the builders before save.
+	flinkapplication.ApplicationTypeValidator = flinkapplicationDescApplicationType.Validators[0].(func(string) error)
+	// flinkapplicationDescWebsiteName is the schema descriptor for website_name field.
+	flinkapplicationDescWebsiteName := flinkapplicationFields[2].Descriptor()
+	// flinkapplication.WebsiteNameValidator is a validator for the "website_name" field. It is called by the builders before save.
+	flinkapplication.WebsiteNameValidator = flinkapplicationDescWebsiteName.Validators[0].(func(string) error)
+	// flinkapplicationDescWebsiteLogo is the schema descriptor for website_logo field.
+	flinkapplicationDescWebsiteLogo := flinkapplicationFields[3].Descriptor()
+	// flinkapplication.WebsiteLogoValidator is a validator for the "website_logo" field. It is called by the builders before save.
+	flinkapplication.WebsiteLogoValidator = flinkapplicationDescWebsiteLogo.Validators[0].(func(string) error)
+	// flinkapplicationDescWebsiteDescription is the schema descriptor for website_description field.
+	flinkapplicationDescWebsiteDescription := flinkapplicationFields[4].Descriptor()
+	// flinkapplication.WebsiteDescriptionValidator is a validator for the "website_description" field. It is called by the builders before save.
+	flinkapplication.WebsiteDescriptionValidator = flinkapplicationDescWebsiteDescription.Validators[0].(func(string) error)
+	// flinkapplicationDescContactEmail is the schema descriptor for contact_email field.
+	flinkapplicationDescContactEmail := flinkapplicationFields[5].Descriptor()
+	// flinkapplication.ContactEmailValidator is a validator for the "contact_email" field. It is called by the builders before save.
+	flinkapplication.ContactEmailValidator = flinkapplicationDescContactEmail.Validators[0].(func(string) error)
+	// flinkapplicationDescStatus is the schema descriptor for status field.
+	flinkapplicationDescStatus := flinkapplicationFields[9].Descriptor()
+	// flinkapplication.DefaultStatus holds the default value on creation for the status field.
+	flinkapplication.DefaultStatus = flinkapplicationDescStatus.Default.(int)
 	flinkgroupMixin := schema.FLinkGroup{}.Mixin()
 	flinkgroupMixinFields0 := flinkgroupMixin[0].Fields()
 	_ = flinkgroupMixinFields0

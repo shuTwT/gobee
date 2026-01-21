@@ -141,6 +141,18 @@ func (f FLinkFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FLinkMutation", m)
 }
 
+// The FLinkApplicationFunc type is an adapter to allow the use of ordinary
+// function as FLinkApplication mutator.
+type FLinkApplicationFunc func(context.Context, *ent.FLinkApplicationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FLinkApplicationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FLinkApplicationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FLinkApplicationMutation", m)
+}
+
 // The FLinkGroupFunc type is an adapter to allow the use of ordinary
 // function as FLinkGroup mutator.
 type FLinkGroupFunc func(context.Context, *ent.FLinkGroupMutation) (ent.Value, error)

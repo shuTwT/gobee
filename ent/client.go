@@ -27,6 +27,7 @@ import (
 	"github.com/shuTwT/gobee/ent/essay"
 	"github.com/shuTwT/gobee/ent/file"
 	"github.com/shuTwT/gobee/ent/flink"
+	"github.com/shuTwT/gobee/ent/flinkapplication"
 	"github.com/shuTwT/gobee/ent/flinkgroup"
 	"github.com/shuTwT/gobee/ent/friendcirclerecord"
 	"github.com/shuTwT/gobee/ent/knowledgebase"
@@ -80,6 +81,8 @@ type Client struct {
 	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
 	FLink *FLinkClient
+	// FLinkApplication is the client for interacting with the FLinkApplication builders.
+	FLinkApplication *FLinkApplicationClient
 	// FLinkGroup is the client for interacting with the FLinkGroup builders.
 	FLinkGroup *FLinkGroupClient
 	// File is the client for interacting with the File builders.
@@ -152,6 +155,7 @@ func (c *Client) init() {
 	c.DocLibraryDetail = NewDocLibraryDetailClient(c.config)
 	c.Essay = NewEssayClient(c.config)
 	c.FLink = NewFLinkClient(c.config)
+	c.FLinkApplication = NewFLinkApplicationClient(c.config)
 	c.FLinkGroup = NewFLinkGroupClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.FriendCircleRecord = NewFriendCircleRecordClient(c.config)
@@ -280,6 +284,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		DocLibraryDetail:    NewDocLibraryDetailClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
+		FLinkApplication:    NewFLinkApplicationClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
 		File:                NewFileClient(cfg),
 		FriendCircleRecord:  NewFriendCircleRecordClient(cfg),
@@ -335,6 +340,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		DocLibraryDetail:    NewDocLibraryDetailClient(cfg),
 		Essay:               NewEssayClient(cfg),
 		FLink:               NewFLinkClient(cfg),
+		FLinkApplication:    NewFLinkApplicationClient(cfg),
 		FLinkGroup:          NewFLinkGroupClient(cfg),
 		File:                NewFileClient(cfg),
 		FriendCircleRecord:  NewFriendCircleRecordClient(cfg),
@@ -391,11 +397,11 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
 		c.CouponUsage, c.DocLibrary, c.DocLibraryDetail, c.Essay, c.FLink,
-		c.FLinkGroup, c.File, c.FriendCircleRecord, c.KnowledgeBase, c.License,
-		c.Member, c.MemberLevel, c.Notification, c.Oauth2AccessToken, c.Oauth2Code,
-		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post,
-		c.Product, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.User,
-		c.VisitLog, c.Wallet, c.WebHook,
+		c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord,
+		c.KnowledgeBase, c.License, c.Member, c.MemberLevel, c.Notification,
+		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
+		c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role, c.ScheduleJob,
+		c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -407,11 +413,11 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
 		c.CouponUsage, c.DocLibrary, c.DocLibraryDetail, c.Essay, c.FLink,
-		c.FLinkGroup, c.File, c.FriendCircleRecord, c.KnowledgeBase, c.License,
-		c.Member, c.MemberLevel, c.Notification, c.Oauth2AccessToken, c.Oauth2Code,
-		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post,
-		c.Product, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.User,
-		c.VisitLog, c.Wallet, c.WebHook,
+		c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord,
+		c.KnowledgeBase, c.License, c.Member, c.MemberLevel, c.Notification,
+		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
+		c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role, c.ScheduleJob,
+		c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -442,6 +448,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Essay.mutate(ctx, m)
 	case *FLinkMutation:
 		return c.FLink.mutate(ctx, m)
+	case *FLinkApplicationMutation:
+		return c.FLinkApplication.mutate(ctx, m)
 	case *FLinkGroupMutation:
 		return c.FLinkGroup.mutate(ctx, m)
 	case *FileMutation:
@@ -2021,6 +2029,139 @@ func (c *FLinkClient) mutate(ctx context.Context, m *FLinkMutation) (Value, erro
 		return (&FLinkDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown FLink mutation op: %q", m.Op())
+	}
+}
+
+// FLinkApplicationClient is a client for the FLinkApplication schema.
+type FLinkApplicationClient struct {
+	config
+}
+
+// NewFLinkApplicationClient returns a client for the FLinkApplication from the given config.
+func NewFLinkApplicationClient(c config) *FLinkApplicationClient {
+	return &FLinkApplicationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `flinkapplication.Hooks(f(g(h())))`.
+func (c *FLinkApplicationClient) Use(hooks ...Hook) {
+	c.hooks.FLinkApplication = append(c.hooks.FLinkApplication, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `flinkapplication.Intercept(f(g(h())))`.
+func (c *FLinkApplicationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FLinkApplication = append(c.inters.FLinkApplication, interceptors...)
+}
+
+// Create returns a builder for creating a FLinkApplication entity.
+func (c *FLinkApplicationClient) Create() *FLinkApplicationCreate {
+	mutation := newFLinkApplicationMutation(c.config, OpCreate)
+	return &FLinkApplicationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FLinkApplication entities.
+func (c *FLinkApplicationClient) CreateBulk(builders ...*FLinkApplicationCreate) *FLinkApplicationCreateBulk {
+	return &FLinkApplicationCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FLinkApplicationClient) MapCreateBulk(slice any, setFunc func(*FLinkApplicationCreate, int)) *FLinkApplicationCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FLinkApplicationCreateBulk{err: fmt.Errorf("calling to FLinkApplicationClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FLinkApplicationCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FLinkApplicationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FLinkApplication.
+func (c *FLinkApplicationClient) Update() *FLinkApplicationUpdate {
+	mutation := newFLinkApplicationMutation(c.config, OpUpdate)
+	return &FLinkApplicationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FLinkApplicationClient) UpdateOne(_m *FLinkApplication) *FLinkApplicationUpdateOne {
+	mutation := newFLinkApplicationMutation(c.config, OpUpdateOne, withFLinkApplication(_m))
+	return &FLinkApplicationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FLinkApplicationClient) UpdateOneID(id int) *FLinkApplicationUpdateOne {
+	mutation := newFLinkApplicationMutation(c.config, OpUpdateOne, withFLinkApplicationID(id))
+	return &FLinkApplicationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FLinkApplication.
+func (c *FLinkApplicationClient) Delete() *FLinkApplicationDelete {
+	mutation := newFLinkApplicationMutation(c.config, OpDelete)
+	return &FLinkApplicationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FLinkApplicationClient) DeleteOne(_m *FLinkApplication) *FLinkApplicationDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FLinkApplicationClient) DeleteOneID(id int) *FLinkApplicationDeleteOne {
+	builder := c.Delete().Where(flinkapplication.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FLinkApplicationDeleteOne{builder}
+}
+
+// Query returns a query builder for FLinkApplication.
+func (c *FLinkApplicationClient) Query() *FLinkApplicationQuery {
+	return &FLinkApplicationQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFLinkApplication},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FLinkApplication entity by its id.
+func (c *FLinkApplicationClient) Get(ctx context.Context, id int) (*FLinkApplication, error) {
+	return c.Query().Where(flinkapplication.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FLinkApplicationClient) GetX(ctx context.Context, id int) *FLinkApplication {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FLinkApplicationClient) Hooks() []Hook {
+	return c.hooks.FLinkApplication
+}
+
+// Interceptors returns the client interceptors.
+func (c *FLinkApplicationClient) Interceptors() []Interceptor {
+	return c.inters.FLinkApplication
+}
+
+func (c *FLinkApplicationClient) mutate(ctx context.Context, m *FLinkApplicationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FLinkApplicationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FLinkApplicationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FLinkApplicationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FLinkApplicationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FLinkApplication mutation op: %q", m.Op())
 	}
 }
 
@@ -5561,18 +5702,18 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 type (
 	hooks struct {
 		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, DocLibrary,
-		DocLibraryDetail, Essay, FLink, FLinkGroup, File, FriendCircleRecord,
-		KnowledgeBase, License, Member, MemberLevel, Notification, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, PayOrder, PersonalAccessToken, Plugin, Post,
-		Product, Role, ScheduleJob, Setting, StorageStrategy, Tag, User, VisitLog,
-		Wallet, WebHook []ent.Hook
+		DocLibraryDetail, Essay, FLink, FLinkApplication, FLinkGroup, File,
+		FriendCircleRecord, KnowledgeBase, License, Member, MemberLevel, Notification,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
+		PersonalAccessToken, Plugin, Post, Product, Role, ScheduleJob, Setting,
+		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Hook
 	}
 	inters struct {
 		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, DocLibrary,
-		DocLibraryDetail, Essay, FLink, FLinkGroup, File, FriendCircleRecord,
-		KnowledgeBase, License, Member, MemberLevel, Notification, Oauth2AccessToken,
-		Oauth2Code, Oauth2RefreshToken, PayOrder, PersonalAccessToken, Plugin, Post,
-		Product, Role, ScheduleJob, Setting, StorageStrategy, Tag, User, VisitLog,
-		Wallet, WebHook []ent.Interceptor
+		DocLibraryDetail, Essay, FLink, FLinkApplication, FLinkGroup, File,
+		FriendCircleRecord, KnowledgeBase, License, Member, MemberLevel, Notification,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
+		PersonalAccessToken, Plugin, Post, Product, Role, ScheduleJob, Setting,
+		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Interceptor
 	}
 )

@@ -68,13 +68,29 @@ func (s *LicenseServiceImpl) CreateLicense(ctx context.Context, domain, licenseK
 }
 
 func (s *LicenseServiceImpl) UpdateLicense(ctx context.Context, id int, domain, licenseKey, customerName string, expireDate time.Time, status int) (*ent.License, error) {
-	updatedLicense, err := s.client.License.UpdateOneID(id).
-		SetDomain(domain).
-		SetLicenseKey(licenseKey).
-		SetCustomerName(customerName).
-		SetExpireDate(expireDate).
-		SetStatus(status).
-		Save(ctx)
+	updateBuilder := s.client.License.UpdateOneID(id)
+
+	if domain != "" {
+		updateBuilder.SetDomain(domain)
+	}
+
+	if licenseKey != "" {
+		updateBuilder.SetLicenseKey(licenseKey)
+	}
+
+	if customerName != "" {
+		updateBuilder.SetCustomerName(customerName)
+	}
+
+	if !expireDate.IsZero() {
+		updateBuilder.SetExpireDate(expireDate)
+	}
+
+	if status != 0 {
+		updateBuilder.SetStatus(status)
+	}
+
+	updatedLicense, err := updateBuilder.Save(ctx)
 	if err != nil {
 		return nil, err
 	}

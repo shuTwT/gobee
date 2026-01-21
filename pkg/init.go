@@ -13,6 +13,7 @@ import (
 	doclibrarydetail_service "github.com/shuTwT/gobee/internal/services/content/doclibrarydetail"
 	essay_service "github.com/shuTwT/gobee/internal/services/content/essay"
 	flink_service "github.com/shuTwT/gobee/internal/services/content/flink"
+	flinkapplication_service "github.com/shuTwT/gobee/internal/services/content/flinkapplication"
 	friend_circle_service "github.com/shuTwT/gobee/internal/services/content/friendcircle"
 	knowledgebase_service "github.com/shuTwT/gobee/internal/services/content/knowledgebase"
 	post_service "github.com/shuTwT/gobee/internal/services/content/post"
@@ -56,6 +57,7 @@ type ServiceMap struct {
 	EssayService            essay_service.EssayService
 	FileService             file_service.FileService
 	FlinkService            flink_service.FlinkService
+	FlinkApplicationService flinkapplication_service.FlinkApplicationService
 	LicenseService          license_service.LicenseService
 	FriendCircleService     friend_circle_service.FriendCircleService
 	KnowledgeBaseService    knowledgebase_service.KnowledgeBaseService
@@ -95,6 +97,7 @@ func InitializeServices(moduleDefs embed.FS, db *ent.Client, scheduleManager *ma
 	fileService := file_service.NewFileServiceImpl(db)
 	licenseService := license_service.NewLicenseServiceImpl(db)
 	flinkService := flink_service.NewFlinkServiceImpl(db)
+	flinkApplicationService := flinkapplication_service.NewFlinkApplicationServiceImpl(db)
 	friendCircleService := friend_circle_service.NewFriendCircleServiceImpl(db)
 	knowledgeBaseService := knowledgebase_service.NewKnowledgeBaseServiceImpl(db)
 	memberLevelService := memberlevel_service.NewMemberLevelServiceImpl(db)
@@ -132,6 +135,7 @@ func InitializeServices(moduleDefs embed.FS, db *ent.Client, scheduleManager *ma
 		EssayService:            essayService,
 		FileService:             fileService,
 		FlinkService:            flinkService,
+		FlinkApplicationService: flinkApplicationService,
 		FriendCircleService:     friendCircleService,
 		KnowledgeBaseService:    knowledgeBaseService,
 		LicenseService:          licenseService,

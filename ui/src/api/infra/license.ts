@@ -19,7 +19,6 @@ export interface LicensePageParams {
 
 export interface LicenseCreateReq {
   domain: string
-  license_key: string
   customer_name: string
   expire_date: string
 }

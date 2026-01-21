@@ -50,3 +50,5 @@ if err := c.QueryParser(&pageQuery); err != nil {
 16.每当用户要求添加一个新的一级模块或二级模块时，都需要在`/api/v1/{一级模块}/{二级模块}`开头的路由结构中添加一个新的路由，同时在`handlers/{一级模块}/{二级模块}/handler.go`,`services/{一级模块}/{二级模块}/service.go`的文件夹结构中添加一个新的文件，同时在`/src/views/{一级模块}/{二级模块}/index.vue`,`/src/api/{一级模块}/{二级模块}.ts`,`/src/router/{一级模块}/{二级模块}.ts`的文件夹结构中添加一个新的文件。
 
 17.在操作项目模块时，需要先将项目模块结构列成一个表格，表格中包含一级模块、二级模块、路由、handler、service、vue组件、api接口、路由文件等信息。
+
+18. `n-date-picker`组件只能接受`number`类型的时间戳作为值，不能接受`string`类型的时间字符串。

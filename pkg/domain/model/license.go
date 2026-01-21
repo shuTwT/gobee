@@ -4,7 +4,6 @@ import "time"
 
 type LicenseCreateReq struct {
 	Domain       string    `json:"domain" validate:"required"`
-	LicenseKey   string    `json:"license_key" validate:"required"`
 	CustomerName string    `json:"customer_name"`
 	ExpireDate   time.Time `json:"expire_date" validate:"required"`
 }

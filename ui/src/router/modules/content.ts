@@ -83,6 +83,16 @@ export default [
                 },
             },
             {
+                path: '/content/flink-application',
+                name: 'FlinkApplicationManagement',
+                component: () => import('@/views/content/flinkapplication/index.vue'),
+                meta: {
+                    title: '友链申请管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
+            },
+            {
                 path: '/content/friend-circle',
                 name: 'FriendCircleRecord',
                 component: () => import('@/views/content/friend-circle/index.vue'),

@@ -6,6 +6,7 @@ import (
 
 	"github.com/shuTwT/gobee/internal/services/infra/license"
 	"github.com/shuTwT/gobee/pkg/domain/model"
+	"github.com/shuTwT/gobee/pkg/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -89,7 +90,12 @@ func (h *LicenseHandlerImpl) CreateLicense(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	newLicense, err := h.licenseService.CreateLicense(c.Context(), req.Domain, req.LicenseKey, req.CustomerName, req.ExpireDate)
+	licenseKey, err := utils.GenerateLicenseKey(req.Domain)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	newLicense, err := h.licenseService.CreateLicense(c.Context(), req.Domain, licenseKey, req.CustomerName, req.ExpireDate)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -118,16 +124,7 @@ func (h *LicenseHandlerImpl) UpdateLicense(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	expireDate := req.ExpireDate
-	if expireDate.IsZero() {
-		licenseEntity, err := h.licenseService.QueryLicense(c.Context(), id)
-		if err != nil {
-			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
-		}
-		expireDate = licenseEntity.ExpireDate
-	}
-
-	updatedLicense, err := h.licenseService.UpdateLicense(c.Context(), id, req.Domain, req.LicenseKey, req.CustomerName, expireDate, req.Status)
+	updatedLicense, err := h.licenseService.UpdateLicense(c.Context(), id, req.Domain, req.LicenseKey, req.CustomerName, req.ExpireDate, req.Status)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}

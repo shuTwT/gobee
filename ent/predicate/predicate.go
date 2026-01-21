@@ -39,6 +39,9 @@ type Essay func(*sql.Selector)
 // FLink is the predicate function for flink builders.
 type FLink func(*sql.Selector)
 
+// FLinkApplication is the predicate function for flinkapplication builders.
+type FLinkApplication func(*sql.Selector)
+
 // FLinkGroup is the predicate function for flinkgroup builders.
 type FLinkGroup func(*sql.Selector)
 

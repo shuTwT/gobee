@@ -7,15 +7,20 @@ import {
   getLicensePage,
   deleteLicense,
   verifyLicense,
+  createLicense,
+  updateLicense,
   type License,
 } from '@/api/infra/license'
 import { addDialog } from '@/components/dialog'
 import FormComponent from './form.vue'
+import type { FormProps } from './utils/types'
 
 const message = useMessage()
 
 const loading = ref(false)
 const data = ref<License[]>([])
+const editFormRef = ref<any>(null)
+const currentLicenseId = ref<number | undefined>(undefined)
 
 const pagination = reactive({
   page:1,
@@ -66,7 +71,7 @@ const columns: DataTableColumns<License> = [
     title: '状态',
     key: 'status',
     render(row) {
-      const statusMap = {
+      const statusMap: Record<number, { type: string; label: string }> = {
         1: { type: 'success', label: '有效' },
         2: { type: 'warning', label: '过期' },
         3: { type: 'error', label: '禁用' },
@@ -82,62 +87,61 @@ const columns: DataTableColumns<License> = [
   {
     title: '操作',
     key: 'actions',
-    width: 200,
+    width: 150,
+    fixed: 'right',
     render(row) {
       return h(
-        NSpace,
-        {},
-        {
-          default: () => [
-            h(
-              NButton,
-              {
-                size: 'small',
-                quaternary: true,
-                type: 'info',
-                onClick: () => handleVerify(row),
-              },
-              {
-                icon: () => h(NIcon, null, { default: () => h(CheckmarkCircleOutline) }),
-                default: () => '验证',
-              },
-            ),
-            h(
-              NButton,
-              {
-                size: 'small',
-                quaternary: true,
-                type: 'primary',
-                onClick: () => handleEdit(row),
-              },
-              {
-                default: () => '编辑',
-              },
-            ),
-            h(
-              NPopconfirm,
-              {
-                onPositiveClick: () => handleDelete(row),
-              },
-              {
-                trigger: () =>
-                  h(
-                    NButton,
-                    {
-                      size: 'small',
-                      quaternary: true,
-                      type: 'error',
-                    },
-                    {
-                      icon: () => h(NIcon, null, { default: () => h(TrashOutline) }),
-                      default: () => '删除',
-                    },
-                  ),
-                default: () => '确定要删除该授权吗？',
-              },
-            ),
-          ],
-        },
+        'div',
+        { style: { display: 'flex', gap: '8px' } },
+        [
+          h(
+            NButton,
+            {
+              size: 'small',
+              quaternary: true,
+              type: 'info',
+              onClick: () => handleVerify(row),
+            },
+            {
+              icon: () => h(NIcon, null, { default: () => h(CheckmarkCircleOutline) }),
+              default: () => '验证',
+            },
+          ),
+          h(
+            NButton,
+            {
+              size: 'small',
+              quaternary: true,
+              type: 'primary',
+              onClick: () => openEditDialog('编辑', row),
+            },
+            {
+              default: () => '编辑',
+            },
+          ),
+          h(
+            NPopconfirm,
+            {
+              onPositiveClick: () => handleDelete(row),
+            },
+            {
+              trigger: () =>
+                h(
+                  NButton,
+                  {
+                    size: 'small',
+                    quaternary: true,
+                    type: 'error',
+                  },
+                  {
+                    icon: () => h(NIcon, null, { default: () => h(TrashOutline) }),
+                    default: () => '删除',
+                  },
+                ),
+              default: () => '确定要删除该授权吗？',
+            },
+          ),
+        ],
       )
     },
   },
@@ -156,19 +160,40 @@ const onSearch = async () => {
   }
 }
 
-const handleAdd = () => {
+const openEditDialog = (title = '新增', row?: License) => {
+  currentLicenseId.value = row?.id
   addDialog({
-    title: '添加授权',
-    contentRenderer: ({ options }) =>
-      h(FormComponent, { ...options.props, onSuccess: () => onSearch() }),
-  })
-}
-
-const handleEdit = (row: License) => {
-  addDialog({
-    title: '编辑授权',
-    contentRenderer: ({ options }) =>
-      h(FormComponent, { ...options.props, license: row, onSuccess: () => onSearch() }),
+    title: `${title}授权`,
+    props: {
+      formInline: {
+        id: row?.id || undefined,
+        domain: row?.domain || '',
+        license_key: row?.license_key,
+        customer_name: row?.customer_name || '',
+        expire_date: row?.expire_date ? new Date(row.expire_date).getTime() : 0,
+        status: row?.status || 1,
+      }
+    },
+    contentRenderer: ({ options }) => h(FormComponent, { ref: editFormRef, formInline: options.props!.formInline }),
+    beforeSure: async (done) => {
+      try {
+        const data = await editFormRef.value?.getData()
+        
+        if (currentLicenseId.value) {
+          await updateLicense(currentLicenseId.value, data)
+          message.success('更新成功')
+        } else {
+          await createLicense(data)
+          message.success('创建成功')
+        }
+        
+        onSearch()
+        done()
+      } catch (error) {
+        console.error('提交失败:', error)
+        message.error('提交失败')
+      }
+    },
   })
 }
 
@@ -201,31 +226,62 @@ onMounted(() => {
 </script>
 
 <template>
-  <NCard title="授权管理">
-    <template #header-extra>
-      <NSpace>
-        <NButton type="primary" @click="handleAdd">
-          <template #icon>
-            <NIcon><AddOutline /></NIcon>
-          </template>
-          添加授权
-        </NButton>
-        <NButton @click="onSearch">
-          <template #icon>
-            <NIcon><RefreshOutline /></NIcon>
-          </template>
-          刷新
-        </NButton>
-      </NSpace>
-    </template>
+  <div class="container-fluid p-6">
+    <n-card title="授权管理" class="license-card">
+      <div class="header-section">
+        <div class="search-section">
+        </div>
+        <div class="action-section">
+          <n-button type="primary" style="margin-right: 12px" @click="openEditDialog('新增')">
+            <template #icon>
+              <n-icon><add-outline /></n-icon>
+            </template>
+            添加授权
+          </n-button>
+          <n-button @click="onSearch">
+            <template #icon>
+              <n-icon><refresh-outline /></n-icon>
+            </template>
+            刷新
+          </n-button>
+        </div>
+      </div>
 
-    <NDataTable
-      :columns="columns"
-      :data="data"
-      :loading="loading"
-      :pagination="pagination"
-      :bordered="false"
-      striped
-    />
-  </NCard>
+      <n-data-table
+        :columns="columns"
+        :data="data"
+        :loading="loading"
+        :pagination="pagination"
+        :row-key="(row) => row.id"
+      />
+    </n-card>
+  </div>
 </template>
+
+<style scoped>
+.license-card {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.search-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.action-section {
+  display: flex;
+  align-items: center;
+}
+</style>

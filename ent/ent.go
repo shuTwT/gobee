@@ -24,6 +24,7 @@ import (
 	"github.com/shuTwT/gobee/ent/essay"
 	"github.com/shuTwT/gobee/ent/file"
 	"github.com/shuTwT/gobee/ent/flink"
+	"github.com/shuTwT/gobee/ent/flinkapplication"
 	"github.com/shuTwT/gobee/ent/flinkgroup"
 	"github.com/shuTwT/gobee/ent/friendcirclerecord"
 	"github.com/shuTwT/gobee/ent/knowledgebase"
@@ -119,6 +120,7 @@ func checkColumn(t, c string) error {
 			doclibrarydetail.Table:    doclibrarydetail.ValidColumn,
 			essay.Table:               essay.ValidColumn,
 			flink.Table:               flink.ValidColumn,
+			flinkapplication.Table:    flinkapplication.ValidColumn,
 			flinkgroup.Table:          flinkgroup.ValidColumn,
 			file.Table:                file.ValidColumn,
 			friendcirclerecord.Table:  friendcirclerecord.ValidColumn,

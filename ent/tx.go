@@ -34,6 +34,8 @@ type Tx struct {
 	Essay *EssayClient
 	// FLink is the client for interacting with the FLink builders.
 	FLink *FLinkClient
+	// FLinkApplication is the client for interacting with the FLinkApplication builders.
+	FLinkApplication *FLinkApplicationClient
 	// FLinkGroup is the client for interacting with the FLinkGroup builders.
 	FLinkGroup *FLinkGroupClient
 	// File is the client for interacting with the File builders.
@@ -226,6 +228,7 @@ func (tx *Tx) init() {
 	tx.DocLibraryDetail = NewDocLibraryDetailClient(tx.config)
 	tx.Essay = NewEssayClient(tx.config)
 	tx.FLink = NewFLinkClient(tx.config)
+	tx.FLinkApplication = NewFLinkApplicationClient(tx.config)
 	tx.FLinkGroup = NewFLinkGroupClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.FriendCircleRecord = NewFriendCircleRecordClient(tx.config)

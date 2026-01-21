@@ -23,6 +23,7 @@ import (
 	"github.com/shuTwT/gobee/ent/essay"
 	"github.com/shuTwT/gobee/ent/file"
 	"github.com/shuTwT/gobee/ent/flink"
+	"github.com/shuTwT/gobee/ent/flinkapplication"
 	"github.com/shuTwT/gobee/ent/flinkgroup"
 	"github.com/shuTwT/gobee/ent/friendcirclerecord"
 	"github.com/shuTwT/gobee/ent/knowledgebase"
@@ -70,6 +71,7 @@ const (
 	TypeDocLibraryDetail    = "DocLibraryDetail"
 	TypeEssay               = "Essay"
 	TypeFLink               = "FLink"
+	TypeFLinkApplication    = "FLinkApplication"
 	TypeFLinkGroup          = "FLinkGroup"
 	TypeFile                = "File"
 	TypeFriendCircleRecord  = "FriendCircleRecord"
@@ -11143,6 +11145,1101 @@ func (m *FLinkMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown FLink edge %s", name)
+}
+
+// FLinkApplicationMutation represents an operation that mutates the FLinkApplication nodes in the graph.
+type FLinkApplicationMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	created_at           *time.Time
+	updated_at           *time.Time
+	website_url          *string
+	application_type     *string
+	website_name         *string
+	website_logo         *string
+	website_description  *string
+	contact_email        *string
+	snapshot_url         *string
+	original_website_url *string
+	modification_reason  *string
+	status               *int
+	addstatus            *int
+	reject_reason        *string
+	clearedFields        map[string]struct{}
+	done                 bool
+	oldValue             func(context.Context) (*FLinkApplication, error)
+	predicates           []predicate.FLinkApplication
+}
+
+var _ ent.Mutation = (*FLinkApplicationMutation)(nil)
+
+// flinkapplicationOption allows management of the mutation configuration using functional options.
+type flinkapplicationOption func(*FLinkApplicationMutation)
+
+// newFLinkApplicationMutation creates new mutation for the FLinkApplication entity.
+func newFLinkApplicationMutation(c config, op Op, opts ...flinkapplicationOption) *FLinkApplicationMutation {
+	m := &FLinkApplicationMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFLinkApplication,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFLinkApplicationID sets the ID field of the mutation.
+func withFLinkApplicationID(id int) flinkapplicationOption {
+	return func(m *FLinkApplicationMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FLinkApplication
+		)
+		m.oldValue = func(ctx context.Context) (*FLinkApplication, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FLinkApplication.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFLinkApplication sets the old FLinkApplication of the mutation.
+func withFLinkApplication(node *FLinkApplication) flinkapplicationOption {
+	return func(m *FLinkApplicationMutation) {
+		m.oldValue = func(context.Context) (*FLinkApplication, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FLinkApplicationMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FLinkApplicationMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of FLinkApplication entities.
+func (m *FLinkApplicationMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FLinkApplicationMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *FLinkApplicationMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().FLinkApplication.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *FLinkApplicationMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *FLinkApplicationMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *FLinkApplicationMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *FLinkApplicationMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *FLinkApplicationMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *FLinkApplicationMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetWebsiteURL sets the "website_url" field.
+func (m *FLinkApplicationMutation) SetWebsiteURL(s string) {
+	m.website_url = &s
+}
+
+// WebsiteURL returns the value of the "website_url" field in the mutation.
+func (m *FLinkApplicationMutation) WebsiteURL() (r string, exists bool) {
+	v := m.website_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWebsiteURL returns the old "website_url" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldWebsiteURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWebsiteURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWebsiteURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWebsiteURL: %w", err)
+	}
+	return oldValue.WebsiteURL, nil
+}
+
+// ResetWebsiteURL resets all changes to the "website_url" field.
+func (m *FLinkApplicationMutation) ResetWebsiteURL() {
+	m.website_url = nil
+}
+
+// SetApplicationType sets the "application_type" field.
+func (m *FLinkApplicationMutation) SetApplicationType(s string) {
+	m.application_type = &s
+}
+
+// ApplicationType returns the value of the "application_type" field in the mutation.
+func (m *FLinkApplicationMutation) ApplicationType() (r string, exists bool) {
+	v := m.application_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldApplicationType returns the old "application_type" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldApplicationType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldApplicationType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldApplicationType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldApplicationType: %w", err)
+	}
+	return oldValue.ApplicationType, nil
+}
+
+// ResetApplicationType resets all changes to the "application_type" field.
+func (m *FLinkApplicationMutation) ResetApplicationType() {
+	m.application_type = nil
+}
+
+// SetWebsiteName sets the "website_name" field.
+func (m *FLinkApplicationMutation) SetWebsiteName(s string) {
+	m.website_name = &s
+}
+
+// WebsiteName returns the value of the "website_name" field in the mutation.
+func (m *FLinkApplicationMutation) WebsiteName() (r string, exists bool) {
+	v := m.website_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWebsiteName returns the old "website_name" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldWebsiteName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWebsiteName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWebsiteName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWebsiteName: %w", err)
+	}
+	return oldValue.WebsiteName, nil
+}
+
+// ResetWebsiteName resets all changes to the "website_name" field.
+func (m *FLinkApplicationMutation) ResetWebsiteName() {
+	m.website_name = nil
+}
+
+// SetWebsiteLogo sets the "website_logo" field.
+func (m *FLinkApplicationMutation) SetWebsiteLogo(s string) {
+	m.website_logo = &s
+}
+
+// WebsiteLogo returns the value of the "website_logo" field in the mutation.
+func (m *FLinkApplicationMutation) WebsiteLogo() (r string, exists bool) {
+	v := m.website_logo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWebsiteLogo returns the old "website_logo" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldWebsiteLogo(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWebsiteLogo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWebsiteLogo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWebsiteLogo: %w", err)
+	}
+	return oldValue.WebsiteLogo, nil
+}
+
+// ResetWebsiteLogo resets all changes to the "website_logo" field.
+func (m *FLinkApplicationMutation) ResetWebsiteLogo() {
+	m.website_logo = nil
+}
+
+// SetWebsiteDescription sets the "website_description" field.
+func (m *FLinkApplicationMutation) SetWebsiteDescription(s string) {
+	m.website_description = &s
+}
+
+// WebsiteDescription returns the value of the "website_description" field in the mutation.
+func (m *FLinkApplicationMutation) WebsiteDescription() (r string, exists bool) {
+	v := m.website_description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWebsiteDescription returns the old "website_description" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldWebsiteDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWebsiteDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWebsiteDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWebsiteDescription: %w", err)
+	}
+	return oldValue.WebsiteDescription, nil
+}
+
+// ResetWebsiteDescription resets all changes to the "website_description" field.
+func (m *FLinkApplicationMutation) ResetWebsiteDescription() {
+	m.website_description = nil
+}
+
+// SetContactEmail sets the "contact_email" field.
+func (m *FLinkApplicationMutation) SetContactEmail(s string) {
+	m.contact_email = &s
+}
+
+// ContactEmail returns the value of the "contact_email" field in the mutation.
+func (m *FLinkApplicationMutation) ContactEmail() (r string, exists bool) {
+	v := m.contact_email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContactEmail returns the old "contact_email" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldContactEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContactEmail is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContactEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContactEmail: %w", err)
+	}
+	return oldValue.ContactEmail, nil
+}
+
+// ResetContactEmail resets all changes to the "contact_email" field.
+func (m *FLinkApplicationMutation) ResetContactEmail() {
+	m.contact_email = nil
+}
+
+// SetSnapshotURL sets the "snapshot_url" field.
+func (m *FLinkApplicationMutation) SetSnapshotURL(s string) {
+	m.snapshot_url = &s
+}
+
+// SnapshotURL returns the value of the "snapshot_url" field in the mutation.
+func (m *FLinkApplicationMutation) SnapshotURL() (r string, exists bool) {
+	v := m.snapshot_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSnapshotURL returns the old "snapshot_url" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldSnapshotURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSnapshotURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSnapshotURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSnapshotURL: %w", err)
+	}
+	return oldValue.SnapshotURL, nil
+}
+
+// ClearSnapshotURL clears the value of the "snapshot_url" field.
+func (m *FLinkApplicationMutation) ClearSnapshotURL() {
+	m.snapshot_url = nil
+	m.clearedFields[flinkapplication.FieldSnapshotURL] = struct{}{}
+}
+
+// SnapshotURLCleared returns if the "snapshot_url" field was cleared in this mutation.
+func (m *FLinkApplicationMutation) SnapshotURLCleared() bool {
+	_, ok := m.clearedFields[flinkapplication.FieldSnapshotURL]
+	return ok
+}
+
+// ResetSnapshotURL resets all changes to the "snapshot_url" field.
+func (m *FLinkApplicationMutation) ResetSnapshotURL() {
+	m.snapshot_url = nil
+	delete(m.clearedFields, flinkapplication.FieldSnapshotURL)
+}
+
+// SetOriginalWebsiteURL sets the "original_website_url" field.
+func (m *FLinkApplicationMutation) SetOriginalWebsiteURL(s string) {
+	m.original_website_url = &s
+}
+
+// OriginalWebsiteURL returns the value of the "original_website_url" field in the mutation.
+func (m *FLinkApplicationMutation) OriginalWebsiteURL() (r string, exists bool) {
+	v := m.original_website_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOriginalWebsiteURL returns the old "original_website_url" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldOriginalWebsiteURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOriginalWebsiteURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOriginalWebsiteURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOriginalWebsiteURL: %w", err)
+	}
+	return oldValue.OriginalWebsiteURL, nil
+}
+
+// ClearOriginalWebsiteURL clears the value of the "original_website_url" field.
+func (m *FLinkApplicationMutation) ClearOriginalWebsiteURL() {
+	m.original_website_url = nil
+	m.clearedFields[flinkapplication.FieldOriginalWebsiteURL] = struct{}{}
+}
+
+// OriginalWebsiteURLCleared returns if the "original_website_url" field was cleared in this mutation.
+func (m *FLinkApplicationMutation) OriginalWebsiteURLCleared() bool {
+	_, ok := m.clearedFields[flinkapplication.FieldOriginalWebsiteURL]
+	return ok
+}
+
+// ResetOriginalWebsiteURL resets all changes to the "original_website_url" field.
+func (m *FLinkApplicationMutation) ResetOriginalWebsiteURL() {
+	m.original_website_url = nil
+	delete(m.clearedFields, flinkapplication.FieldOriginalWebsiteURL)
+}
+
+// SetModificationReason sets the "modification_reason" field.
+func (m *FLinkApplicationMutation) SetModificationReason(s string) {
+	m.modification_reason = &s
+}
+
+// ModificationReason returns the value of the "modification_reason" field in the mutation.
+func (m *FLinkApplicationMutation) ModificationReason() (r string, exists bool) {
+	v := m.modification_reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldModificationReason returns the old "modification_reason" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldModificationReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldModificationReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldModificationReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldModificationReason: %w", err)
+	}
+	return oldValue.ModificationReason, nil
+}
+
+// ClearModificationReason clears the value of the "modification_reason" field.
+func (m *FLinkApplicationMutation) ClearModificationReason() {
+	m.modification_reason = nil
+	m.clearedFields[flinkapplication.FieldModificationReason] = struct{}{}
+}
+
+// ModificationReasonCleared returns if the "modification_reason" field was cleared in this mutation.
+func (m *FLinkApplicationMutation) ModificationReasonCleared() bool {
+	_, ok := m.clearedFields[flinkapplication.FieldModificationReason]
+	return ok
+}
+
+// ResetModificationReason resets all changes to the "modification_reason" field.
+func (m *FLinkApplicationMutation) ResetModificationReason() {
+	m.modification_reason = nil
+	delete(m.clearedFields, flinkapplication.FieldModificationReason)
+}
+
+// SetStatus sets the "status" field.
+func (m *FLinkApplicationMutation) SetStatus(i int) {
+	m.status = &i
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *FLinkApplicationMutation) Status() (r int, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldStatus(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds i to the "status" field.
+func (m *FLinkApplicationMutation) AddStatus(i int) {
+	if m.addstatus != nil {
+		*m.addstatus += i
+	} else {
+		m.addstatus = &i
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *FLinkApplicationMutation) AddedStatus() (r int, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *FLinkApplicationMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// SetRejectReason sets the "reject_reason" field.
+func (m *FLinkApplicationMutation) SetRejectReason(s string) {
+	m.reject_reason = &s
+}
+
+// RejectReason returns the value of the "reject_reason" field in the mutation.
+func (m *FLinkApplicationMutation) RejectReason() (r string, exists bool) {
+	v := m.reject_reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRejectReason returns the old "reject_reason" field's value of the FLinkApplication entity.
+// If the FLinkApplication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FLinkApplicationMutation) OldRejectReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRejectReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRejectReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRejectReason: %w", err)
+	}
+	return oldValue.RejectReason, nil
+}
+
+// ClearRejectReason clears the value of the "reject_reason" field.
+func (m *FLinkApplicationMutation) ClearRejectReason() {
+	m.reject_reason = nil
+	m.clearedFields[flinkapplication.FieldRejectReason] = struct{}{}
+}
+
+// RejectReasonCleared returns if the "reject_reason" field was cleared in this mutation.
+func (m *FLinkApplicationMutation) RejectReasonCleared() bool {
+	_, ok := m.clearedFields[flinkapplication.FieldRejectReason]
+	return ok
+}
+
+// ResetRejectReason resets all changes to the "reject_reason" field.
+func (m *FLinkApplicationMutation) ResetRejectReason() {
+	m.reject_reason = nil
+	delete(m.clearedFields, flinkapplication.FieldRejectReason)
+}
+
+// Where appends a list predicates to the FLinkApplicationMutation builder.
+func (m *FLinkApplicationMutation) Where(ps ...predicate.FLinkApplication) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the FLinkApplicationMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FLinkApplicationMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FLinkApplication, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *FLinkApplicationMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FLinkApplicationMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (FLinkApplication).
+func (m *FLinkApplicationMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FLinkApplicationMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.created_at != nil {
+		fields = append(fields, flinkapplication.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, flinkapplication.FieldUpdatedAt)
+	}
+	if m.website_url != nil {
+		fields = append(fields, flinkapplication.FieldWebsiteURL)
+	}
+	if m.application_type != nil {
+		fields = append(fields, flinkapplication.FieldApplicationType)
+	}
+	if m.website_name != nil {
+		fields = append(fields, flinkapplication.FieldWebsiteName)
+	}
+	if m.website_logo != nil {
+		fields = append(fields, flinkapplication.FieldWebsiteLogo)
+	}
+	if m.website_description != nil {
+		fields = append(fields, flinkapplication.FieldWebsiteDescription)
+	}
+	if m.contact_email != nil {
+		fields = append(fields, flinkapplication.FieldContactEmail)
+	}
+	if m.snapshot_url != nil {
+		fields = append(fields, flinkapplication.FieldSnapshotURL)
+	}
+	if m.original_website_url != nil {
+		fields = append(fields, flinkapplication.FieldOriginalWebsiteURL)
+	}
+	if m.modification_reason != nil {
+		fields = append(fields, flinkapplication.FieldModificationReason)
+	}
+	if m.status != nil {
+		fields = append(fields, flinkapplication.FieldStatus)
+	}
+	if m.reject_reason != nil {
+		fields = append(fields, flinkapplication.FieldRejectReason)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FLinkApplicationMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case flinkapplication.FieldCreatedAt:
+		return m.CreatedAt()
+	case flinkapplication.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case flinkapplication.FieldWebsiteURL:
+		return m.WebsiteURL()
+	case flinkapplication.FieldApplicationType:
+		return m.ApplicationType()
+	case flinkapplication.FieldWebsiteName:
+		return m.WebsiteName()
+	case flinkapplication.FieldWebsiteLogo:
+		return m.WebsiteLogo()
+	case flinkapplication.FieldWebsiteDescription:
+		return m.WebsiteDescription()
+	case flinkapplication.FieldContactEmail:
+		return m.ContactEmail()
+	case flinkapplication.FieldSnapshotURL:
+		return m.SnapshotURL()
+	case flinkapplication.FieldOriginalWebsiteURL:
+		return m.OriginalWebsiteURL()
+	case flinkapplication.FieldModificationReason:
+		return m.ModificationReason()
+	case flinkapplication.FieldStatus:
+		return m.Status()
+	case flinkapplication.FieldRejectReason:
+		return m.RejectReason()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FLinkApplicationMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case flinkapplication.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case flinkapplication.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case flinkapplication.FieldWebsiteURL:
+		return m.OldWebsiteURL(ctx)
+	case flinkapplication.FieldApplicationType:
+		return m.OldApplicationType(ctx)
+	case flinkapplication.FieldWebsiteName:
+		return m.OldWebsiteName(ctx)
+	case flinkapplication.FieldWebsiteLogo:
+		return m.OldWebsiteLogo(ctx)
+	case flinkapplication.FieldWebsiteDescription:
+		return m.OldWebsiteDescription(ctx)
+	case flinkapplication.FieldContactEmail:
+		return m.OldContactEmail(ctx)
+	case flinkapplication.FieldSnapshotURL:
+		return m.OldSnapshotURL(ctx)
+	case flinkapplication.FieldOriginalWebsiteURL:
+		return m.OldOriginalWebsiteURL(ctx)
+	case flinkapplication.FieldModificationReason:
+		return m.OldModificationReason(ctx)
+	case flinkapplication.FieldStatus:
+		return m.OldStatus(ctx)
+	case flinkapplication.FieldRejectReason:
+		return m.OldRejectReason(ctx)
+	}
+	return nil, fmt.Errorf("unknown FLinkApplication field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FLinkApplicationMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case flinkapplication.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case flinkapplication.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case flinkapplication.FieldWebsiteURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWebsiteURL(v)
+		return nil
+	case flinkapplication.FieldApplicationType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetApplicationType(v)
+		return nil
+	case flinkapplication.FieldWebsiteName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWebsiteName(v)
+		return nil
+	case flinkapplication.FieldWebsiteLogo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWebsiteLogo(v)
+		return nil
+	case flinkapplication.FieldWebsiteDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWebsiteDescription(v)
+		return nil
+	case flinkapplication.FieldContactEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContactEmail(v)
+		return nil
+	case flinkapplication.FieldSnapshotURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSnapshotURL(v)
+		return nil
+	case flinkapplication.FieldOriginalWebsiteURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOriginalWebsiteURL(v)
+		return nil
+	case flinkapplication.FieldModificationReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetModificationReason(v)
+		return nil
+	case flinkapplication.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case flinkapplication.FieldRejectReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRejectReason(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FLinkApplication field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FLinkApplicationMutation) AddedFields() []string {
+	var fields []string
+	if m.addstatus != nil {
+		fields = append(fields, flinkapplication.FieldStatus)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FLinkApplicationMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case flinkapplication.FieldStatus:
+		return m.AddedStatus()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FLinkApplicationMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case flinkapplication.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FLinkApplication numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FLinkApplicationMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(flinkapplication.FieldSnapshotURL) {
+		fields = append(fields, flinkapplication.FieldSnapshotURL)
+	}
+	if m.FieldCleared(flinkapplication.FieldOriginalWebsiteURL) {
+		fields = append(fields, flinkapplication.FieldOriginalWebsiteURL)
+	}
+	if m.FieldCleared(flinkapplication.FieldModificationReason) {
+		fields = append(fields, flinkapplication.FieldModificationReason)
+	}
+	if m.FieldCleared(flinkapplication.FieldRejectReason) {
+		fields = append(fields, flinkapplication.FieldRejectReason)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FLinkApplicationMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FLinkApplicationMutation) ClearField(name string) error {
+	switch name {
+	case flinkapplication.FieldSnapshotURL:
+		m.ClearSnapshotURL()
+		return nil
+	case flinkapplication.FieldOriginalWebsiteURL:
+		m.ClearOriginalWebsiteURL()
+		return nil
+	case flinkapplication.FieldModificationReason:
+		m.ClearModificationReason()
+		return nil
+	case flinkapplication.FieldRejectReason:
+		m.ClearRejectReason()
+		return nil
+	}
+	return fmt.Errorf("unknown FLinkApplication nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FLinkApplicationMutation) ResetField(name string) error {
+	switch name {
+	case flinkapplication.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case flinkapplication.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case flinkapplication.FieldWebsiteURL:
+		m.ResetWebsiteURL()
+		return nil
+	case flinkapplication.FieldApplicationType:
+		m.ResetApplicationType()
+		return nil
+	case flinkapplication.FieldWebsiteName:
+		m.ResetWebsiteName()
+		return nil
+	case flinkapplication.FieldWebsiteLogo:
+		m.ResetWebsiteLogo()
+		return nil
+	case flinkapplication.FieldWebsiteDescription:
+		m.ResetWebsiteDescription()
+		return nil
+	case flinkapplication.FieldContactEmail:
+		m.ResetContactEmail()
+		return nil
+	case flinkapplication.FieldSnapshotURL:
+		m.ResetSnapshotURL()
+		return nil
+	case flinkapplication.FieldOriginalWebsiteURL:
+		m.ResetOriginalWebsiteURL()
+		return nil
+	case flinkapplication.FieldModificationReason:
+		m.ResetModificationReason()
+		return nil
+	case flinkapplication.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case flinkapplication.FieldRejectReason:
+		m.ResetRejectReason()
+		return nil
+	}
+	return fmt.Errorf("unknown FLinkApplication field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FLinkApplicationMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FLinkApplicationMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FLinkApplicationMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FLinkApplicationMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FLinkApplicationMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FLinkApplicationMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FLinkApplicationMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown FLinkApplication unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FLinkApplicationMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown FLinkApplication edge %s", name)
 }
 
 // FLinkGroupMutation represents an operation that mutates the FLinkGroup nodes in the graph.
