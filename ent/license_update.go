@@ -34,16 +34,16 @@ func (_u *LicenseUpdate) SetUpdatedAt(v time.Time) *LicenseUpdate {
 	return _u
 }
 
-// SetMachineCode sets the "machine_code" field.
-func (_u *LicenseUpdate) SetMachineCode(v string) *LicenseUpdate {
-	_u.mutation.SetMachineCode(v)
+// SetDomain sets the "domain" field.
+func (_u *LicenseUpdate) SetDomain(v string) *LicenseUpdate {
+	_u.mutation.SetDomain(v)
 	return _u
 }
 
-// SetNillableMachineCode sets the "machine_code" field if the given value is not nil.
-func (_u *LicenseUpdate) SetNillableMachineCode(v *string) *LicenseUpdate {
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (_u *LicenseUpdate) SetNillableDomain(v *string) *LicenseUpdate {
 	if v != nil {
-		_u.SetMachineCode(*v)
+		_u.SetDomain(*v)
 	}
 	return _u
 }
@@ -160,9 +160,9 @@ func (_u *LicenseUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *LicenseUpdate) check() error {
-	if v, ok := _u.mutation.MachineCode(); ok {
-		if err := license.MachineCodeValidator(v); err != nil {
-			return &ValidationError{Name: "machine_code", err: fmt.Errorf(`ent: validator failed for field "License.machine_code": %w`, err)}
+	if v, ok := _u.mutation.Domain(); ok {
+		if err := license.DomainValidator(v); err != nil {
+			return &ValidationError{Name: "domain", err: fmt.Errorf(`ent: validator failed for field "License.domain": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.LicenseKey(); ok {
@@ -193,8 +193,8 @@ func (_u *LicenseUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(license.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.MachineCode(); ok {
-		_spec.SetField(license.FieldMachineCode, field.TypeString, value)
+	if value, ok := _u.mutation.Domain(); ok {
+		_spec.SetField(license.FieldDomain, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.LicenseKey(); ok {
 		_spec.SetField(license.FieldLicenseKey, field.TypeString, value)
@@ -240,16 +240,16 @@ func (_u *LicenseUpdateOne) SetUpdatedAt(v time.Time) *LicenseUpdateOne {
 	return _u
 }
 
-// SetMachineCode sets the "machine_code" field.
-func (_u *LicenseUpdateOne) SetMachineCode(v string) *LicenseUpdateOne {
-	_u.mutation.SetMachineCode(v)
+// SetDomain sets the "domain" field.
+func (_u *LicenseUpdateOne) SetDomain(v string) *LicenseUpdateOne {
+	_u.mutation.SetDomain(v)
 	return _u
 }
 
-// SetNillableMachineCode sets the "machine_code" field if the given value is not nil.
-func (_u *LicenseUpdateOne) SetNillableMachineCode(v *string) *LicenseUpdateOne {
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (_u *LicenseUpdateOne) SetNillableDomain(v *string) *LicenseUpdateOne {
 	if v != nil {
-		_u.SetMachineCode(*v)
+		_u.SetDomain(*v)
 	}
 	return _u
 }
@@ -379,9 +379,9 @@ func (_u *LicenseUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *LicenseUpdateOne) check() error {
-	if v, ok := _u.mutation.MachineCode(); ok {
-		if err := license.MachineCodeValidator(v); err != nil {
-			return &ValidationError{Name: "machine_code", err: fmt.Errorf(`ent: validator failed for field "License.machine_code": %w`, err)}
+	if v, ok := _u.mutation.Domain(); ok {
+		if err := license.DomainValidator(v); err != nil {
+			return &ValidationError{Name: "domain", err: fmt.Errorf(`ent: validator failed for field "License.domain": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.LicenseKey(); ok {
@@ -429,8 +429,8 @@ func (_u *LicenseUpdateOne) sqlSave(ctx context.Context) (_node *License, err er
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(license.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.MachineCode(); ok {
-		_spec.SetField(license.FieldMachineCode, field.TypeString, value)
+	if value, ok := _u.mutation.Domain(); ok {
+		_spec.SetField(license.FieldDomain, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.LicenseKey(); ok {
 		_spec.SetField(license.FieldLicenseKey, field.TypeString, value)

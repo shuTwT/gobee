@@ -5,7 +5,7 @@ export interface License {
   id: number
   created_at: string
   updated_at: string
-  machine_code: string
+  domain: string
   license_key: string
   customer_name: string
   expire_date: string
@@ -18,14 +18,14 @@ export interface LicensePageParams {
 }
 
 export interface LicenseCreateReq {
-  machine_code: string
+  domain: string
   license_key: string
   customer_name: string
   expire_date: string
 }
 
 export interface LicenseUpdateReq {
-  machine_code?: string
+  domain?: string
   license_key?: string
   customer_name?: string
   expire_date?: string
@@ -33,7 +33,7 @@ export interface LicenseUpdateReq {
 }
 
 export interface LicenseVerifyReq {
-  machine_code: string
+  domain: string
 }
 
 export interface LicenseVerifyResp {

@@ -18,7 +18,7 @@
 
 参数:
 - ctx: 上下文
-- machineCode: 机器码
+- domain: 域名
 - licenseKey: 授权密钥
 - customerName: 客户名称
 - expireDate: 过期日期
@@ -50,7 +50,7 @@
 参数:
 - ctx: 上下文
 - id: 授权ID
-- machineCode: 机器码
+- domain: 域名
 - licenseKey: 授权密钥
 - customerName: 客户名称
 - expireDate: 过期日期
@@ -72,14 +72,14 @@
 
 参数:
 - ctx: 上下文
-- machineCode: 机器码
+- domain: 域名
 
 返回: 授权实体（如果有效）或 nil（如果无效）
 
 ## 业务逻辑
 
 ### 授权验证逻辑
-1. 根据机器码查询授权记录
+1. 根据域名查询授权记录
 2. 检查授权是否存在
 3. 检查授权是否过期
 4. 如果过期，自动更新状态为"过期"

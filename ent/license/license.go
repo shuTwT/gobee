@@ -17,8 +17,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
-	// FieldMachineCode holds the string denoting the machine_code field in the database.
-	FieldMachineCode = "machine_code"
+	// FieldDomain holds the string denoting the domain field in the database.
+	FieldDomain = "domain"
 	// FieldLicenseKey holds the string denoting the license_key field in the database.
 	FieldLicenseKey = "license_key"
 	// FieldCustomerName holds the string denoting the customer_name field in the database.
@@ -36,7 +36,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
-	FieldMachineCode,
+	FieldDomain,
 	FieldLicenseKey,
 	FieldCustomerName,
 	FieldExpireDate,
@@ -60,8 +60,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
-	// MachineCodeValidator is a validator for the "machine_code" field. It is called by the builders before save.
-	MachineCodeValidator func(string) error
+	// DomainValidator is a validator for the "domain" field. It is called by the builders before save.
+	DomainValidator func(string) error
 	// LicenseKeyValidator is a validator for the "license_key" field. It is called by the builders before save.
 	LicenseKeyValidator func(string) error
 	// CustomerNameValidator is a validator for the "customer_name" field. It is called by the builders before save.
@@ -88,9 +88,9 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByMachineCode orders the results by the machine_code field.
-func ByMachineCode(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMachineCode, opts...).ToFunc()
+// ByDomain orders the results by the domain field.
+func ByDomain(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDomain, opts...).ToFunc()
 }
 
 // ByLicenseKey orders the results by the license_key field.

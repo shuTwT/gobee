@@ -64,9 +64,9 @@ func UpdatedAt(v time.Time) predicate.License {
 	return predicate.License(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// MachineCode applies equality check predicate on the "machine_code" field. It's identical to MachineCodeEQ.
-func MachineCode(v string) predicate.License {
-	return predicate.License(sql.FieldEQ(FieldMachineCode, v))
+// Domain applies equality check predicate on the "domain" field. It's identical to DomainEQ.
+func Domain(v string) predicate.License {
+	return predicate.License(sql.FieldEQ(FieldDomain, v))
 }
 
 // LicenseKey applies equality check predicate on the "license_key" field. It's identical to LicenseKeyEQ.
@@ -169,69 +169,69 @@ func UpdatedAtLTE(v time.Time) predicate.License {
 	return predicate.License(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// MachineCodeEQ applies the EQ predicate on the "machine_code" field.
-func MachineCodeEQ(v string) predicate.License {
-	return predicate.License(sql.FieldEQ(FieldMachineCode, v))
+// DomainEQ applies the EQ predicate on the "domain" field.
+func DomainEQ(v string) predicate.License {
+	return predicate.License(sql.FieldEQ(FieldDomain, v))
 }
 
-// MachineCodeNEQ applies the NEQ predicate on the "machine_code" field.
-func MachineCodeNEQ(v string) predicate.License {
-	return predicate.License(sql.FieldNEQ(FieldMachineCode, v))
+// DomainNEQ applies the NEQ predicate on the "domain" field.
+func DomainNEQ(v string) predicate.License {
+	return predicate.License(sql.FieldNEQ(FieldDomain, v))
 }
 
-// MachineCodeIn applies the In predicate on the "machine_code" field.
-func MachineCodeIn(vs ...string) predicate.License {
-	return predicate.License(sql.FieldIn(FieldMachineCode, vs...))
+// DomainIn applies the In predicate on the "domain" field.
+func DomainIn(vs ...string) predicate.License {
+	return predicate.License(sql.FieldIn(FieldDomain, vs...))
 }
 
-// MachineCodeNotIn applies the NotIn predicate on the "machine_code" field.
-func MachineCodeNotIn(vs ...string) predicate.License {
-	return predicate.License(sql.FieldNotIn(FieldMachineCode, vs...))
+// DomainNotIn applies the NotIn predicate on the "domain" field.
+func DomainNotIn(vs ...string) predicate.License {
+	return predicate.License(sql.FieldNotIn(FieldDomain, vs...))
 }
 
-// MachineCodeGT applies the GT predicate on the "machine_code" field.
-func MachineCodeGT(v string) predicate.License {
-	return predicate.License(sql.FieldGT(FieldMachineCode, v))
+// DomainGT applies the GT predicate on the "domain" field.
+func DomainGT(v string) predicate.License {
+	return predicate.License(sql.FieldGT(FieldDomain, v))
 }
 
-// MachineCodeGTE applies the GTE predicate on the "machine_code" field.
-func MachineCodeGTE(v string) predicate.License {
-	return predicate.License(sql.FieldGTE(FieldMachineCode, v))
+// DomainGTE applies the GTE predicate on the "domain" field.
+func DomainGTE(v string) predicate.License {
+	return predicate.License(sql.FieldGTE(FieldDomain, v))
 }
 
-// MachineCodeLT applies the LT predicate on the "machine_code" field.
-func MachineCodeLT(v string) predicate.License {
-	return predicate.License(sql.FieldLT(FieldMachineCode, v))
+// DomainLT applies the LT predicate on the "domain" field.
+func DomainLT(v string) predicate.License {
+	return predicate.License(sql.FieldLT(FieldDomain, v))
 }
 
-// MachineCodeLTE applies the LTE predicate on the "machine_code" field.
-func MachineCodeLTE(v string) predicate.License {
-	return predicate.License(sql.FieldLTE(FieldMachineCode, v))
+// DomainLTE applies the LTE predicate on the "domain" field.
+func DomainLTE(v string) predicate.License {
+	return predicate.License(sql.FieldLTE(FieldDomain, v))
 }
 
-// MachineCodeContains applies the Contains predicate on the "machine_code" field.
-func MachineCodeContains(v string) predicate.License {
-	return predicate.License(sql.FieldContains(FieldMachineCode, v))
+// DomainContains applies the Contains predicate on the "domain" field.
+func DomainContains(v string) predicate.License {
+	return predicate.License(sql.FieldContains(FieldDomain, v))
 }
 
-// MachineCodeHasPrefix applies the HasPrefix predicate on the "machine_code" field.
-func MachineCodeHasPrefix(v string) predicate.License {
-	return predicate.License(sql.FieldHasPrefix(FieldMachineCode, v))
+// DomainHasPrefix applies the HasPrefix predicate on the "domain" field.
+func DomainHasPrefix(v string) predicate.License {
+	return predicate.License(sql.FieldHasPrefix(FieldDomain, v))
 }
 
-// MachineCodeHasSuffix applies the HasSuffix predicate on the "machine_code" field.
-func MachineCodeHasSuffix(v string) predicate.License {
-	return predicate.License(sql.FieldHasSuffix(FieldMachineCode, v))
+// DomainHasSuffix applies the HasSuffix predicate on the "domain" field.
+func DomainHasSuffix(v string) predicate.License {
+	return predicate.License(sql.FieldHasSuffix(FieldDomain, v))
 }
 
-// MachineCodeEqualFold applies the EqualFold predicate on the "machine_code" field.
-func MachineCodeEqualFold(v string) predicate.License {
-	return predicate.License(sql.FieldEqualFold(FieldMachineCode, v))
+// DomainEqualFold applies the EqualFold predicate on the "domain" field.
+func DomainEqualFold(v string) predicate.License {
+	return predicate.License(sql.FieldEqualFold(FieldDomain, v))
 }
 
-// MachineCodeContainsFold applies the ContainsFold predicate on the "machine_code" field.
-func MachineCodeContainsFold(v string) predicate.License {
-	return predicate.License(sql.FieldContainsFold(FieldMachineCode, v))
+// DomainContainsFold applies the ContainsFold predicate on the "domain" field.
+func DomainContainsFold(v string) predicate.License {
+	return predicate.License(sql.FieldContainsFold(FieldDomain, v))
 }
 
 // LicenseKeyEQ applies the EQ predicate on the "license_key" field.

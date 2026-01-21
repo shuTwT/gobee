@@ -14027,7 +14027,7 @@ type LicenseMutation struct {
 	id            *int
 	created_at    *time.Time
 	updated_at    *time.Time
-	machine_code  *string
+	domain        *string
 	license_key   *string
 	customer_name *string
 	expire_date   *time.Time
@@ -14215,40 +14215,40 @@ func (m *LicenseMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
-// SetMachineCode sets the "machine_code" field.
-func (m *LicenseMutation) SetMachineCode(s string) {
-	m.machine_code = &s
+// SetDomain sets the "domain" field.
+func (m *LicenseMutation) SetDomain(s string) {
+	m.domain = &s
 }
 
-// MachineCode returns the value of the "machine_code" field in the mutation.
-func (m *LicenseMutation) MachineCode() (r string, exists bool) {
-	v := m.machine_code
+// Domain returns the value of the "domain" field in the mutation.
+func (m *LicenseMutation) Domain() (r string, exists bool) {
+	v := m.domain
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldMachineCode returns the old "machine_code" field's value of the License entity.
+// OldDomain returns the old "domain" field's value of the License entity.
 // If the License object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LicenseMutation) OldMachineCode(ctx context.Context) (v string, err error) {
+func (m *LicenseMutation) OldDomain(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMachineCode is only allowed on UpdateOne operations")
+		return v, errors.New("OldDomain is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMachineCode requires an ID field in the mutation")
+		return v, errors.New("OldDomain requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMachineCode: %w", err)
+		return v, fmt.Errorf("querying old value for OldDomain: %w", err)
 	}
-	return oldValue.MachineCode, nil
+	return oldValue.Domain, nil
 }
 
-// ResetMachineCode resets all changes to the "machine_code" field.
-func (m *LicenseMutation) ResetMachineCode() {
-	m.machine_code = nil
+// ResetDomain resets all changes to the "domain" field.
+func (m *LicenseMutation) ResetDomain() {
+	m.domain = nil
 }
 
 // SetLicenseKey sets the "license_key" field.
@@ -14469,8 +14469,8 @@ func (m *LicenseMutation) Fields() []string {
 	if m.updated_at != nil {
 		fields = append(fields, license.FieldUpdatedAt)
 	}
-	if m.machine_code != nil {
-		fields = append(fields, license.FieldMachineCode)
+	if m.domain != nil {
+		fields = append(fields, license.FieldDomain)
 	}
 	if m.license_key != nil {
 		fields = append(fields, license.FieldLicenseKey)
@@ -14496,8 +14496,8 @@ func (m *LicenseMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case license.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case license.FieldMachineCode:
-		return m.MachineCode()
+	case license.FieldDomain:
+		return m.Domain()
 	case license.FieldLicenseKey:
 		return m.LicenseKey()
 	case license.FieldCustomerName:
@@ -14519,8 +14519,8 @@ func (m *LicenseMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreatedAt(ctx)
 	case license.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case license.FieldMachineCode:
-		return m.OldMachineCode(ctx)
+	case license.FieldDomain:
+		return m.OldDomain(ctx)
 	case license.FieldLicenseKey:
 		return m.OldLicenseKey(ctx)
 	case license.FieldCustomerName:
@@ -14552,12 +14552,12 @@ func (m *LicenseMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case license.FieldMachineCode:
+	case license.FieldDomain:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetMachineCode(v)
+		m.SetDomain(v)
 		return nil
 	case license.FieldLicenseKey:
 		v, ok := value.(string)
@@ -14666,8 +14666,8 @@ func (m *LicenseMutation) ResetField(name string) error {
 	case license.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case license.FieldMachineCode:
-		m.ResetMachineCode()
+	case license.FieldDomain:
+		m.ResetDomain()
 		return nil
 	case license.FieldLicenseKey:
 		m.ResetLicenseKey()

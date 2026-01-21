@@ -21,8 +21,8 @@ type License struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// 机器码
-	MachineCode string `json:"machine_code,omitempty"`
+	// 域名
+	Domain string `json:"domain,omitempty"`
 	// 授权密钥
 	LicenseKey string `json:"license_key,omitempty"`
 	// 客户名称
@@ -41,7 +41,7 @@ func (*License) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case license.FieldID, license.FieldStatus:
 			values[i] = new(sql.NullInt64)
-		case license.FieldMachineCode, license.FieldLicenseKey, license.FieldCustomerName:
+		case license.FieldDomain, license.FieldLicenseKey, license.FieldCustomerName:
 			values[i] = new(sql.NullString)
 		case license.FieldCreatedAt, license.FieldUpdatedAt, license.FieldExpireDate:
 			values[i] = new(sql.NullTime)
@@ -78,11 +78,11 @@ func (_m *License) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
-		case license.FieldMachineCode:
+		case license.FieldDomain:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field machine_code", values[i])
+				return fmt.Errorf("unexpected type %T for field domain", values[i])
 			} else if value.Valid {
-				_m.MachineCode = value.String
+				_m.Domain = value.String
 			}
 		case license.FieldLicenseKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -150,8 +150,8 @@ func (_m *License) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("machine_code=")
-	builder.WriteString(_m.MachineCode)
+	builder.WriteString("domain=")
+	builder.WriteString(_m.Domain)
 	builder.WriteString(", ")
 	builder.WriteString("license_key=")
 	builder.WriteString(_m.LicenseKey)

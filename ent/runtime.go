@@ -608,18 +608,18 @@ func init() {
 	license.DefaultUpdatedAt = licenseDescUpdatedAt.Default.(func() time.Time)
 	// license.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	license.UpdateDefaultUpdatedAt = licenseDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// licenseDescMachineCode is the schema descriptor for machine_code field.
-	licenseDescMachineCode := licenseFields[0].Descriptor()
-	// license.MachineCodeValidator is a validator for the "machine_code" field. It is called by the builders before save.
-	license.MachineCodeValidator = func() func(string) error {
-		validators := licenseDescMachineCode.Validators
+	// licenseDescDomain is the schema descriptor for domain field.
+	licenseDescDomain := licenseFields[0].Descriptor()
+	// license.DomainValidator is a validator for the "domain" field. It is called by the builders before save.
+	license.DomainValidator = func() func(string) error {
+		validators := licenseDescDomain.Validators
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
 		}
-		return func(machine_code string) error {
+		return func(domain string) error {
 			for _, fn := range fns {
-				if err := fn(machine_code); err != nil {
+				if err := fn(domain); err != nil {
 					return err
 				}
 			}

@@ -17,10 +17,10 @@ func (License) Mixin() []ent.Mixin {
 
 func (License) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("machine_code").
+		field.String("domain").
 			NotEmpty().
 			MaxLen(255).
-			Comment("机器码"),
+			Comment("域名"),
 		field.String("license_key").
 			NotEmpty().
 			MaxLen(512).

@@ -44,7 +44,7 @@ func (h *LicenseHandlerImpl) ListLicensePage(c *fiber.Ctx) error {
 			ID:           licenseEntity.ID,
 			CreatedAt:    licenseEntity.CreatedAt,
 			UpdatedAt:    licenseEntity.UpdatedAt,
-			MachineCode:  licenseEntity.MachineCode,
+			Domain:       licenseEntity.Domain,
 			LicenseKey:   licenseEntity.LicenseKey,
 			CustomerName: licenseEntity.CustomerName,
 			ExpireDate:   licenseEntity.ExpireDate,
@@ -74,7 +74,7 @@ func (h *LicenseHandlerImpl) QueryLicense(c *fiber.Ctx) error {
 		ID:           licenseEntity.ID,
 		CreatedAt:    licenseEntity.CreatedAt,
 		UpdatedAt:    licenseEntity.UpdatedAt,
-		MachineCode:  licenseEntity.MachineCode,
+		Domain:       licenseEntity.Domain,
 		LicenseKey:   licenseEntity.LicenseKey,
 		CustomerName: licenseEntity.CustomerName,
 		ExpireDate:   licenseEntity.ExpireDate,
@@ -89,7 +89,7 @@ func (h *LicenseHandlerImpl) CreateLicense(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	newLicense, err := h.licenseService.CreateLicense(c.Context(), req.MachineCode, req.LicenseKey, req.CustomerName, req.ExpireDate)
+	newLicense, err := h.licenseService.CreateLicense(c.Context(), req.Domain, req.LicenseKey, req.CustomerName, req.ExpireDate)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -98,7 +98,7 @@ func (h *LicenseHandlerImpl) CreateLicense(c *fiber.Ctx) error {
 		ID:           newLicense.ID,
 		CreatedAt:    newLicense.CreatedAt,
 		UpdatedAt:    newLicense.UpdatedAt,
-		MachineCode:  newLicense.MachineCode,
+		Domain:       newLicense.Domain,
 		LicenseKey:   newLicense.LicenseKey,
 		CustomerName: newLicense.CustomerName,
 		ExpireDate:   newLicense.ExpireDate,
@@ -127,7 +127,7 @@ func (h *LicenseHandlerImpl) UpdateLicense(c *fiber.Ctx) error {
 		expireDate = licenseEntity.ExpireDate
 	}
 
-	updatedLicense, err := h.licenseService.UpdateLicense(c.Context(), id, req.MachineCode, req.LicenseKey, req.CustomerName, expireDate, req.Status)
+	updatedLicense, err := h.licenseService.UpdateLicense(c.Context(), id, req.Domain, req.LicenseKey, req.CustomerName, expireDate, req.Status)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -136,7 +136,7 @@ func (h *LicenseHandlerImpl) UpdateLicense(c *fiber.Ctx) error {
 		ID:           updatedLicense.ID,
 		CreatedAt:    updatedLicense.CreatedAt,
 		UpdatedAt:    updatedLicense.UpdatedAt,
-		MachineCode:  updatedLicense.MachineCode,
+		Domain:       updatedLicense.Domain,
 		LicenseKey:   updatedLicense.LicenseKey,
 		CustomerName: updatedLicense.CustomerName,
 		ExpireDate:   updatedLicense.ExpireDate,
@@ -164,7 +164,7 @@ func (h *LicenseHandlerImpl) VerifyLicense(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	licenseEntity, err := h.licenseService.VerifyLicense(c.Context(), req.MachineCode)
+	licenseEntity, err := h.licenseService.VerifyLicense(c.Context(), req.Domain)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}

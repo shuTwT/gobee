@@ -13,7 +13,7 @@ const formRef = ref()
 const loading = ref(false)
 
 const formData = ref<LicenseCreateReq & LicenseUpdateReq>({
-  machine_code: '',
+  domain: '',
   license_key: '',
   customer_name: '',
   expire_date: '',
@@ -55,7 +55,7 @@ const handleSubmit = async () => {
 const initForm = () => {
   if (props.license) {
     formData.value = {
-      machine_code: props.license.machine_code || '',
+      domain: props.license.domain || '',
       license_key: props.license.license_key || '',
       customer_name: props.license.customer_name || '',
       expire_date: props.license.expire_date || '',
@@ -70,8 +70,8 @@ initForm()
 <template>
   <div class="license-form">
     <NForm ref="formRef" :model="formData" label-placement="left" label-width="100px">
-      <NFormItem label="机器码" path="machine_code" :rule="{ required: true, message: '请输入机器码' }">
-        <NInput v-model:value="formData.machine_code" placeholder="请输入机器码" />
+      <NFormItem label="域名" path="domain" :rule="{ required: true, message: '请输入域名' }">
+        <NInput v-model:value="formData.domain" placeholder="请输入域名" />
       </NFormItem>
 
       <NFormItem label="授权密钥" path="license_key" :rule="{ required: true, message: '请输入授权密钥' }">

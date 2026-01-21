@@ -18,7 +18,7 @@ const loading = ref(false)
 const data = ref<License[]>([])
 
 const pagination = reactive({
-  page: 1,
+  page:1,
   pageSize: 10,
   showSizePicker: true,
   total: 0,
@@ -41,8 +41,8 @@ const columns: DataTableColumns<License> = [
     width: 80,
   },
   {
-    title: '机器码',
-    key: 'machine_code',
+    title: '域名',
+    key: 'domain',
     ellipsis: {
       tooltip: true,
     },
@@ -184,7 +184,7 @@ const handleDelete = async (row: License) => {
 
 const handleVerify = async (row: License) => {
   try {
-    const res = await verifyLicense({ machine_code: row.machine_code })
+    const res = await verifyLicense({ domain: row.domain })
     if (res.data.valid) {
       message.success(`授权验证成功：${res.data.message}，客户：${res.data.customer_name}，过期时间：${res.data.expire_date}`)
     } else {

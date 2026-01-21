@@ -48,9 +48,9 @@ func (_c *LicenseCreate) SetNillableUpdatedAt(v *time.Time) *LicenseCreate {
 	return _c
 }
 
-// SetMachineCode sets the "machine_code" field.
-func (_c *LicenseCreate) SetMachineCode(v string) *LicenseCreate {
-	_c.mutation.SetMachineCode(v)
+// SetDomain sets the "domain" field.
+func (_c *LicenseCreate) SetDomain(v string) *LicenseCreate {
+	_c.mutation.SetDomain(v)
 	return _c
 }
 
@@ -157,12 +157,12 @@ func (_c *LicenseCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "License.updated_at"`)}
 	}
-	if _, ok := _c.mutation.MachineCode(); !ok {
-		return &ValidationError{Name: "machine_code", err: errors.New(`ent: missing required field "License.machine_code"`)}
+	if _, ok := _c.mutation.Domain(); !ok {
+		return &ValidationError{Name: "domain", err: errors.New(`ent: missing required field "License.domain"`)}
 	}
-	if v, ok := _c.mutation.MachineCode(); ok {
-		if err := license.MachineCodeValidator(v); err != nil {
-			return &ValidationError{Name: "machine_code", err: fmt.Errorf(`ent: validator failed for field "License.machine_code": %w`, err)}
+	if v, ok := _c.mutation.Domain(); ok {
+		if err := license.DomainValidator(v); err != nil {
+			return &ValidationError{Name: "domain", err: fmt.Errorf(`ent: validator failed for field "License.domain": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.LicenseKey(); !ok {
@@ -224,9 +224,9 @@ func (_c *LicenseCreate) createSpec() (*License, *sqlgraph.CreateSpec) {
 		_spec.SetField(license.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := _c.mutation.MachineCode(); ok {
-		_spec.SetField(license.FieldMachineCode, field.TypeString, value)
-		_node.MachineCode = value
+	if value, ok := _c.mutation.Domain(); ok {
+		_spec.SetField(license.FieldDomain, field.TypeString, value)
+		_node.Domain = value
 	}
 	if value, ok := _c.mutation.LicenseKey(); ok {
 		_spec.SetField(license.FieldLicenseKey, field.TypeString, value)

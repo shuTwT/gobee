@@ -332,7 +332,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "machine_code", Type: field.TypeString, Size: 255},
+		{Name: "domain", Type: field.TypeString, Size: 255},
 		{Name: "license_key", Type: field.TypeString, Size: 512},
 		{Name: "customer_name", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "expire_date", Type: field.TypeTime},

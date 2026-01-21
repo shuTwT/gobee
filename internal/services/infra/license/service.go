@@ -11,10 +11,10 @@ import (
 type LicenseService interface {
 	ListLicensePage(ctx context.Context, page, size int) (int, []*ent.License, error)
 	QueryLicense(ctx context.Context, id int) (*ent.License, error)
-	CreateLicense(ctx context.Context, machineCode, licenseKey, customerName string, expireDate time.Time) (*ent.License, error)
-	UpdateLicense(ctx context.Context, id int, machineCode, licenseKey, customerName string, expireDate time.Time, status int) (*ent.License, error)
+	CreateLicense(ctx context.Context, domain, licenseKey, customerName string, expireDate time.Time) (*ent.License, error)
+	UpdateLicense(ctx context.Context, id int, domain, licenseKey, customerName string, expireDate time.Time, status int) (*ent.License, error)
 	DeleteLicense(ctx context.Context, id int) error
-	VerifyLicense(ctx context.Context, machineCode string) (*ent.License, error)
+	VerifyLicense(ctx context.Context, domain string) (*ent.License, error)
 }
 
 type LicenseServiceImpl struct {
@@ -53,9 +53,9 @@ func (s *LicenseServiceImpl) QueryLicense(ctx context.Context, id int) (*ent.Lic
 	return licenseEntity, nil
 }
 
-func (s *LicenseServiceImpl) CreateLicense(ctx context.Context, machineCode, licenseKey, customerName string, expireDate time.Time) (*ent.License, error) {
+func (s *LicenseServiceImpl) CreateLicense(ctx context.Context, domain, licenseKey, customerName string, expireDate time.Time) (*ent.License, error) {
 	newLicense, err := s.client.License.Create().
-		SetMachineCode(machineCode).
+		SetDomain(domain).
 		SetLicenseKey(licenseKey).
 		SetCustomerName(customerName).
 		SetExpireDate(expireDate).
@@ -67,9 +67,9 @@ func (s *LicenseServiceImpl) CreateLicense(ctx context.Context, machineCode, lic
 	return newLicense, nil
 }
 
-func (s *LicenseServiceImpl) UpdateLicense(ctx context.Context, id int, machineCode, licenseKey, customerName string, expireDate time.Time, status int) (*ent.License, error) {
+func (s *LicenseServiceImpl) UpdateLicense(ctx context.Context, id int, domain, licenseKey, customerName string, expireDate time.Time, status int) (*ent.License, error) {
 	updatedLicense, err := s.client.License.UpdateOneID(id).
-		SetMachineCode(machineCode).
+		SetDomain(domain).
 		SetLicenseKey(licenseKey).
 		SetCustomerName(customerName).
 		SetExpireDate(expireDate).
@@ -89,9 +89,9 @@ func (s *LicenseServiceImpl) DeleteLicense(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *LicenseServiceImpl) VerifyLicense(ctx context.Context, machineCode string) (*ent.License, error) {
+func (s *LicenseServiceImpl) VerifyLicense(ctx context.Context, domain string) (*ent.License, error) {
 	licenseEntity, err := s.client.License.Query().
-		Where(license_ent.MachineCode(machineCode)).
+		Where(license_ent.Domain(domain)).
 		First(ctx)
 	if err != nil {
 		return nil, err
