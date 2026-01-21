@@ -42,6 +42,8 @@ type Tx struct {
 	FriendCircleRecord *FriendCircleRecordClient
 	// KnowledgeBase is the client for interacting with the KnowledgeBase builders.
 	KnowledgeBase *KnowledgeBaseClient
+	// License is the client for interacting with the License builders.
+	License *LicenseClient
 	// Member is the client for interacting with the Member builders.
 	Member *MemberClient
 	// MemberLevel is the client for interacting with the MemberLevel builders.
@@ -228,6 +230,7 @@ func (tx *Tx) init() {
 	tx.File = NewFileClient(tx.config)
 	tx.FriendCircleRecord = NewFriendCircleRecordClient(tx.config)
 	tx.KnowledgeBase = NewKnowledgeBaseClient(tx.config)
+	tx.License = NewLicenseClient(tx.config)
 	tx.Member = NewMemberClient(tx.config)
 	tx.MemberLevel = NewMemberLevelClient(tx.config)
 	tx.Notification = NewNotificationClient(tx.config)

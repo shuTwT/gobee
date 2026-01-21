@@ -51,6 +51,9 @@ type FriendCircleRecord func(*sql.Selector)
 // KnowledgeBase is the predicate function for knowledgebase builders.
 type KnowledgeBase func(*sql.Selector)
 
+// License is the predicate function for license builders.
+type License func(*sql.Selector)
+
 // Member is the predicate function for member builders.
 type Member func(*sql.Selector)
 

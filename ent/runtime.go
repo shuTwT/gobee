@@ -20,6 +20,7 @@ import (
 	"github.com/shuTwT/gobee/ent/flinkgroup"
 	"github.com/shuTwT/gobee/ent/friendcirclerecord"
 	"github.com/shuTwT/gobee/ent/knowledgebase"
+	"github.com/shuTwT/gobee/ent/license"
 	"github.com/shuTwT/gobee/ent/member"
 	"github.com/shuTwT/gobee/ent/memberlevel"
 	"github.com/shuTwT/gobee/ent/notification"
@@ -592,6 +593,65 @@ func init() {
 	knowledgebaseDescMaxBatchDocumentCount := knowledgebaseFields[4].Descriptor()
 	// knowledgebase.MaxBatchDocumentCountValidator is a validator for the "max_batch_document_count" field. It is called by the builders before save.
 	knowledgebase.MaxBatchDocumentCountValidator = knowledgebaseDescMaxBatchDocumentCount.Validators[0].(func(int) error)
+	licenseMixin := schema.License{}.Mixin()
+	licenseMixinFields0 := licenseMixin[0].Fields()
+	_ = licenseMixinFields0
+	licenseFields := schema.License{}.Fields()
+	_ = licenseFields
+	// licenseDescCreatedAt is the schema descriptor for created_at field.
+	licenseDescCreatedAt := licenseMixinFields0[1].Descriptor()
+	// license.DefaultCreatedAt holds the default value on creation for the created_at field.
+	license.DefaultCreatedAt = licenseDescCreatedAt.Default.(func() time.Time)
+	// licenseDescUpdatedAt is the schema descriptor for updated_at field.
+	licenseDescUpdatedAt := licenseMixinFields0[2].Descriptor()
+	// license.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	license.DefaultUpdatedAt = licenseDescUpdatedAt.Default.(func() time.Time)
+	// license.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	license.UpdateDefaultUpdatedAt = licenseDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// licenseDescMachineCode is the schema descriptor for machine_code field.
+	licenseDescMachineCode := licenseFields[0].Descriptor()
+	// license.MachineCodeValidator is a validator for the "machine_code" field. It is called by the builders before save.
+	license.MachineCodeValidator = func() func(string) error {
+		validators := licenseDescMachineCode.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(machine_code string) error {
+			for _, fn := range fns {
+				if err := fn(machine_code); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// licenseDescLicenseKey is the schema descriptor for license_key field.
+	licenseDescLicenseKey := licenseFields[1].Descriptor()
+	// license.LicenseKeyValidator is a validator for the "license_key" field. It is called by the builders before save.
+	license.LicenseKeyValidator = func() func(string) error {
+		validators := licenseDescLicenseKey.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(license_key string) error {
+			for _, fn := range fns {
+				if err := fn(license_key); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// licenseDescCustomerName is the schema descriptor for customer_name field.
+	licenseDescCustomerName := licenseFields[2].Descriptor()
+	// license.CustomerNameValidator is a validator for the "customer_name" field. It is called by the builders before save.
+	license.CustomerNameValidator = licenseDescCustomerName.Validators[0].(func(string) error)
+	// licenseDescStatus is the schema descriptor for status field.
+	licenseDescStatus := licenseFields[4].Descriptor()
+	// license.DefaultStatus holds the default value on creation for the status field.
+	license.DefaultStatus = licenseDescStatus.Default.(int)
 	memberMixin := schema.Member{}.Mixin()
 	memberMixinFields0 := memberMixin[0].Fields()
 	_ = memberMixinFields0

@@ -71,6 +71,16 @@ export default [
                     showLink: true,
                     roles: ['admin', 'common'],
                 },
+            },
+            {
+                path: '/infra/license',
+                name: 'LicenseManagement',
+                component: () => import('@/views/infra/license/index.vue'),
+                meta: {
+                    title: '授权管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
             }
         ]
     }

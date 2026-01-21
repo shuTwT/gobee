@@ -16,6 +16,7 @@ import (
 	post_handler "github.com/shuTwT/gobee/internal/handlers/content/post"
 	tag_handler "github.com/shuTwT/gobee/internal/handlers/content/tag"
 	file_handler "github.com/shuTwT/gobee/internal/handlers/infra/file"
+	license_handler "github.com/shuTwT/gobee/internal/handlers/infra/license"
 	migration_handler "github.com/shuTwT/gobee/internal/handlers/infra/migration"
 	plugin_handler "github.com/shuTwT/gobee/internal/handlers/infra/plugin"
 	schedulejob_handler "github.com/shuTwT/gobee/internal/handlers/infra/schedulejob"
@@ -53,6 +54,7 @@ type HandlerMap struct {
 	DocLibraryHandler       doclibrary_handler.DocLibraryHandler
 	DocLibraryDetailHandler doclibrarydetail_handler.DocLibraryDetailHandler
 	FileHandler             file_handler.FileHandler
+	LicenseHandler          license_handler.LicenseHandler
 	FlinkHandler            flink_handler.FlinkHandler
 	FlinkGroupHandler       flinkgroup_handler.FlinkGroupHandler
 	FriendCircleHandler     friendcircle_handler.FriendCircleHandler
@@ -91,6 +93,7 @@ func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 	doclibraryHandler := doclibrary_handler.NewDocLibraryHandlerImpl(serviceMap.DocLibraryService)
 	doclibrarydetailHandler := doclibrarydetail_handler.NewDocLibraryDetailHandlerImpl(serviceMap.DocLibraryDetailService)
 	fileHandler := file_handler.NewFileHandlerImpl(serviceMap.FileService, serviceMap.StorageStrategyService)
+	licenseHandler := license_handler.NewLicenseHandlerImpl(serviceMap.LicenseService)
 	flinkHandler := flink_handler.NewFlinkHandlerImpl(db, serviceMap.FlinkService)
 	flinkGroupHandler := flinkgroup_handler.NewFlinkGroupHandlerImpl(db, serviceMap.FlinkService)
 	friendCircleHandler := friendcircle_handler.NewFriendCircleHandlerImpl(serviceMap.FriendCircleService)
@@ -133,6 +136,7 @@ func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 		FriendCircleHandler:     friendCircleHandler,
 		InitializeHandler:       initializeHandler,
 		KnowledgeBaseHandler:    knowledgeBaseHandler,
+		LicenseHandler:          licenseHandler,
 		MemberHandler:           memberHandler,
 		MemberLevelHandler:      memberLevelHandler,
 		MigrationHandler:        migrationHandler,

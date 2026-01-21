@@ -27,6 +27,7 @@ import (
 	"github.com/shuTwT/gobee/ent/flinkgroup"
 	"github.com/shuTwT/gobee/ent/friendcirclerecord"
 	"github.com/shuTwT/gobee/ent/knowledgebase"
+	"github.com/shuTwT/gobee/ent/license"
 	"github.com/shuTwT/gobee/ent/member"
 	"github.com/shuTwT/gobee/ent/memberlevel"
 	"github.com/shuTwT/gobee/ent/notification"
@@ -122,6 +123,7 @@ func checkColumn(t, c string) error {
 			file.Table:                file.ValidColumn,
 			friendcirclerecord.Table:  friendcirclerecord.ValidColumn,
 			knowledgebase.Table:       knowledgebase.ValidColumn,
+			license.Table:             license.ValidColumn,
 			member.Table:              member.ValidColumn,
 			memberlevel.Table:         memberlevel.ValidColumn,
 			notification.Table:        notification.ValidColumn,

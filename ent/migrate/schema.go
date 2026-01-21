@@ -327,6 +327,23 @@ var (
 		Columns:    KnowledgeBasesColumns,
 		PrimaryKey: []*schema.Column{KnowledgeBasesColumns[0]},
 	}
+	// LicensesColumns holds the columns for the "licenses" table.
+	LicensesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "machine_code", Type: field.TypeString, Size: 255},
+		{Name: "license_key", Type: field.TypeString, Size: 512},
+		{Name: "customer_name", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "expire_date", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeInt, Default: 1},
+	}
+	// LicensesTable holds the schema information for the "licenses" table.
+	LicensesTable = &schema.Table{
+		Name:       "licenses",
+		Columns:    LicensesColumns,
+		PrimaryKey: []*schema.Column{LicensesColumns[0]},
+	}
 	// MembersColumns holds the columns for the "members" table.
 	MembersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -856,6 +873,7 @@ var (
 		FilesTable,
 		FriendCircleRecordsTable,
 		KnowledgeBasesTable,
+		LicensesTable,
 		MembersTable,
 		MemberLevelsTable,
 		NotificationsTable,

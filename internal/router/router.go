@@ -209,6 +209,15 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		pluginApi.Post("/:id/stop", handlerMap.PluginHandler.StopPlugin).Name("pluginStop")
 		pluginApi.Post("/:id/restart", handlerMap.PluginHandler.RestartPlugin).Name("pluginRestart")
 	}
+	licenseApi := router.Group("/license")
+	{
+		licenseApi.Get("/page", handlerMap.LicenseHandler.ListLicensePage).Name("licensePage")
+		licenseApi.Get("/query/:id", handlerMap.LicenseHandler.QueryLicense).Name("licenseQuery")
+		licenseApi.Post("/create", handlerMap.LicenseHandler.CreateLicense).Name("licenseCreate")
+		licenseApi.Put("/update/:id", handlerMap.LicenseHandler.UpdateLicense).Name("licenseUpdate")
+		licenseApi.Delete("/delete/:id", handlerMap.LicenseHandler.DeleteLicense).Name("licenseDelete")
+		licenseApi.Post("/verify", handlerMap.LicenseHandler.VerifyLicense).Name("licenseVerify")
+	}
 }
 
 // 注册商城路由

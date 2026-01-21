@@ -4,7 +4,7 @@ import (
 	"embed"
 
 	"github.com/shuTwT/gobee/ent"
-	"github.com/shuTwT/gobee/internal/schedule/manager"
+	"github.com/shuTwT/gobee/internal/infra/schedule/manager"
 	album_service "github.com/shuTwT/gobee/internal/services/content/album"
 	albumphoto_service "github.com/shuTwT/gobee/internal/services/content/albumphoto"
 	category_service "github.com/shuTwT/gobee/internal/services/content/category"
@@ -18,6 +18,7 @@ import (
 	post_service "github.com/shuTwT/gobee/internal/services/content/post"
 	tag_service "github.com/shuTwT/gobee/internal/services/content/tag"
 	file_service "github.com/shuTwT/gobee/internal/services/infra/file"
+	license_service "github.com/shuTwT/gobee/internal/services/infra/license"
 	migration_service "github.com/shuTwT/gobee/internal/services/infra/migration"
 	permission_service "github.com/shuTwT/gobee/internal/services/infra/permission"
 	plugin_service "github.com/shuTwT/gobee/internal/services/infra/plugin"
@@ -55,6 +56,7 @@ type ServiceMap struct {
 	EssayService            essay_service.EssayService
 	FileService             file_service.FileService
 	FlinkService            flink_service.FlinkService
+	LicenseService          license_service.LicenseService
 	FriendCircleService     friend_circle_service.FriendCircleService
 	KnowledgeBaseService    knowledgebase_service.KnowledgeBaseService
 	MemberLevelService      memberlevel_service.MemberLevelService
@@ -91,6 +93,7 @@ func InitializeServices(moduleDefs embed.FS, db *ent.Client, scheduleManager *ma
 	doclibrarydetailService := doclibrarydetail_service.NewDocLibraryDetailServiceImpl(db)
 	essayService := essay_service.NewEssayServiceImpl(db)
 	fileService := file_service.NewFileServiceImpl(db)
+	licenseService := license_service.NewLicenseServiceImpl(db)
 	flinkService := flink_service.NewFlinkServiceImpl(db)
 	friendCircleService := friend_circle_service.NewFriendCircleServiceImpl(db)
 	knowledgeBaseService := knowledgebase_service.NewKnowledgeBaseServiceImpl(db)
@@ -131,6 +134,7 @@ func InitializeServices(moduleDefs embed.FS, db *ent.Client, scheduleManager *ma
 		FlinkService:            flinkService,
 		FriendCircleService:     friendCircleService,
 		KnowledgeBaseService:    knowledgeBaseService,
+		LicenseService:          licenseService,
 		MemberLevelService:      memberLevelService,
 		MemberService:           memberService,
 		MigrationService:        migrationService,
