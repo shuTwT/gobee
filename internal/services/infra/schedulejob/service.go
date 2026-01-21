@@ -6,7 +6,7 @@ import (
 
 	"github.com/shuTwT/gobee/ent"
 	"github.com/shuTwT/gobee/ent/schedulejob"
-	schedule_manager "github.com/shuTwT/gobee/internal/schedule/manager"
+	schedule_manager "github.com/shuTwT/gobee/internal/infra/schedule/manager"
 	"github.com/shuTwT/gobee/pkg/domain/model"
 )
 

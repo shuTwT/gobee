@@ -9,9 +9,9 @@ import (
 	"github.com/shuTwT/gobee/ent"
 	"github.com/shuTwT/gobee/internal/database"
 	"github.com/shuTwT/gobee/internal/handlers"
+	"github.com/shuTwT/gobee/internal/infra/schedule"
+	"github.com/shuTwT/gobee/internal/infra/schedule/manager"
 	"github.com/shuTwT/gobee/internal/router"
-	"github.com/shuTwT/gobee/internal/schedule"
-	"github.com/shuTwT/gobee/internal/schedule/manager"
 	"github.com/shuTwT/gobee/pkg"
 	"github.com/shuTwT/gobee/pkg/config"
 

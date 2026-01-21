@@ -6,8 +6,8 @@ import (
 
 	"github.com/shuTwT/gobee/ent"
 	"github.com/shuTwT/gobee/ent/schedulejob"
+	"github.com/shuTwT/gobee/internal/infra/schedule/manager"
 	friendcircle_job "github.com/shuTwT/gobee/internal/job/friendcircle"
-	"github.com/shuTwT/gobee/internal/schedule/manager"
 	friend_circle_service "github.com/shuTwT/gobee/internal/services/content/friendcircle"
 )
 
