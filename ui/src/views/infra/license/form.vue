@@ -4,7 +4,6 @@ import dayjs from 'dayjs'
 import type { FormInst, FormRules } from 'naive-ui'
 import type { FormProps } from './utils/types'
 import { NForm, NFormItem, NInput, NDatePicker, NSelect, NButton, NSpace } from 'naive-ui'
-import { createLicense, updateLicense, type LicenseCreateReq, type LicenseUpdateReq } from '@/api/infra/license'
 
 const props = defineProps<FormProps>()
 
@@ -44,7 +43,7 @@ const getData = () => {
           const submitData: any = {
             domain: data.domain,
             customer_name: data.customer_name,
-            expire_date: data.expire_date ? dayjs(data.expire_date).format('YYYY-MM-DD HH:mm:ss') : '',
+            expire_date: data.expire_date,
           }
           if (isEdit.value) {
             submitData.status = data.status
@@ -90,14 +89,6 @@ defineExpose({ getData })
         :options="statusOptions"
         placeholder="请选择状态"
       />
-    </n-form-item>
-
-    <n-form-item>
-      <n-space>
-        <n-button type="primary" @click="formRef?.validate()">
-          {{ isEdit ? '更新' : '创建' }}
-        </n-button>
-      </n-space>
     </n-form-item>
   </n-form>
 </template>

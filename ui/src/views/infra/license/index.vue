@@ -170,7 +170,7 @@ const openEditDialog = (title = '新增', row?: License) => {
         domain: row?.domain || '',
         license_key: row?.license_key,
         customer_name: row?.customer_name || '',
-        expire_date: row?.expire_date ? new Date(row.expire_date).getTime() : 0,
+        expire_date: row?.expire_date ? new Date(row.expire_date).getTime() : undefined,
         status: row?.status || 1,
       }
     },
