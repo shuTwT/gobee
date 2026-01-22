@@ -13,7 +13,8 @@
     "lint:eslint": "eslint . --fix",
     "lint": "run-s lint:*",
     "format": "prettier --write src/",
-    "generate": "pnpm run -C packages/api-client generate"
+    "generate": "pnpm run -C packages/api-client generate",
+    "dev:docs": "pnpm run -C packages/docs dev"
   },
   "dependencies": {
     "@tinymce/tinymce-vue": "^6.3.0",
