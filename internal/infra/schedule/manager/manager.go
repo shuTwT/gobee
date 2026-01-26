@@ -145,3 +145,36 @@ func (m *ScheduleManager) RemoveJobFromScheduler(jobID int) error {
 	log.Printf("已移除任务 ID: %d", jobID)
 	return nil
 }
+
+func (m *ScheduleManager) ExecuteJobNow(jobEntity *ent.ScheduleJob) error {
+	job, ok := m.jobCache[jobEntity.JobName]
+	if !ok {
+		return fmt.Errorf("找不到任务 '%s' 的实现", jobEntity.JobName)
+	}
+
+	switch jobEntity.Type {
+	case "interval":
+		durationJob, ok := job.(schedule_model.DurationJob)
+		if !ok {
+			return fmt.Errorf("任务 '%s' 不是 DurationJob 类型", jobEntity.JobName)
+		}
+		if err := durationJob.Execute(context.Background()); err != nil {
+			log.Printf("任务 '%s' 执行失败: %v", jobEntity.JobName, err)
+			return err
+		}
+	case "cron":
+		cronJob, ok := job.(schedule_model.CronJob)
+		if !ok {
+			return fmt.Errorf("任务 '%s' 不是 CronJob 类型", jobEntity.JobName)
+		}
+		if err := cronJob.Execute(context.Background()); err != nil {
+			log.Printf("任务 '%s' 执行失败: %v", jobEntity.JobName, err)
+			return err
+		}
+	default:
+		return fmt.Errorf("任务 '%s' 的类型 '%s' 不支持", jobEntity.JobName, jobEntity.Type)
+	}
+
+	log.Printf("任务 '%s' (ID: %d) 已立即执行", jobEntity.Name, jobEntity.ID)
+	return nil
+}

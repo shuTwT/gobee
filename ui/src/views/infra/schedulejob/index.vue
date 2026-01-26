@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { h, ref, onMounted } from 'vue'
 import { NButton, NIcon, NDataTable, NInput, NSelect, NPopconfirm, NTag, NSwitch, useMessage, useDialog } from 'naive-ui'
-import { RefreshOutline, Pencil, TrashOutline } from '@vicons/ionicons5'
+import { RefreshOutline, Pencil, TrashOutline, PlayCircleOutline } from '@vicons/ionicons5'
 import type { DataTableColumns } from 'naive-ui'
 import {
   getScheduleJobPage,
   createScheduleJob,
   updateScheduleJob,
   deleteScheduleJob,
+  executeScheduleJob,
   type ScheduleJob,
   type CreateScheduleJobParams,
 } from '@/api/infra/schedulejob'
@@ -113,7 +114,6 @@ const columns: DataTableColumns<ScheduleJob> = [
   {
     title: '下次执行时间',
     key: 'next_run_time',
-    width: 180,
     ellipsis: {
       tooltip: true,
     },
@@ -124,7 +124,6 @@ const columns: DataTableColumns<ScheduleJob> = [
   {
     title: '上次执行时间',
     key: 'last_run_time',
-    width: 180,
     ellipsis: {
       tooltip: true,
     },
@@ -135,7 +134,6 @@ const columns: DataTableColumns<ScheduleJob> = [
   {
     title: '创建时间',
     key: 'created_at',
-    width: 180,
     ellipsis: {
       tooltip: true,
     },
@@ -143,13 +141,35 @@ const columns: DataTableColumns<ScheduleJob> = [
   {
     title: '操作',
     key: 'actions',
-    width: 150,
+    width: 300,
     fixed: 'right',
     render(row) {
       return h(
         'div',
         { style: { display: 'flex', gap: '8px' } },
         [
+          h(
+            NPopconfirm,
+            {
+              onPositiveClick: () => handleExecute(row),
+            },
+            {
+              trigger: () =>
+                h(
+                  NButton,
+                  {
+                    size: 'small',
+                    type: 'success',
+                    quaternary: true,
+                  },
+                  {
+                    icon: () => h(NIcon, null, { default: () => h(PlayCircleOutline) }),
+                    default: () => '立即执行',
+                  },
+                ),
+              default: () => `确定要立即执行定时任务"${row.name}"吗？`,
+            },
+          ),
           h(
             NButton,
             {
@@ -267,6 +287,16 @@ const handleDelete = (row: ScheduleJob) => {
   })
 }
 
+const handleExecute = (row: ScheduleJob) => {
+  executeScheduleJob(row.id).then(() => {
+    window.$message?.success('定时任务执行成功')
+    onSearch()
+  }).catch(error => {
+    console.error('执行失败:', error)
+    window.$message?.error('执行失败')
+  })
+}
+
 onMounted(() => {
   onSearch()
 })
@@ -330,8 +360,6 @@ onMounted(() => {
         :pagination="pagination"
         :remote="true"
         :row-key="(row) => row.id"
-        :bordered="false"
-        :single-line="false"
       />
     </n-card>
   </div>

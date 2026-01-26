@@ -3,6 +3,7 @@ package schedulejob
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/shuTwT/gobee/ent"
 	"github.com/shuTwT/gobee/ent/schedulejob"
@@ -17,6 +18,7 @@ type ScheduleJobService interface {
 	CreateScheduleJob(ctx context.Context, req *model.CreateScheduleJobReq) (*ent.ScheduleJob, error)
 	UpdateScheduleJob(ctx context.Context, id int, req *model.UpdateScheduleJobReq) (*ent.ScheduleJob, error)
 	DeleteScheduleJob(ctx context.Context, id int) error
+	ExecuteScheduleJobNow(ctx context.Context, id int) error
 }
 
 type ScheduleJobServiceImpl struct {
@@ -69,6 +71,16 @@ func (s *ScheduleJobServiceImpl) CreateScheduleJob(ctx context.Context, req *mod
 		return nil, err
 	}
 
+	exists, err := s.client.ScheduleJob.Query().
+		Where(schedulejob.JobName(req.JobName)).
+		Exist(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if exists {
+		return nil, errors.New("内部任务名称已存在")
+	}
+
 	builder := s.client.ScheduleJob.Create().
 		SetName(req.Name).
 		SetType(req.Type).
@@ -107,6 +119,21 @@ func (s *ScheduleJobServiceImpl) UpdateScheduleJob(ctx context.Context, id int, 
 	}
 	if !exists {
 		return nil, errors.New("定时任务不存在")
+	}
+
+	if req.JobName != nil {
+		jobNameExists, err := s.client.ScheduleJob.Query().
+			Where(
+				schedulejob.JobName(*req.JobName),
+				schedulejob.IDNEQ(id),
+			).
+			Exist(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if jobNameExists {
+			return nil, errors.New("内部任务名称已存在")
+		}
 	}
 
 	builder := s.client.ScheduleJob.UpdateOneID(id)
@@ -168,6 +195,23 @@ func (s *ScheduleJobServiceImpl) DeleteScheduleJob(ctx context.Context, id int) 
 	return nil
 }
 
+func (s *ScheduleJobServiceImpl) ExecuteScheduleJobNow(ctx context.Context, id int) error {
+	job, err := s.client.ScheduleJob.Query().
+		Where(schedulejob.ID(id)).
+		First(ctx)
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		if err := s.scheduleManager.ExecuteJobNow(job); err != nil {
+			log.Printf("异步执行任务失败: %v", err)
+		}
+	}()
+
+	return nil
+}
+
 func validateCreateScheduleJobReq(req *model.CreateScheduleJobReq) error {
 	if req.Name == "" {
 		return errors.New("任务名称不能为空")
@@ -184,6 +228,6 @@ func validateCreateScheduleJobReq(req *model.CreateScheduleJobReq) error {
 	return nil
 }
 
-func validateUpdateScheduleJobReq(req *model.UpdateScheduleJobReq) error {
+func validateUpdateScheduleJobReq(_ *model.UpdateScheduleJobReq) error {
 	return nil
 }

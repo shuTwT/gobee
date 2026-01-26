@@ -192,6 +192,7 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		scheduleJobApi.Get("/query/:id", handlerMap.ScheduleJobHandler.QueryScheduleJob).Name("scheduleJobQuery")
 		scheduleJobApi.Put("/update/:id", handlerMap.ScheduleJobHandler.UpdateScheduleJob).Name("scheduleJobUpdate")
 		scheduleJobApi.Delete("/delete/:id", handlerMap.ScheduleJobHandler.DeleteScheduleJob).Name("scheduleJobDelete")
+		scheduleJobApi.Post("/execute/:id", handlerMap.ScheduleJobHandler.ExecuteScheduleJobNow).Name("scheduleJobExecute")
 	}
 	migrationApi := router.Group("/migration")
 	{

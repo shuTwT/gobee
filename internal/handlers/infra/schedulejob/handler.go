@@ -17,6 +17,7 @@ type ScheduleJobHandler interface {
 	QueryScheduleJob(c *fiber.Ctx) error
 	UpdateScheduleJob(c *fiber.Ctx) error
 	DeleteScheduleJob(c *fiber.Ctx) error
+	ExecuteScheduleJobNow(c *fiber.Ctx) error
 }
 
 type ScheduleJobHandlerImpl struct {
@@ -128,7 +129,24 @@ func (h *ScheduleJobHandlerImpl) DeleteScheduleJob(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("定时任务删除成功", nil))
 }
 
-func (h *ScheduleJobHandlerImpl) buildScheduleJobResp(job *ent.ScheduleJob) *model.ScheduleJobResp {
+func (h *ScheduleJobHandlerImpl) ExecuteScheduleJobNow(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		slog.Error("Invalid job ID", "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "无效的任务ID"))
+	}
+
+	err = h.scheduleJobService.ExecuteScheduleJobNow(c.Context(), id)
+	if err != nil {
+		slog.Error("Failed to execute schedule job", "job_id", id, "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	slog.Info("Schedule job executed successfully", "job_id", id)
+	return c.JSON(model.NewSuccess("定时任务执行成功", nil))
+}
+
+func (*ScheduleJobHandlerImpl) buildScheduleJobResp(job *ent.ScheduleJob) *model.ScheduleJobResp {
 	return &model.ScheduleJobResp{
 		ID:                  job.ID,
 		CreatedAt:           job.CreatedAt,

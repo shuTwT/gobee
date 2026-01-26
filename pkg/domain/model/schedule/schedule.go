@@ -27,7 +27,7 @@ type DurationJob interface {
 
 type CronJob interface {
 	Execute(context.Context) error
-	Crontab() string
+	// Crontab() string
 	Type() JobType
 	Description() string
 }

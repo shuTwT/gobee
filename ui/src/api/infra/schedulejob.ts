@@ -56,3 +56,7 @@ export const updateScheduleJob = (data: UpdateScheduleJobParams) => {
 export const deleteScheduleJob = (id: number) => {
   return http.request<ApiResponse<null>>('delete', `${BASE_URL}/v1/schedule-job/delete/${id}`)
 }
+
+export const executeScheduleJob = (id: number) => {
+  return http.request<ApiResponse<null>>('post', `${BASE_URL}/v1/schedule-job/execute/${id}`)
+}
