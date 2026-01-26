@@ -1,42 +1,11 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
-import * as productApi from '@/api/mall/product'
+import type { FormProps } from './utils/types'
 
-interface Props {
-  productId?: number
-  productData: any
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits(['confirm'])
+const props = defineProps<FormProps>()
 
 const formRef = ref<FormInst | null>(null)
-const formData = ref({
-  name: props.productData.name || '',
-  sku: props.productData.sku || '',
-  price: props.productData.price || 0,
-  original_price: props.productData.original_price || 0,
-  cost_price: props.productData.cost_price || 0,
-  stock: props.productData.stock || 0,
-  min_stock: props.productData.min_stock || 0,
-  category_id: props.productData.category_id || null,
-  brand: props.productData.brand || '',
-  unit: props.productData.unit || '',
-  weight: props.productData.weight || 0,
-  volume: props.productData.volume || 0,
-  description: props.productData.description || '',
-  short_description: props.productData.short_description || '',
-  images: props.productData.images || [],
-  attributes: props.productData.attributes || {},
-  tags: props.productData.tags || [],
-  active: props.productData.active !== undefined ? props.productData.active : true,
-  featured: props.productData.featured || false,
-  digital: props.productData.digital || false,
-  meta_title: props.productData.meta_title || '',
-  meta_description: props.productData.meta_description || '',
-  meta_keywords: props.productData.meta_keywords || '',
-  sort_order: props.productData.sort_order || 0,
-})
+const formData = ref(props.formInline)
 
 const rules: FormRules = {
   name: {

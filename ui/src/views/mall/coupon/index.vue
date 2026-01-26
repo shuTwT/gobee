@@ -200,6 +200,8 @@ const openEditDialog = (title = '新增', row?: any) => {
   const editFormRef = ref()
   addDialog<FormProps>({
     title: `${title}优惠券`,
+    scroll:true,
+    scrollbarHeight:"600px",
     props: {
       formInline: {
         id: row?.id || undefined,

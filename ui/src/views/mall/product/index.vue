@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm, NCheckbox } from 'naive-ui'
+import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline, CloudUploadOutline, CloudDownloadOutline } from '@vicons/ionicons5'
 import * as productApi from '@/api/mall/product'
 import { addDialog } from '@/components/dialog'
@@ -23,8 +23,8 @@ const pagination = reactive({
 const dataList = ref<any>([])
 const loading = ref(false)
 const checkedRowKeys = ref<number[]>([])
-const allChecked = ref(false)
 const editFormRef = ref()
+const currentProductId = ref<number | undefined>(undefined)
 
 const columns: DataTableColumns<any> = [
   {
@@ -165,27 +165,47 @@ const onSearch = () => {
 }
 
 const openEditDialog = (title = '新增', row?: any) => {
+  currentProductId.value = row?.id
   addDialog({
     title: `${title}商品`,
+    scroll: true,
+    scrollbarHeight: '600px',
     props: {
-      productId: row?.id || undefined,
-      productData: row || {
-        name: '',
-        sku: '',
-        price: 0,
-        stock: 0,
-        active: true,
-        featured: false,
-        digital: false,
-      },
+      formInline: {
+        id: row?.id || undefined,
+        name: row?.name || '',
+        sku: row?.sku || '',
+        price: row?.price || 0,
+        original_price: row?.original_price || 0,
+        cost_price: row?.cost_price || 0,
+        stock: row?.stock || 0,
+        min_stock: row?.min_stock || 0,
+        category_id: row?.category_id || null,
+        brand: row?.brand || '',
+        unit: row?.unit || '',
+        weight: row?.weight || 0,
+        volume: row?.volume || 0,
+        description: row?.description || '',
+        short_description: row?.short_description || '',
+        images: row?.images || [],
+        attributes: row?.attributes || {},
+        tags: row?.tags || [],
+        active: row?.active !== undefined ? row.active : true,
+        featured: row?.featured || false,
+        digital: row?.digital || false,
+        meta_title: row?.meta_title || '',
+        meta_description: row?.meta_description || '',
+        meta_keywords: row?.meta_keywords || '',
+        sort_order: row?.sort_order || 0,
+      }
     },
-    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, productId: options.props!.productId, productData: options.props!.productData }),
+    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, formInline: options.props!.formInline }),
     beforeSure: async (done) => {
       try {
         const data = await editFormRef.value?.getData()
         
-        if (row?.id) {
-          await productApi.updateProduct(row.id, data)
+        if (currentProductId.value) {
+          await productApi.updateProduct(currentProductId.value, data)
           window.$message?.success('更新成功')
         } else {
           await productApi.createProduct(data)
