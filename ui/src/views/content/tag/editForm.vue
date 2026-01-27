@@ -1,22 +1,11 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
+import type { FormProps } from './utils/types'
 
-interface Props {
-  tagId?: number
-  tagData: any
-}
-
-const props = defineProps<Props>()
+const props = defineProps<FormProps>()
 
 const formRef = ref<FormInst | null>(null)
-const formData = ref({
-  name: props.tagData.name || '',
-  slug: props.tagData.slug || '',
-  description: props.tagData.description || '',
-  color: props.tagData.color || '#1890ff',
-  sort_order: props.tagData.sort_order || 0,
-  active: props.tagData.active !== undefined ? props.tagData.active : true,
-})
+const formData = ref(props.formInline)
 
 const rules: FormRules = {
   name: {

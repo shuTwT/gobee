@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference types="vite-svg-loader" />
 
 import type { MessageApiInjection,DialogApiInjection,NotificationApiInjection } from "naive-ui/es/message/src/MessageProvider";
 

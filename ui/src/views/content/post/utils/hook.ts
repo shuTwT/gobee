@@ -15,6 +15,8 @@ export function usePostHook() {
       postApi
         .updatePostContent(row.id, {
           content: row.content,
+          md_content: row.md_content,
+          html_content: row.v,
         })
         .then((res) => {
           message.success('保存成功')

@@ -4,8 +4,11 @@ import { useRoute } from 'vue-router'
 import * as postApi from '@/api/content/post'
 import { usePostHook } from '../utils/hook'
 import { MdCatalog, MdPreview } from 'md-editor-v3'
+import {register} from "@gobee/md-kit/src/index"
 
 const { settingPost, savePost, publishPost, unpublishPost, importPost } = usePostHook()
+
+register()
 
 const route = useRoute()
 const editorRef = shallowRef()

@@ -23,6 +23,7 @@ const pagination = reactive({
 const dataList = ref<any>([])
 const loading = ref(false)
 const editFormRef = ref<any>(null)
+const currentMemberLevelId = ref<number | undefined>(undefined)
 
 const columns: DataTableColumns<any> = [
   {
@@ -139,32 +140,34 @@ const onSearch = () => {
 }
 
 const openEditDialog = (title = '新增', row?: any) => {
-  
+  currentMemberLevelId.value = row?.id
   addDialog({
     title: `${title}会员等级`,
     props: {
-      memberLevelId: row?.id || undefined,
-      memberLevelData: row || {
-        name: '',
-        level:1,
-        min_points: 0,
-        discount_rate: 100,
-        description: '',
-        active: true,
-        sort_order: 0,
-      },
+      formInline: {
+        id: row?.id || undefined,
+        name: row?.name || '',
+        level: row?.level || 1,
+        min_points: row?.min_points || 0,
+        discount_rate: row?.discount_rate || 100,
+        description: row?.description || '',
+        privileges: row?.privileges || [],
+        icon: row?.icon || '',
+        active: row?.active !== undefined ? row.active : true,
+        sort_order: row?.sort_order || 0,
+      }
     },
-    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, memberLevelId: options.props!.memberLevelId, memberLevelData: options.props!.memberLevelData }),
+    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, formInline: options.props!.formInline }),
     beforeSure: async (done) => {
       try {
         const data = await editFormRef.value?.getData()
         
-        if (title==='新增') {
+        if (currentMemberLevelId.value) {
+          await memberLevelApi.updateMemberLevel(currentMemberLevelId.value, data)
+          window.$message?.success('更新成功')
+        } else {
           await memberLevelApi.createMemberLevel(data)
           window.$message?.success('创建成功')
-        } else {
-          await memberLevelApi.updateMemberLevel(row.id, data)
-          window.$message?.success('更新成功')
         }
         
         onSearch()

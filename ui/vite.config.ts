@@ -8,6 +8,7 @@ import tailwindcss from '@tailwindcss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
+import svgLoader from 'vite-svg-loader'
 // import { visualizer } from "rollup-plugin-visualizer";
 
 
@@ -41,6 +42,7 @@ export default defineConfig({
       }],
       resolvers: [NaiveUiResolver()]
     }),
+    svgLoader()
     // visualizer({
     //   open:true
     // })

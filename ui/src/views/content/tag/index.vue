@@ -144,17 +144,17 @@ const openEditDialog = (title = '新增', row?: any) => {
   addDialog({
     title: `${title}标签`,
     props: {
-      tagId: row?.id || undefined,
-      tagData: row || {
-        name: '',
-        slug: '',
-        description: '',
-        color: '#1890ff',
-        sort_order: 0,
-        active: true,
-      },
+      formInline: {
+        id: row?.id || undefined,
+        name: row?.name || '',
+        slug: row?.slug || '',
+        description: row?.description || '',
+        color: row?.color || '#1890ff',
+        sort_order: row?.sort_order || 0,
+        active: row?.active !== undefined ? row.active : true,
+      }
     },
-    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, tagId: options.props!.tagId, tagData: options.props!.tagData }),
+    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, formInline: options.props!.formInline }),
     beforeSure: async (done) => {
       try {
         const data = await editFormRef.value?.getData()

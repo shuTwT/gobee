@@ -5,17 +5,7 @@ import type { FormProps } from './utils/types'
 const props = defineProps<FormProps>()
 
 const formRef = ref<FormInst | null>(null)
-const formData = ref({
-  name: props.memberLevelData.name || '',
-  level: props.memberLevelData.level || 1,
-  min_points: props.memberLevelData.min_points || 0,
-  discount_rate: props.memberLevelData.discount_rate || 100,
-  description: props.memberLevelData.description || '',
-  privileges: props.memberLevelData.privileges || [],
-  icon: props.memberLevelData.icon || '',
-  active: props.memberLevelData.active !== undefined ? props.memberLevelData.active : true,
-  sort_order: props.memberLevelData.sort_order || 0,
-})
+const formData = ref(props.formInline)
 
 const rules: FormRules = {
   name: {

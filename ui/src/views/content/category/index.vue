@@ -136,16 +136,16 @@ const openEditDialog = (title = '新增', row?: any) => {
   addDialog({
     title: `${title}分类`,
     props: {
-      categoryId: row?.id || undefined,
-      categoryData: row || {
-        name: '',
-        slug: '',
-        description: '',
-        sort_order: 0,
-        active: true,
-      },
+      formInline: {
+        id: row?.id || undefined,
+        name: row?.name || '',
+        slug: row?.slug || '',
+        description: row?.description || '',
+        sort_order: row?.sort_order || 0,
+        active: row?.active !== undefined ? row.active : true,
+      }
     },
-    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, categoryId: options.props!.categoryId, categoryData: options.props!.categoryData }),
+    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, formInline: options.props!.formInline }),
     beforeSure: async (done) => {
       try {
         const data = await editFormRef.value?.getData()
