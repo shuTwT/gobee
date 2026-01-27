@@ -22,6 +22,7 @@ import (
 	plugin_handler "github.com/shuTwT/gobee/internal/handlers/infra/plugin"
 	schedulejob_handler "github.com/shuTwT/gobee/internal/handlers/infra/schedulejob"
 	storagestrategy "github.com/shuTwT/gobee/internal/handlers/infra/storagestrategy"
+	theme_handler "github.com/shuTwT/gobee/internal/handlers/infra/theme"
 	visit_handler "github.com/shuTwT/gobee/internal/handlers/infra/visit"
 	coupon_handler "github.com/shuTwT/gobee/internal/handlers/mall/coupon"
 	couponusage_handler "github.com/shuTwT/gobee/internal/handlers/mall/couponusage"
@@ -75,6 +76,7 @@ type HandlerMap struct {
 	ScheduleJobHandler      schedulejob_handler.ScheduleJobHandler
 	SettingHandler          setting_handler.SettingHandler
 	TagHandler              tag_handler.TagHandler
+	ThemeHandler            theme_handler.ThemeHandler
 	UserHandler             user_handler.UserHandler
 	EssayHandler            essay_handler.EssayHandler
 	StorageStrategyHandler  storagestrategy.StorageStrategyHandler
@@ -120,6 +122,7 @@ func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 	notificationHandler := notification_handler.NewNotificationHandlerImpl(serviceMap.NotificationService)
 	pluginHandler := plugin_handler.NewPluginHandlerImpl(serviceMap.PluginService)
 	scheduleJobHandler := schedulejob_handler.NewScheduleJobHandlerImpl(serviceMap.ScheduleJobService)
+	themeHandler := theme_handler.NewThemeHandlerImpl(serviceMap.ThemeService)
 
 	handlerMap := HandlerMap{
 		AlbumHandler:            albumHandler,
@@ -159,6 +162,7 @@ func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 		StorageStrategyHandler:  storageStrategyHandler,
 		VisitHandler:            visitHandler,
 		WalletHandler:           walletHandler,
+		ThemeHandler:            themeHandler,
 	}
 
 	return handlerMap

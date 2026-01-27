@@ -12,8 +12,8 @@ import (
 	"github.com/shuTwT/gobee/internal/infra/logger"
 )
 
-//go:embed assets/moduleDefs
-var moduleDefs embed.FS
+//go:embed assets
+var assetsRes embed.FS
 
 //go:embed ui/dist
 var frontendRes embed.FS
@@ -30,7 +30,7 @@ var frontendRes embed.FS
 // @BasePath /
 func main() {
 	logger.NewLogger()
-	app, cleanup := server.InitializeApp(moduleDefs, frontendRes)
+	app, cleanup := server.InitializeApp(assetsRes, frontendRes)
 	defer cleanup()
 
 	log.Fatal(app.Listen(":13000"))

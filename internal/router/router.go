@@ -216,6 +216,15 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		pluginApi.Post("/:id/stop", handlerMap.PluginHandler.StopPlugin).Name("pluginStop")
 		pluginApi.Post("/:id/restart", handlerMap.PluginHandler.RestartPlugin).Name("pluginRestart")
 	}
+	themeApi := router.Group("/theme")
+	{
+		themeApi.Post("/create", handlerMap.ThemeHandler.CreateTheme).Name("themeCreate")
+		themeApi.Get("/page", handlerMap.ThemeHandler.ListThemePage).Name("themePage")
+		themeApi.Get("/query/:id", handlerMap.ThemeHandler.QueryTheme).Name("themeQuery")
+		themeApi.Delete("/delete/:id", handlerMap.ThemeHandler.DeleteTheme).Name("themeDelete")
+		themeApi.Post("/:id/enable", handlerMap.ThemeHandler.EnableTheme).Name("themeEnable")
+		themeApi.Post("/:id/disable", handlerMap.ThemeHandler.DisableTheme).Name("themeDisable")
+	}
 	licenseApi := router.Group("/license")
 	{
 		licenseApi.Get("/page", handlerMap.LicenseHandler.ListLicensePage).Name("licensePage")

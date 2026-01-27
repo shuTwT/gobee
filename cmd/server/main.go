@@ -20,7 +20,7 @@ import (
 	"github.com/gofiber/swagger"
 )
 
-func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) (*fiber.App, func()) {
+func InitializeApp(assetsRes embed.FS, frontendRes embed.FS) (*fiber.App, func()) {
 	config.Init()
 	dbType := config.GetString(config.DATABASE_TYPE)
 	dbConfig := database.DBConfig{
@@ -49,7 +49,9 @@ func InitializeApp(moduleDefs embed.FS, frontendRes embed.FS) (*fiber.App, func(
 
 	scheduleManager := manager.NewScheduleManager()
 
-	serviceMap := pkg.InitializeServices(moduleDefs, db, scheduleManager)
+	pkg.ExtractDefaultTheme(assetsRes)
+
+	serviceMap := pkg.InitializeServices(assetsRes, db, scheduleManager)
 
 	if !fiber.IsChild() {
 		// 主进程程初始化定时任务

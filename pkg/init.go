@@ -2,6 +2,10 @@ package pkg
 
 import (
 	"embed"
+	"io/fs"
+	"log/slog"
+	"os"
+	"path/filepath"
 
 	"github.com/shuTwT/gobee/ent"
 	"github.com/shuTwT/gobee/internal/infra/schedule/manager"
@@ -25,6 +29,7 @@ import (
 	plugin_service "github.com/shuTwT/gobee/internal/services/infra/plugin"
 	schedulejob_service "github.com/shuTwT/gobee/internal/services/infra/schedulejob"
 	storagestrategy_service "github.com/shuTwT/gobee/internal/services/infra/storagestrategy"
+	theme_service "github.com/shuTwT/gobee/internal/services/infra/theme"
 	visit_service "github.com/shuTwT/gobee/internal/services/infra/visit"
 	coupon_service "github.com/shuTwT/gobee/internal/services/mall/coupon"
 	couponusage_service "github.com/shuTwT/gobee/internal/services/mall/couponusage"
@@ -41,6 +46,69 @@ import (
 	setting_service "github.com/shuTwT/gobee/internal/services/system/setting"
 	user_service "github.com/shuTwT/gobee/internal/services/system/user"
 )
+
+func ExtractDefaultTheme(assetsRes embed.FS) {
+	go func() {
+		themeDir := "./data/themes"
+		defaultThemePath := "./data/themes/gobee-theme-ace"
+		sourceThemePath := "assets/themes/gobee-theme-ace"
+
+		if _, err := os.Stat(defaultThemePath); err == nil {
+			slog.Info("Default theme already exists", "path", defaultThemePath)
+			return
+		}
+
+		slog.Info("Extracting default theme", "from", sourceThemePath, "to", defaultThemePath)
+
+		if err := os.MkdirAll(themeDir, 0755); err != nil {
+			slog.Error("Failed to create themes directory", "error", err.Error())
+			return
+		}
+
+		sourceDir, err := fs.Sub(assetsRes, sourceThemePath)
+		if err != nil {
+			slog.Error("Failed to get source directory", "error", err.Error())
+			return
+		}
+
+		err = fs.WalkDir(sourceDir, ".", func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+
+			targetPath := filepath.Join(defaultThemePath, path)
+
+			if d.IsDir() {
+				return os.MkdirAll(targetPath, 0755)
+			}
+
+			sourceFile, err := sourceDir.Open(path)
+			if err != nil {
+				return err
+			}
+			defer sourceFile.Close()
+
+			destFile, err := os.OpenFile(targetPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+			if err != nil {
+				return err
+			}
+			defer destFile.Close()
+
+			_, err = destFile.ReadFrom(sourceFile)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+
+		if err != nil {
+			slog.Error("Failed to extract default theme", "error", err.Error())
+		} else {
+			slog.Info("Default theme extracted successfully", "path", defaultThemePath)
+		}
+	}()
+}
 
 type ServiceMap struct {
 	AlbumService            album_service.AlbumService
@@ -75,12 +143,13 @@ type ServiceMap struct {
 	SettingService          setting_service.SettingService
 	StorageStrategyService  storagestrategy_service.StorageStrategyService
 	TagService              tag_service.TagService
+	ThemeService            theme_service.ThemeService
 	UserService             user_service.UserService
 	VisitService            visit_service.VisitService
 	WalletService           wallet_service.WalletService
 }
 
-func InitializeServices(moduleDefs embed.FS, db *ent.Client, scheduleManager *manager.ScheduleManager) ServiceMap {
+func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *manager.ScheduleManager) ServiceMap {
 
 	albumService := album_service.NewAlbumServiceImpl(db)
 	albumPhotoService := albumphoto_service.NewAlbumPhotoServiceImpl(db)
@@ -110,6 +179,7 @@ func InitializeServices(moduleDefs embed.FS, db *ent.Client, scheduleManager *ma
 	roleService := role_service.NewRoleServiceImpl(db)
 	settingService := setting_service.NewSettingServiceImpl(db)
 	storageStrategyService := storagestrategy_service.NewStorageStrategyServiceImpl(db)
+	themeService := theme_service.NewThemeServiceImpl(db)
 	tagService := tag_service.NewTagServiceImpl(db)
 	userService := user_service.NewUserServiceImpl(db)
 	visitService := visit_service.NewVisitServiceImpl(db)
@@ -118,7 +188,7 @@ func InitializeServices(moduleDefs embed.FS, db *ent.Client, scheduleManager *ma
 	notificationService := notification_service.NewNotificationServiceImpl(db)
 	scheduleJobService := schedulejob_service.NewScheduleJobServiceImpl(db, scheduleManager)
 
-	permissionService.LoadPermissionsFromDef(moduleDefs)
+	permissionService.LoadPermissionsFromDef(assetsRes)
 
 	serviceMap := ServiceMap{
 		AlbumService:            albumService,
@@ -153,6 +223,7 @@ func InitializeServices(moduleDefs embed.FS, db *ent.Client, scheduleManager *ma
 		SettingService:          settingService,
 		StorageStrategyService:  storageStrategyService,
 		TagService:              tagService,
+		ThemeService:            themeService,
 		UserService:             userService,
 		VisitService:            visitService,
 		WalletService:           walletService,

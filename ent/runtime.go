@@ -39,6 +39,7 @@ import (
 	"github.com/shuTwT/gobee/ent/setting"
 	"github.com/shuTwT/gobee/ent/storagestrategy"
 	"github.com/shuTwT/gobee/ent/tag"
+	"github.com/shuTwT/gobee/ent/theme"
 	"github.com/shuTwT/gobee/ent/user"
 	"github.com/shuTwT/gobee/ent/visitlog"
 	"github.com/shuTwT/gobee/ent/wallet"
@@ -1690,6 +1691,143 @@ func init() {
 	tagDescActive := tagFields[5].Descriptor()
 	// tag.DefaultActive holds the default value on creation for the active field.
 	tag.DefaultActive = tagDescActive.Default.(bool)
+	themeMixin := schema.Theme{}.Mixin()
+	themeMixinFields0 := themeMixin[0].Fields()
+	_ = themeMixinFields0
+	themeFields := schema.Theme{}.Fields()
+	_ = themeFields
+	// themeDescCreatedAt is the schema descriptor for created_at field.
+	themeDescCreatedAt := themeMixinFields0[1].Descriptor()
+	// theme.DefaultCreatedAt holds the default value on creation for the created_at field.
+	theme.DefaultCreatedAt = themeDescCreatedAt.Default.(func() time.Time)
+	// themeDescUpdatedAt is the schema descriptor for updated_at field.
+	themeDescUpdatedAt := themeMixinFields0[2].Descriptor()
+	// theme.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	theme.DefaultUpdatedAt = themeDescUpdatedAt.Default.(func() time.Time)
+	// theme.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	theme.UpdateDefaultUpdatedAt = themeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// themeDescName is the schema descriptor for name field.
+	themeDescName := themeFields[0].Descriptor()
+	// theme.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	theme.NameValidator = func() func(string) error {
+		validators := themeDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// themeDescDisplayName is the schema descriptor for display_name field.
+	themeDescDisplayName := themeFields[1].Descriptor()
+	// theme.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	theme.DisplayNameValidator = func() func(string) error {
+		validators := themeDescDisplayName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(display_name string) error {
+			for _, fn := range fns {
+				if err := fn(display_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// themeDescDescription is the schema descriptor for description field.
+	themeDescDescription := themeFields[2].Descriptor()
+	// theme.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	theme.DescriptionValidator = themeDescDescription.Validators[0].(func(string) error)
+	// themeDescAuthorName is the schema descriptor for author_name field.
+	themeDescAuthorName := themeFields[3].Descriptor()
+	// theme.AuthorNameValidator is a validator for the "author_name" field. It is called by the builders before save.
+	theme.AuthorNameValidator = themeDescAuthorName.Validators[0].(func(string) error)
+	// themeDescAuthorEmail is the schema descriptor for author_email field.
+	themeDescAuthorEmail := themeFields[4].Descriptor()
+	// theme.AuthorEmailValidator is a validator for the "author_email" field. It is called by the builders before save.
+	theme.AuthorEmailValidator = themeDescAuthorEmail.Validators[0].(func(string) error)
+	// themeDescLogo is the schema descriptor for logo field.
+	themeDescLogo := themeFields[5].Descriptor()
+	// theme.LogoValidator is a validator for the "logo" field. It is called by the builders before save.
+	theme.LogoValidator = themeDescLogo.Validators[0].(func(string) error)
+	// themeDescHomepage is the schema descriptor for homepage field.
+	themeDescHomepage := themeFields[6].Descriptor()
+	// theme.HomepageValidator is a validator for the "homepage" field. It is called by the builders before save.
+	theme.HomepageValidator = themeDescHomepage.Validators[0].(func(string) error)
+	// themeDescRepo is the schema descriptor for repo field.
+	themeDescRepo := themeFields[7].Descriptor()
+	// theme.RepoValidator is a validator for the "repo" field. It is called by the builders before save.
+	theme.RepoValidator = themeDescRepo.Validators[0].(func(string) error)
+	// themeDescIssue is the schema descriptor for issue field.
+	themeDescIssue := themeFields[8].Descriptor()
+	// theme.IssueValidator is a validator for the "issue" field. It is called by the builders before save.
+	theme.IssueValidator = themeDescIssue.Validators[0].(func(string) error)
+	// themeDescSettingName is the schema descriptor for setting_name field.
+	themeDescSettingName := themeFields[9].Descriptor()
+	// theme.SettingNameValidator is a validator for the "setting_name" field. It is called by the builders before save.
+	theme.SettingNameValidator = themeDescSettingName.Validators[0].(func(string) error)
+	// themeDescConfigMapName is the schema descriptor for config_map_name field.
+	themeDescConfigMapName := themeFields[10].Descriptor()
+	// theme.ConfigMapNameValidator is a validator for the "config_map_name" field. It is called by the builders before save.
+	theme.ConfigMapNameValidator = themeDescConfigMapName.Validators[0].(func(string) error)
+	// themeDescVersion is the schema descriptor for version field.
+	themeDescVersion := themeFields[11].Descriptor()
+	// theme.VersionValidator is a validator for the "version" field. It is called by the builders before save.
+	theme.VersionValidator = func() func(string) error {
+		validators := themeDescVersion.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(version string) error {
+			for _, fn := range fns {
+				if err := fn(version); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// themeDescRequire is the schema descriptor for require field.
+	themeDescRequire := themeFields[12].Descriptor()
+	// theme.DefaultRequire holds the default value on creation for the require field.
+	theme.DefaultRequire = themeDescRequire.Default.(string)
+	// theme.RequireValidator is a validator for the "require" field. It is called by the builders before save.
+	theme.RequireValidator = themeDescRequire.Validators[0].(func(string) error)
+	// themeDescLicense is the schema descriptor for license field.
+	themeDescLicense := themeFields[13].Descriptor()
+	// theme.LicenseValidator is a validator for the "license" field. It is called by the builders before save.
+	theme.LicenseValidator = themeDescLicense.Validators[0].(func(string) error)
+	// themeDescPath is the schema descriptor for path field.
+	themeDescPath := themeFields[14].Descriptor()
+	// theme.PathValidator is a validator for the "path" field. It is called by the builders before save.
+	theme.PathValidator = func() func(string) error {
+		validators := themeDescPath.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(_path string) error {
+			for _, fn := range fns {
+				if err := fn(_path); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// themeDescEnabled is the schema descriptor for enabled field.
+	themeDescEnabled := themeFields[15].Descriptor()
+	// theme.DefaultEnabled holds the default value on creation for the enabled field.
+	theme.DefaultEnabled = themeDescEnabled.Default.(bool)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0

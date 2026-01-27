@@ -78,6 +78,8 @@ type Tx struct {
 	StorageStrategy *StorageStrategyClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
+	// Theme is the client for interacting with the Theme builders.
+	Theme *ThemeClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// VisitLog is the client for interacting with the VisitLog builders.
@@ -250,6 +252,7 @@ func (tx *Tx) init() {
 	tx.Setting = NewSettingClient(tx.config)
 	tx.StorageStrategy = NewStorageStrategyClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
+	tx.Theme = NewThemeClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.VisitLog = NewVisitLogClient(tx.config)
 	tx.Wallet = NewWalletClient(tx.config)

@@ -45,6 +45,7 @@ import (
 	"github.com/shuTwT/gobee/ent/setting"
 	"github.com/shuTwT/gobee/ent/storagestrategy"
 	"github.com/shuTwT/gobee/ent/tag"
+	"github.com/shuTwT/gobee/ent/theme"
 	"github.com/shuTwT/gobee/ent/user"
 	"github.com/shuTwT/gobee/ent/visitlog"
 	"github.com/shuTwT/gobee/ent/wallet"
@@ -93,6 +94,7 @@ const (
 	TypeSetting             = "Setting"
 	TypeStorageStrategy     = "StorageStrategy"
 	TypeTag                 = "Tag"
+	TypeTheme               = "Theme"
 	TypeUser                = "User"
 	TypeVisitLog            = "VisitLog"
 	TypeWallet              = "Wallet"
@@ -33163,6 +33165,1449 @@ func (m *TagMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Tag edge %s", name)
+}
+
+// ThemeMutation represents an operation that mutates the Theme nodes in the graph.
+type ThemeMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *int
+	created_at      *time.Time
+	updated_at      *time.Time
+	name            *string
+	display_name    *string
+	description     *string
+	author_name     *string
+	author_email    *string
+	logo            *string
+	homepage        *string
+	repo            *string
+	issue           *string
+	setting_name    *string
+	config_map_name *string
+	version         *string
+	require         *string
+	license         *string
+	_path           *string
+	enabled         *bool
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*Theme, error)
+	predicates      []predicate.Theme
+}
+
+var _ ent.Mutation = (*ThemeMutation)(nil)
+
+// themeOption allows management of the mutation configuration using functional options.
+type themeOption func(*ThemeMutation)
+
+// newThemeMutation creates new mutation for the Theme entity.
+func newThemeMutation(c config, op Op, opts ...themeOption) *ThemeMutation {
+	m := &ThemeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTheme,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withThemeID sets the ID field of the mutation.
+func withThemeID(id int) themeOption {
+	return func(m *ThemeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Theme
+		)
+		m.oldValue = func(ctx context.Context) (*Theme, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Theme.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTheme sets the old Theme of the mutation.
+func withTheme(node *Theme) themeOption {
+	return func(m *ThemeMutation) {
+		m.oldValue = func(context.Context) (*Theme, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ThemeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ThemeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Theme entities.
+func (m *ThemeMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ThemeMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ThemeMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Theme.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ThemeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ThemeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ThemeMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ThemeMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ThemeMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ThemeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *ThemeMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ThemeMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ThemeMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDisplayName sets the "display_name" field.
+func (m *ThemeMutation) SetDisplayName(s string) {
+	m.display_name = &s
+}
+
+// DisplayName returns the value of the "display_name" field in the mutation.
+func (m *ThemeMutation) DisplayName() (r string, exists bool) {
+	v := m.display_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisplayName returns the old "display_name" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldDisplayName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisplayName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisplayName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisplayName: %w", err)
+	}
+	return oldValue.DisplayName, nil
+}
+
+// ResetDisplayName resets all changes to the "display_name" field.
+func (m *ThemeMutation) ResetDisplayName() {
+	m.display_name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *ThemeMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *ThemeMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *ThemeMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[theme.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *ThemeMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[theme.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *ThemeMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, theme.FieldDescription)
+}
+
+// SetAuthorName sets the "author_name" field.
+func (m *ThemeMutation) SetAuthorName(s string) {
+	m.author_name = &s
+}
+
+// AuthorName returns the value of the "author_name" field in the mutation.
+func (m *ThemeMutation) AuthorName() (r string, exists bool) {
+	v := m.author_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthorName returns the old "author_name" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldAuthorName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthorName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthorName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthorName: %w", err)
+	}
+	return oldValue.AuthorName, nil
+}
+
+// ClearAuthorName clears the value of the "author_name" field.
+func (m *ThemeMutation) ClearAuthorName() {
+	m.author_name = nil
+	m.clearedFields[theme.FieldAuthorName] = struct{}{}
+}
+
+// AuthorNameCleared returns if the "author_name" field was cleared in this mutation.
+func (m *ThemeMutation) AuthorNameCleared() bool {
+	_, ok := m.clearedFields[theme.FieldAuthorName]
+	return ok
+}
+
+// ResetAuthorName resets all changes to the "author_name" field.
+func (m *ThemeMutation) ResetAuthorName() {
+	m.author_name = nil
+	delete(m.clearedFields, theme.FieldAuthorName)
+}
+
+// SetAuthorEmail sets the "author_email" field.
+func (m *ThemeMutation) SetAuthorEmail(s string) {
+	m.author_email = &s
+}
+
+// AuthorEmail returns the value of the "author_email" field in the mutation.
+func (m *ThemeMutation) AuthorEmail() (r string, exists bool) {
+	v := m.author_email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthorEmail returns the old "author_email" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldAuthorEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthorEmail is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthorEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthorEmail: %w", err)
+	}
+	return oldValue.AuthorEmail, nil
+}
+
+// ClearAuthorEmail clears the value of the "author_email" field.
+func (m *ThemeMutation) ClearAuthorEmail() {
+	m.author_email = nil
+	m.clearedFields[theme.FieldAuthorEmail] = struct{}{}
+}
+
+// AuthorEmailCleared returns if the "author_email" field was cleared in this mutation.
+func (m *ThemeMutation) AuthorEmailCleared() bool {
+	_, ok := m.clearedFields[theme.FieldAuthorEmail]
+	return ok
+}
+
+// ResetAuthorEmail resets all changes to the "author_email" field.
+func (m *ThemeMutation) ResetAuthorEmail() {
+	m.author_email = nil
+	delete(m.clearedFields, theme.FieldAuthorEmail)
+}
+
+// SetLogo sets the "logo" field.
+func (m *ThemeMutation) SetLogo(s string) {
+	m.logo = &s
+}
+
+// Logo returns the value of the "logo" field in the mutation.
+func (m *ThemeMutation) Logo() (r string, exists bool) {
+	v := m.logo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLogo returns the old "logo" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldLogo(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLogo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLogo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLogo: %w", err)
+	}
+	return oldValue.Logo, nil
+}
+
+// ClearLogo clears the value of the "logo" field.
+func (m *ThemeMutation) ClearLogo() {
+	m.logo = nil
+	m.clearedFields[theme.FieldLogo] = struct{}{}
+}
+
+// LogoCleared returns if the "logo" field was cleared in this mutation.
+func (m *ThemeMutation) LogoCleared() bool {
+	_, ok := m.clearedFields[theme.FieldLogo]
+	return ok
+}
+
+// ResetLogo resets all changes to the "logo" field.
+func (m *ThemeMutation) ResetLogo() {
+	m.logo = nil
+	delete(m.clearedFields, theme.FieldLogo)
+}
+
+// SetHomepage sets the "homepage" field.
+func (m *ThemeMutation) SetHomepage(s string) {
+	m.homepage = &s
+}
+
+// Homepage returns the value of the "homepage" field in the mutation.
+func (m *ThemeMutation) Homepage() (r string, exists bool) {
+	v := m.homepage
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHomepage returns the old "homepage" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldHomepage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHomepage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHomepage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHomepage: %w", err)
+	}
+	return oldValue.Homepage, nil
+}
+
+// ClearHomepage clears the value of the "homepage" field.
+func (m *ThemeMutation) ClearHomepage() {
+	m.homepage = nil
+	m.clearedFields[theme.FieldHomepage] = struct{}{}
+}
+
+// HomepageCleared returns if the "homepage" field was cleared in this mutation.
+func (m *ThemeMutation) HomepageCleared() bool {
+	_, ok := m.clearedFields[theme.FieldHomepage]
+	return ok
+}
+
+// ResetHomepage resets all changes to the "homepage" field.
+func (m *ThemeMutation) ResetHomepage() {
+	m.homepage = nil
+	delete(m.clearedFields, theme.FieldHomepage)
+}
+
+// SetRepo sets the "repo" field.
+func (m *ThemeMutation) SetRepo(s string) {
+	m.repo = &s
+}
+
+// Repo returns the value of the "repo" field in the mutation.
+func (m *ThemeMutation) Repo() (r string, exists bool) {
+	v := m.repo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRepo returns the old "repo" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldRepo(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRepo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRepo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRepo: %w", err)
+	}
+	return oldValue.Repo, nil
+}
+
+// ClearRepo clears the value of the "repo" field.
+func (m *ThemeMutation) ClearRepo() {
+	m.repo = nil
+	m.clearedFields[theme.FieldRepo] = struct{}{}
+}
+
+// RepoCleared returns if the "repo" field was cleared in this mutation.
+func (m *ThemeMutation) RepoCleared() bool {
+	_, ok := m.clearedFields[theme.FieldRepo]
+	return ok
+}
+
+// ResetRepo resets all changes to the "repo" field.
+func (m *ThemeMutation) ResetRepo() {
+	m.repo = nil
+	delete(m.clearedFields, theme.FieldRepo)
+}
+
+// SetIssue sets the "issue" field.
+func (m *ThemeMutation) SetIssue(s string) {
+	m.issue = &s
+}
+
+// Issue returns the value of the "issue" field in the mutation.
+func (m *ThemeMutation) Issue() (r string, exists bool) {
+	v := m.issue
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIssue returns the old "issue" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldIssue(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIssue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIssue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIssue: %w", err)
+	}
+	return oldValue.Issue, nil
+}
+
+// ClearIssue clears the value of the "issue" field.
+func (m *ThemeMutation) ClearIssue() {
+	m.issue = nil
+	m.clearedFields[theme.FieldIssue] = struct{}{}
+}
+
+// IssueCleared returns if the "issue" field was cleared in this mutation.
+func (m *ThemeMutation) IssueCleared() bool {
+	_, ok := m.clearedFields[theme.FieldIssue]
+	return ok
+}
+
+// ResetIssue resets all changes to the "issue" field.
+func (m *ThemeMutation) ResetIssue() {
+	m.issue = nil
+	delete(m.clearedFields, theme.FieldIssue)
+}
+
+// SetSettingName sets the "setting_name" field.
+func (m *ThemeMutation) SetSettingName(s string) {
+	m.setting_name = &s
+}
+
+// SettingName returns the value of the "setting_name" field in the mutation.
+func (m *ThemeMutation) SettingName() (r string, exists bool) {
+	v := m.setting_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSettingName returns the old "setting_name" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldSettingName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSettingName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSettingName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSettingName: %w", err)
+	}
+	return oldValue.SettingName, nil
+}
+
+// ClearSettingName clears the value of the "setting_name" field.
+func (m *ThemeMutation) ClearSettingName() {
+	m.setting_name = nil
+	m.clearedFields[theme.FieldSettingName] = struct{}{}
+}
+
+// SettingNameCleared returns if the "setting_name" field was cleared in this mutation.
+func (m *ThemeMutation) SettingNameCleared() bool {
+	_, ok := m.clearedFields[theme.FieldSettingName]
+	return ok
+}
+
+// ResetSettingName resets all changes to the "setting_name" field.
+func (m *ThemeMutation) ResetSettingName() {
+	m.setting_name = nil
+	delete(m.clearedFields, theme.FieldSettingName)
+}
+
+// SetConfigMapName sets the "config_map_name" field.
+func (m *ThemeMutation) SetConfigMapName(s string) {
+	m.config_map_name = &s
+}
+
+// ConfigMapName returns the value of the "config_map_name" field in the mutation.
+func (m *ThemeMutation) ConfigMapName() (r string, exists bool) {
+	v := m.config_map_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConfigMapName returns the old "config_map_name" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldConfigMapName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConfigMapName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConfigMapName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConfigMapName: %w", err)
+	}
+	return oldValue.ConfigMapName, nil
+}
+
+// ClearConfigMapName clears the value of the "config_map_name" field.
+func (m *ThemeMutation) ClearConfigMapName() {
+	m.config_map_name = nil
+	m.clearedFields[theme.FieldConfigMapName] = struct{}{}
+}
+
+// ConfigMapNameCleared returns if the "config_map_name" field was cleared in this mutation.
+func (m *ThemeMutation) ConfigMapNameCleared() bool {
+	_, ok := m.clearedFields[theme.FieldConfigMapName]
+	return ok
+}
+
+// ResetConfigMapName resets all changes to the "config_map_name" field.
+func (m *ThemeMutation) ResetConfigMapName() {
+	m.config_map_name = nil
+	delete(m.clearedFields, theme.FieldConfigMapName)
+}
+
+// SetVersion sets the "version" field.
+func (m *ThemeMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *ThemeMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *ThemeMutation) ResetVersion() {
+	m.version = nil
+}
+
+// SetRequire sets the "require" field.
+func (m *ThemeMutation) SetRequire(s string) {
+	m.require = &s
+}
+
+// Require returns the value of the "require" field in the mutation.
+func (m *ThemeMutation) Require() (r string, exists bool) {
+	v := m.require
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRequire returns the old "require" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldRequire(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRequire is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRequire requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRequire: %w", err)
+	}
+	return oldValue.Require, nil
+}
+
+// ResetRequire resets all changes to the "require" field.
+func (m *ThemeMutation) ResetRequire() {
+	m.require = nil
+}
+
+// SetLicense sets the "license" field.
+func (m *ThemeMutation) SetLicense(s string) {
+	m.license = &s
+}
+
+// License returns the value of the "license" field in the mutation.
+func (m *ThemeMutation) License() (r string, exists bool) {
+	v := m.license
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLicense returns the old "license" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldLicense(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLicense is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLicense requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLicense: %w", err)
+	}
+	return oldValue.License, nil
+}
+
+// ClearLicense clears the value of the "license" field.
+func (m *ThemeMutation) ClearLicense() {
+	m.license = nil
+	m.clearedFields[theme.FieldLicense] = struct{}{}
+}
+
+// LicenseCleared returns if the "license" field was cleared in this mutation.
+func (m *ThemeMutation) LicenseCleared() bool {
+	_, ok := m.clearedFields[theme.FieldLicense]
+	return ok
+}
+
+// ResetLicense resets all changes to the "license" field.
+func (m *ThemeMutation) ResetLicense() {
+	m.license = nil
+	delete(m.clearedFields, theme.FieldLicense)
+}
+
+// SetPath sets the "path" field.
+func (m *ThemeMutation) SetPath(s string) {
+	m._path = &s
+}
+
+// Path returns the value of the "path" field in the mutation.
+func (m *ThemeMutation) Path() (r string, exists bool) {
+	v := m._path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPath returns the old "path" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldPath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPath: %w", err)
+	}
+	return oldValue.Path, nil
+}
+
+// ResetPath resets all changes to the "path" field.
+func (m *ThemeMutation) ResetPath() {
+	m._path = nil
+}
+
+// SetEnabled sets the "enabled" field.
+func (m *ThemeMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the value of the "enabled" field in the mutation.
+func (m *ThemeMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old "enabled" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ResetEnabled resets all changes to the "enabled" field.
+func (m *ThemeMutation) ResetEnabled() {
+	m.enabled = nil
+}
+
+// Where appends a list predicates to the ThemeMutation builder.
+func (m *ThemeMutation) Where(ps ...predicate.Theme) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ThemeMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ThemeMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Theme, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ThemeMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ThemeMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Theme).
+func (m *ThemeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ThemeMutation) Fields() []string {
+	fields := make([]string, 0, 18)
+	if m.created_at != nil {
+		fields = append(fields, theme.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, theme.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, theme.FieldName)
+	}
+	if m.display_name != nil {
+		fields = append(fields, theme.FieldDisplayName)
+	}
+	if m.description != nil {
+		fields = append(fields, theme.FieldDescription)
+	}
+	if m.author_name != nil {
+		fields = append(fields, theme.FieldAuthorName)
+	}
+	if m.author_email != nil {
+		fields = append(fields, theme.FieldAuthorEmail)
+	}
+	if m.logo != nil {
+		fields = append(fields, theme.FieldLogo)
+	}
+	if m.homepage != nil {
+		fields = append(fields, theme.FieldHomepage)
+	}
+	if m.repo != nil {
+		fields = append(fields, theme.FieldRepo)
+	}
+	if m.issue != nil {
+		fields = append(fields, theme.FieldIssue)
+	}
+	if m.setting_name != nil {
+		fields = append(fields, theme.FieldSettingName)
+	}
+	if m.config_map_name != nil {
+		fields = append(fields, theme.FieldConfigMapName)
+	}
+	if m.version != nil {
+		fields = append(fields, theme.FieldVersion)
+	}
+	if m.require != nil {
+		fields = append(fields, theme.FieldRequire)
+	}
+	if m.license != nil {
+		fields = append(fields, theme.FieldLicense)
+	}
+	if m._path != nil {
+		fields = append(fields, theme.FieldPath)
+	}
+	if m.enabled != nil {
+		fields = append(fields, theme.FieldEnabled)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ThemeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case theme.FieldCreatedAt:
+		return m.CreatedAt()
+	case theme.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case theme.FieldName:
+		return m.Name()
+	case theme.FieldDisplayName:
+		return m.DisplayName()
+	case theme.FieldDescription:
+		return m.Description()
+	case theme.FieldAuthorName:
+		return m.AuthorName()
+	case theme.FieldAuthorEmail:
+		return m.AuthorEmail()
+	case theme.FieldLogo:
+		return m.Logo()
+	case theme.FieldHomepage:
+		return m.Homepage()
+	case theme.FieldRepo:
+		return m.Repo()
+	case theme.FieldIssue:
+		return m.Issue()
+	case theme.FieldSettingName:
+		return m.SettingName()
+	case theme.FieldConfigMapName:
+		return m.ConfigMapName()
+	case theme.FieldVersion:
+		return m.Version()
+	case theme.FieldRequire:
+		return m.Require()
+	case theme.FieldLicense:
+		return m.License()
+	case theme.FieldPath:
+		return m.Path()
+	case theme.FieldEnabled:
+		return m.Enabled()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ThemeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case theme.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case theme.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case theme.FieldName:
+		return m.OldName(ctx)
+	case theme.FieldDisplayName:
+		return m.OldDisplayName(ctx)
+	case theme.FieldDescription:
+		return m.OldDescription(ctx)
+	case theme.FieldAuthorName:
+		return m.OldAuthorName(ctx)
+	case theme.FieldAuthorEmail:
+		return m.OldAuthorEmail(ctx)
+	case theme.FieldLogo:
+		return m.OldLogo(ctx)
+	case theme.FieldHomepage:
+		return m.OldHomepage(ctx)
+	case theme.FieldRepo:
+		return m.OldRepo(ctx)
+	case theme.FieldIssue:
+		return m.OldIssue(ctx)
+	case theme.FieldSettingName:
+		return m.OldSettingName(ctx)
+	case theme.FieldConfigMapName:
+		return m.OldConfigMapName(ctx)
+	case theme.FieldVersion:
+		return m.OldVersion(ctx)
+	case theme.FieldRequire:
+		return m.OldRequire(ctx)
+	case theme.FieldLicense:
+		return m.OldLicense(ctx)
+	case theme.FieldPath:
+		return m.OldPath(ctx)
+	case theme.FieldEnabled:
+		return m.OldEnabled(ctx)
+	}
+	return nil, fmt.Errorf("unknown Theme field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ThemeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case theme.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case theme.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case theme.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case theme.FieldDisplayName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisplayName(v)
+		return nil
+	case theme.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case theme.FieldAuthorName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthorName(v)
+		return nil
+	case theme.FieldAuthorEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthorEmail(v)
+		return nil
+	case theme.FieldLogo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLogo(v)
+		return nil
+	case theme.FieldHomepage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHomepage(v)
+		return nil
+	case theme.FieldRepo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRepo(v)
+		return nil
+	case theme.FieldIssue:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIssue(v)
+		return nil
+	case theme.FieldSettingName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSettingName(v)
+		return nil
+	case theme.FieldConfigMapName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConfigMapName(v)
+		return nil
+	case theme.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case theme.FieldRequire:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRequire(v)
+		return nil
+	case theme.FieldLicense:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLicense(v)
+		return nil
+	case theme.FieldPath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPath(v)
+		return nil
+	case theme.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Theme field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ThemeMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ThemeMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ThemeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Theme numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ThemeMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(theme.FieldDescription) {
+		fields = append(fields, theme.FieldDescription)
+	}
+	if m.FieldCleared(theme.FieldAuthorName) {
+		fields = append(fields, theme.FieldAuthorName)
+	}
+	if m.FieldCleared(theme.FieldAuthorEmail) {
+		fields = append(fields, theme.FieldAuthorEmail)
+	}
+	if m.FieldCleared(theme.FieldLogo) {
+		fields = append(fields, theme.FieldLogo)
+	}
+	if m.FieldCleared(theme.FieldHomepage) {
+		fields = append(fields, theme.FieldHomepage)
+	}
+	if m.FieldCleared(theme.FieldRepo) {
+		fields = append(fields, theme.FieldRepo)
+	}
+	if m.FieldCleared(theme.FieldIssue) {
+		fields = append(fields, theme.FieldIssue)
+	}
+	if m.FieldCleared(theme.FieldSettingName) {
+		fields = append(fields, theme.FieldSettingName)
+	}
+	if m.FieldCleared(theme.FieldConfigMapName) {
+		fields = append(fields, theme.FieldConfigMapName)
+	}
+	if m.FieldCleared(theme.FieldLicense) {
+		fields = append(fields, theme.FieldLicense)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ThemeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ThemeMutation) ClearField(name string) error {
+	switch name {
+	case theme.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case theme.FieldAuthorName:
+		m.ClearAuthorName()
+		return nil
+	case theme.FieldAuthorEmail:
+		m.ClearAuthorEmail()
+		return nil
+	case theme.FieldLogo:
+		m.ClearLogo()
+		return nil
+	case theme.FieldHomepage:
+		m.ClearHomepage()
+		return nil
+	case theme.FieldRepo:
+		m.ClearRepo()
+		return nil
+	case theme.FieldIssue:
+		m.ClearIssue()
+		return nil
+	case theme.FieldSettingName:
+		m.ClearSettingName()
+		return nil
+	case theme.FieldConfigMapName:
+		m.ClearConfigMapName()
+		return nil
+	case theme.FieldLicense:
+		m.ClearLicense()
+		return nil
+	}
+	return fmt.Errorf("unknown Theme nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ThemeMutation) ResetField(name string) error {
+	switch name {
+	case theme.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case theme.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case theme.FieldName:
+		m.ResetName()
+		return nil
+	case theme.FieldDisplayName:
+		m.ResetDisplayName()
+		return nil
+	case theme.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case theme.FieldAuthorName:
+		m.ResetAuthorName()
+		return nil
+	case theme.FieldAuthorEmail:
+		m.ResetAuthorEmail()
+		return nil
+	case theme.FieldLogo:
+		m.ResetLogo()
+		return nil
+	case theme.FieldHomepage:
+		m.ResetHomepage()
+		return nil
+	case theme.FieldRepo:
+		m.ResetRepo()
+		return nil
+	case theme.FieldIssue:
+		m.ResetIssue()
+		return nil
+	case theme.FieldSettingName:
+		m.ResetSettingName()
+		return nil
+	case theme.FieldConfigMapName:
+		m.ResetConfigMapName()
+		return nil
+	case theme.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case theme.FieldRequire:
+		m.ResetRequire()
+		return nil
+	case theme.FieldLicense:
+		m.ResetLicense()
+		return nil
+	case theme.FieldPath:
+		m.ResetPath()
+		return nil
+	case theme.FieldEnabled:
+		m.ResetEnabled()
+		return nil
+	}
+	return fmt.Errorf("unknown Theme field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ThemeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ThemeMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ThemeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ThemeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ThemeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ThemeMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ThemeMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Theme unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ThemeMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Theme edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.

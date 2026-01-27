@@ -729,6 +729,34 @@ var (
 		Columns:    TagsColumns,
 		PrimaryKey: []*schema.Column{TagsColumns[0]},
 	}
+	// ThemesColumns holds the columns for the "themes" table.
+	ThemesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true, Size: 100},
+		{Name: "display_name", Type: field.TypeString, Size: 100},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "author_name", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "author_email", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "logo", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "homepage", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "repo", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "issue", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "setting_name", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "config_map_name", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "version", Type: field.TypeString, Size: 20},
+		{Name: "require", Type: field.TypeString, Size: 50, Default: "*"},
+		{Name: "license", Type: field.TypeString, Nullable: true, Size: 50},
+		{Name: "path", Type: field.TypeString, Size: 255},
+		{Name: "enabled", Type: field.TypeBool, Default: false},
+	}
+	// ThemesTable holds the schema information for the "themes" table.
+	ThemesTable = &schema.Table{
+		Name:       "themes",
+		Columns:    ThemesColumns,
+		PrimaryKey: []*schema.Column{ThemesColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -914,6 +942,7 @@ var (
 		SettingsTable,
 		StorageStrategiesTable,
 		TagsTable,
+		ThemesTable,
 		UsersTable,
 		VisitLogsTable,
 		WalletsTable,

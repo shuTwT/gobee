@@ -48,6 +48,7 @@ import (
 	"github.com/shuTwT/gobee/ent/setting"
 	"github.com/shuTwT/gobee/ent/storagestrategy"
 	"github.com/shuTwT/gobee/ent/tag"
+	"github.com/shuTwT/gobee/ent/theme"
 	"github.com/shuTwT/gobee/ent/user"
 	"github.com/shuTwT/gobee/ent/visitlog"
 	"github.com/shuTwT/gobee/ent/wallet"
@@ -125,6 +126,8 @@ type Client struct {
 	StorageStrategy *StorageStrategyClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
+	// Theme is the client for interacting with the Theme builders.
+	Theme *ThemeClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// VisitLog is the client for interacting with the VisitLog builders.
@@ -177,6 +180,7 @@ func (c *Client) init() {
 	c.Setting = NewSettingClient(c.config)
 	c.StorageStrategy = NewStorageStrategyClient(c.config)
 	c.Tag = NewTagClient(c.config)
+	c.Theme = NewThemeClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.VisitLog = NewVisitLogClient(c.config)
 	c.Wallet = NewWalletClient(c.config)
@@ -306,6 +310,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Setting:             NewSettingClient(cfg),
 		StorageStrategy:     NewStorageStrategyClient(cfg),
 		Tag:                 NewTagClient(cfg),
+		Theme:               NewThemeClient(cfg),
 		User:                NewUserClient(cfg),
 		VisitLog:            NewVisitLogClient(cfg),
 		Wallet:              NewWalletClient(cfg),
@@ -362,6 +367,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Setting:             NewSettingClient(cfg),
 		StorageStrategy:     NewStorageStrategyClient(cfg),
 		Tag:                 NewTagClient(cfg),
+		Theme:               NewThemeClient(cfg),
 		User:                NewUserClient(cfg),
 		VisitLog:            NewVisitLogClient(cfg),
 		Wallet:              NewWalletClient(cfg),
@@ -401,7 +407,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.KnowledgeBase, c.License, c.Member, c.MemberLevel, c.Notification,
 		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
 		c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role, c.ScheduleJob,
-		c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet,
+		c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -417,7 +424,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.KnowledgeBase, c.License, c.Member, c.MemberLevel, c.Notification,
 		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
 		c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role, c.ScheduleJob,
-		c.Setting, c.StorageStrategy, c.Tag, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet,
+		c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -492,6 +500,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.StorageStrategy.mutate(ctx, m)
 	case *TagMutation:
 		return c.Tag.mutate(ctx, m)
+	case *ThemeMutation:
+		return c.Theme.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *VisitLogMutation:
@@ -5102,6 +5112,139 @@ func (c *TagClient) mutate(ctx context.Context, m *TagMutation) (Value, error) {
 	}
 }
 
+// ThemeClient is a client for the Theme schema.
+type ThemeClient struct {
+	config
+}
+
+// NewThemeClient returns a client for the Theme from the given config.
+func NewThemeClient(c config) *ThemeClient {
+	return &ThemeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `theme.Hooks(f(g(h())))`.
+func (c *ThemeClient) Use(hooks ...Hook) {
+	c.hooks.Theme = append(c.hooks.Theme, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `theme.Intercept(f(g(h())))`.
+func (c *ThemeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Theme = append(c.inters.Theme, interceptors...)
+}
+
+// Create returns a builder for creating a Theme entity.
+func (c *ThemeClient) Create() *ThemeCreate {
+	mutation := newThemeMutation(c.config, OpCreate)
+	return &ThemeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Theme entities.
+func (c *ThemeClient) CreateBulk(builders ...*ThemeCreate) *ThemeCreateBulk {
+	return &ThemeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ThemeClient) MapCreateBulk(slice any, setFunc func(*ThemeCreate, int)) *ThemeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ThemeCreateBulk{err: fmt.Errorf("calling to ThemeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ThemeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ThemeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Theme.
+func (c *ThemeClient) Update() *ThemeUpdate {
+	mutation := newThemeMutation(c.config, OpUpdate)
+	return &ThemeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ThemeClient) UpdateOne(_m *Theme) *ThemeUpdateOne {
+	mutation := newThemeMutation(c.config, OpUpdateOne, withTheme(_m))
+	return &ThemeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ThemeClient) UpdateOneID(id int) *ThemeUpdateOne {
+	mutation := newThemeMutation(c.config, OpUpdateOne, withThemeID(id))
+	return &ThemeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Theme.
+func (c *ThemeClient) Delete() *ThemeDelete {
+	mutation := newThemeMutation(c.config, OpDelete)
+	return &ThemeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ThemeClient) DeleteOne(_m *Theme) *ThemeDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ThemeClient) DeleteOneID(id int) *ThemeDeleteOne {
+	builder := c.Delete().Where(theme.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ThemeDeleteOne{builder}
+}
+
+// Query returns a query builder for Theme.
+func (c *ThemeClient) Query() *ThemeQuery {
+	return &ThemeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTheme},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Theme entity by its id.
+func (c *ThemeClient) Get(ctx context.Context, id int) (*Theme, error) {
+	return c.Query().Where(theme.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ThemeClient) GetX(ctx context.Context, id int) *Theme {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ThemeClient) Hooks() []Hook {
+	return c.hooks.Theme
+}
+
+// Interceptors returns the client interceptors.
+func (c *ThemeClient) Interceptors() []Interceptor {
+	return c.inters.Theme
+}
+
+func (c *ThemeClient) mutate(ctx context.Context, m *ThemeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ThemeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ThemeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ThemeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ThemeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Theme mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -5706,7 +5849,7 @@ type (
 		FriendCircleRecord, KnowledgeBase, License, Member, MemberLevel, Notification,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
 		PersonalAccessToken, Plugin, Post, Product, Role, ScheduleJob, Setting,
-		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Hook
+		StorageStrategy, Tag, Theme, User, VisitLog, Wallet, WebHook []ent.Hook
 	}
 	inters struct {
 		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, DocLibrary,
@@ -5714,6 +5857,6 @@ type (
 		FriendCircleRecord, KnowledgeBase, License, Member, MemberLevel, Notification,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
 		PersonalAccessToken, Plugin, Post, Product, Role, ScheduleJob, Setting,
-		StorageStrategy, Tag, User, VisitLog, Wallet, WebHook []ent.Interceptor
+		StorageStrategy, Tag, Theme, User, VisitLog, Wallet, WebHook []ent.Interceptor
 	}
 )

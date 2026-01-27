@@ -73,6 +73,16 @@ export default [
                 },
             },
             {
+                path: '/infra/theme',
+                name: 'ThemeManagement',
+                component: () => import('@/views/infra/theme/index.vue'),
+                meta: {
+                    title: '主题管理',
+                    showLink: true,
+                    roles: ['admin', 'common'],
+                },
+            },
+            {
                 path: '/infra/license',
                 name: 'LicenseManagement',
                 component: () => import('@/views/infra/license/index.vue'),

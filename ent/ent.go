@@ -45,6 +45,7 @@ import (
 	"github.com/shuTwT/gobee/ent/setting"
 	"github.com/shuTwT/gobee/ent/storagestrategy"
 	"github.com/shuTwT/gobee/ent/tag"
+	"github.com/shuTwT/gobee/ent/theme"
 	"github.com/shuTwT/gobee/ent/user"
 	"github.com/shuTwT/gobee/ent/visitlog"
 	"github.com/shuTwT/gobee/ent/wallet"
@@ -142,6 +143,7 @@ func checkColumn(t, c string) error {
 			setting.Table:             setting.ValidColumn,
 			storagestrategy.Table:     storagestrategy.ValidColumn,
 			tag.Table:                 tag.ValidColumn,
+			theme.Table:               theme.ValidColumn,
 			user.Table:                user.ValidColumn,
 			visitlog.Table:            visitlog.ValidColumn,
 			wallet.Table:              wallet.ValidColumn,
