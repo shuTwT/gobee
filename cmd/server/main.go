@@ -53,6 +53,10 @@ func InitializeApp(assetsRes embed.FS, frontendRes embed.FS) (*fiber.App, func()
 
 	serviceMap := pkg.InitializeServices(assetsRes, db, scheduleManager)
 
+	if err := serviceMap.ThemeService.RegisterDefaultTheme(context.Background()); err != nil {
+		slog.Error("Failed to register default theme", "error", err.Error())
+	}
+
 	if !fiber.IsChild() {
 		// 主进程程初始化定时任务
 		err := schedule.InitializeSchedule(db, scheduleManager, serviceMap.FriendCircleService)
@@ -89,9 +93,8 @@ func InitializeApp(assetsRes embed.FS, frontendRes embed.FS) (*fiber.App, func()
 	app.Use(logger.New())
 	app.Use(cors.New())
 
-	router.InitFrontendRes(app, frontendRes)
-
 	handlerMap := handlers.InitHandler(serviceMap, db)
+	router.InitFrontendRes(app, frontendRes, serviceMap)
 	router.Initialize(app, handlerMap, db)
 
 	go func() {

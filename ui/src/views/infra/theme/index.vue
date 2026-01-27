@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm, NUpload } from 'naive-ui'
-import { Pencil, RefreshOutline, TrashOutline, CloudUploadOutline } from '@vicons/ionicons5'
+import { Pencil, RefreshOutline, TrashOutline, CloudUploadOutline, EyeOutline } from '@vicons/ionicons5'
 import * as themeApi from '@/api/infra/theme'
 import { addDialog } from '@/components/dialog'
 import Form from './form.vue'
+import Detail from './detail.vue'
+import UploadForm from './uploadForm.vue'
 
 const pagination = reactive({
   page: 1,
@@ -83,6 +85,19 @@ const columns: DataTableColumns<any> = [
             NButton,
             {
               size: 'small',
+              type: 'info',
+              quaternary: true,
+              onClick: () => handleDetail(row),
+            },
+            {
+              icon: () => h(NIcon, {}, () => h(EyeOutline)),
+              default: () => '详情',
+            },
+          ),
+          h(
+            NButton,
+            {
+              size: 'small',
               type: 'primary',
               quaternary: true,
               onClick: () => {
@@ -141,28 +156,23 @@ const onSearch = () => {
 const handleUpload = () => {
   addDialog({
     title: '上传主题',
-    width: 500,
-    contentRenderer: () => {
-      return h('div', { style: { padding: '20px' } }, [
-        h(NUpload, {
-          accept: '.zip',
-          max: 1,
-          customRequest: ({ file, onFinish, onError }) => {
-            const formData = new FormData()
-            formData.append('file', file.file as File)
-            
-            themeApi.uploadTheme(formData).then(res => {
-              window.$message?.success('上传成功')
-              onFinish()
-              onSearch()
-            }).catch(err => {
-              window.$message?.error('上传失败')
-              onError()
-            })
-          },
-        })
-      ])
+    contentRenderer: () => h(UploadForm, {
+      onSuccess: () => {
+        onSearch()
+      }
+    }),
+    beforeSure: (done) => {
+      done()
     },
+  })
+}
+
+const handleDetail = (row: any) => {
+  addDialog({
+    title: '主题详情',
+    contentRenderer: () => h(Detail, {
+      theme: row
+    }),
     beforeSure: (done) => {
       done()
     },

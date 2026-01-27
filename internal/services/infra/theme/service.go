@@ -25,6 +25,8 @@ type ThemeService interface {
 	DeleteTheme(ctx context.Context, id int) error
 	EnableTheme(ctx context.Context, id int) error
 	DisableTheme(ctx context.Context, id int) error
+	RegisterDefaultTheme(ctx context.Context) error
+	GetEnabledTheme(ctx context.Context) (*ent.Theme, error)
 }
 
 type ThemeServiceImpl struct {
@@ -308,6 +310,16 @@ func (s *ThemeServiceImpl) DisableTheme(ctx context.Context, id int) error {
 	return nil
 }
 
+func (s *ThemeServiceImpl) GetEnabledTheme(ctx context.Context) (*ent.Theme, error) {
+	themeEntity, err := s.client.Theme.Query().
+		Where(theme_ent.Enabled(true)).
+		First(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return themeEntity, nil
+}
+
 func validateThemeConfig(config *model.ThemeConfig) error {
 	if config.Name == "" {
 		return errors.New("主题名称不能为空")
@@ -321,5 +333,117 @@ func validateThemeConfig(config *model.ThemeConfig) error {
 	if config.Type != "theme" {
 		return errors.New("类型必须为 theme")
 	}
+	return nil
+}
+
+func (s *ThemeServiceImpl) RegisterDefaultTheme(ctx context.Context) error {
+	themeDir := "./data/themes/gobee-theme-ace"
+	themeConfigPath := filepath.Join(themeDir, "theme.yaml")
+
+	// Check if theme.yaml exists
+	if _, err := os.Stat(themeConfigPath); os.IsNotExist(err) {
+		// If file not found, it might mean extraction failed or path is wrong.
+		// Since extraction is done before this call, we should log error but not panic?
+		// But here we return error.
+		return fmt.Errorf("default theme config not found at %s", themeConfigPath)
+	}
+
+	// Read theme.yaml
+	themeConfigContent, err := os.ReadFile(themeConfigPath)
+	if err != nil {
+		return fmt.Errorf("failed to read theme config: %w", err)
+	}
+
+	var themeConfig model.ThemeConfig
+	if err := yaml.Unmarshal(themeConfigContent, &themeConfig); err != nil {
+		return fmt.Errorf("failed to parse theme config: %w", err)
+	}
+
+	// Check if theme exists in DB
+	exists, err := s.client.Theme.Query().Where(theme_ent.Name(themeConfig.Name)).Exist(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to check if theme exists: %w", err)
+	}
+
+	if !exists {
+		// Create theme in DB
+		builder := s.client.Theme.Create().
+			SetName(themeConfig.Name).
+			SetDisplayName(themeConfig.DisplayName).
+			SetVersion(themeConfig.Version).
+			SetRequire(themeConfig.Require).
+			SetPath(themeDir).
+			SetEnabled(false)
+
+		if themeConfig.Description != "" {
+			builder.SetDescription(themeConfig.Description)
+		}
+		if themeConfig.Author != nil {
+			if themeConfig.Author.Name != "" {
+				builder.SetAuthorName(themeConfig.Author.Name)
+			}
+			if themeConfig.Author.Email != "" {
+				builder.SetAuthorEmail(themeConfig.Author.Email)
+			}
+		}
+		if themeConfig.Logo != "" {
+			builder.SetLogo(themeConfig.Logo)
+		}
+		if themeConfig.Homepage != "" {
+			builder.SetHomepage(themeConfig.Homepage)
+		}
+		if themeConfig.Repo != "" {
+			builder.SetRepo(themeConfig.Repo)
+		}
+		if themeConfig.Issue != "" {
+			builder.SetIssue(themeConfig.Issue)
+		}
+		if themeConfig.SettingName != "" {
+			builder.SetSettingName(themeConfig.SettingName)
+		}
+		if themeConfig.ConfigMapName != "" {
+			builder.SetConfigMapName(themeConfig.ConfigMapName)
+		}
+		if themeConfig.License != "" {
+			builder.SetLicense(themeConfig.License)
+		}
+
+		_, err := builder.Save(ctx)
+		if err != nil {
+			return fmt.Errorf("failed to save default theme to DB: %w", err)
+		}
+	}
+
+	// Check if we need to enable it
+	// If it's the only theme, enable it.
+	// Or if no theme is enabled, enable it.
+
+	count, err := s.client.Theme.Query().Count(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to count themes: %w", err)
+	}
+
+	enabledCount, err := s.client.Theme.Query().Where(theme_ent.Enabled(true)).Count(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to count enabled themes: %w", err)
+	}
+
+	if count == 1 || enabledCount == 0 {
+		// Enable this theme
+		// We need the ID first.
+		themeEntity, err := s.client.Theme.Query().Where(theme_ent.Name(themeConfig.Name)).First(ctx)
+		if err != nil {
+			return fmt.Errorf("failed to query default theme: %w", err)
+		}
+
+		// Only enable if not already enabled (though enabledCount==0 implies it's not)
+		if !themeEntity.Enabled {
+			// Use internal logic to enable to ensure consistency (e.g. disable others)
+			// But here we know others are disabled or don't exist.
+			// Still, using EnableTheme is safer if we change logic later.
+			return s.EnableTheme(ctx, themeEntity.ID)
+		}
+	}
+
 	return nil
 }

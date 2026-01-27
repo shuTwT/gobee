@@ -48,66 +48,64 @@ import (
 )
 
 func ExtractDefaultTheme(assetsRes embed.FS) {
-	go func() {
-		themeDir := "./data/themes"
-		defaultThemePath := "./data/themes/gobee-theme-ace"
-		sourceThemePath := "assets/themes/gobee-theme-ace"
+	themeDir := "./data/themes"
+	defaultThemePath := "./data/themes/gobee-theme-ace"
+	sourceThemePath := "assets/themes/gobee-theme-ace"
 
-		if _, err := os.Stat(defaultThemePath); err == nil {
-			slog.Info("Default theme already exists", "path", defaultThemePath)
-			return
-		}
+	if _, err := os.Stat(defaultThemePath); err == nil {
+		slog.Info("Default theme already exists", "path", defaultThemePath)
+		return
+	}
 
-		slog.Info("Extracting default theme", "from", sourceThemePath, "to", defaultThemePath)
+	slog.Info("Extracting default theme", "from", sourceThemePath, "to", defaultThemePath)
 
-		if err := os.MkdirAll(themeDir, 0755); err != nil {
-			slog.Error("Failed to create themes directory", "error", err.Error())
-			return
-		}
+	if err := os.MkdirAll(themeDir, 0755); err != nil {
+		slog.Error("Failed to create themes directory", "error", err.Error())
+		return
+	}
 
-		sourceDir, err := fs.Sub(assetsRes, sourceThemePath)
+	sourceDir, err := fs.Sub(assetsRes, sourceThemePath)
+	if err != nil {
+		slog.Error("Failed to get source directory", "error", err.Error())
+		return
+	}
+
+	err = fs.WalkDir(sourceDir, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			slog.Error("Failed to get source directory", "error", err.Error())
-			return
+			return err
 		}
 
-		err = fs.WalkDir(sourceDir, ".", func(path string, d fs.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
+		targetPath := filepath.Join(defaultThemePath, path)
 
-			targetPath := filepath.Join(defaultThemePath, path)
+		if d.IsDir() {
+			return os.MkdirAll(targetPath, 0755)
+		}
 
-			if d.IsDir() {
-				return os.MkdirAll(targetPath, 0755)
-			}
-
-			sourceFile, err := sourceDir.Open(path)
-			if err != nil {
-				return err
-			}
-			defer sourceFile.Close()
-
-			destFile, err := os.OpenFile(targetPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-			if err != nil {
-				return err
-			}
-			defer destFile.Close()
-
-			_, err = destFile.ReadFrom(sourceFile)
-			if err != nil {
-				return err
-			}
-
-			return nil
-		})
-
+		sourceFile, err := sourceDir.Open(path)
 		if err != nil {
-			slog.Error("Failed to extract default theme", "error", err.Error())
-		} else {
-			slog.Info("Default theme extracted successfully", "path", defaultThemePath)
+			return err
 		}
-	}()
+		defer sourceFile.Close()
+
+		destFile, err := os.OpenFile(targetPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+		if err != nil {
+			return err
+		}
+		defer destFile.Close()
+
+		_, err = destFile.ReadFrom(sourceFile)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		slog.Error("Failed to extract default theme", "error", err.Error())
+	} else {
+		slog.Info("Default theme extracted successfully", "path", defaultThemePath)
+	}
 }
 
 type ServiceMap struct {

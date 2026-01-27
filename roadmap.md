@@ -25,6 +25,7 @@
         |   |---tag.html 标签页面
         |   |---archives.html 归档页面
         |   |---author.html 作者页面
+        |   |---404.html 404页面
         |---theme.yaml 主题声明，后台在主题详情处可查看
         |---config.yaml 主题配置schema声明，将在前端渲染为表单
         ```

@@ -1,19 +1,23 @@
 package router
 
 import (
+	"context"
 	"embed"
+	"fmt"
+	"html/template"
 	"io"
 	"io/fs"
 	"log"
 	"mime"
+	"os"
 	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/shuTwT/gobee/pkg"
 )
 
-func InitFrontendRes(app *fiber.App, frontendRes embed.FS) {
+func InitFrontendRes(app *fiber.App, frontendRes embed.FS, serviceMap pkg.ServiceMap) {
 
-	// 载入静态资源
 	distDir, err := fs.Sub(frontendRes, "ui/dist")
 	if err != nil {
 		log.Fatalln("静态资源载入失败")
@@ -27,28 +31,24 @@ func InitFrontendRes(app *fiber.App, frontendRes embed.FS) {
 			defer file.Close()
 			stat, err := file.Stat()
 			if err == nil && !stat.IsDir() {
-				// 不是文件夹
 				ext := filepath.Ext(filePath)
 				contentType = mime.TypeByExtension(ext)
 				if contentType == "" {
 					contentType = "application/octet-stream"
 				}
 				if ext == ".html" {
-					// 是 html 文件
 
 				}
 				resp.Header.Set("Content-Type", contentType)
 				_, err = io.Copy(c.Response().BodyWriter(), file)
 				return err
 			} else if err == nil && stat.IsDir() {
-				//是文件夹，向下查找 index.html
 				fillePathTmp := filepath.Join(filePath, "/index.html")
 				if fileSub, err := distDir.Open(fillePathTmp); err == nil {
 					defer fileSub.Close()
 					statSub, err := fileSub.Stat()
 					if err == nil && !statSub.IsDir() {
 						if filepath.Ext(filePath) == ".html" {
-							// 是 html 文件
 							resp.Header.Set("Content-Type", "text/html")
 							_, err = io.Copy(c.Response().BodyWriter(), file)
 							return err
@@ -58,7 +58,6 @@ func InitFrontendRes(app *fiber.App, frontendRes embed.FS) {
 			}
 
 		}
-		// If no file or directory/index.html found, try to serve root index.html
 		if file, err := distDir.Open("index.html"); err == nil {
 			defer file.Close()
 			resp.Header.Set("Content-Type", "text/html")
@@ -67,4 +66,90 @@ func InitFrontendRes(app *fiber.App, frontendRes embed.FS) {
 		}
 		return c.SendStatus(fiber.StatusNotFound)
 	})
+
+	initFrontendRoutes(app, serviceMap)
+}
+
+func initFrontendRoutes(app *fiber.App, serviceMap pkg.ServiceMap) {
+	app.Get("/", renderTemplate(serviceMap, "index.html"))
+	app.Get("/archives", renderTemplate(serviceMap, "archives.html"))
+	app.Get("/author/:userId", renderTemplate(serviceMap, "author.html"))
+	app.Get("/categories", renderTemplate(serviceMap, "categories.html"))
+	app.Get("/category/:categoryName", renderTemplate(serviceMap, "category.html"))
+	app.Get("/post/:slug", renderTemplate(serviceMap, "post.html"))
+	app.Get("/tags", renderTemplate(serviceMap, "tags.html"))
+	app.Get("/tag/:tagName", renderTemplate(serviceMap, "tag.html"))
+	app.Get("/404", renderTemplate(serviceMap, "404.html"))
+
+	app.Use(func(c *fiber.Ctx) error {
+		path := c.Path()
+		if len(path) >= 4 && path[:4] == "/api" {
+			return c.Next()
+		}
+		if len(path) >= 8 && path[:8] == "/console" {
+			return c.Next()
+		}
+		return c.Redirect("/404")
+	})
+}
+
+func renderTemplate(serviceMap pkg.ServiceMap, templateName string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		ctx := context.Background()
+
+		theme, err := serviceMap.ThemeService.GetEnabledTheme(ctx)
+		if err != nil {
+			log.Printf("获取启用主题失败: %v", err)
+			return c.Status(fiber.StatusInternalServerError).SendString("获取主题失败")
+		}
+
+		templatePath := filepath.Join(theme.Path, "templates", templateName)
+
+		log.Printf("%s", templatePath)
+
+		if _, err := os.Stat(templatePath); os.IsNotExist(err) {
+			log.Printf("模板文件不存在: %s", templatePath)
+			return c.Status(fiber.StatusNotFound).SendString("模板文件不存在")
+		}
+
+		tmpl, err := template.ParseFiles(templatePath)
+		if err != nil {
+			log.Printf("解析模板失败: %v", err)
+			return c.Status(fiber.StatusInternalServerError).SendString("解析模板失败")
+		}
+
+		c.Set("Content-Type", "text/html; charset=utf-8")
+
+		data := map[string]interface{}{
+			"Title":  fmt.Sprintf("%s - %s", getTemplateTitle(templateName), theme.DisplayName),
+			"Theme":  theme,
+			"Path":   c.Path(),
+			"Params": c.AllParams(),
+		}
+
+		if err := tmpl.Execute(c.Response().BodyWriter(), data); err != nil {
+			log.Printf("渲染模板失败: %v", err)
+			return c.Status(fiber.StatusInternalServerError).SendString("渲染模板失败")
+		}
+
+		return nil
+	}
+}
+
+func getTemplateTitle(templateName string) string {
+	titles := map[string]string{
+		"index.html":      "首页",
+		"archives.html":   "归档",
+		"author.html":     "作者",
+		"categories.html": "分类",
+		"category.html":   "分类",
+		"post.html":       "文章",
+		"tags.html":       "标签",
+		"tag.html":        "标签",
+		"404.html":        "404",
+	}
+	if title, ok := titles[templateName]; ok {
+		return title
+	}
+	return "页面"
 }
