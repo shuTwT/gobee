@@ -11,9 +11,6 @@ importers:
       '@gobee/api-client':
         specifier: workspace:*
         version: link:packages/api-client
-      '@tinymce/tinymce-vue':
-        specifier: ^6.3.0
-        version: 6.3.0(tinymce@8.3.1)(vue@3.5.22(typescript@5.8.3))
       '@types/js-cookie':
         specifier: ^3.0.6
         version: 3.0.6
@@ -65,9 +62,6 @@ importers:
       pinia:
         specifier: ^3.0.1
         version: 3.0.3(typescript@5.8.3)(vue@3.5.22(typescript@5.8.3))
-      tinymce:
-        specifier: ^8
-        version: 8.3.1
       vue:
         specifier: ^3.5.13
         version: 3.5.22(typescript@5.8.3)
@@ -1184,15 +1178,6 @@ packages:
     resolution: {integrity: sha512-jVA+/UpKL1vRLg6Hkao5jldawNmRo7mQYrZtNHMIVpLfLhDml5nMRUo/8MwoX2vNXvnaXNNMedrMfMugAVX1nA==}
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7
-
-  '@tinymce/tinymce-vue@6.3.0':
-    resolution: {integrity: sha512-DSP8Jhd3XqCCliTnusfbmz3D8GqQ4iRzkc4aadYHDcJPVjkaqopJ61McOdH82CSy599vGLkPjGzqJYWJkRMiUA==}
-    peerDependencies:
-      tinymce: ^8.0.0 || ^7.0.0 || ^6.0.0 || ^5.5.1
-      vue: ^3.0.0
-    peerDependenciesMeta:
-      tinymce:
-        optional: true
 
   '@transloadit/prettier-bytes@0.3.5':
     resolution: {integrity: sha512-xF4A3d/ZyX2LJWeQZREZQw+qFX4TGQ8bGVP97OLRt6sPO6T0TNHBFTuRHOJh7RNmYOBmQ9MHxpolD9bXihpuVA==}
@@ -2934,9 +2919,6 @@ packages:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
 
-  tinymce@8.3.1:
-    resolution: {integrity: sha512-mdQdTAA90aEIyhEteIwy+QQ6UnxPCd3qQ5MlGvvByOvnjyOSdBzBcmnXeqWuhGz3fIs3XBJjIw7JyIMiHjebqw==}
-
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
@@ -4274,12 +4256,6 @@ snapshots:
       '@tailwindcss/oxide': 4.1.18
       tailwindcss: 4.1.18
       vite: 6.3.6(@types/node@22.18.10)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.2)
-
-  '@tinymce/tinymce-vue@6.3.0(tinymce@8.3.1)(vue@3.5.22(typescript@5.8.3))':
-    dependencies:
-      vue: 3.5.22(typescript@5.8.3)
-    optionalDependencies:
-      tinymce: 8.3.1
 
   '@transloadit/prettier-bytes@0.3.5': {}
 
@@ -6166,8 +6142,6 @@ snapshots:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
-
-  tinymce@8.3.1: {}
 
   to-regex-range@5.0.1:
     dependencies:

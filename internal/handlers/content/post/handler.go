@@ -212,7 +212,7 @@ func (h *PostHandlerImpl) UpdatePostContent(c *fiber.Ctx) error {
 	if err = c.BodyParser(&post); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	newPost, err := h.postService.UpdatePostContent(c.Context(), id, post.Content)
+	newPost, err := h.postService.UpdatePostContent(c.Context(), id, post.Content, post.HtmlContent, post.MdContent)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}

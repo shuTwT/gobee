@@ -24,7 +24,7 @@ type PostService interface {
 	QueryPostBySlug(c context.Context, slug string) (*ent.Post, error)
 	QueryPostById(c context.Context, id int) (*ent.Post, error)
 	CreatePost(c context.Context, title string, content string) (*ent.Post, error)
-	UpdatePostContent(c context.Context, id int, content string) (*ent.Post, error)
+	UpdatePostContent(c context.Context, id int, content string, htmlContent *string, mdContent *string) (*ent.Post, error)
 	UpdatePostSetting(c context.Context, id int, post model.PostUpdateReq) (*ent.Post, error)
 	DeletePost(c context.Context, id int) error
 	GetPostCount(c context.Context) (int, error)
@@ -178,9 +178,11 @@ func (s *PostServiceImpl) QueryPostById(c context.Context, id int) (*ent.Post, e
 	return post, nil
 }
 
-func (s *PostServiceImpl) UpdatePostContent(c context.Context, id int, content string) (*ent.Post, error) {
+func (s *PostServiceImpl) UpdatePostContent(c context.Context, id int, content string, htmlContent *string, mdContent *string) (*ent.Post, error) {
 	newPost, err := s.client.Post.UpdateOneID(id).
 		SetContent(content).
+		SetNillableHTMLContent(htmlContent).
+		SetNillableMdContent(mdContent).
 		Save(c)
 	return newPost, err
 }
