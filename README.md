@@ -332,6 +332,6 @@ GoBee 项目的成功离不开以下优秀开源项目的支持，在此表示�
 
 **🎉 让 GoBee 成为你内容管理的最佳伙伴！**
 
-Made with ❤️ by the GoBee Community
+<!-- Made with ❤️ by the GoBee Community -->
 
 </div>
