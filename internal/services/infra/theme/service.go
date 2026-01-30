@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/shuTwT/gobee/ent"
 	theme_ent "github.com/shuTwT/gobee/ent/theme"
@@ -21,7 +22,9 @@ import (
 type ThemeService interface {
 	ListThemePage(ctx context.Context, page, size int) (int, []*ent.Theme, error)
 	QueryTheme(ctx context.Context, id int) (*ent.Theme, error)
-	CreateTheme(ctx context.Context, fileHeader *multipart.FileHeader) (*ent.Theme, error)
+	QueryThemeByName(ctx context.Context, name string) (*ent.Theme, error)
+	UploadThemeFile(ctx context.Context, fileHeader *multipart.FileHeader) (string, error)
+	CreateTheme(ctx context.Context, req *model.CreateThemeReq) (*ent.Theme, error)
 	DeleteTheme(ctx context.Context, id int) error
 	EnableTheme(ctx context.Context, id int) error
 	DisableTheme(ctx context.Context, id int) error
@@ -67,29 +70,73 @@ func (s *ThemeServiceImpl) QueryTheme(ctx context.Context, id int) (*ent.Theme, 
 	return themeEntity, nil
 }
 
-func (s *ThemeServiceImpl) CreateTheme(ctx context.Context, fileHeader *multipart.FileHeader) (*ent.Theme, error) {
+func (s *ThemeServiceImpl) QueryThemeByName(ctx context.Context, name string) (*ent.Theme, error) {
+	themeEntity, err := s.client.Theme.Query().
+		Where(theme_ent.Name(name)).
+		First(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return themeEntity, nil
+}
+
+func (s *ThemeServiceImpl) UploadThemeFile(ctx context.Context, fileHeader *multipart.FileHeader) (string, error) {
 	if fileHeader == nil {
-		return nil, errors.New("文件不能为空")
+		return "", errors.New("文件不能为空")
 	}
 
 	srcFile, err := fileHeader.Open()
 	if err != nil {
-		return nil, fmt.Errorf("打开上传文件失败: %w", err)
+		return "", fmt.Errorf("打开上传文件失败: %w", err)
 	}
 	defer srcFile.Close()
 
-	tempFile, err := os.CreateTemp("", "theme-*.zip")
+	tmpDir := "./data/tmp/themes"
+	if err := os.MkdirAll(tmpDir, 0755); err != nil {
+		return "", fmt.Errorf("创建临时目录失败: %w", err)
+	}
+
+	fileName := fmt.Sprintf("theme-%d.zip", time.Now().UnixNano())
+	filePath := filepath.Join(tmpDir, fileName)
+
+	dstFile, err := os.Create(filePath)
 	if err != nil {
-		return nil, fmt.Errorf("创建临时文件失败: %w", err)
+		return "", fmt.Errorf("创建目标文件失败: %w", err)
 	}
-	defer os.Remove(tempFile.Name())
-	defer tempFile.Close()
+	defer dstFile.Close()
 
-	if _, err := io.Copy(tempFile, srcFile); err != nil {
-		return nil, fmt.Errorf("复制文件失败: %w", err)
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
+		os.Remove(filePath)
+		return "", fmt.Errorf("复制文件失败: %w", err)
 	}
 
-	zipReader, err := zip.OpenReader(tempFile.Name())
+	return filePath, nil
+}
+
+func (s *ThemeServiceImpl) CreateTheme(ctx context.Context, req *model.CreateThemeReq) (*ent.Theme, error) {
+	if req == nil {
+		return nil, errors.New("请求参数不能为空")
+	}
+
+	if req.Type == "internal" {
+		return s.createInternalTheme(ctx, req)
+	} else if req.Type == "external" {
+		return s.createExternalTheme(ctx, req)
+	}
+
+	return nil, errors.New("无效的主题类型")
+}
+
+func (s *ThemeServiceImpl) createInternalTheme(ctx context.Context, req *model.CreateThemeReq) (*ent.Theme, error) {
+	if req.FilePath == "" {
+		return nil, errors.New("文件路径不能为空")
+	}
+
+	if _, err := os.Stat(req.FilePath); os.IsNotExist(err) {
+		return nil, errors.New("文件不存在")
+	}
+
+	zipReader, err := zip.OpenReader(req.FilePath)
 	if err != nil {
 		return nil, fmt.Errorf("打开压缩包失败: %w", err)
 	}
@@ -190,7 +237,10 @@ func (s *ThemeServiceImpl) CreateTheme(ctx context.Context, fileHeader *multipar
 		}
 	}
 
+	os.Remove(req.FilePath)
+
 	builder := s.client.Theme.Create().
+		SetType("internal").
 		SetName(themeConfig.Name).
 		SetDisplayName(themeConfig.DisplayName).
 		SetVersion(themeConfig.Version).
@@ -234,6 +284,48 @@ func (s *ThemeServiceImpl) CreateTheme(ctx context.Context, fileHeader *multipar
 	themeEntity, err := builder.Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("保存主题信息失败: %w", err)
+	}
+
+	return themeEntity, nil
+}
+
+func (s *ThemeServiceImpl) createExternalTheme(ctx context.Context, req *model.CreateThemeReq) (*ent.Theme, error) {
+	if req.Name == "" {
+		return nil, errors.New("主题名称不能为空")
+	}
+	if req.DisplayName == "" {
+		return nil, errors.New("显示名称不能为空")
+	}
+	if req.ExternalURL == "" {
+		return nil, errors.New("外部主题URL不能为空")
+	}
+	if req.Version == "" {
+		return nil, errors.New("版本号不能为空")
+	}
+
+	exists, err := s.client.Theme.Query().Where(theme_ent.Name(req.Name)).Exist(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("检查主题是否存在失败: %w", err)
+	}
+	if exists {
+		return nil, fmt.Errorf("主题 '%s' 已存在", req.Name)
+	}
+
+	builder := s.client.Theme.Create().
+		SetType("external").
+		SetName(req.Name).
+		SetDisplayName(req.DisplayName).
+		SetExternalURL(req.ExternalURL).
+		SetVersion(req.Version).
+		SetEnabled(false)
+
+	if req.Description != "" {
+		builder.SetDescription(req.Description)
+	}
+
+	themeEntity, err := builder.Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("保存外部主题信息失败: %w", err)
 	}
 
 	return themeEntity, nil
@@ -366,8 +458,8 @@ func (s *ThemeServiceImpl) RegisterDefaultTheme(ctx context.Context) error {
 	}
 
 	if !exists {
-		// Create theme in DB
 		builder := s.client.Theme.Create().
+			SetType("internal").
 			SetName(themeConfig.Name).
 			SetDisplayName(themeConfig.DisplayName).
 			SetVersion(themeConfig.Version).

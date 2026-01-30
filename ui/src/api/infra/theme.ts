@@ -5,6 +5,7 @@ export interface Theme {
   id: number
   created_at: string
   updated_at: string
+  type: string
   name: string
   display_name: string
   description?: string
@@ -19,13 +20,24 @@ export interface Theme {
   version: string
   require?: string
   license?: string
-  path: string
+  path?: string
+  external_url?: string
   enabled: boolean
 }
 
 export interface ThemePageParams {
   page: number
   size: number
+}
+
+export interface CreateThemeParams {
+  type: 'internal' | 'external'
+  file_path?: string
+  name?: string
+  display_name?: string
+  description?: string
+  external_url?: string
+  version?: string
 }
 
 export const getThemePage = (params: ThemePageParams) => {
@@ -36,13 +48,17 @@ export const queryTheme = (id: number) => {
   return http.request<ApiResponse<Theme>>('get', `${BASE_URL}/v1/theme/query/${id}`)
 }
 
-export const uploadTheme = (file: FormData) => {
-  return http.request<ApiResponse<Theme>>('post', `${BASE_URL}/v1/theme/create`, { 
+export const uploadThemeFile = (file: FormData) => {
+  return http.request<ApiResponse<{ file_path: string }>>('post', `${BASE_URL}/v1/theme/upload`, { 
     data: file,
     headers: {
       'Content-Type': 'multipart/form-data'
     }
   })
+}
+
+export const createTheme = (params: CreateThemeParams) => {
+  return http.request<ApiResponse<Theme>>('post', `${BASE_URL}/v1/theme/create`, { data: params })
 }
 
 export const deleteTheme = (id: number) => {

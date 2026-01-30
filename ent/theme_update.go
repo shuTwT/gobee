@@ -34,6 +34,20 @@ func (_u *ThemeUpdate) SetUpdatedAt(v time.Time) *ThemeUpdate {
 	return _u
 }
 
+// SetType sets the "type" field.
+func (_u *ThemeUpdate) SetType(v string) *ThemeUpdate {
+	_u.mutation.SetType(v)
+	return _u
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_u *ThemeUpdate) SetNillableType(v *string) *ThemeUpdate {
+	if v != nil {
+		_u.SetType(*v)
+	}
+	return _u
+}
+
 // SetName sets the "name" field.
 func (_u *ThemeUpdate) SetName(v string) *ThemeUpdate {
 	_u.mutation.SetName(v)
@@ -304,6 +318,32 @@ func (_u *ThemeUpdate) SetNillablePath(v *string) *ThemeUpdate {
 	return _u
 }
 
+// ClearPath clears the value of the "path" field.
+func (_u *ThemeUpdate) ClearPath() *ThemeUpdate {
+	_u.mutation.ClearPath()
+	return _u
+}
+
+// SetExternalURL sets the "external_url" field.
+func (_u *ThemeUpdate) SetExternalURL(v string) *ThemeUpdate {
+	_u.mutation.SetExternalURL(v)
+	return _u
+}
+
+// SetNillableExternalURL sets the "external_url" field if the given value is not nil.
+func (_u *ThemeUpdate) SetNillableExternalURL(v *string) *ThemeUpdate {
+	if v != nil {
+		_u.SetExternalURL(*v)
+	}
+	return _u
+}
+
+// ClearExternalURL clears the value of the "external_url" field.
+func (_u *ThemeUpdate) ClearExternalURL() *ThemeUpdate {
+	_u.mutation.ClearExternalURL()
+	return _u
+}
+
 // SetEnabled sets the "enabled" field.
 func (_u *ThemeUpdate) SetEnabled(v bool) *ThemeUpdate {
 	_u.mutation.SetEnabled(v)
@@ -436,6 +476,11 @@ func (_u *ThemeUpdate) check() error {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Theme.path": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ExternalURL(); ok {
+		if err := theme.ExternalURLValidator(v); err != nil {
+			return &ValidationError{Name: "external_url", err: fmt.Errorf(`ent: validator failed for field "Theme.external_url": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -453,6 +498,9 @@ func (_u *ThemeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(theme.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.GetType(); ok {
+		_spec.SetField(theme.FieldType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(theme.FieldName, field.TypeString, value)
@@ -529,6 +577,15 @@ func (_u *ThemeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Path(); ok {
 		_spec.SetField(theme.FieldPath, field.TypeString, value)
 	}
+	if _u.mutation.PathCleared() {
+		_spec.ClearField(theme.FieldPath, field.TypeString)
+	}
+	if value, ok := _u.mutation.ExternalURL(); ok {
+		_spec.SetField(theme.FieldExternalURL, field.TypeString, value)
+	}
+	if _u.mutation.ExternalURLCleared() {
+		_spec.ClearField(theme.FieldExternalURL, field.TypeString)
+	}
 	if value, ok := _u.mutation.Enabled(); ok {
 		_spec.SetField(theme.FieldEnabled, field.TypeBool, value)
 	}
@@ -555,6 +612,20 @@ type ThemeUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *ThemeUpdateOne) SetUpdatedAt(v time.Time) *ThemeUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetType sets the "type" field.
+func (_u *ThemeUpdateOne) SetType(v string) *ThemeUpdateOne {
+	_u.mutation.SetType(v)
+	return _u
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_u *ThemeUpdateOne) SetNillableType(v *string) *ThemeUpdateOne {
+	if v != nil {
+		_u.SetType(*v)
+	}
 	return _u
 }
 
@@ -828,6 +899,32 @@ func (_u *ThemeUpdateOne) SetNillablePath(v *string) *ThemeUpdateOne {
 	return _u
 }
 
+// ClearPath clears the value of the "path" field.
+func (_u *ThemeUpdateOne) ClearPath() *ThemeUpdateOne {
+	_u.mutation.ClearPath()
+	return _u
+}
+
+// SetExternalURL sets the "external_url" field.
+func (_u *ThemeUpdateOne) SetExternalURL(v string) *ThemeUpdateOne {
+	_u.mutation.SetExternalURL(v)
+	return _u
+}
+
+// SetNillableExternalURL sets the "external_url" field if the given value is not nil.
+func (_u *ThemeUpdateOne) SetNillableExternalURL(v *string) *ThemeUpdateOne {
+	if v != nil {
+		_u.SetExternalURL(*v)
+	}
+	return _u
+}
+
+// ClearExternalURL clears the value of the "external_url" field.
+func (_u *ThemeUpdateOne) ClearExternalURL() *ThemeUpdateOne {
+	_u.mutation.ClearExternalURL()
+	return _u
+}
+
 // SetEnabled sets the "enabled" field.
 func (_u *ThemeUpdateOne) SetEnabled(v bool) *ThemeUpdateOne {
 	_u.mutation.SetEnabled(v)
@@ -973,6 +1070,11 @@ func (_u *ThemeUpdateOne) check() error {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Theme.path": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ExternalURL(); ok {
+		if err := theme.ExternalURLValidator(v); err != nil {
+			return &ValidationError{Name: "external_url", err: fmt.Errorf(`ent: validator failed for field "Theme.external_url": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -1007,6 +1109,9 @@ func (_u *ThemeUpdateOne) sqlSave(ctx context.Context) (_node *Theme, err error)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(theme.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.GetType(); ok {
+		_spec.SetField(theme.FieldType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(theme.FieldName, field.TypeString, value)
@@ -1082,6 +1187,15 @@ func (_u *ThemeUpdateOne) sqlSave(ctx context.Context) (_node *Theme, err error)
 	}
 	if value, ok := _u.mutation.Path(); ok {
 		_spec.SetField(theme.FieldPath, field.TypeString, value)
+	}
+	if _u.mutation.PathCleared() {
+		_spec.ClearField(theme.FieldPath, field.TypeString)
+	}
+	if value, ok := _u.mutation.ExternalURL(); ok {
+		_spec.SetField(theme.FieldExternalURL, field.TypeString, value)
+	}
+	if _u.mutation.ExternalURLCleared() {
+		_spec.ClearField(theme.FieldExternalURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.Enabled(); ok {
 		_spec.SetField(theme.FieldEnabled, field.TypeBool, value)

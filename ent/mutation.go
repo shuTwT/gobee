@@ -33175,6 +33175,7 @@ type ThemeMutation struct {
 	id              *int
 	created_at      *time.Time
 	updated_at      *time.Time
+	_type           *string
 	name            *string
 	display_name    *string
 	description     *string
@@ -33190,6 +33191,7 @@ type ThemeMutation struct {
 	require         *string
 	license         *string
 	_path           *string
+	external_url    *string
 	enabled         *bool
 	clearedFields   map[string]struct{}
 	done            bool
@@ -33371,6 +33373,42 @@ func (m *ThemeMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err erro
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *ThemeMutation) ResetUpdatedAt() {
 	m.updated_at = nil
+}
+
+// SetType sets the "type" field.
+func (m *ThemeMutation) SetType(s string) {
+	m._type = &s
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *ThemeMutation) GetType() (r string, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *ThemeMutation) ResetType() {
+	m._type = nil
 }
 
 // SetName sets the "name" field.
@@ -34038,9 +34076,71 @@ func (m *ThemeMutation) OldPath(ctx context.Context) (v string, err error) {
 	return oldValue.Path, nil
 }
 
+// ClearPath clears the value of the "path" field.
+func (m *ThemeMutation) ClearPath() {
+	m._path = nil
+	m.clearedFields[theme.FieldPath] = struct{}{}
+}
+
+// PathCleared returns if the "path" field was cleared in this mutation.
+func (m *ThemeMutation) PathCleared() bool {
+	_, ok := m.clearedFields[theme.FieldPath]
+	return ok
+}
+
 // ResetPath resets all changes to the "path" field.
 func (m *ThemeMutation) ResetPath() {
 	m._path = nil
+	delete(m.clearedFields, theme.FieldPath)
+}
+
+// SetExternalURL sets the "external_url" field.
+func (m *ThemeMutation) SetExternalURL(s string) {
+	m.external_url = &s
+}
+
+// ExternalURL returns the value of the "external_url" field in the mutation.
+func (m *ThemeMutation) ExternalURL() (r string, exists bool) {
+	v := m.external_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExternalURL returns the old "external_url" field's value of the Theme entity.
+// If the Theme object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThemeMutation) OldExternalURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExternalURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExternalURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExternalURL: %w", err)
+	}
+	return oldValue.ExternalURL, nil
+}
+
+// ClearExternalURL clears the value of the "external_url" field.
+func (m *ThemeMutation) ClearExternalURL() {
+	m.external_url = nil
+	m.clearedFields[theme.FieldExternalURL] = struct{}{}
+}
+
+// ExternalURLCleared returns if the "external_url" field was cleared in this mutation.
+func (m *ThemeMutation) ExternalURLCleared() bool {
+	_, ok := m.clearedFields[theme.FieldExternalURL]
+	return ok
+}
+
+// ResetExternalURL resets all changes to the "external_url" field.
+func (m *ThemeMutation) ResetExternalURL() {
+	m.external_url = nil
+	delete(m.clearedFields, theme.FieldExternalURL)
 }
 
 // SetEnabled sets the "enabled" field.
@@ -34113,12 +34213,15 @@ func (m *ThemeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ThemeMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, theme.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, theme.FieldUpdatedAt)
+	}
+	if m._type != nil {
+		fields = append(fields, theme.FieldType)
 	}
 	if m.name != nil {
 		fields = append(fields, theme.FieldName)
@@ -34165,6 +34268,9 @@ func (m *ThemeMutation) Fields() []string {
 	if m._path != nil {
 		fields = append(fields, theme.FieldPath)
 	}
+	if m.external_url != nil {
+		fields = append(fields, theme.FieldExternalURL)
+	}
 	if m.enabled != nil {
 		fields = append(fields, theme.FieldEnabled)
 	}
@@ -34180,6 +34286,8 @@ func (m *ThemeMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case theme.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case theme.FieldType:
+		return m.GetType()
 	case theme.FieldName:
 		return m.Name()
 	case theme.FieldDisplayName:
@@ -34210,6 +34318,8 @@ func (m *ThemeMutation) Field(name string) (ent.Value, bool) {
 		return m.License()
 	case theme.FieldPath:
 		return m.Path()
+	case theme.FieldExternalURL:
+		return m.ExternalURL()
 	case theme.FieldEnabled:
 		return m.Enabled()
 	}
@@ -34225,6 +34335,8 @@ func (m *ThemeMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreatedAt(ctx)
 	case theme.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case theme.FieldType:
+		return m.OldType(ctx)
 	case theme.FieldName:
 		return m.OldName(ctx)
 	case theme.FieldDisplayName:
@@ -34255,6 +34367,8 @@ func (m *ThemeMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldLicense(ctx)
 	case theme.FieldPath:
 		return m.OldPath(ctx)
+	case theme.FieldExternalURL:
+		return m.OldExternalURL(ctx)
 	case theme.FieldEnabled:
 		return m.OldEnabled(ctx)
 	}
@@ -34279,6 +34393,13 @@ func (m *ThemeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case theme.FieldType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
 		return nil
 	case theme.FieldName:
 		v, ok := value.(string)
@@ -34385,6 +34506,13 @@ func (m *ThemeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPath(v)
 		return nil
+	case theme.FieldExternalURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExternalURL(v)
+		return nil
 	case theme.FieldEnabled:
 		v, ok := value.(bool)
 		if !ok {
@@ -34452,6 +34580,12 @@ func (m *ThemeMutation) ClearedFields() []string {
 	if m.FieldCleared(theme.FieldLicense) {
 		fields = append(fields, theme.FieldLicense)
 	}
+	if m.FieldCleared(theme.FieldPath) {
+		fields = append(fields, theme.FieldPath)
+	}
+	if m.FieldCleared(theme.FieldExternalURL) {
+		fields = append(fields, theme.FieldExternalURL)
+	}
 	return fields
 }
 
@@ -34496,6 +34630,12 @@ func (m *ThemeMutation) ClearField(name string) error {
 	case theme.FieldLicense:
 		m.ClearLicense()
 		return nil
+	case theme.FieldPath:
+		m.ClearPath()
+		return nil
+	case theme.FieldExternalURL:
+		m.ClearExternalURL()
+		return nil
 	}
 	return fmt.Errorf("unknown Theme nullable field %s", name)
 }
@@ -34509,6 +34649,9 @@ func (m *ThemeMutation) ResetField(name string) error {
 		return nil
 	case theme.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case theme.FieldType:
+		m.ResetType()
 		return nil
 	case theme.FieldName:
 		m.ResetName()
@@ -34554,6 +34697,9 @@ func (m *ThemeMutation) ResetField(name string) error {
 		return nil
 	case theme.FieldPath:
 		m.ResetPath()
+		return nil
+	case theme.FieldExternalURL:
+		m.ResetExternalURL()
 		return nil
 	case theme.FieldEnabled:
 		m.ResetEnabled()

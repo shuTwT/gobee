@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/shuTwT/gobee/ent"
 	"github.com/shuTwT/gobee/pkg"
 )
 
@@ -71,6 +72,49 @@ func InitFrontendRes(app *fiber.App, frontendRes embed.FS, serviceMap pkg.Servic
 }
 
 func initFrontendRoutes(app *fiber.App, serviceMap pkg.ServiceMap) {
+	ctx := context.Background()
+
+	previewTheme := func(c *fiber.Ctx) (*ent.Theme, error) {
+		previewName := c.Query("preview")
+		if previewName == "" {
+			return serviceMap.ThemeService.GetEnabledTheme(ctx)
+		}
+
+		themeName := "gobee-theme-" + previewName
+		theme, err := serviceMap.ThemeService.QueryThemeByName(ctx, themeName)
+		if err != nil {
+			log.Printf("获取预览主题失败: %v", err)
+			return serviceMap.ThemeService.GetEnabledTheme(ctx)
+		}
+
+		return theme, nil
+	}
+
+	app.Use(func(c *fiber.Ctx) error {
+		theme, err := previewTheme(c)
+		if err != nil {
+			log.Printf("获取主题失败: %v", err)
+			return c.Next()
+		}
+
+		if theme != nil && theme.Type == "external" {
+			path := c.Path()
+			if len(path) >= 4 && path[:4] == "/api" {
+				return c.Next()
+			}
+			if len(path) >= 8 && path[:8] == "/console" {
+				return c.Next()
+			}
+			if theme.ExternalURL != "" {
+				return c.Redirect(theme.ExternalURL + path)
+			}
+			return c.Next()
+		}
+
+		c.Locals("theme", theme)
+		return c.Next()
+	})
+
 	app.Get("/", renderTemplate(serviceMap, "index.html"))
 	app.Get("/archives", renderTemplate(serviceMap, "archives.html"))
 	app.Get("/author/:userId", renderTemplate(serviceMap, "author.html"))
@@ -95,15 +139,20 @@ func initFrontendRoutes(app *fiber.App, serviceMap pkg.ServiceMap) {
 
 func renderTemplate(serviceMap pkg.ServiceMap, templateName string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		ctx := context.Background()
-
-		theme, err := serviceMap.ThemeService.GetEnabledTheme(ctx)
-		if err != nil {
-			log.Printf("获取启用主题失败: %v", err)
-			return c.Status(fiber.StatusInternalServerError).SendString("获取主题失败")
+		theme := c.Locals("theme")
+		if theme == nil {
+			ctx := context.Background()
+			var err error
+			theme, err = serviceMap.ThemeService.GetEnabledTheme(ctx)
+			if err != nil {
+				log.Printf("获取启用主题失败: %v", err)
+				return c.Status(fiber.StatusInternalServerError).SendString("获取主题失败")
+			}
 		}
 
-		templatePath := filepath.Join(theme.Path, "templates", templateName)
+		themeEntity := theme.(*ent.Theme)
+
+		templatePath := filepath.Join(themeEntity.Path, "templates", templateName)
 
 		log.Printf("%s", templatePath)
 
@@ -121,8 +170,8 @@ func renderTemplate(serviceMap pkg.ServiceMap, templateName string) fiber.Handle
 		c.Set("Content-Type", "text/html; charset=utf-8")
 
 		data := map[string]interface{}{
-			"Title":  fmt.Sprintf("%s - %s", getTemplateTitle(templateName), theme.DisplayName),
-			"Theme":  theme,
+			"Title":  fmt.Sprintf("%s - %s", getTemplateTitle(templateName), themeEntity.DisplayName),
+			"Theme":  themeEntity,
 			"Path":   c.Path(),
 			"Params": c.AllParams(),
 		}

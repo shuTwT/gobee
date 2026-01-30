@@ -218,6 +218,7 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	}
 	themeApi := router.Group("/theme")
 	{
+		themeApi.Post("/upload", handlerMap.ThemeHandler.UploadThemeFile).Name("themeUpload")
 		themeApi.Post("/create", handlerMap.ThemeHandler.CreateTheme).Name("themeCreate")
 		themeApi.Get("/page", handlerMap.ThemeHandler.ListThemePage).Name("themePage")
 		themeApi.Get("/query/:id", handlerMap.ThemeHandler.QueryTheme).Name("themeQuery")

@@ -21,6 +21,8 @@ type Theme struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 主题类型: internal-内部主题, external-外部主题
+	Type string `json:"type,omitempty"`
 	// 主题名称，唯一标识
 	Name string `json:"name,omitempty"`
 	// 显示名称
@@ -49,8 +51,10 @@ type Theme struct {
 	Require string `json:"require,omitempty"`
 	// 许可证
 	License string `json:"license,omitempty"`
-	// 主题文件路径
+	// 主题文件路径(内部主题)
 	Path string `json:"path,omitempty"`
+	// 外部主题URL地址
+	ExternalURL string `json:"external_url,omitempty"`
 	// 是否启用
 	Enabled      bool `json:"enabled,omitempty"`
 	selectValues sql.SelectValues
@@ -65,7 +69,7 @@ func (*Theme) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case theme.FieldID:
 			values[i] = new(sql.NullInt64)
-		case theme.FieldName, theme.FieldDisplayName, theme.FieldDescription, theme.FieldAuthorName, theme.FieldAuthorEmail, theme.FieldLogo, theme.FieldHomepage, theme.FieldRepo, theme.FieldIssue, theme.FieldSettingName, theme.FieldConfigMapName, theme.FieldVersion, theme.FieldRequire, theme.FieldLicense, theme.FieldPath:
+		case theme.FieldType, theme.FieldName, theme.FieldDisplayName, theme.FieldDescription, theme.FieldAuthorName, theme.FieldAuthorEmail, theme.FieldLogo, theme.FieldHomepage, theme.FieldRepo, theme.FieldIssue, theme.FieldSettingName, theme.FieldConfigMapName, theme.FieldVersion, theme.FieldRequire, theme.FieldLicense, theme.FieldPath, theme.FieldExternalURL:
 			values[i] = new(sql.NullString)
 		case theme.FieldCreatedAt, theme.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -101,6 +105,12 @@ func (_m *Theme) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
+			}
+		case theme.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				_m.Type = value.String
 			}
 		case theme.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -192,6 +202,12 @@ func (_m *Theme) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Path = value.String
 			}
+		case theme.FieldExternalURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field external_url", values[i])
+			} else if value.Valid {
+				_m.ExternalURL = value.String
+			}
 		case theme.FieldEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field enabled", values[i])
@@ -240,6 +256,9 @@ func (_m *Theme) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(_m.Type)
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
@@ -284,6 +303,9 @@ func (_m *Theme) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("path=")
 	builder.WriteString(_m.Path)
+	builder.WriteString(", ")
+	builder.WriteString("external_url=")
+	builder.WriteString(_m.ExternalURL)
 	builder.WriteString(", ")
 	builder.WriteString("enabled=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Enabled))

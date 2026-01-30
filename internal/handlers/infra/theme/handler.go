@@ -12,6 +12,7 @@ import (
 )
 
 type ThemeHandler interface {
+	UploadThemeFile(c *fiber.Ctx) error
 	CreateTheme(c *fiber.Ctx) error
 	ListThemePage(c *fiber.Ctx) error
 	QueryTheme(c *fiber.Ctx) error
@@ -28,14 +29,31 @@ func NewThemeHandlerImpl(themeService theme.ThemeService) *ThemeHandlerImpl {
 	return &ThemeHandlerImpl{themeService: themeService}
 }
 
-func (h *ThemeHandlerImpl) CreateTheme(c *fiber.Ctx) error {
+func (h *ThemeHandlerImpl) UploadThemeFile(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {
 		slog.Error("Failed to get uploaded file", "error", err.Error())
 		return c.JSON(model.NewError(fiber.StatusBadRequest, "获取上传文件失败"))
 	}
 
-	themeEntity, err := h.themeService.CreateTheme(c.Context(), file)
+	filePath, err := h.themeService.UploadThemeFile(c.Context(), file)
+	if err != nil {
+		slog.Error("Failed to upload theme file", "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	slog.Info("Theme file uploaded successfully", "file_path", filePath)
+	return c.JSON(model.NewSuccess("主题文件上传成功", map[string]string{"file_path": filePath}))
+}
+
+func (h *ThemeHandlerImpl) CreateTheme(c *fiber.Ctx) error {
+	var req model.CreateThemeReq
+	if err := c.BodyParser(&req); err != nil {
+		slog.Error("Failed to parse request body", "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "请求参数解析失败"))
+	}
+
+	themeEntity, err := h.themeService.CreateTheme(c.Context(), &req)
 	if err != nil {
 		slog.Error("Failed to create theme", "error", err.Error())
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
@@ -144,6 +162,7 @@ func (h *ThemeHandlerImpl) buildThemeResp(t *ent.Theme) *model.ThemeResp {
 		ID:            t.ID,
 		CreatedAt:     t.CreatedAt,
 		UpdatedAt:     t.UpdatedAt,
+		Type:          t.Type,
 		Name:          t.Name,
 		DisplayName:   t.DisplayName,
 		Description:   t.Description,
@@ -159,6 +178,7 @@ func (h *ThemeHandlerImpl) buildThemeResp(t *ent.Theme) *model.ThemeResp {
 		Require:       t.Require,
 		License:       t.License,
 		Path:          t.Path,
+		ExternalURL:   t.ExternalURL,
 		Enabled:       t.Enabled,
 	}
 }

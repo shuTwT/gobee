@@ -1,7 +1,6 @@
 package model
 
 import (
-	"mime/multipart"
 	"time"
 )
 
@@ -28,13 +27,28 @@ type ThemeAuthor struct {
 }
 
 type CreateThemeReq struct {
-	File *multipart.FileHeader `form:"file" validate:"required"`
+	Type        string `json:"type" validate:"required,oneof=internal external"`
+	FilePath    string `json:"file_path,omitempty"`
+	Name        string `json:"name,omitempty"`
+	DisplayName string `json:"display_name,omitempty"`
+	Description string `json:"description,omitempty"`
+	ExternalURL string `json:"external_url,omitempty"`
+	Version     string `json:"version,omitempty"`
+}
+
+type CreateExternalThemeReq struct {
+	Name        string `json:"name" validate:"required"`
+	DisplayName string `json:"display_name" validate:"required"`
+	Description string `json:"description,omitempty"`
+	ExternalURL string `json:"external_url" validate:"required,url"`
+	Version     string `json:"version" validate:"required"`
 }
 
 type ThemeResp struct {
 	ID              int        `json:"id"`
 	CreatedAt       time.Time  `json:"created_at"`
 	UpdatedAt       time.Time  `json:"updated_at"`
+	Type            string     `json:"type"`
 	Name            string     `json:"name"`
 	DisplayName      string     `json:"display_name"`
 	Description      string     `json:"description"`
@@ -50,5 +64,6 @@ type ThemeResp struct {
 	Require          string     `json:"require"`
 	License          string     `json:"license"`
 	Path            string     `json:"path"`
+	ExternalURL      string     `json:"external_url"`
 	Enabled          bool       `json:"enabled"`
 }

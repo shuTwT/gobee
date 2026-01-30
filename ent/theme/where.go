@@ -64,6 +64,11 @@ func UpdatedAt(v time.Time) predicate.Theme {
 	return predicate.Theme(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
+func Type(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldEQ(FieldType, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Theme {
 	return predicate.Theme(sql.FieldEQ(FieldName, v))
@@ -137,6 +142,11 @@ func License(v string) predicate.Theme {
 // Path applies equality check predicate on the "path" field. It's identical to PathEQ.
 func Path(v string) predicate.Theme {
 	return predicate.Theme(sql.FieldEQ(FieldPath, v))
+}
+
+// ExternalURL applies equality check predicate on the "external_url" field. It's identical to ExternalURLEQ.
+func ExternalURL(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldEQ(FieldExternalURL, v))
 }
 
 // Enabled applies equality check predicate on the "enabled" field. It's identical to EnabledEQ.
@@ -222,6 +232,71 @@ func UpdatedAtLT(v time.Time) predicate.Theme {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.Theme {
 	return predicate.Theme(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldEQ(FieldType, v))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldNEQ(FieldType, v))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...string) predicate.Theme {
+	return predicate.Theme(sql.FieldIn(FieldType, vs...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...string) predicate.Theme {
+	return predicate.Theme(sql.FieldNotIn(FieldType, vs...))
+}
+
+// TypeGT applies the GT predicate on the "type" field.
+func TypeGT(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldGT(FieldType, v))
+}
+
+// TypeGTE applies the GTE predicate on the "type" field.
+func TypeGTE(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldGTE(FieldType, v))
+}
+
+// TypeLT applies the LT predicate on the "type" field.
+func TypeLT(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldLT(FieldType, v))
+}
+
+// TypeLTE applies the LTE predicate on the "type" field.
+func TypeLTE(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldLTE(FieldType, v))
+}
+
+// TypeContains applies the Contains predicate on the "type" field.
+func TypeContains(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldContains(FieldType, v))
+}
+
+// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
+func TypeHasPrefix(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldHasPrefix(FieldType, v))
+}
+
+// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
+func TypeHasSuffix(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldHasSuffix(FieldType, v))
+}
+
+// TypeEqualFold applies the EqualFold predicate on the "type" field.
+func TypeEqualFold(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldEqualFold(FieldType, v))
+}
+
+// TypeContainsFold applies the ContainsFold predicate on the "type" field.
+func TypeContainsFold(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldContainsFold(FieldType, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -1289,6 +1364,16 @@ func PathHasSuffix(v string) predicate.Theme {
 	return predicate.Theme(sql.FieldHasSuffix(FieldPath, v))
 }
 
+// PathIsNil applies the IsNil predicate on the "path" field.
+func PathIsNil() predicate.Theme {
+	return predicate.Theme(sql.FieldIsNull(FieldPath))
+}
+
+// PathNotNil applies the NotNil predicate on the "path" field.
+func PathNotNil() predicate.Theme {
+	return predicate.Theme(sql.FieldNotNull(FieldPath))
+}
+
 // PathEqualFold applies the EqualFold predicate on the "path" field.
 func PathEqualFold(v string) predicate.Theme {
 	return predicate.Theme(sql.FieldEqualFold(FieldPath, v))
@@ -1297,6 +1382,81 @@ func PathEqualFold(v string) predicate.Theme {
 // PathContainsFold applies the ContainsFold predicate on the "path" field.
 func PathContainsFold(v string) predicate.Theme {
 	return predicate.Theme(sql.FieldContainsFold(FieldPath, v))
+}
+
+// ExternalURLEQ applies the EQ predicate on the "external_url" field.
+func ExternalURLEQ(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldEQ(FieldExternalURL, v))
+}
+
+// ExternalURLNEQ applies the NEQ predicate on the "external_url" field.
+func ExternalURLNEQ(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldNEQ(FieldExternalURL, v))
+}
+
+// ExternalURLIn applies the In predicate on the "external_url" field.
+func ExternalURLIn(vs ...string) predicate.Theme {
+	return predicate.Theme(sql.FieldIn(FieldExternalURL, vs...))
+}
+
+// ExternalURLNotIn applies the NotIn predicate on the "external_url" field.
+func ExternalURLNotIn(vs ...string) predicate.Theme {
+	return predicate.Theme(sql.FieldNotIn(FieldExternalURL, vs...))
+}
+
+// ExternalURLGT applies the GT predicate on the "external_url" field.
+func ExternalURLGT(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldGT(FieldExternalURL, v))
+}
+
+// ExternalURLGTE applies the GTE predicate on the "external_url" field.
+func ExternalURLGTE(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldGTE(FieldExternalURL, v))
+}
+
+// ExternalURLLT applies the LT predicate on the "external_url" field.
+func ExternalURLLT(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldLT(FieldExternalURL, v))
+}
+
+// ExternalURLLTE applies the LTE predicate on the "external_url" field.
+func ExternalURLLTE(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldLTE(FieldExternalURL, v))
+}
+
+// ExternalURLContains applies the Contains predicate on the "external_url" field.
+func ExternalURLContains(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldContains(FieldExternalURL, v))
+}
+
+// ExternalURLHasPrefix applies the HasPrefix predicate on the "external_url" field.
+func ExternalURLHasPrefix(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldHasPrefix(FieldExternalURL, v))
+}
+
+// ExternalURLHasSuffix applies the HasSuffix predicate on the "external_url" field.
+func ExternalURLHasSuffix(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldHasSuffix(FieldExternalURL, v))
+}
+
+// ExternalURLIsNil applies the IsNil predicate on the "external_url" field.
+func ExternalURLIsNil() predicate.Theme {
+	return predicate.Theme(sql.FieldIsNull(FieldExternalURL))
+}
+
+// ExternalURLNotNil applies the NotNil predicate on the "external_url" field.
+func ExternalURLNotNil() predicate.Theme {
+	return predicate.Theme(sql.FieldNotNull(FieldExternalURL))
+}
+
+// ExternalURLEqualFold applies the EqualFold predicate on the "external_url" field.
+func ExternalURLEqualFold(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldEqualFold(FieldExternalURL, v))
+}
+
+// ExternalURLContainsFold applies the ContainsFold predicate on the "external_url" field.
+func ExternalURLContainsFold(v string) predicate.Theme {
+	return predicate.Theme(sql.FieldContainsFold(FieldExternalURL, v))
 }
 
 // EnabledEQ applies the EQ predicate on the "enabled" field.

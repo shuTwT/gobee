@@ -3,9 +3,8 @@ import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm, N
 import { Pencil, RefreshOutline, TrashOutline, CloudUploadOutline, EyeOutline } from '@vicons/ionicons5'
 import * as themeApi from '@/api/infra/theme'
 import { addDialog } from '@/components/dialog'
-import Form from './form.vue'
+import EditForm from './editForm.vue'
 import Detail from './detail.vue'
-import UploadForm from './uploadForm.vue'
 
 const pagination = reactive({
   page: 1,
@@ -26,7 +25,7 @@ const pagination = reactive({
 
 const dataList = ref<any>([])
 const loading = ref(false)
-const formRef = ref()
+const editFormRef = ref<any>(null)
 const currentThemeId = ref<number | undefined>(undefined)
 
 const columns: DataTableColumns<any> = [
@@ -34,6 +33,14 @@ const columns: DataTableColumns<any> = [
     title: 'ID',
     key: 'id',
     width: 80,
+  },
+  {
+    title: '主题类型',
+    key: 'type',
+    width: 100,
+    render: (row) => {
+      return row.type === 'internal' ? '内部主题' : '外部主题'
+    },
   },
   {
     title: '主题名称',
@@ -58,6 +65,14 @@ const columns: DataTableColumns<any> = [
   {
     title: '描述',
     key: 'description',
+    width: 200,
+    ellipsis: {
+      tooltip: true,
+    },
+  },
+  {
+    title: '外部URL',
+    key: 'external_url',
     width: 200,
     ellipsis: {
       tooltip: true,
@@ -156,13 +171,29 @@ const onSearch = () => {
 const handleUpload = () => {
   addDialog({
     title: '上传主题',
-    contentRenderer: () => h(UploadForm, {
-      onSuccess: () => {
-        onSearch()
+    props: {
+      formInline: {
+        type: 'internal',
+        file_path: '',
+        name: '',
+        display_name: '',
+        version: '',
+        external_url: '',
+        description: ''
       }
-    }),
-    beforeSure: (done) => {
-      done()
+    },
+    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, formInline: options.props!.formInline }),
+    beforeSure: async (done) => {
+      try {
+        const data = await editFormRef.value?.getData()
+        await themeApi.createTheme(data)
+        window.$message?.success('主题创建成功')
+        onSearch()
+        done()
+      } catch (error) {
+        console.error('提交失败:', error)
+        window.$message?.error('提交失败')
+      }
     },
   })
 }

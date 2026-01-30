@@ -734,6 +734,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "type", Type: field.TypeString, Default: "internal"},
 		{Name: "name", Type: field.TypeString, Unique: true, Size: 100},
 		{Name: "display_name", Type: field.TypeString, Size: 100},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 500},
@@ -748,7 +749,8 @@ var (
 		{Name: "version", Type: field.TypeString, Size: 20},
 		{Name: "require", Type: field.TypeString, Size: 50, Default: "*"},
 		{Name: "license", Type: field.TypeString, Nullable: true, Size: 50},
-		{Name: "path", Type: field.TypeString, Size: 255},
+		{Name: "path", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "external_url", Type: field.TypeString, Nullable: true, Size: 500},
 		{Name: "enabled", Type: field.TypeBool, Default: false},
 	}
 	// ThemesTable holds the schema information for the "themes" table.

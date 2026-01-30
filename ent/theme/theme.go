@@ -17,6 +17,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldDisplayName holds the string denoting the display_name field in the database.
@@ -47,6 +49,8 @@ const (
 	FieldLicense = "license"
 	// FieldPath holds the string denoting the path field in the database.
 	FieldPath = "path"
+	// FieldExternalURL holds the string denoting the external_url field in the database.
+	FieldExternalURL = "external_url"
 	// FieldEnabled holds the string denoting the enabled field in the database.
 	FieldEnabled = "enabled"
 	// Table holds the table name of the theme in the database.
@@ -58,6 +62,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldType,
 	FieldName,
 	FieldDisplayName,
 	FieldDescription,
@@ -73,6 +78,7 @@ var Columns = []string{
 	FieldRequire,
 	FieldLicense,
 	FieldPath,
+	FieldExternalURL,
 	FieldEnabled,
 }
 
@@ -93,6 +99,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultType holds the default value on creation for the "type" field.
+	DefaultType string
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
@@ -125,6 +133,8 @@ var (
 	LicenseValidator func(string) error
 	// PathValidator is a validator for the "path" field. It is called by the builders before save.
 	PathValidator func(string) error
+	// ExternalURLValidator is a validator for the "external_url" field. It is called by the builders before save.
+	ExternalURLValidator func(string) error
 	// DefaultEnabled holds the default value on creation for the "enabled" field.
 	DefaultEnabled bool
 )
@@ -145,6 +155,11 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
 }
 
 // ByName orders the results by the name field.
@@ -220,6 +235,11 @@ func ByLicense(opts ...sql.OrderTermOption) OrderOption {
 // ByPath orders the results by the path field.
 func ByPath(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPath, opts...).ToFunc()
+}
+
+// ByExternalURL orders the results by the external_url field.
+func ByExternalURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExternalURL, opts...).ToFunc()
 }
 
 // ByEnabled orders the results by the enabled field.

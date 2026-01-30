@@ -48,6 +48,20 @@ func (_c *ThemeCreate) SetNillableUpdatedAt(v *time.Time) *ThemeCreate {
 	return _c
 }
 
+// SetType sets the "type" field.
+func (_c *ThemeCreate) SetType(v string) *ThemeCreate {
+	_c.mutation.SetType(v)
+	return _c
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_c *ThemeCreate) SetNillableType(v *string) *ThemeCreate {
+	if v != nil {
+		_c.SetType(*v)
+	}
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *ThemeCreate) SetName(v string) *ThemeCreate {
 	_c.mutation.SetName(v)
@@ -226,6 +240,28 @@ func (_c *ThemeCreate) SetPath(v string) *ThemeCreate {
 	return _c
 }
 
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (_c *ThemeCreate) SetNillablePath(v *string) *ThemeCreate {
+	if v != nil {
+		_c.SetPath(*v)
+	}
+	return _c
+}
+
+// SetExternalURL sets the "external_url" field.
+func (_c *ThemeCreate) SetExternalURL(v string) *ThemeCreate {
+	_c.mutation.SetExternalURL(v)
+	return _c
+}
+
+// SetNillableExternalURL sets the "external_url" field if the given value is not nil.
+func (_c *ThemeCreate) SetNillableExternalURL(v *string) *ThemeCreate {
+	if v != nil {
+		_c.SetExternalURL(*v)
+	}
+	return _c
+}
+
 // SetEnabled sets the "enabled" field.
 func (_c *ThemeCreate) SetEnabled(v bool) *ThemeCreate {
 	_c.mutation.SetEnabled(v)
@@ -289,6 +325,10 @@ func (_c *ThemeCreate) defaults() {
 		v := theme.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := _c.mutation.GetType(); !ok {
+		v := theme.DefaultType
+		_c.mutation.SetType(v)
+	}
 	if _, ok := _c.mutation.Require(); !ok {
 		v := theme.DefaultRequire
 		_c.mutation.SetRequire(v)
@@ -306,6 +346,9 @@ func (_c *ThemeCreate) check() error {
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Theme.updated_at"`)}
+	}
+	if _, ok := _c.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Theme.type"`)}
 	}
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Theme.name"`)}
@@ -389,12 +432,14 @@ func (_c *ThemeCreate) check() error {
 			return &ValidationError{Name: "license", err: fmt.Errorf(`ent: validator failed for field "Theme.license": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.Path(); !ok {
-		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "Theme.path"`)}
-	}
 	if v, ok := _c.mutation.Path(); ok {
 		if err := theme.PathValidator(v); err != nil {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Theme.path": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.ExternalURL(); ok {
+		if err := theme.ExternalURLValidator(v); err != nil {
+			return &ValidationError{Name: "external_url", err: fmt.Errorf(`ent: validator failed for field "Theme.external_url": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.Enabled(); !ok {
@@ -439,6 +484,10 @@ func (_c *ThemeCreate) createSpec() (*Theme, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(theme.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := _c.mutation.GetType(); ok {
+		_spec.SetField(theme.FieldType, field.TypeString, value)
+		_node.Type = value
 	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(theme.FieldName, field.TypeString, value)
@@ -499,6 +548,10 @@ func (_c *ThemeCreate) createSpec() (*Theme, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Path(); ok {
 		_spec.SetField(theme.FieldPath, field.TypeString, value)
 		_node.Path = value
+	}
+	if value, ok := _c.mutation.ExternalURL(); ok {
+		_spec.SetField(theme.FieldExternalURL, field.TypeString, value)
+		_node.ExternalURL = value
 	}
 	if value, ok := _c.mutation.Enabled(); ok {
 		_spec.SetField(theme.FieldEnabled, field.TypeBool, value)
