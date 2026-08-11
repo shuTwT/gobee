@@ -1,3 +1,42 @@
+# Repository Guidelines
+
+## 项目结构与模块组织
+
+Hoshikuzu 是基于 Go 1.25+、Fiber 和 Vue 3/TypeScript 的 CMS。
+后端入口为 `main.go`，服务启动代码在 `cmd/server/`。
+项目按三层组织：`internal/handlers/` 负责 HTTP 请求，`internal/services/` 负责业务逻辑，Ent ORM 负责数据访问。
+中间件、路由和基础设施分别位于 `internal/middleware/`、`internal/router/` 和 `internal/infra/`；公共模型与工具位于 `pkg/`。
+
+Ent Schema 在 `ent/schema/`，修改后运行 `go generate ./ent`；
+其余 Ent 文件均为生成代码，不要手工修改。
+插件协议在 `pkg/plugin/proto/`，生成的 protobuf 文件也不要手改。
+主题和静态资源在 `assets/`，API 文档在 `docs/`。
+前端工作区位于 `ui/`：业务代码在 `ui/src/`，共享包在 `ui/packages/`，静态文件在 `ui/public/`。
+
+## 构建、测试与开发命令
+
+- `go mod download && go mod verify` 安装并校验 Go 依赖。
+- `make dev` 构建并运行后端；`make run` 同时构建前后端后运行。
+- `make build-backend`、`make build-frontend` 分别构建后端和前端；`make build` 构建完整应用。
+- `air -c .air.toml` 启动后端热重载；Air 不监视 `ui/`，前端需单独运行。
+- `cd ui && pnpm install && pnpm run dev` 启动前端开发服务器（默认 `5173`）。后端默认端口为 `13000`。
+- `cd ui && pnpm run build` 执行 API 客户端生成、类型检查和生产构建；`pnpm lint`、`pnpm format` 分别运行 lint 修复和 Prettier。
+- 构建必须启用 `CGO_ENABLED=1`（SQLite 所需）；跨平台构建使用 `make build-all-platforms`。
+
+## 编码规范
+
+Go 文件提交前运行 `gofmt`；包名使用小写且不含下划线，按领域保持 Handler、Service 和模型目录对应。前端遵循 Prettier：两空格、单引号、无分号、每行最多 100 字符；Vue 组件使用 PascalCase，TypeScript 变量和函数使用 camelCase。不要直接编辑生成代码。
+
+## 测试指南
+
+当前尚无已提交的测试文件或覆盖率阈值。新增 Go 测试使用包旁的 `*_test.go`，数据库测试优先使用 `ent/enttest/` 工具；服务层可通过接口进行 mock。提交前运行 `go test ./...`、`cd ui && pnpm type-check` 及相关构建命令。
+
+## 提交与 Pull Request
+
+遵循已有 Conventional Commit 风格，例如 `feat(menu): 添加菜单管理`、`fix(post): 修复发布状态判断`、`refactor(router): 重组公开路由`。提交应小而聚焦。PR 需说明变更内容，关联 Issue，注明配置、迁移或生成代码变化；涉及界面的修改应附截图。API 契约变化时同步更新 Swagger 或相关文档，禁止提交 `.env` 中的真实密钥。
+
+## 补充规则
+
 1.项目使用框架版本:gofiber v2.52.9,ent orm v0.14.5
 
 2.包名应为小写。例如，使用 `apihandler` 而不是 `api_handler` 或 `apiHandler`
@@ -15,6 +54,7 @@
 7.使用 `slog` 或 `zap` 等库进行结构化日志记录。日志应包含时间戳、日志级别、消息以及相关的上下文信息（如 request ID, user ID）
 
 8.接口路由命名规范：
+
 - 所有路由都应采用 RESTful 风格。
 - 路由路径应以 `/api/v1` 开头，其中 `v1` 是 API 版本号。
 - 每个路由都应使用 HTTP 方法（GET, POST, PUT, DELETE 等）来表示操作类型。
@@ -51,6 +91,6 @@ if err := c.QueryParser(&pageQuery); err != nil {
 
 17.在操作项目模块时，需要先将项目模块结构列成一个表格，表格中包含一级模块、二级模块、路由、handler、service、vue组件、api接口、路由文件等信息。
 
-18. `n-date-picker`组件只能接受`number`类型的时间戳作为值，不能接受`string`类型的时间字符串。
+18.`n-date-picker`组件只能接受`number`类型的时间戳作为值，不能接受`string`类型的时间字符串。
 
 19.使用`make proto`命令来为protobuf文件生成代码

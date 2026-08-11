@@ -11,3 +11,18 @@ node_modules
 /main
 /dist
 /.env
+
+# AI agent local files
+
+.claude/*
+.codex/*
+.agents/*
+
+# keep shared instructions
+!.claude/CLAUDE.md
+!.codex/AGENTS.md
+!.agents/
+
+# local overrides
+CLAUDE.local.md
+AGENTS.local.md
