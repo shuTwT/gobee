@@ -8,6 +8,73 @@ import (
 )
 
 var (
+	// AiChatMessagesColumns holds the columns for the "ai_chat_messages" table.
+	AiChatMessagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"user", "assistant"}},
+		{Name: "content", Type: field.TypeString, Size: 2147483647},
+		{Name: "model", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "session_id", Type: field.TypeInt},
+	}
+	// AiChatMessagesTable holds the schema information for the "ai_chat_messages" table.
+	AiChatMessagesTable = &schema.Table{
+		Name:       "ai_chat_messages",
+		Columns:    AiChatMessagesColumns,
+		PrimaryKey: []*schema.Column{AiChatMessagesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "ai_chat_messages_ai_chat_sessions_messages",
+				Columns:    []*schema.Column{AiChatMessagesColumns[6]},
+				RefColumns: []*schema.Column{AiChatSessionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// AiChatSessionsColumns holds the columns for the "ai_chat_sessions" table.
+	AiChatSessionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "title", Type: field.TypeString, Size: 255, Default: "新对话"},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// AiChatSessionsTable holds the schema information for the "ai_chat_sessions" table.
+	AiChatSessionsTable = &schema.Table{
+		Name:       "ai_chat_sessions",
+		Columns:    AiChatSessionsColumns,
+		PrimaryKey: []*schema.Column{AiChatSessionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "ai_chat_sessions_users_ai_chat_sessions",
+				Columns:    []*schema.Column{AiChatSessionsColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// AiConfigsColumns holds the columns for the "ai_configs" table.
+	AiConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "config_key", Type: field.TypeString, Unique: true},
+		{Name: "base_url", Type: field.TypeString, Size: 2048},
+		{Name: "model", Type: field.TypeString, Size: 255},
+		{Name: "temperature", Type: field.TypeFloat64, Default: 0.7},
+		{Name: "max_tokens", Type: field.TypeInt, Default: 2048},
+		{Name: "top_p", Type: field.TypeFloat64, Default: 1},
+		{Name: "frequency_penalty", Type: field.TypeFloat64, Default: 0},
+		{Name: "presence_penalty", Type: field.TypeFloat64, Default: 0},
+		{Name: "api_key_ciphertext", Type: field.TypeString},
+	}
+	// AiConfigsTable holds the schema information for the "ai_configs" table.
+	AiConfigsTable = &schema.Table{
+		Name:       "ai_configs",
+		Columns:    AiConfigsColumns,
+		PrimaryKey: []*schema.Column{AiConfigsColumns[0]},
+	}
 	// AlbumsColumns holds the columns for the "albums" table.
 	AlbumsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -845,6 +912,9 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AiChatMessagesTable,
+		AiChatSessionsTable,
+		AiConfigsTable,
 		AlbumsTable,
 		AlbumPhotosTable,
 		CategoriesTable,
@@ -886,6 +956,8 @@ var (
 )
 
 func init() {
+	AiChatMessagesTable.ForeignKeys[0].RefTable = AiChatSessionsTable
+	AiChatSessionsTable.ForeignKeys[0].RefTable = UsersTable
 	FlinksTable.ForeignKeys[0].RefTable = FlinkGroupsTable
 	FilesTable.ForeignKeys[0].RefTable = StorageStrategiesTable
 	MembersTable.ForeignKeys[0].RefTable = MemberLevelsTable

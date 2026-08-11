@@ -52,9 +52,11 @@ type UserEdges struct {
 	Member *Member `json:"member,omitempty"`
 	// Wallet holds the value of the wallet edge.
 	Wallet *Wallet `json:"wallet,omitempty"`
+	// AiChatSessions holds the value of the ai_chat_sessions edge.
+	AiChatSessions []*AIChatSession `json:"ai_chat_sessions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // RoleOrErr returns the Role value or an error if the edge
@@ -88,6 +90,15 @@ func (e UserEdges) WalletOrErr() (*Wallet, error) {
 		return nil, &NotFoundError{label: wallet.Label}
 	}
 	return nil, &NotLoadedError{edge: "wallet"}
+}
+
+// AiChatSessionsOrErr returns the AiChatSessions value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AiChatSessionsOrErr() ([]*AIChatSession, error) {
+	if e.loadedTypes[3] {
+		return e.AiChatSessions, nil
+	}
+	return nil, &NotLoadedError{edge: "ai_chat_sessions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -204,6 +215,11 @@ func (_m *User) QueryMember() *MemberQuery {
 // QueryWallet queries the "wallet" edge of the User entity.
 func (_m *User) QueryWallet() *WalletQuery {
 	return NewUserClient(_m.config).QueryWallet(_m)
+}
+
+// QueryAiChatSessions queries the "ai_chat_sessions" edge of the User entity.
+func (_m *User) QueryAiChatSessions() *AIChatSessionQuery {
+	return NewUserClient(_m.config).QueryAiChatSessions(_m)
 }
 
 // Update returns a builder for updating this User.

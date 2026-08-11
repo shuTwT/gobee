@@ -27,14 +27,6 @@ var SettingKeys = struct {
 	SiteICPBeian             string //icp备案号
 	SiteGonganBeian          string //公网安备号
 	SecurityEnable2FA        string //是否启用2FA
-	OpenaiAPIKey             string //openai api key
-	OpenaiApiUrl             string //openai api url
-	AiModel                  string //openai模型
-	AiTemperature            string //openai温度
-	AiMaxTokens              string //openai最大token数
-	AiTopP                   string //openai top_p
-	AiFrequencyPenalty       string //openai 频率惩罚
-	AiPresencePenalty        string //openai 存在惩罚
 	MailSmtpHost             string //smtp主机
 	MailSmtpPort             string //smtp端口
 	MailSmtpUsername         string //smtp用户名
@@ -78,14 +70,6 @@ var SettingKeys = struct {
 	SiteICPBeian:             "site_icp_beian",
 	SiteGonganBeian:          "site_gongan_beian",
 	SecurityEnable2FA:        "security_enable_2fa",
-	OpenaiAPIKey:             "openai_api_key",
-	OpenaiApiUrl:             "openai_api_url",
-	AiModel:                  "openai_model",
-	AiTemperature:            "openai_temperature",
-	AiMaxTokens:              "openai_max_tokens",
-	AiTopP:                   "openai_top_p",
-	AiFrequencyPenalty:       "openai_frequency_penalty",
-	AiPresencePenalty:        "openai_presence_penalty",
 	MailSmtpHost:             "mail_smtp_host",
 	MailSmtpPort:             "mail_smtp_port",
 	MailSmtpUsername:         "mail_smtp_username",

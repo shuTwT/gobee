@@ -15,6 +15,9 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/shuTwT/hoshikuzu/ent/aichatmessage"
+	"github.com/shuTwT/hoshikuzu/ent/aichatsession"
+	"github.com/shuTwT/hoshikuzu/ent/aiconfig"
 	"github.com/shuTwT/hoshikuzu/ent/album"
 	"github.com/shuTwT/hoshikuzu/ent/albumphoto"
 	"github.com/shuTwT/hoshikuzu/ent/category"
@@ -57,6 +60,12 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// AIChatMessage is the client for interacting with the AIChatMessage builders.
+	AIChatMessage *AIChatMessageClient
+	// AIChatSession is the client for interacting with the AIChatSession builders.
+	AIChatSession *AIChatSessionClient
+	// AIConfig is the client for interacting with the AIConfig builders.
+	AIConfig *AIConfigClient
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
 	// AlbumPhoto is the client for interacting with the AlbumPhoto builders.
@@ -138,6 +147,9 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.AIChatMessage = NewAIChatMessageClient(c.config)
+	c.AIChatSession = NewAIChatSessionClient(c.config)
+	c.AIConfig = NewAIConfigClient(c.config)
 	c.Album = NewAlbumClient(c.config)
 	c.AlbumPhoto = NewAlbumPhotoClient(c.config)
 	c.Category = NewCategoryClient(c.config)
@@ -265,6 +277,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                 ctx,
 		config:              cfg,
+		AIChatMessage:       NewAIChatMessageClient(cfg),
+		AIChatSession:       NewAIChatSessionClient(cfg),
+		AIConfig:            NewAIConfigClient(cfg),
 		Album:               NewAlbumClient(cfg),
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		Category:            NewCategoryClient(cfg),
@@ -319,6 +334,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                 ctx,
 		config:              cfg,
+		AIChatMessage:       NewAIChatMessageClient(cfg),
+		AIChatSession:       NewAIChatSessionClient(cfg),
+		AIConfig:            NewAIConfigClient(cfg),
 		Album:               NewAlbumClient(cfg),
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		Category:            NewCategoryClient(cfg),
@@ -360,7 +378,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Album.
+//		AIChatMessage.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -383,13 +401,13 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.AlbumPhoto, c.Category, c.Comment, c.Coupon, c.CouponUsage, c.Essay,
-		c.FLink, c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord,
-		c.License, c.Member, c.MemberLevel, c.Menu, c.Notification,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
-		c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role, c.ScheduleJob,
-		c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet,
-		c.WebHook,
+		c.AIChatMessage, c.AIChatSession, c.AIConfig, c.Album, c.AlbumPhoto, c.Category,
+		c.Comment, c.Coupon, c.CouponUsage, c.Essay, c.FLink, c.FLinkApplication,
+		c.FLinkGroup, c.File, c.FriendCircleRecord, c.License, c.Member, c.MemberLevel,
+		c.Menu, c.Notification, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post,
+		c.Product, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.Theme,
+		c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -399,13 +417,13 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.AlbumPhoto, c.Category, c.Comment, c.Coupon, c.CouponUsage, c.Essay,
-		c.FLink, c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord,
-		c.License, c.Member, c.MemberLevel, c.Menu, c.Notification,
-		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
-		c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role, c.ScheduleJob,
-		c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet,
-		c.WebHook,
+		c.AIChatMessage, c.AIChatSession, c.AIConfig, c.Album, c.AlbumPhoto, c.Category,
+		c.Comment, c.Coupon, c.CouponUsage, c.Essay, c.FLink, c.FLinkApplication,
+		c.FLinkGroup, c.File, c.FriendCircleRecord, c.License, c.Member, c.MemberLevel,
+		c.Menu, c.Notification, c.Oauth2AccessToken, c.Oauth2Code,
+		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post,
+		c.Product, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.Theme,
+		c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -414,6 +432,12 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *AIChatMessageMutation:
+		return c.AIChatMessage.mutate(ctx, m)
+	case *AIChatSessionMutation:
+		return c.AIChatSession.mutate(ctx, m)
+	case *AIConfigMutation:
+		return c.AIConfig.mutate(ctx, m)
 	case *AlbumMutation:
 		return c.Album.mutate(ctx, m)
 	case *AlbumPhotoMutation:
@@ -486,6 +510,453 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.WebHook.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// AIChatMessageClient is a client for the AIChatMessage schema.
+type AIChatMessageClient struct {
+	config
+}
+
+// NewAIChatMessageClient returns a client for the AIChatMessage from the given config.
+func NewAIChatMessageClient(c config) *AIChatMessageClient {
+	return &AIChatMessageClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `aichatmessage.Hooks(f(g(h())))`.
+func (c *AIChatMessageClient) Use(hooks ...Hook) {
+	c.hooks.AIChatMessage = append(c.hooks.AIChatMessage, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `aichatmessage.Intercept(f(g(h())))`.
+func (c *AIChatMessageClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AIChatMessage = append(c.inters.AIChatMessage, interceptors...)
+}
+
+// Create returns a builder for creating a AIChatMessage entity.
+func (c *AIChatMessageClient) Create() *AIChatMessageCreate {
+	mutation := newAIChatMessageMutation(c.config, OpCreate)
+	return &AIChatMessageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AIChatMessage entities.
+func (c *AIChatMessageClient) CreateBulk(builders ...*AIChatMessageCreate) *AIChatMessageCreateBulk {
+	return &AIChatMessageCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AIChatMessageClient) MapCreateBulk(slice any, setFunc func(*AIChatMessageCreate, int)) *AIChatMessageCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AIChatMessageCreateBulk{err: fmt.Errorf("calling to AIChatMessageClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AIChatMessageCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AIChatMessageCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AIChatMessage.
+func (c *AIChatMessageClient) Update() *AIChatMessageUpdate {
+	mutation := newAIChatMessageMutation(c.config, OpUpdate)
+	return &AIChatMessageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AIChatMessageClient) UpdateOne(_m *AIChatMessage) *AIChatMessageUpdateOne {
+	mutation := newAIChatMessageMutation(c.config, OpUpdateOne, withAIChatMessage(_m))
+	return &AIChatMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AIChatMessageClient) UpdateOneID(id int) *AIChatMessageUpdateOne {
+	mutation := newAIChatMessageMutation(c.config, OpUpdateOne, withAIChatMessageID(id))
+	return &AIChatMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AIChatMessage.
+func (c *AIChatMessageClient) Delete() *AIChatMessageDelete {
+	mutation := newAIChatMessageMutation(c.config, OpDelete)
+	return &AIChatMessageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AIChatMessageClient) DeleteOne(_m *AIChatMessage) *AIChatMessageDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AIChatMessageClient) DeleteOneID(id int) *AIChatMessageDeleteOne {
+	builder := c.Delete().Where(aichatmessage.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AIChatMessageDeleteOne{builder}
+}
+
+// Query returns a query builder for AIChatMessage.
+func (c *AIChatMessageClient) Query() *AIChatMessageQuery {
+	return &AIChatMessageQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAIChatMessage},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AIChatMessage entity by its id.
+func (c *AIChatMessageClient) Get(ctx context.Context, id int) (*AIChatMessage, error) {
+	return c.Query().Where(aichatmessage.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AIChatMessageClient) GetX(ctx context.Context, id int) *AIChatMessage {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QuerySession queries the session edge of a AIChatMessage.
+func (c *AIChatMessageClient) QuerySession(_m *AIChatMessage) *AIChatSessionQuery {
+	query := (&AIChatSessionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(aichatmessage.Table, aichatmessage.FieldID, id),
+			sqlgraph.To(aichatsession.Table, aichatsession.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, aichatmessage.SessionTable, aichatmessage.SessionColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AIChatMessageClient) Hooks() []Hook {
+	return c.hooks.AIChatMessage
+}
+
+// Interceptors returns the client interceptors.
+func (c *AIChatMessageClient) Interceptors() []Interceptor {
+	return c.inters.AIChatMessage
+}
+
+func (c *AIChatMessageClient) mutate(ctx context.Context, m *AIChatMessageMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AIChatMessageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AIChatMessageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AIChatMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AIChatMessageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AIChatMessage mutation op: %q", m.Op())
+	}
+}
+
+// AIChatSessionClient is a client for the AIChatSession schema.
+type AIChatSessionClient struct {
+	config
+}
+
+// NewAIChatSessionClient returns a client for the AIChatSession from the given config.
+func NewAIChatSessionClient(c config) *AIChatSessionClient {
+	return &AIChatSessionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `aichatsession.Hooks(f(g(h())))`.
+func (c *AIChatSessionClient) Use(hooks ...Hook) {
+	c.hooks.AIChatSession = append(c.hooks.AIChatSession, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `aichatsession.Intercept(f(g(h())))`.
+func (c *AIChatSessionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AIChatSession = append(c.inters.AIChatSession, interceptors...)
+}
+
+// Create returns a builder for creating a AIChatSession entity.
+func (c *AIChatSessionClient) Create() *AIChatSessionCreate {
+	mutation := newAIChatSessionMutation(c.config, OpCreate)
+	return &AIChatSessionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AIChatSession entities.
+func (c *AIChatSessionClient) CreateBulk(builders ...*AIChatSessionCreate) *AIChatSessionCreateBulk {
+	return &AIChatSessionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AIChatSessionClient) MapCreateBulk(slice any, setFunc func(*AIChatSessionCreate, int)) *AIChatSessionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AIChatSessionCreateBulk{err: fmt.Errorf("calling to AIChatSessionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AIChatSessionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AIChatSessionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AIChatSession.
+func (c *AIChatSessionClient) Update() *AIChatSessionUpdate {
+	mutation := newAIChatSessionMutation(c.config, OpUpdate)
+	return &AIChatSessionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AIChatSessionClient) UpdateOne(_m *AIChatSession) *AIChatSessionUpdateOne {
+	mutation := newAIChatSessionMutation(c.config, OpUpdateOne, withAIChatSession(_m))
+	return &AIChatSessionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AIChatSessionClient) UpdateOneID(id int) *AIChatSessionUpdateOne {
+	mutation := newAIChatSessionMutation(c.config, OpUpdateOne, withAIChatSessionID(id))
+	return &AIChatSessionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AIChatSession.
+func (c *AIChatSessionClient) Delete() *AIChatSessionDelete {
+	mutation := newAIChatSessionMutation(c.config, OpDelete)
+	return &AIChatSessionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AIChatSessionClient) DeleteOne(_m *AIChatSession) *AIChatSessionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AIChatSessionClient) DeleteOneID(id int) *AIChatSessionDeleteOne {
+	builder := c.Delete().Where(aichatsession.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AIChatSessionDeleteOne{builder}
+}
+
+// Query returns a query builder for AIChatSession.
+func (c *AIChatSessionClient) Query() *AIChatSessionQuery {
+	return &AIChatSessionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAIChatSession},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AIChatSession entity by its id.
+func (c *AIChatSessionClient) Get(ctx context.Context, id int) (*AIChatSession, error) {
+	return c.Query().Where(aichatsession.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AIChatSessionClient) GetX(ctx context.Context, id int) *AIChatSession {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a AIChatSession.
+func (c *AIChatSessionClient) QueryUser(_m *AIChatSession) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(aichatsession.Table, aichatsession.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, aichatsession.UserTable, aichatsession.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMessages queries the messages edge of a AIChatSession.
+func (c *AIChatSessionClient) QueryMessages(_m *AIChatSession) *AIChatMessageQuery {
+	query := (&AIChatMessageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(aichatsession.Table, aichatsession.FieldID, id),
+			sqlgraph.To(aichatmessage.Table, aichatmessage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, aichatsession.MessagesTable, aichatsession.MessagesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AIChatSessionClient) Hooks() []Hook {
+	return c.hooks.AIChatSession
+}
+
+// Interceptors returns the client interceptors.
+func (c *AIChatSessionClient) Interceptors() []Interceptor {
+	return c.inters.AIChatSession
+}
+
+func (c *AIChatSessionClient) mutate(ctx context.Context, m *AIChatSessionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AIChatSessionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AIChatSessionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AIChatSessionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AIChatSessionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AIChatSession mutation op: %q", m.Op())
+	}
+}
+
+// AIConfigClient is a client for the AIConfig schema.
+type AIConfigClient struct {
+	config
+}
+
+// NewAIConfigClient returns a client for the AIConfig from the given config.
+func NewAIConfigClient(c config) *AIConfigClient {
+	return &AIConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `aiconfig.Hooks(f(g(h())))`.
+func (c *AIConfigClient) Use(hooks ...Hook) {
+	c.hooks.AIConfig = append(c.hooks.AIConfig, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `aiconfig.Intercept(f(g(h())))`.
+func (c *AIConfigClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AIConfig = append(c.inters.AIConfig, interceptors...)
+}
+
+// Create returns a builder for creating a AIConfig entity.
+func (c *AIConfigClient) Create() *AIConfigCreate {
+	mutation := newAIConfigMutation(c.config, OpCreate)
+	return &AIConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AIConfig entities.
+func (c *AIConfigClient) CreateBulk(builders ...*AIConfigCreate) *AIConfigCreateBulk {
+	return &AIConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AIConfigClient) MapCreateBulk(slice any, setFunc func(*AIConfigCreate, int)) *AIConfigCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AIConfigCreateBulk{err: fmt.Errorf("calling to AIConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AIConfigCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AIConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AIConfig.
+func (c *AIConfigClient) Update() *AIConfigUpdate {
+	mutation := newAIConfigMutation(c.config, OpUpdate)
+	return &AIConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AIConfigClient) UpdateOne(_m *AIConfig) *AIConfigUpdateOne {
+	mutation := newAIConfigMutation(c.config, OpUpdateOne, withAIConfig(_m))
+	return &AIConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AIConfigClient) UpdateOneID(id int) *AIConfigUpdateOne {
+	mutation := newAIConfigMutation(c.config, OpUpdateOne, withAIConfigID(id))
+	return &AIConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AIConfig.
+func (c *AIConfigClient) Delete() *AIConfigDelete {
+	mutation := newAIConfigMutation(c.config, OpDelete)
+	return &AIConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AIConfigClient) DeleteOne(_m *AIConfig) *AIConfigDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AIConfigClient) DeleteOneID(id int) *AIConfigDeleteOne {
+	builder := c.Delete().Where(aiconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AIConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for AIConfig.
+func (c *AIConfigClient) Query() *AIConfigQuery {
+	return &AIConfigQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAIConfig},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AIConfig entity by its id.
+func (c *AIConfigClient) Get(ctx context.Context, id int) (*AIConfig, error) {
+	return c.Query().Where(aiconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AIConfigClient) GetX(ctx context.Context, id int) *AIConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AIConfigClient) Hooks() []Hook {
+	return c.hooks.AIConfig
+}
+
+// Interceptors returns the client interceptors.
+func (c *AIConfigClient) Interceptors() []Interceptor {
+	return c.inters.AIConfig
+}
+
+func (c *AIConfigClient) mutate(ctx context.Context, m *AIConfigMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AIConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AIConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AIConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AIConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AIConfig mutation op: %q", m.Op())
 	}
 }
 
@@ -4944,6 +5415,22 @@ func (c *UserClient) QueryWallet(_m *User) *WalletQuery {
 	return query
 }
 
+// QueryAiChatSessions queries the ai_chat_sessions edge of a User.
+func (c *UserClient) QueryAiChatSessions(_m *User) *AIChatSessionQuery {
+	query := (&AIChatSessionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(aichatsession.Table, aichatsession.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AiChatSessionsTable, user.AiChatSessionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -5387,19 +5874,19 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, Category, Comment, Coupon, CouponUsage, Essay, FLink,
-		FLinkApplication, FLinkGroup, File, FriendCircleRecord, License, Member,
-		MemberLevel, Menu, Notification, Oauth2AccessToken, Oauth2Code,
-		Oauth2RefreshToken, PayOrder, PersonalAccessToken, Plugin, Post, Product, Role,
-		ScheduleJob, Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,
-		WebHook []ent.Hook
+		AIChatMessage, AIChatSession, AIConfig, Album, AlbumPhoto, Category, Comment,
+		Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
+		FriendCircleRecord, License, Member, MemberLevel, Menu, Notification,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
+		PersonalAccessToken, Plugin, Post, Product, Role, ScheduleJob, Setting,
+		StorageStrategy, Tag, Theme, User, VisitLog, Wallet, WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, Category, Comment, Coupon, CouponUsage, Essay, FLink,
-		FLinkApplication, FLinkGroup, File, FriendCircleRecord, License, Member,
-		MemberLevel, Menu, Notification, Oauth2AccessToken, Oauth2Code,
-		Oauth2RefreshToken, PayOrder, PersonalAccessToken, Plugin, Post, Product, Role,
-		ScheduleJob, Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,
-		WebHook []ent.Interceptor
+		AIChatMessage, AIChatSession, AIConfig, Album, AlbumPhoto, Category, Comment,
+		Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
+		FriendCircleRecord, License, Member, MemberLevel, Menu, Notification,
+		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
+		PersonalAccessToken, Plugin, Post, Product, Role, ScheduleJob, Setting,
+		StorageStrategy, Tag, Theme, User, VisitLog, Wallet, WebHook []ent.Interceptor
 	}
 )

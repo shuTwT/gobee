@@ -6,6 +6,15 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// AIChatMessage is the predicate function for aichatmessage builders.
+type AIChatMessage func(*sql.Selector)
+
+// AIChatSession is the predicate function for aichatsession builders.
+type AIChatSession func(*sql.Selector)
+
+// AIConfig is the predicate function for aiconfig builders.
+type AIConfig func(*sql.Selector)
+
 // Album is the predicate function for album builders.
 type Album func(*sql.Selector)
 

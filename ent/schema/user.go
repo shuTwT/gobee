@@ -54,5 +54,6 @@ func (User) Edges() []ent.Edge {
 			Unique(),
 		edge.To("wallet", Wallet.Type).
 			Unique(),
+		edge.To("ai_chat_sessions", AIChatSession.Type),
 	}
 }

@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"context"
 	"embed"
 	"io/fs"
 	"log/slog"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/internal/infra/schedule/manager"
+	ai_service "github.com/shuTwT/hoshikuzu/internal/services/ai/chat"
 	album_service "github.com/shuTwT/hoshikuzu/internal/services/content/album"
 	albumphoto_service "github.com/shuTwT/hoshikuzu/internal/services/content/albumphoto"
 	category_service "github.com/shuTwT/hoshikuzu/internal/services/content/category"
@@ -106,6 +108,7 @@ func ExtractDefaultTheme(assetsRes embed.FS) {
 }
 
 type ServiceMap struct {
+	AIService               ai_service.AIService
 	AlbumService            album_service.AlbumService
 	AlbumPhotoService       albumphoto_service.AlbumPhotoService
 	AuthService             auth_service.AuthService
@@ -167,6 +170,10 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 	productService := product_service.NewProductServiceImpl(db)
 	roleService := role_service.NewRoleServiceImpl(db)
 	settingService := setting_service.NewSettingServiceImpl(db)
+	aiService := ai_service.NewAIServiceImpl(db)
+	if err := aiService.CleanupLegacySettings(context.Background()); err != nil {
+		panic("failed cleaning legacy AI settings: " + err.Error())
+	}
 	storageStrategyService := storagestrategy_service.NewStorageStrategyServiceImpl(db)
 	themeService := theme_service.NewThemeServiceImpl(db)
 	tagService := tag_service.NewTagServiceImpl(db)
@@ -180,6 +187,7 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 	permissionService.LoadPermissionsFromDef(assetsRes)
 
 	serviceMap := ServiceMap{
+		AIService:               aiService,
 		AlbumService:            albumService,
 		AlbumPhotoService:       albumPhotoService,
 		AuthService:             authService,

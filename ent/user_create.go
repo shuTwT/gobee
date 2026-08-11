@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/hoshikuzu/ent/aichatsession"
 	"github.com/shuTwT/hoshikuzu/ent/member"
 	"github.com/shuTwT/hoshikuzu/ent/role"
 	"github.com/shuTwT/hoshikuzu/ent/user"
@@ -180,6 +181,21 @@ func (_c *UserCreate) SetNillableWalletID(id *int) *UserCreate {
 // SetWallet sets the "wallet" edge to the Wallet entity.
 func (_c *UserCreate) SetWallet(v *Wallet) *UserCreate {
 	return _c.SetWalletID(v.ID)
+}
+
+// AddAiChatSessionIDs adds the "ai_chat_sessions" edge to the AIChatSession entity by IDs.
+func (_c *UserCreate) AddAiChatSessionIDs(ids ...int) *UserCreate {
+	_c.mutation.AddAiChatSessionIDs(ids...)
+	return _c
+}
+
+// AddAiChatSessions adds the "ai_chat_sessions" edges to the AIChatSession entity.
+func (_c *UserCreate) AddAiChatSessions(v ...*AIChatSession) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAiChatSessionIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -383,6 +399,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.AiChatSessionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AiChatSessionsTable,
+			Columns: []string{user.AiChatSessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(aichatsession.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

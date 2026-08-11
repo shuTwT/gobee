@@ -9,6 +9,42 @@ import (
 	"github.com/shuTwT/hoshikuzu/ent"
 )
 
+// The AIChatMessageFunc type is an adapter to allow the use of ordinary
+// function as AIChatMessage mutator.
+type AIChatMessageFunc func(context.Context, *ent.AIChatMessageMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AIChatMessageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AIChatMessageMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AIChatMessageMutation", m)
+}
+
+// The AIChatSessionFunc type is an adapter to allow the use of ordinary
+// function as AIChatSession mutator.
+type AIChatSessionFunc func(context.Context, *ent.AIChatSessionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AIChatSessionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AIChatSessionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AIChatSessionMutation", m)
+}
+
+// The AIConfigFunc type is an adapter to allow the use of ordinary
+// function as AIConfig mutator.
+type AIConfigFunc func(context.Context, *ent.AIConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AIConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AIConfigMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AIConfigMutation", m)
+}
+
 // The AlbumFunc type is an adapter to allow the use of ordinary
 // function as Album mutator.
 type AlbumFunc func(context.Context, *ent.AlbumMutation) (ent.Value, error)

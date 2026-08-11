@@ -43,6 +43,26 @@ func initSystemRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	}
 }
 
+// 注册 AI 路由。该组位于 FlexibleAuth 之后，聊天和管理接口都必须先通过登录认证。
+func initAIRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
+	aiConfig := router.Group("/ai/config")
+	{
+		router.Get("/ai/config", handlerMap.AIHandler.GetConfig)
+		router.Put("/ai/config", handlerMap.AIHandler.SaveConfig)
+		aiConfig.Post("/test", handlerMap.AIHandler.TestConfig)
+		aiConfig.Get("/models", handlerMap.AIHandler.ListModels)
+	}
+	aiChat := router.Group("/ai/chat/sessions")
+	{
+		router.Get("/ai/chat/sessions", handlerMap.AIHandler.ListSessions)
+		router.Post("/ai/chat/sessions", handlerMap.AIHandler.CreateSession)
+		aiChat.Get("/:id/messages", handlerMap.AIHandler.ListMessages)
+		aiChat.Delete("/:id", handlerMap.AIHandler.DeleteSession)
+		aiChat.Delete("/:id/messages", handlerMap.AIHandler.ClearSession)
+		aiChat.Post("/:id/stream", handlerMap.AIHandler.Stream)
+	}
+}
+
 // 注册内容路由
 func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	commentApi := router.Group("/comment")
@@ -379,6 +399,7 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap, dbClient *ent
 			apiV1.Get("/settings", handlerMap.SettingHandler.GetSettings)
 
 			apiV1.Use(middleware.FlexibleAuth(dbClient))
+			initAIRouter(apiV1, handlerMap)
 
 			// 首页统计信息接口
 			apiV1.Get("/common/statistic", handlerMap.CommonHandler.GetHomeStatistics)

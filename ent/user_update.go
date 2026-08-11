@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shuTwT/hoshikuzu/ent/aichatsession"
 	"github.com/shuTwT/hoshikuzu/ent/member"
 	"github.com/shuTwT/hoshikuzu/ent/predicate"
 	"github.com/shuTwT/hoshikuzu/ent/role"
@@ -176,6 +177,21 @@ func (_u *UserUpdate) SetWallet(v *Wallet) *UserUpdate {
 	return _u.SetWalletID(v.ID)
 }
 
+// AddAiChatSessionIDs adds the "ai_chat_sessions" edge to the AIChatSession entity by IDs.
+func (_u *UserUpdate) AddAiChatSessionIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddAiChatSessionIDs(ids...)
+	return _u
+}
+
+// AddAiChatSessions adds the "ai_chat_sessions" edges to the AIChatSession entity.
+func (_u *UserUpdate) AddAiChatSessions(v ...*AIChatSession) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAiChatSessionIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdate) Mutation() *UserMutation {
 	return _u.mutation
@@ -197,6 +213,27 @@ func (_u *UserUpdate) ClearMember() *UserUpdate {
 func (_u *UserUpdate) ClearWallet() *UserUpdate {
 	_u.mutation.ClearWallet()
 	return _u
+}
+
+// ClearAiChatSessions clears all "ai_chat_sessions" edges to the AIChatSession entity.
+func (_u *UserUpdate) ClearAiChatSessions() *UserUpdate {
+	_u.mutation.ClearAiChatSessions()
+	return _u
+}
+
+// RemoveAiChatSessionIDs removes the "ai_chat_sessions" edge to AIChatSession entities by IDs.
+func (_u *UserUpdate) RemoveAiChatSessionIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveAiChatSessionIDs(ids...)
+	return _u
+}
+
+// RemoveAiChatSessions removes "ai_chat_sessions" edges to AIChatSession entities.
+func (_u *UserUpdate) RemoveAiChatSessions(v ...*AIChatSession) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAiChatSessionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -370,6 +407,51 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.AiChatSessionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AiChatSessionsTable,
+			Columns: []string{user.AiChatSessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(aichatsession.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAiChatSessionsIDs(); len(nodes) > 0 && !_u.mutation.AiChatSessionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AiChatSessionsTable,
+			Columns: []string{user.AiChatSessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(aichatsession.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AiChatSessionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AiChatSessionsTable,
+			Columns: []string{user.AiChatSessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(aichatsession.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -535,6 +617,21 @@ func (_u *UserUpdateOne) SetWallet(v *Wallet) *UserUpdateOne {
 	return _u.SetWalletID(v.ID)
 }
 
+// AddAiChatSessionIDs adds the "ai_chat_sessions" edge to the AIChatSession entity by IDs.
+func (_u *UserUpdateOne) AddAiChatSessionIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddAiChatSessionIDs(ids...)
+	return _u
+}
+
+// AddAiChatSessions adds the "ai_chat_sessions" edges to the AIChatSession entity.
+func (_u *UserUpdateOne) AddAiChatSessions(v ...*AIChatSession) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAiChatSessionIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdateOne) Mutation() *UserMutation {
 	return _u.mutation
@@ -556,6 +653,27 @@ func (_u *UserUpdateOne) ClearMember() *UserUpdateOne {
 func (_u *UserUpdateOne) ClearWallet() *UserUpdateOne {
 	_u.mutation.ClearWallet()
 	return _u
+}
+
+// ClearAiChatSessions clears all "ai_chat_sessions" edges to the AIChatSession entity.
+func (_u *UserUpdateOne) ClearAiChatSessions() *UserUpdateOne {
+	_u.mutation.ClearAiChatSessions()
+	return _u
+}
+
+// RemoveAiChatSessionIDs removes the "ai_chat_sessions" edge to AIChatSession entities by IDs.
+func (_u *UserUpdateOne) RemoveAiChatSessionIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveAiChatSessionIDs(ids...)
+	return _u
+}
+
+// RemoveAiChatSessions removes "ai_chat_sessions" edges to AIChatSession entities.
+func (_u *UserUpdateOne) RemoveAiChatSessions(v ...*AIChatSession) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAiChatSessionIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -752,6 +870,51 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.AiChatSessionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AiChatSessionsTable,
+			Columns: []string{user.AiChatSessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(aichatsession.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAiChatSessionsIDs(); len(nodes) > 0 && !_u.mutation.AiChatSessionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AiChatSessionsTable,
+			Columns: []string{user.AiChatSessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(aichatsession.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AiChatSessionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AiChatSessionsTable,
+			Columns: []string{user.AiChatSessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(aichatsession.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

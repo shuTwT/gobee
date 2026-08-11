@@ -1,5 +1,87 @@
 basePath: /
 definitions:
+  aichatmessage.Role:
+    enum:
+    - user
+    - assistant
+    type: string
+    x-enum-varnames:
+    - RoleUser
+    - RoleAssistant
+  ent.AIChatMessage:
+    properties:
+      content:
+        description: 消息内容
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.AIChatMessageEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the AIChatMessageQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: integer
+      model:
+        description: 生成该回复的模型
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/aichatmessage.Role'
+        description: 消息角色
+      session_id:
+        description: 会话 ID
+        type: integer
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.AIChatMessageEdges:
+    properties:
+      session:
+        allOf:
+        - $ref: '#/definitions/ent.AIChatSession'
+        description: Session holds the value of the session edge.
+    type: object
+  ent.AIChatSession:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.AIChatSessionEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the AIChatSessionQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: integer
+      title:
+        description: 会话标题
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      user_id:
+        description: 所属用户 ID
+        type: integer
+    type: object
+  ent.AIChatSessionEdges:
+    properties:
+      messages:
+        description: Messages holds the value of the messages edge.
+        items:
+          $ref: '#/definitions/ent.AIChatMessage'
+        type: array
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
   ent.Album:
     properties:
       created_at:
@@ -953,6 +1035,11 @@ definitions:
     type: object
   ent.UserEdges:
     properties:
+      ai_chat_sessions:
+        description: AiChatSessions holds the value of the ai_chat_sessions edge.
+        items:
+          $ref: '#/definitions/ent.AIChatSession'
+        type: array
       member:
         allOf:
         - $ref: '#/definitions/ent.Member'
@@ -1041,6 +1128,85 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
+    type: object
+  model.AIChatMessageResp:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      model:
+        type: string
+      role:
+        type: string
+    type: object
+  model.AIChatSessionResp:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.AIChatStreamReq:
+    properties:
+      content:
+        type: string
+    type: object
+  model.AIConfigResp:
+    properties:
+      api_key_configured:
+        type: boolean
+      base_url:
+        type: string
+      frequency_penalty:
+        type: number
+      max_tokens:
+        type: integer
+      model:
+        type: string
+      presence_penalty:
+        type: number
+      temperature:
+        type: number
+      top_p:
+        type: number
+    type: object
+  model.AIConfigTestReq:
+    properties:
+      api_key:
+        type: string
+      base_url:
+        type: string
+    type: object
+  model.AIConfigUpdateReq:
+    properties:
+      api_key:
+        type: string
+      base_url:
+        type: string
+      frequency_penalty:
+        type: number
+      max_tokens:
+        type: integer
+      model:
+        type: string
+      presence_penalty:
+        type: number
+      temperature:
+        type: number
+      top_p:
+        type: number
+    type: object
+  model.AIModelResp:
+    properties:
+      id:
+        type: string
     type: object
   model.AIResponse:
     properties:
@@ -3248,6 +3414,286 @@ paths:
       summary: 系统初始化
       tags:
       - 公开接口/初始化
+  /api/v1/ai/chat/sessions:
+    get:
+      description: 获取当前登录用户自己的聊天会话
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.AIChatSessionResp'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取聊天会话列表
+      tags:
+      - 后台管理接口/AI聊天
+    post:
+      description: 为当前登录用户创建一个空聊天会话
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.AIChatSessionResp'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建聊天会话
+      tags:
+      - 后台管理接口/AI聊天
+  /api/v1/ai/chat/sessions/{id}:
+    delete:
+      description: 删除当前用户会话及其全部消息
+      parameters:
+      - description: 会话 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除聊天会话
+      tags:
+      - 后台管理接口/AI聊天
+  /api/v1/ai/chat/sessions/{id}/messages:
+    delete:
+      description: 删除当前会话的全部消息并重置标题
+      parameters:
+      - description: 会话 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 清空聊天会话
+      tags:
+      - 后台管理接口/AI聊天
+    get:
+      description: 获取当前用户会话中的全部消息
+      parameters:
+      - description: 会话 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.AIChatMessageResp'
+                  type: array
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取会话消息
+      tags:
+      - 后台管理接口/AI聊天
+  /api/v1/ai/chat/sessions/{id}/stream:
+    post:
+      consumes:
+      - application/json
+      description: 将当前会话全部历史提交给 OpenAI 兼容模型并通过 SSE 返回增量内容
+      parameters:
+      - description: 会话 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 聊天消息
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AIChatStreamReq'
+      produces:
+      - text/event-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 流式发送聊天消息
+      tags:
+      - 后台管理接口/AI聊天
+  /api/v1/ai/config:
+    get:
+      description: 获取脱敏后的 OpenAI 兼容配置，仅超级管理员可用
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.AIConfigResp'
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取 AI 配置
+      tags:
+      - 后台管理接口/AI
+    put:
+      consumes:
+      - application/json
+      description: 保存完整的 OpenAI 兼容配置，API Key 只写入服务端密文
+      parameters:
+      - description: AI 配置
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AIConfigUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 保存 AI 配置
+      tags:
+      - 后台管理接口/AI
+  /api/v1/ai/config/models:
+    get:
+      description: 由服务端使用已保存配置请求供应商模型列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.AIModelResp'
+                  type: array
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取 AI 模型列表
+      tags:
+      - 后台管理接口/AI
+  /api/v1/ai/config/test:
+    post:
+      consumes:
+      - application/json
+      description: 服务端测试未保存的 OpenAI 兼容配置
+      parameters:
+      - description: 测试配置
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AIConfigTestReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 测试 AI 配置
+      tags:
+      - 后台管理接口/AI
   /api/v1/album-photo/create:
     post:
       consumes:

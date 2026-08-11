@@ -128,6 +128,9 @@ STAGE=dev
 
 # JWT 密钥（生产环境务必修改）
 SECRET=your-super-secret-jwt-key-here
+
+# AI 配置加密密钥（必须是 Base64 编码的 32 字节密钥，不设置则 AI 接口关闭）
+AI_CONFIG_ENCRYPTION_KEY=base64-encoded-32-byte-key
 ```
 
 #### 数据库配置示例
@@ -174,8 +177,12 @@ SECRET=your-super-secret-jwt-key-here
 - ✅ **系统初始化**: 系统初始化向导
 
 #### 🤖 AI助手模块 (ai)
-- ✅ **智能对话**: 集成OpenAI提供智能对话功能
-- ✅ **内容生成**: AI辅助内容生成和优化
+- ✅ **智能对话**: 服务端代理 OpenAI 兼容 Chat Completions，支持 SSE 流式回复
+- ✅ **会话持久化**: 按登录用户保存、清空和删除聊天会话
+- ✅ **密钥保护**: API Key 使用 AES-256-GCM 加密入库，浏览器不接触明文密钥
+
+首次使用前，超级管理员需要在“系统设置 → AI 设置”填写 OpenAI 兼容地址、模型和 API Key。
+API Key 不会回显，每次保存配置都必须重新输入；`AI_CONFIG_ENCRYPTION_KEY` 只由服务端环境提供。
 
 ### 🏗️ 项目架构
 

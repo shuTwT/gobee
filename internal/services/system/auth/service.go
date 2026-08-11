@@ -40,6 +40,10 @@ func (s *AuthServiceImpl) Login(ctx context.Context, req *model.LoginRequest) (*
 	if err = bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(req.Password)); err != nil {
 		return nil, errors.New("密码错误")
 	}
+	role, err := u.QueryRole().Only(ctx)
+	if err != nil {
+		return nil, errors.New("用户角色不存在")
+	}
 
 	expires := time.Now().Add(time.Hour * 24).UnixMilli()
 	claims := jwt.MapClaims{
@@ -57,10 +61,17 @@ func (s *AuthServiceImpl) Login(ctx context.Context, req *model.LoginRequest) (*
 		return nil, err
 	}
 
+	roleCode := role.Code
+	// The UI historically calls the super administrator role "admin". Keep
+	// that presentation label while no longer granting it to every user.
+	if roleCode == "superAdmin" {
+		roleCode = "admin"
+	}
+
 	return &model.LoginResp{
 		AccessToken: t,
 		Expires:     expires,
 		Username:    u.Name,
-		Roles:       []string{"admin"},
+		Roles:       []string{roleCode},
 	}, nil
 }

@@ -12,6 +12,12 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// AIChatMessage is the client for interacting with the AIChatMessage builders.
+	AIChatMessage *AIChatMessageClient
+	// AIChatSession is the client for interacting with the AIChatSession builders.
+	AIChatSession *AIChatSessionClient
+	// AIConfig is the client for interacting with the AIConfig builders.
+	AIConfig *AIConfigClient
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
 	// AlbumPhoto is the client for interacting with the AlbumPhoto builders.
@@ -213,6 +219,9 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.AIChatMessage = NewAIChatMessageClient(tx.config)
+	tx.AIChatSession = NewAIChatSessionClient(tx.config)
+	tx.AIConfig = NewAIConfigClient(tx.config)
 	tx.Album = NewAlbumClient(tx.config)
 	tx.AlbumPhoto = NewAlbumPhotoClient(tx.config)
 	tx.Category = NewCategoryClient(tx.config)
@@ -257,7 +266,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Album.QueryXXX(), the query will be executed
+// applies a query, for example: AIChatMessage.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

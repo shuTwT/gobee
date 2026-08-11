@@ -8,7 +8,7 @@ export default [
     meta: {
       title: 'AI 助手',
       showLink: true,
-      roles: ['admin', 'common'],
+      roles: ['admin', 'common', 'guest'],
       rank: 15
     },
     children: [
@@ -19,7 +19,7 @@ export default [
         meta: {
           title: 'AI 聊天',
           showLink: true,
-          roles: ['admin', 'common'],
+          roles: ['admin', 'common', 'guest'],
         },
       },
     ]

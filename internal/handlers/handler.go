@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/shuTwT/hoshikuzu/ent"
+	ai_handler "github.com/shuTwT/hoshikuzu/internal/handlers/ai/chat"
 	album_handler "github.com/shuTwT/hoshikuzu/internal/handlers/content/album"
 	albumphoto_handler "github.com/shuTwT/hoshikuzu/internal/handlers/content/albumphoto"
 	category_handler "github.com/shuTwT/hoshikuzu/internal/handlers/content/category"
@@ -42,6 +43,7 @@ import (
 )
 
 type HandlerMap struct {
+	AIHandler               *ai_handler.AIHandler
 	AlbumHandler            *album_handler.AlbumHandler
 	AlbumPhotoHandler       *albumphoto_handler.AlbumPhotoHandler
 	AuthHandler             *auth_handler.AuthHandler
@@ -81,6 +83,7 @@ type HandlerMap struct {
 }
 
 func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
+	aiHandler := ai_handler.NewAIHandler(serviceMap.AIService, db)
 	albumHandler := album_handler.NewAlbumHandler(serviceMap.AlbumService)
 	albnumPhotoHandler := albumphoto_handler.NewAlbumPhotoHandler(serviceMap.AlbumPhotoService)
 	authHandler := auth_handler.NewAuthHandler(serviceMap.AuthService)
@@ -135,6 +138,7 @@ func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 		serviceMap.MenuService)
 
 	handlerMap := HandlerMap{
+		AIHandler:               aiHandler,
 		AlbumHandler:            albumHandler,
 		AlbumPhotoHandler:       albnumPhotoHandler,
 		AuthHandler:             authHandler,

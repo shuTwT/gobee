@@ -569,6 +569,29 @@ func HasWalletWith(preds ...predicate.Wallet) predicate.User {
 	})
 }
 
+// HasAiChatSessions applies the HasEdge predicate on the "ai_chat_sessions" edge.
+func HasAiChatSessions() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AiChatSessionsTable, AiChatSessionsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAiChatSessionsWith applies the HasEdge predicate on the "ai_chat_sessions" edge with a given conditions (other predicates).
+func HasAiChatSessionsWith(preds ...predicate.AIChatSession) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newAiChatSessionsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

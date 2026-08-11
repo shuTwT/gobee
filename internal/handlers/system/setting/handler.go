@@ -14,6 +14,18 @@ type SettingHandler struct {
 	settingService setting_service.SettingService
 }
 
+var retiredAISettingKeys = map[string]struct{}{
+	"ai":                       {},
+	"openai_api_key":           {},
+	"openai_api_url":           {},
+	"openai_model":             {},
+	"openai_temperature":       {},
+	"openai_max_tokens":        {},
+	"openai_top_p":             {},
+	"openai_frequency_penalty": {},
+	"openai_presence_penalty":  {},
+}
+
 func NewSettingHandler(settingService setting_service.SettingService) *SettingHandler {
 	return &SettingHandler{
 		settingService: settingService,
@@ -45,6 +57,9 @@ func (h *SettingHandler) GetSettings(c *fiber.Ctx) error {
 
 	settingsMap := make(map[string]string)
 	for _, s := range settings {
+		if isRetiredAISettingKey(s.Key) {
+			continue
+		}
 		settingsMap[s.Key] = s.Value
 	}
 
@@ -68,6 +83,9 @@ func (h *SettingHandler) GetJsonSettingsMap(c *fiber.Ctx) error {
 	ctx := c.Context()
 
 	key := c.Params("key")
+	if isRetiredAISettingKey(key) {
+		return c.Status(fiber.StatusGone).JSON(model.NewError(fiber.StatusGone, "AI settings are no longer stored in generic settings"))
+	}
 
 	var exist bool
 	var err error
@@ -109,6 +127,9 @@ func (h *SettingHandler) SaveSettings(c *fiber.Ctx) error {
 	ctx := c.Context()
 
 	key := c.Params("key")
+	if isRetiredAISettingKey(key) {
+		return c.Status(fiber.StatusGone).JSON(model.NewError(fiber.StatusGone, "AI settings are no longer stored in generic settings"))
+	}
 
 	var req map[string]interface{}
 
@@ -139,4 +160,9 @@ func (h *SettingHandler) SaveSettings(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(model.NewSuccess("success", nil))
+}
+
+func isRetiredAISettingKey(key string) bool {
+	_, ok := retiredAISettingKeys[key]
+	return ok
 }

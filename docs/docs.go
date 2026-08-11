@@ -130,6 +130,453 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/ai/chat/sessions": {
+            "get": {
+                "description": "获取当前登录用户自己的聊天会话",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI聊天"
+                ],
+                "summary": "获取聊天会话列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.AIChatSessionResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "为当前登录用户创建一个空聊天会话",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI聊天"
+                ],
+                "summary": "创建聊天会话",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.AIChatSessionResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/chat/sessions/{id}": {
+            "delete": {
+                "description": "删除当前用户会话及其全部消息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI聊天"
+                ],
+                "summary": "删除聊天会话",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "会话 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/chat/sessions/{id}/messages": {
+            "get": {
+                "description": "获取当前用户会话中的全部消息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI聊天"
+                ],
+                "summary": "获取会话消息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "会话 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.AIChatMessageResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除当前会话的全部消息并重置标题",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI聊天"
+                ],
+                "summary": "清空聊天会话",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "会话 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/chat/sessions/{id}/stream": {
+            "post": {
+                "description": "将当前会话全部历史提交给 OpenAI 兼容模型并通过 SSE 返回增量内容",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/event-stream"
+                ],
+                "tags": [
+                    "后台管理接口/AI聊天"
+                ],
+                "summary": "流式发送聊天消息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "会话 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "聊天消息",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AIChatStreamReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/config": {
+            "get": {
+                "description": "获取脱敏后的 OpenAI 兼容配置，仅超级管理员可用",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "获取 AI 配置",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.AIConfigResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "保存完整的 OpenAI 兼容配置，API Key 只写入服务端密文",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "保存 AI 配置",
+                "parameters": [
+                    {
+                        "description": "AI 配置",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AIConfigUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/config/models": {
+            "get": {
+                "description": "由服务端使用已保存配置请求供应商模型列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "获取 AI 模型列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.AIModelResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/config/test": {
+            "post": {
+                "description": "服务端测试未保存的 OpenAI 兼容配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "测试 AI 配置",
+                "parameters": [
+                    {
+                        "description": "测试配置",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AIConfigTestReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/album-photo/create": {
             "post": {
                 "description": "创建一个新的相册照片",
@@ -11990,6 +12437,128 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "aichatmessage.Role": {
+            "type": "string",
+            "enum": [
+                "user",
+                "assistant"
+            ],
+            "x-enum-varnames": [
+                "RoleUser",
+                "RoleAssistant"
+            ]
+        },
+        "ent.AIChatMessage": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "消息内容",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the AIChatMessageQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.AIChatMessageEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "model": {
+                    "description": "生成该回复的模型",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "消息角色",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/aichatmessage.Role"
+                        }
+                    ]
+                },
+                "session_id": {
+                    "description": "会话 ID",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.AIChatMessageEdges": {
+            "type": "object",
+            "properties": {
+                "session": {
+                    "description": "Session holds the value of the session edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.AIChatSession"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.AIChatSession": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the AIChatSessionQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.AIChatSessionEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "会话标题",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "所属用户 ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "ent.AIChatSessionEdges": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "description": "Messages holds the value of the messages edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.AIChatMessage"
+                    }
+                },
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
+                }
+            }
+        },
         "ent.Album": {
             "type": "object",
             "properties": {
@@ -13308,6 +13877,13 @@ const docTemplate = `{
         "ent.UserEdges": {
             "type": "object",
             "properties": {
+                "ai_chat_sessions": {
+                    "description": "AiChatSessions holds the value of the ai_chat_sessions edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.AIChatSession"
+                    }
+                },
                 "member": {
                     "description": "Member holds the value of the member edge.",
                     "allOf": [
@@ -13438,6 +14014,128 @@ const docTemplate = `{
                             "$ref": "#/definitions/ent.User"
                         }
                     ]
+                }
+            }
+        },
+        "model.AIChatMessageResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.AIChatSessionResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.AIChatStreamReq": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.AIConfigResp": {
+            "type": "object",
+            "properties": {
+                "api_key_configured": {
+                    "type": "boolean"
+                },
+                "base_url": {
+                    "type": "string"
+                },
+                "frequency_penalty": {
+                    "type": "number"
+                },
+                "max_tokens": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "presence_penalty": {
+                    "type": "number"
+                },
+                "temperature": {
+                    "type": "number"
+                },
+                "top_p": {
+                    "type": "number"
+                }
+            }
+        },
+        "model.AIConfigTestReq": {
+            "type": "object",
+            "properties": {
+                "api_key": {
+                    "type": "string"
+                },
+                "base_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.AIConfigUpdateReq": {
+            "type": "object",
+            "properties": {
+                "api_key": {
+                    "type": "string"
+                },
+                "base_url": {
+                    "type": "string"
+                },
+                "frequency_penalty": {
+                    "type": "number"
+                },
+                "max_tokens": {
+                    "type": "integer"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "presence_penalty": {
+                    "type": "number"
+                },
+                "temperature": {
+                    "type": "number"
+                },
+                "top_p": {
+                    "type": "number"
+                }
+            }
+        },
+        "model.AIModelResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
                 }
             }
         },

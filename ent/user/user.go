@@ -38,6 +38,8 @@ const (
 	EdgeMember = "member"
 	// EdgeWallet holds the string denoting the wallet edge name in mutations.
 	EdgeWallet = "wallet"
+	// EdgeAiChatSessions holds the string denoting the ai_chat_sessions edge name in mutations.
+	EdgeAiChatSessions = "ai_chat_sessions"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// RoleTable is the table that holds the role relation/edge.
@@ -61,6 +63,13 @@ const (
 	WalletInverseTable = "wallets"
 	// WalletColumn is the table column denoting the wallet relation/edge.
 	WalletColumn = "user_id"
+	// AiChatSessionsTable is the table that holds the ai_chat_sessions relation/edge.
+	AiChatSessionsTable = "ai_chat_sessions"
+	// AiChatSessionsInverseTable is the table name for the AIChatSession entity.
+	// It exists in this package in order to avoid circular dependency with the "aichatsession" package.
+	AiChatSessionsInverseTable = "ai_chat_sessions"
+	// AiChatSessionsColumn is the table column denoting the ai_chat_sessions relation/edge.
+	AiChatSessionsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -181,6 +190,20 @@ func ByWalletField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newWalletStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByAiChatSessionsCount orders the results by ai_chat_sessions count.
+func ByAiChatSessionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAiChatSessionsStep(), opts...)
+	}
+}
+
+// ByAiChatSessions orders the results by ai_chat_sessions terms.
+func ByAiChatSessions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAiChatSessionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newRoleStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -200,5 +223,12 @@ func newWalletStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(WalletInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, WalletTable, WalletColumn),
+	)
+}
+func newAiChatSessionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AiChatSessionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AiChatSessionsTable, AiChatSessionsColumn),
 	)
 }

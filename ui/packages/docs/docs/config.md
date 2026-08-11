@@ -54,10 +54,6 @@ payment:
     pid: your_epay_pid
     key: your_epay_key
 
-ai:
-  api_key: your_ai_api_key
-  model: gpt-4
-  max_tokens: 2000
 ```
 
 ## 配置项说明
@@ -138,13 +134,18 @@ ai:
 | pid | string | 易支付商户 ID | - |
 | key | string | 易支付密钥 | - |
 
-### AI 配置 (ai)
+### AI 配置
 
-| 配置项 | 类型 | 说明 | 默认值 |
-|--------|------|------|--------|
-| api_key | string | AI 服务 API 密钥 | - |
-| model | string | AI 模型名称 | gpt-4 |
-| max_tokens | int | 最大 token 数 | 2000 |
+AI 供应商配置只允许超级管理员在后台“系统设置 → AI 设置”中保存。API Key
+不会通过通用设置接口返回，而是由服务端使用 AES-256-GCM 加密后保存。
+
+启动服务前必须提供一个 Base64 编码的 32 字节加密密钥：
+
+```bash
+AI_CONFIG_ENCRYPTION_KEY=base64-encoded-32-byte-key
+```
+
+未提供该密钥时，AI 配置、模型列表和聊天接口会直接关闭，不会使用默认密钥或旧配置兜底。
 
 ## 环境变量
 
