@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/shuTwT/hoshikuzu/ent/album"
 	"github.com/shuTwT/hoshikuzu/ent/albumphoto"
-	"github.com/shuTwT/hoshikuzu/ent/apiperms"
 	"github.com/shuTwT/hoshikuzu/ent/category"
 	"github.com/shuTwT/hoshikuzu/ent/comment"
 	"github.com/shuTwT/hoshikuzu/ent/coupon"
@@ -110,7 +109,6 @@ func checkColumn(t, c string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			album.Table:               album.ValidColumn,
 			albumphoto.Table:          albumphoto.ValidColumn,
-			apiperms.Table:            apiperms.ValidColumn,
 			category.Table:            category.ValidColumn,
 			comment.Table:             comment.ValidColumn,
 			coupon.Table:              coupon.ValidColumn,

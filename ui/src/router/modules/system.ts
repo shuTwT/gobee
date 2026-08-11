@@ -23,16 +23,6 @@ export default [
         },
       },
       {
-        path: '/system/api',
-        name: 'ApiManagement',
-        component: () => import('@/views/system/api/index.vue'),
-        meta: {
-          title: 'api管理',
-          showLink: true,
-          roles: ['admin'],
-        },
-      },
-      {
         path: '/system/role',
         name: 'RoleManagement',
         component: () => import('@/views/system/role/index.vue'),

@@ -25,7 +25,7 @@ proto:
 # ===================== 原有功能（完全保留） =====================
 build-frontend:
 	@echo "Building frontend..."
-	cd ui && pnpm install && pnpm run build-only
+	cd ui && pnpm install && pnpm run build
 	@echo "Copying frontend build to assets..."
 
 build-backend:

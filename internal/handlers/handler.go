@@ -30,7 +30,6 @@ import (
 	product_handler "github.com/shuTwT/hoshikuzu/internal/handlers/mall/product"
 	wallet_handler "github.com/shuTwT/hoshikuzu/internal/handlers/mall/wallet"
 	public_handler "github.com/shuTwT/hoshikuzu/internal/handlers/public"
-	apiinterface_handler "github.com/shuTwT/hoshikuzu/internal/handlers/system/apiinterface"
 	auth_handler "github.com/shuTwT/hoshikuzu/internal/handlers/system/auth"
 	common_handler "github.com/shuTwT/hoshikuzu/internal/handlers/system/common"
 	initialize_handler "github.com/shuTwT/hoshikuzu/internal/handlers/system/initialize"
@@ -45,7 +44,6 @@ import (
 type HandlerMap struct {
 	AlbumHandler            *album_handler.AlbumHandler
 	AlbumPhotoHandler       *albumphoto_handler.AlbumPhotoHandler
-	ApiInterfaceHandler     *apiinterface_handler.ApiInterfaceHandler
 	AuthHandler             *auth_handler.AuthHandler
 	CategoryHandler         *category_handler.CategoryHandler
 	CommentHandler          *comment_handler.CommentHandler
@@ -85,7 +83,6 @@ type HandlerMap struct {
 func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 	albumHandler := album_handler.NewAlbumHandler(serviceMap.AlbumService)
 	albnumPhotoHandler := albumphoto_handler.NewAlbumPhotoHandler(serviceMap.AlbumPhotoService)
-	apiInterfaceHandler := apiinterface_handler.NewApiInterfaceHandler(serviceMap.ApiInterfaceService)
 	authHandler := auth_handler.NewAuthHandler(serviceMap.AuthService)
 	categoryHandler := category_handler.NewCategoryHandler(serviceMap.CategoryService, serviceMap.PostService)
 	commentHandler := comment_handler.NewCommentHandler(serviceMap.CommentService)
@@ -140,7 +137,6 @@ func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 	handlerMap := HandlerMap{
 		AlbumHandler:            albumHandler,
 		AlbumPhotoHandler:       albnumPhotoHandler,
-		ApiInterfaceHandler:     apiInterfaceHandler,
 		AuthHandler:             authHandler,
 		CategoryHandler:         categoryHandler,
 		CommentHandler:          commentHandler,

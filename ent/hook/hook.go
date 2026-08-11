@@ -33,18 +33,6 @@ func (f AlbumPhotoFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlbumPhotoMutation", m)
 }
 
-// The ApiPermsFunc type is an adapter to allow the use of ordinary
-// function as ApiPerms mutator.
-type ApiPermsFunc func(context.Context, *ent.ApiPermsMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ApiPermsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ApiPermsMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiPermsMutation", m)
-}
-
 // The CategoryFunc type is an adapter to allow the use of ordinary
 // function as Category mutator.
 type CategoryFunc func(context.Context, *ent.CategoryMutation) (ent.Value, error)

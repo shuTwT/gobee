@@ -17,7 +17,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/shuTwT/hoshikuzu/ent/album"
 	"github.com/shuTwT/hoshikuzu/ent/albumphoto"
-	"github.com/shuTwT/hoshikuzu/ent/apiperms"
 	"github.com/shuTwT/hoshikuzu/ent/category"
 	"github.com/shuTwT/hoshikuzu/ent/comment"
 	"github.com/shuTwT/hoshikuzu/ent/coupon"
@@ -62,8 +61,6 @@ type Client struct {
 	Album *AlbumClient
 	// AlbumPhoto is the client for interacting with the AlbumPhoto builders.
 	AlbumPhoto *AlbumPhotoClient
-	// ApiPerms is the client for interacting with the ApiPerms builders.
-	ApiPerms *ApiPermsClient
 	// Category is the client for interacting with the Category builders.
 	Category *CategoryClient
 	// Comment is the client for interacting with the Comment builders.
@@ -143,7 +140,6 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Album = NewAlbumClient(c.config)
 	c.AlbumPhoto = NewAlbumPhotoClient(c.config)
-	c.ApiPerms = NewApiPermsClient(c.config)
 	c.Category = NewCategoryClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
@@ -271,7 +267,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:              cfg,
 		Album:               NewAlbumClient(cfg),
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
-		ApiPerms:            NewApiPermsClient(cfg),
 		Category:            NewCategoryClient(cfg),
 		Comment:             NewCommentClient(cfg),
 		Coupon:              NewCouponClient(cfg),
@@ -326,7 +321,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:              cfg,
 		Album:               NewAlbumClient(cfg),
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
-		ApiPerms:            NewApiPermsClient(cfg),
 		Category:            NewCategoryClient(cfg),
 		Comment:             NewCommentClient(cfg),
 		Coupon:              NewCouponClient(cfg),
@@ -389,13 +383,13 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
-		c.CouponUsage, c.Essay, c.FLink, c.FLinkApplication, c.FLinkGroup, c.File,
-		c.FriendCircleRecord, c.License, c.Member, c.MemberLevel, c.Menu,
-		c.Notification, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken,
-		c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role,
-		c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User,
-		c.VisitLog, c.Wallet, c.WebHook,
+		c.Album, c.AlbumPhoto, c.Category, c.Comment, c.Coupon, c.CouponUsage, c.Essay,
+		c.FLink, c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord,
+		c.License, c.Member, c.MemberLevel, c.Menu, c.Notification,
+		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
+		c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role, c.ScheduleJob,
+		c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet,
+		c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -405,13 +399,13 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.AlbumPhoto, c.ApiPerms, c.Category, c.Comment, c.Coupon,
-		c.CouponUsage, c.Essay, c.FLink, c.FLinkApplication, c.FLinkGroup, c.File,
-		c.FriendCircleRecord, c.License, c.Member, c.MemberLevel, c.Menu,
-		c.Notification, c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken,
-		c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role,
-		c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User,
-		c.VisitLog, c.Wallet, c.WebHook,
+		c.Album, c.AlbumPhoto, c.Category, c.Comment, c.Coupon, c.CouponUsage, c.Essay,
+		c.FLink, c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord,
+		c.License, c.Member, c.MemberLevel, c.Menu, c.Notification,
+		c.Oauth2AccessToken, c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder,
+		c.PersonalAccessToken, c.Plugin, c.Post, c.Product, c.Role, c.ScheduleJob,
+		c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet,
+		c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -424,8 +418,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Album.mutate(ctx, m)
 	case *AlbumPhotoMutation:
 		return c.AlbumPhoto.mutate(ctx, m)
-	case *ApiPermsMutation:
-		return c.ApiPerms.mutate(ctx, m)
 	case *CategoryMutation:
 		return c.Category.mutate(ctx, m)
 	case *CommentMutation:
@@ -760,139 +752,6 @@ func (c *AlbumPhotoClient) mutate(ctx context.Context, m *AlbumPhotoMutation) (V
 		return (&AlbumPhotoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown AlbumPhoto mutation op: %q", m.Op())
-	}
-}
-
-// ApiPermsClient is a client for the ApiPerms schema.
-type ApiPermsClient struct {
-	config
-}
-
-// NewApiPermsClient returns a client for the ApiPerms from the given config.
-func NewApiPermsClient(c config) *ApiPermsClient {
-	return &ApiPermsClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `apiperms.Hooks(f(g(h())))`.
-func (c *ApiPermsClient) Use(hooks ...Hook) {
-	c.hooks.ApiPerms = append(c.hooks.ApiPerms, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `apiperms.Intercept(f(g(h())))`.
-func (c *ApiPermsClient) Intercept(interceptors ...Interceptor) {
-	c.inters.ApiPerms = append(c.inters.ApiPerms, interceptors...)
-}
-
-// Create returns a builder for creating a ApiPerms entity.
-func (c *ApiPermsClient) Create() *ApiPermsCreate {
-	mutation := newApiPermsMutation(c.config, OpCreate)
-	return &ApiPermsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ApiPerms entities.
-func (c *ApiPermsClient) CreateBulk(builders ...*ApiPermsCreate) *ApiPermsCreateBulk {
-	return &ApiPermsCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *ApiPermsClient) MapCreateBulk(slice any, setFunc func(*ApiPermsCreate, int)) *ApiPermsCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &ApiPermsCreateBulk{err: fmt.Errorf("calling to ApiPermsClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*ApiPermsCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &ApiPermsCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ApiPerms.
-func (c *ApiPermsClient) Update() *ApiPermsUpdate {
-	mutation := newApiPermsMutation(c.config, OpUpdate)
-	return &ApiPermsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ApiPermsClient) UpdateOne(_m *ApiPerms) *ApiPermsUpdateOne {
-	mutation := newApiPermsMutation(c.config, OpUpdateOne, withApiPerms(_m))
-	return &ApiPermsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ApiPermsClient) UpdateOneID(id int) *ApiPermsUpdateOne {
-	mutation := newApiPermsMutation(c.config, OpUpdateOne, withApiPermsID(id))
-	return &ApiPermsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ApiPerms.
-func (c *ApiPermsClient) Delete() *ApiPermsDelete {
-	mutation := newApiPermsMutation(c.config, OpDelete)
-	return &ApiPermsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *ApiPermsClient) DeleteOne(_m *ApiPerms) *ApiPermsDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ApiPermsClient) DeleteOneID(id int) *ApiPermsDeleteOne {
-	builder := c.Delete().Where(apiperms.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ApiPermsDeleteOne{builder}
-}
-
-// Query returns a query builder for ApiPerms.
-func (c *ApiPermsClient) Query() *ApiPermsQuery {
-	return &ApiPermsQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeApiPerms},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a ApiPerms entity by its id.
-func (c *ApiPermsClient) Get(ctx context.Context, id int) (*ApiPerms, error) {
-	return c.Query().Where(apiperms.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ApiPermsClient) GetX(ctx context.Context, id int) *ApiPerms {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *ApiPermsClient) Hooks() []Hook {
-	return c.hooks.ApiPerms
-}
-
-// Interceptors returns the client interceptors.
-func (c *ApiPermsClient) Interceptors() []Interceptor {
-	return c.inters.ApiPerms
-}
-
-func (c *ApiPermsClient) mutate(ctx context.Context, m *ApiPermsMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&ApiPermsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&ApiPermsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&ApiPermsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&ApiPermsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown ApiPerms mutation op: %q", m.Op())
 	}
 }
 
@@ -5528,16 +5387,16 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, Essay,
-		FLink, FLinkApplication, FLinkGroup, File, FriendCircleRecord, License, Member,
+		Album, AlbumPhoto, Category, Comment, Coupon, CouponUsage, Essay, FLink,
+		FLinkApplication, FLinkGroup, File, FriendCircleRecord, License, Member,
 		MemberLevel, Menu, Notification, Oauth2AccessToken, Oauth2Code,
 		Oauth2RefreshToken, PayOrder, PersonalAccessToken, Plugin, Post, Product, Role,
 		ScheduleJob, Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,
 		WebHook []ent.Hook
 	}
 	inters struct {
-		Album, AlbumPhoto, ApiPerms, Category, Comment, Coupon, CouponUsage, Essay,
-		FLink, FLinkApplication, FLinkGroup, File, FriendCircleRecord, License, Member,
+		Album, AlbumPhoto, Category, Comment, Coupon, CouponUsage, Essay, FLink,
+		FLinkApplication, FLinkGroup, File, FriendCircleRecord, License, Member,
 		MemberLevel, Menu, Notification, Oauth2AccessToken, Oauth2Code,
 		Oauth2RefreshToken, PayOrder, PersonalAccessToken, Plugin, Post, Product, Role,
 		ScheduleJob, Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,

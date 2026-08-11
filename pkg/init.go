@@ -36,7 +36,6 @@ import (
 	payorder_service "github.com/shuTwT/hoshikuzu/internal/services/mall/payorder"
 	product_service "github.com/shuTwT/hoshikuzu/internal/services/mall/product"
 	wallet_service "github.com/shuTwT/hoshikuzu/internal/services/mall/wallet"
-	api_interface_service "github.com/shuTwT/hoshikuzu/internal/services/system/apiinterface"
 	auth_service "github.com/shuTwT/hoshikuzu/internal/services/system/auth"
 	common_service "github.com/shuTwT/hoshikuzu/internal/services/system/common"
 	notification_service "github.com/shuTwT/hoshikuzu/internal/services/system/notification"
@@ -109,7 +108,6 @@ func ExtractDefaultTheme(assetsRes embed.FS) {
 type ServiceMap struct {
 	AlbumService            album_service.AlbumService
 	AlbumPhotoService       albumphoto_service.AlbumPhotoService
-	ApiInterfaceService     api_interface_service.ApiInterfaceService
 	AuthService             auth_service.AuthService
 	CategoryService         category_service.CategoryService
 	CommentService          comment_service.CommentService
@@ -147,7 +145,6 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 
 	albumService := album_service.NewAlbumServiceImpl(db)
 	albumPhotoService := albumphoto_service.NewAlbumPhotoServiceImpl(db)
-	apiInterfaceService := api_interface_service.NewApiInterfaceServiceImpl(db)
 	authService := auth_service.NewAuthServiceImpl(db)
 	categoryService := category_service.NewCategoryServiceImpl(db)
 	commentService := comment_service.NewCommentServiceImpl(db)
@@ -185,7 +182,6 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 	serviceMap := ServiceMap{
 		AlbumService:            albumService,
 		AlbumPhotoService:       albumPhotoService,
-		ApiInterfaceService:     apiInterfaceService,
 		AuthService:             authService,
 		CategoryService:         categoryService,
 		CommentService:          commentService,

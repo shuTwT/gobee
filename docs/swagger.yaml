@@ -1094,36 +1094,6 @@ definitions:
       sort:
         type: integer
     type: object
-  model.ApiRoute:
-    properties:
-      category:
-        description: 分类
-        items:
-          type: string
-        type: array
-      desc:
-        description: 描述
-        type: string
-      method:
-        description: 请求方法
-        type: string
-      name:
-        description: api名称
-        type: string
-      path:
-        description: api路径
-        type: string
-      permission_type:
-        description: 权限
-        type: string
-      roles:
-        items:
-          type: string
-        type: array
-      status:
-        description: 状态
-        type: string
-    type: object
   model.CategoryCreateReq:
     properties:
       active:
@@ -2064,15 +2034,6 @@ definitions:
       records:
         items:
           $ref: '#/definitions/ent.Wallet'
-        type: array
-      total:
-        type: integer
-    type: object
-  model.PageResult-model_ApiRoute:
-    properties:
-      records:
-        items:
-          $ref: '#/definitions/model.ApiRoute'
         type: array
       total:
         type: integer
@@ -3711,45 +3672,6 @@ paths:
       summary: 更新相册
       tags:
       - 后台管理接口/相册
-  /api/v1/api-interface/page:
-    get:
-      consumes:
-      - application/json
-      description: 查询所有API路由的分页列表
-      parameters:
-      - default: 1
-        description: 页码
-        in: query
-        name: page
-        type: integer
-      - default: 10
-        description: 每页数量
-        in: query
-        name: page_size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpSuccess'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.PageResult-model_ApiRoute'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 查询API路由分页列表
-      tags:
-      - 后台管理接口/api路由
   /api/v1/category/create:
     post:
       consumes:

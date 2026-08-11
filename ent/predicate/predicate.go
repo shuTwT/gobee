@@ -12,9 +12,6 @@ type Album func(*sql.Selector)
 // AlbumPhoto is the predicate function for albumphoto builders.
 type AlbumPhoto func(*sql.Selector)
 
-// ApiPerms is the predicate function for apiperms builders.
-type ApiPerms func(*sql.Selector)
-
 // Category is the predicate function for category builders.
 type Category func(*sql.Selector)
 

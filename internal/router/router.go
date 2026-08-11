@@ -376,7 +376,6 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap, dbClient *ent
 
 			// 路由列表接口
 			apiV1.Get("/routes", handlerMap.RouteHandler.GetRoutes)
-			apiV1.Get("/api-interface/page", handlerMap.ApiInterfaceHandler.ListApiRoutesPage)
 			apiV1.Get("/settings", handlerMap.SettingHandler.GetSettings)
 
 			apiV1.Use(middleware.FlexibleAuth(dbClient))

@@ -7,7 +7,6 @@ import (
 
 	"github.com/shuTwT/hoshikuzu/ent/album"
 	"github.com/shuTwT/hoshikuzu/ent/albumphoto"
-	"github.com/shuTwT/hoshikuzu/ent/apiperms"
 	"github.com/shuTwT/hoshikuzu/ent/category"
 	"github.com/shuTwT/hoshikuzu/ent/comment"
 	"github.com/shuTwT/hoshikuzu/ent/coupon"
@@ -94,33 +93,6 @@ func init() {
 	albumphotoDescViewCount := albumphotoFields[3].Descriptor()
 	// albumphoto.DefaultViewCount holds the default value on creation for the view_count field.
 	albumphoto.DefaultViewCount = albumphotoDescViewCount.Default.(int)
-	apipermsMixin := schema.ApiPerms{}.Mixin()
-	apipermsMixinFields0 := apipermsMixin[0].Fields()
-	_ = apipermsMixinFields0
-	apipermsFields := schema.ApiPerms{}.Fields()
-	_ = apipermsFields
-	// apipermsDescCreatedAt is the schema descriptor for created_at field.
-	apipermsDescCreatedAt := apipermsMixinFields0[1].Descriptor()
-	// apiperms.DefaultCreatedAt holds the default value on creation for the created_at field.
-	apiperms.DefaultCreatedAt = apipermsDescCreatedAt.Default.(func() time.Time)
-	// apipermsDescUpdatedAt is the schema descriptor for updated_at field.
-	apipermsDescUpdatedAt := apipermsMixinFields0[2].Descriptor()
-	// apiperms.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	apiperms.DefaultUpdatedAt = apipermsDescUpdatedAt.Default.(func() time.Time)
-	// apiperms.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	apiperms.UpdateDefaultUpdatedAt = apipermsDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// apipermsDescPermissionType is the schema descriptor for permission_type field.
-	apipermsDescPermissionType := apipermsFields[4].Descriptor()
-	// apiperms.DefaultPermissionType holds the default value on creation for the permission_type field.
-	apiperms.DefaultPermissionType = apipermsDescPermissionType.Default.(string)
-	// apipermsDescRoles is the schema descriptor for roles field.
-	apipermsDescRoles := apipermsFields[5].Descriptor()
-	// apiperms.DefaultRoles holds the default value on creation for the roles field.
-	apiperms.DefaultRoles = apipermsDescRoles.Default.([]string)
-	// apipermsDescStatus is the schema descriptor for status field.
-	apipermsDescStatus := apipermsFields[6].Descriptor()
-	// apiperms.DefaultStatus holds the default value on creation for the status field.
-	apiperms.DefaultStatus = apipermsDescStatus.Default.(string)
 	categoryMixin := schema.Category{}.Mixin()
 	categoryMixinFields0 := categoryMixin[0].Fields()
 	_ = categoryMixinFields0

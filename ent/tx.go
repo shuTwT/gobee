@@ -16,8 +16,6 @@ type Tx struct {
 	Album *AlbumClient
 	// AlbumPhoto is the client for interacting with the AlbumPhoto builders.
 	AlbumPhoto *AlbumPhotoClient
-	// ApiPerms is the client for interacting with the ApiPerms builders.
-	ApiPerms *ApiPermsClient
 	// Category is the client for interacting with the Category builders.
 	Category *CategoryClient
 	// Comment is the client for interacting with the Comment builders.
@@ -217,7 +215,6 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Album = NewAlbumClient(tx.config)
 	tx.AlbumPhoto = NewAlbumPhotoClient(tx.config)
-	tx.ApiPerms = NewApiPermsClient(tx.config)
 	tx.Category = NewCategoryClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.Coupon = NewCouponClient(tx.config)
