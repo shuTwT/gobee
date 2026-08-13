@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useThemeVars } from 'naive-ui'
 import { useUserStore } from '@/stores/modules/user'
 
 const router = useRouter()
 const userStore = useUserStore()
 const dialog = useDialog()
 const message = useMessage()
+const themeVars = useThemeVars()
+
+// 卡片主题色变量，跟随 naive-ui 主题，避免硬编码紫色
+const cardCssVars = computed(() => ({
+  '--card-primary': themeVars.value.primaryColor,
+  '--card-primary-hover': themeVars.value.primaryColorHover,
+}))
 
 const gotoUserCenter = () => {
   router.push({ name: 'UserCenter' })
@@ -56,14 +64,14 @@ function logout() {
         <n-avatar
           class="cursor-pointer"
           :src="hasAvatar ? userStore.avatar : undefined"
-          :style="!hasAvatar ? { color: '#fff', backgroundColor: '#18a058' } : {}"
+          :style="!hasAvatar ? { color: '#fff', backgroundColor: themeVars.primaryColor } : {}"
         >
           {{ avatarText }}
         </n-avatar>
       </template>
 
       <!-- Discord 风格用户卡片 -->
-      <div class="discord-user-card">
+      <div class="discord-user-card" :style="cardCssVars">
         <!-- 顶部横幅区 -->
         <div class="card-banner"></div>
 
@@ -74,7 +82,6 @@ function logout() {
             <n-avatar
               class="card-avatar"
               :src="hasAvatar ? userStore.avatar : undefined"
-              :style="!hasAvatar ? { color: '#fff', backgroundColor: '#5865f2' } : {}"
             >
               {{ avatarText }}
             </n-avatar>
@@ -146,7 +153,7 @@ function logout() {
 /* 顶部横幅 */
 .card-banner {
   height: 60px;
-  background: linear-gradient(135deg, #5865f2 0%, #7289da 100%);
+  background: linear-gradient(135deg, var(--card-primary) 0%, var(--card-primary-hover) 100%);
 }
 
 /* 主体 */
@@ -168,7 +175,8 @@ function logout() {
   height: 68px;
   border: 6px solid #111214;
   border-radius: 50%;
-  background: #5865f2;
+  background: var(--card-primary);
+  color: #fff;
 }
 
 .card-status-dot {
@@ -256,8 +264,8 @@ function logout() {
   border-radius: 4px;
   font-size: 12px;
   font-weight: 500;
-  background: rgba(88, 101, 242, 0.15);
-  color: #5865f2;
+  background: color-mix(in srgb, var(--card-primary) 15%, transparent);
+  color: var(--card-primary);
 }
 
 /* 操作按钮区 */

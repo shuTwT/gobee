@@ -27,6 +27,7 @@ func initSystemRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	userApi := router.Group("/user")
 	{
 		userApi.Get("/profile", handlerMap.UserHandler.GetUserProfile)
+		userApi.Put("/profile/update", handlerMap.UserHandler.UpdateProfile)
 		userApi.Get("/list", handlerMap.UserHandler.ListUser)
 		userApi.Get("/page", handlerMap.UserHandler.ListUserPage)
 		userApi.Post("/create", handlerMap.UserHandler.CreateUser)

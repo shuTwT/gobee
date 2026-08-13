@@ -40,3 +40,7 @@ export const createPat = (data:any)=>{
 export const getUserProfile = ()=>{
   return http.request<ApiResponse<any>>('get',`${BASE_URL}/v1/user/profile`)
 }
+
+export const updateProfile = (data: { nickname?: string; bio?: string }) => {
+  return http.request<ApiResponse<any>>('put', `${BASE_URL}/v1/user/profile/update`, { data })
+}

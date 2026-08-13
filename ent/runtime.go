@@ -2031,6 +2031,14 @@ func init() {
 			return nil
 		}
 	}()
+	// userDescNickname is the schema descriptor for nickname field.
+	userDescNickname := userFields[7].Descriptor()
+	// user.NicknameValidator is a validator for the "nickname" field. It is called by the builders before save.
+	user.NicknameValidator = userDescNickname.Validators[0].(func(string) error)
+	// userDescBio is the schema descriptor for bio field.
+	userDescBio := userFields[8].Descriptor()
+	// user.BioValidator is a validator for the "bio" field. It is called by the builders before save.
+	user.BioValidator = userDescBio.Validators[0].(func(string) error)
 	visitlogMixin := schema.VisitLog{}.Mixin()
 	visitlogMixinFields0 := visitlogMixin[0].Fields()
 	_ = visitlogMixinFields0

@@ -32,6 +32,10 @@ const (
 	FieldPassword = "password"
 	// FieldRoleID holds the string denoting the role_id field in the database.
 	FieldRoleID = "role_id"
+	// FieldNickname holds the string denoting the nickname field in the database.
+	FieldNickname = "nickname"
+	// FieldBio holds the string denoting the bio field in the database.
+	FieldBio = "bio"
 	// EdgeRole holds the string denoting the role edge name in mutations.
 	EdgeRole = "role"
 	// EdgeMember holds the string denoting the member edge name in mutations.
@@ -84,6 +88,8 @@ var Columns = []string{
 	FieldPhoneNumberVerified,
 	FieldPassword,
 	FieldRoleID,
+	FieldNickname,
+	FieldBio,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -115,6 +121,10 @@ var (
 	DefaultPhoneNumberVerified bool
 	// PasswordValidator is a validator for the "password" field. It is called by the builders before save.
 	PasswordValidator func(string) error
+	// NicknameValidator is a validator for the "nickname" field. It is called by the builders before save.
+	NicknameValidator func(string) error
+	// BioValidator is a validator for the "bio" field. It is called by the builders before save.
+	BioValidator func(string) error
 )
 
 // OrderOption defines the ordering options for the User queries.
@@ -168,6 +178,16 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 // ByRoleID orders the results by the role_id field.
 func ByRoleID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRoleID, opts...).ToFunc()
+}
+
+// ByNickname orders the results by the nickname field.
+func ByNickname(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNickname, opts...).ToFunc()
+}
+
+// ByBio orders the results by the bio field.
+func ByBio(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBio, opts...).ToFunc()
 }
 
 // ByRoleField orders the results by role field.

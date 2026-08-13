@@ -1,13 +1,57 @@
 <script setup lang="ts">
-import { NButton, NDescriptions,NDescriptionsItem, NSpace } from 'naive-ui'
+import { NButton, NDescriptions,NDescriptionsItem, NSpace, useThemeVars } from 'naive-ui'
 import * as userApi from "@/api/system/user"
 import personalAccessTokenForm from './personalAccessTokenForm.vue'
+import profileEditForm from './profileEditForm.vue'
 import { addDialog } from '@/components/dialog'
 import type { TableColumn } from 'naive-ui/es/data-table/src/interface'
 import dayjs from 'dayjs'
 import { useClipboard } from '@vueuse/core'
+import { useUserStore } from '@/stores/modules/user'
+import { useStorageLocal } from '@/utils/utils'
+import { userKey } from '@/utils/auth'
 
 const message = useMessage()
+const userStore = useUserStore()
+const themeVars = useThemeVars()
+
+// 头像缺省时显示的首字母
+const avatarText = computed(() => {
+  const name = userStore.nickname || userStore.username || 'U'
+  return name.charAt(0).toUpperCase()
+})
+
+// 编辑个人资料：弹窗编辑昵称与个人简介
+const handleEditProfile = () => {
+  const formRef = ref()
+  addDialog({
+    title: '编辑个人资料',
+    contentRenderer: () =>
+      h(profileEditForm, {
+        ref: formRef,
+        nickname: personalInfomation.value.nickname,
+        bio: personalInfomation.value.bio,
+      }),
+    beforeSure: async (done) => {
+      try {
+        const data = await formRef.value.getData()
+        await userApi.updateProfile(data)
+        message.success('保存成功')
+        done()
+        // 保存成功后刷新资料，并同步用户 store 昵称（头部/左下角即时刷新 + 持久化）
+        const res = await userApi.getUserProfile()
+        personalInfomation.value = res.data
+        const newNickname = res.data.nickname ?? ''
+        userStore.SET_NICKNAME(newNickname)
+        const storage = useStorageLocal()
+        const stored = storage.getItem(userKey) ?? {}
+        storage.setItem(userKey, { ...stored, nickname: newNickname })
+      } catch {
+        // 校验失败或保存失败，保持弹窗开启
+      }
+    },
+  })
+}
 const colorOptions = ref([
   {
     value: 'light',
@@ -122,7 +166,28 @@ onMounted(async ()=>{
 </script>
 <template>
   <div class="p-4 sm:p-6 lg:p-8">
-    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">用户中心</h2>
+    <!-- 顶部：左侧头像+昵称/用户名，右侧编辑按钮 -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <n-avatar
+          :size="56"
+          round
+          :src="userStore.avatar || undefined"
+          :style="!userStore.avatar ? { color: '#fff', backgroundColor: themeVars.primaryColor } : {}"
+        >
+          {{ avatarText }}
+        </n-avatar>
+        <div class="flex flex-col">
+          <span class="text-[18px] font-bold text-gray-900 dark:text-white leading-tight">
+            {{ userStore.nickname || userStore.username || '用户' }}
+          </span>
+          <span class="text-[14px] text-gray-500 dark:text-gray-400 leading-tight">
+            {{ userStore.username }}
+          </span>
+        </div>
+      </div>
+      <n-button type="primary" @click="handleEditProfile">编辑</n-button>
+    </div>
 
     <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-6">
       <n-tabs v-model:value="activeTab" type="segment" animated>

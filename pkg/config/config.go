@@ -1,6 +1,8 @@
 package config
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"os"
 	"path/filepath"
 
@@ -36,6 +38,8 @@ const (
 	REDIS_ADDR     = "redis.addr"
 	REDIS_PASSWORD = "redis.password"
 	REDIS_DB       = "redis.db"
+	// AI 配置加密密钥（Base64 编码的 32 字节 AES-256 密钥）
+	AI_CONFIG_ENCRYPTION_KEY = "ai.config_encryption_key"
 )
 
 func Init() {
@@ -60,6 +64,8 @@ func Init() {
 	viper.SetDefault(REDIS_ADDR, "localhost:6379")
 	viper.SetDefault(REDIS_PASSWORD, "")
 	viper.SetDefault(REDIS_DB, 0)
+	// AI 配置加密密钥：空则首次启动自动生成并持久化，保证 AI 功能开箱即用
+	viper.SetDefault(AI_CONFIG_ENCRYPTION_KEY, "")
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")
@@ -77,6 +83,7 @@ func Init() {
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// 配置文件不存在，在工作空间/data创建默认配置文件
+			ensureAIEncryptionKey()
 			createDefaultConfig()
 		} else {
 			// 配置文件存在但读取失败
@@ -84,6 +91,31 @@ func Init() {
 		}
 	} else {
 		logger.Info("已加载配置文件", "config_file", viper.ConfigFileUsed())
+		ensureAIEncryptionKey()
+	}
+}
+
+// ensureAIEncryptionKey 确保 AI 配置加密密钥存在：缺失时生成随机密钥并持久化到配置文件。
+// 生成的密钥稳定不变，保证数据库中已加密的 AI API Key 在重启后仍可解密。
+func ensureAIEncryptionKey() {
+	if viper.GetString(AI_CONFIG_ENCRYPTION_KEY) != "" {
+		return
+	}
+	raw := make([]byte, 32)
+	if _, err := rand.Read(raw); err != nil {
+		logger.Warn("生成 AI 配置加密密钥失败", "error", err.Error())
+		return
+	}
+	key := base64.StdEncoding.EncodeToString(raw)
+	viper.Set(AI_CONFIG_ENCRYPTION_KEY, key)
+	if viper.ConfigFileUsed() == "" {
+		// 配置文件尚未存在，由 createDefaultConfig 负责写盘
+		return
+	}
+	if err := viper.WriteConfig(); err != nil {
+		logger.Warn("无法持久化 AI 配置加密密钥", "error", err.Error())
+	} else {
+		logger.Info("已生成 AI 配置加密密钥并写入配置文件", "config_file", viper.ConfigFileUsed())
 	}
 }
 

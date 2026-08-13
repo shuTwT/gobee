@@ -796,6 +796,8 @@ var (
 		{Name: "phone_number", Type: field.TypeString, Unique: true, Nullable: true, Size: 20},
 		{Name: "phone_number_verified", Type: field.TypeBool, Default: false},
 		{Name: "password", Type: field.TypeString, Size: 255},
+		{Name: "nickname", Type: field.TypeString, Nullable: true, Size: 50},
+		{Name: "bio", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "role_id", Type: field.TypeInt, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -806,7 +808,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_roles_users",
-				Columns:    []*schema.Column{UsersColumns[9]},
+				Columns:    []*schema.Column{UsersColumns[11]},
 				RefColumns: []*schema.Column{RolesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

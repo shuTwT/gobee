@@ -55,9 +55,6 @@ func (s *EssayServiceImpl) GetEssay(ctx context.Context, id int) (*ent.Essay, er
 
 func (s *EssayServiceImpl) GetEssayPage(ctx context.Context, page, pageSize int) ([]*ent.Essay, int, error) {
 	count, err := s.client.Essay.Query().
-		Order(ent.Desc(essay.FieldID)).
-		Limit(pageSize).
-		Offset((page - 1) * pageSize).
 		Count(ctx)
 	if err != nil {
 		return nil, 0, err

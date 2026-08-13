@@ -10,6 +10,8 @@ import (
 	"io"
 	"os"
 	"strings"
+
+	"github.com/shuTwT/hoshikuzu/pkg/config"
 )
 
 var (
@@ -27,11 +29,17 @@ type aesGCMCipher struct {
 	aead cipher.AEAD
 }
 
-// NewConfigCipher reads a base64-encoded, 32-byte AES-256 key directly from
-// the deployment environment. There is intentionally no generated default.
+// NewConfigCipher reads a base64-encoded, 32-byte AES-256 key from the
+// deployment environment, falling back to the ai.config_encryption_key entry
+// in the config file. There is intentionally no generated default here; the
+// config layer auto-generates one on first startup when it is missing.
 func NewConfigCipher() (SecretCipher, error) {
 	rawKey, ok := os.LookupEnv("AI_CONFIG_ENCRYPTION_KEY")
 	if !ok || strings.TrimSpace(rawKey) == "" {
+		// 回退到配置文件（data/config.toml 的 [ai] config_encryption_key）
+		rawKey = config.GetString(config.AI_CONFIG_ENCRYPTION_KEY)
+	}
+	if strings.TrimSpace(rawKey) == "" {
 		return nil, ErrConfigEncryptionKeyUnavailable
 	}
 	return NewAESGCMCipher(rawKey)

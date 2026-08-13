@@ -49,6 +49,14 @@ type UserProfileResp struct {
 	PhoneNumberVerified bool      `json:"phone_number_verified"`
 	RoleID              *int      `json:"role_id,omitempty"`
 	Role                *ent.Role `json:"role,omitempty"`
+	Nickname            string    `json:"nickname"`
+	Bio                 string    `json:"bio"`
+}
+
+// UpdateProfileReq 个人资料自我更新请求（仅昵称与个人简介）
+type UpdateProfileReq struct {
+	Nickname string `json:"nickname,omitempty" validate:"max=50"`
+	Bio      string `json:"bio,omitempty" validate:"max=255"`
 }
 
 type UserSearchReq struct {

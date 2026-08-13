@@ -41,6 +41,8 @@ func (User) Fields() []ent.Field {
 			NotEmpty().MaxLen(255).
 			Sensitive(),
 		field.Int("role_id").Optional().Comment("角色ID"),
+		field.String("nickname").Optional().MaxLen(50).Comment("昵称"),
+		field.String("bio").Optional().MaxLen(255).Comment("个人简介"),
 	}
 }
 

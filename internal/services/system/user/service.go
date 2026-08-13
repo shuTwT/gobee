@@ -24,6 +24,7 @@ type UserService interface {
 	QueryUserById(ctx context.Context, id int) (*ent.User, error)
 	CreateUser(ctx context.Context, req model.UserCreateReq) (*ent.User, error)
 	UpdateUser(ctx context.Context, id int, req model.UserUpdateReq) (*ent.User, error)
+	UpdateProfile(ctx context.Context, userId int, req model.UpdateProfileReq) error
 	GetUserCount(ctx context.Context) (int, error)
 	DeleteUser(ctx context.Context, id int) error
 	GetPersonalAccessTokenList(ctx context.Context, userId int) ([]*ent.PersonalAccessToken, error)
@@ -219,6 +220,14 @@ func (s *UserServiceImpl) UpdateUser(ctx context.Context, id int, req model.User
 		return nil, err
 	}
 	return updatedUser, nil
+}
+
+// UpdateProfile 更新当前登录用户的个人资料（仅昵称与个人简介）
+func (s *UserServiceImpl) UpdateProfile(ctx context.Context, userId int, req model.UpdateProfileReq) error {
+	return s.client.User.UpdateOneID(userId).
+		SetNickname(req.Nickname).
+		SetBio(req.Bio).
+		Exec(ctx)
 }
 
 func (s *UserServiceImpl) GetUserCount(ctx context.Context) (int, error) {

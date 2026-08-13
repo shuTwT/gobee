@@ -390,7 +390,35 @@ func (h *UserHandler) GetUserProfile(c *fiber.Ctx) error {
 		PhoneNumber:         &user.PhoneNumber,
 		PhoneNumberVerified: user.PhoneNumberVerified,
 		Role:                role,
+		Nickname:            user.Nickname,
+		Bio:                 user.Bio,
 	}
 
 	return c.JSON(model.NewSuccess("success", result))
+}
+
+// @Summary 更新个人资料
+// @Description 更新当前登录用户的昵称与个人简介
+// @Tags 后台管理接口/用户
+// @Accept json
+// @Produce json
+// @Param req body model.UpdateProfileReq true "个人资料更新请求"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 401 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/user/profile/update [put]
+func (h *UserHandler) UpdateProfile(c *fiber.Ctx) error {
+	loginUser := middleware.GetCurrentUser(c)
+	if loginUser == nil {
+		return c.JSON(model.NewError(fiber.StatusUnauthorized, "Unauthorized"))
+	}
+	var req model.UpdateProfileReq
+	if err := c.BodyParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	if err := h.userService.UpdateProfile(c.Context(), loginUser.ID, req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", nil))
 }
