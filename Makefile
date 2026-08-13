@@ -54,7 +54,9 @@ frontend: build-frontend
 .PHONY: build-all-platforms package
 build-all-platforms: build-frontend
 	@echo "=== Start building all platforms (CGO enabled) ==="
-	@for platform in $(TARGET_PLATFORMS); do \
+	@set -u; \
+	BUILD_FAILED=0; \
+	for platform in $(TARGET_PLATFORMS); do \
 		GOOS=$$(echo $$platform | cut -d '/' -f1); \
 		GOARCH=$$(echo $$platform | cut -d '/' -f2); \
 		CC=$$(echo $$platform | cut -d '/' -f3); \
@@ -62,12 +64,30 @@ build-all-platforms: build-frontend
 		if [ "$$GOOS" = "windows" ]; then EXT=".exe"; else EXT=""; fi; \
 		OUTPUT_DIR=$(DIST_DIR)/$$GOOS"_"$$GOARCH; \
 		OUTPUT_FILE=$$OUTPUT_DIR/$(BINARY_NAME)$$EXT; \
-		mkdir -p $$OUTPUT_DIR; \
 		echo "--- Building $$GOOS/$$GOARCH (CC=$$CC) ---"; \
 		\
-		CC=$$CC $(CGO_FLAG) GOOS=$$GOOS GOARCH=$$GOARCH go build $(LDFLAGS) -o $$OUTPUT_FILE main.go; \
-		echo "✅ $$GOOS/$$GOARCH built to $$OUTPUT_FILE"; \
-	done
+		if ! command -v "$$CC" >/dev/null 2>&1; then \
+			echo "ERROR: required C compiler '$$CC' was not found in PATH." >&2; \
+			echo "Install the toolchain for $$GOOS/$$GOARCH or remove that platform from TARGET_PLATFORMS." >&2; \
+			BUILD_FAILED=1; \
+			continue; \
+		fi; \
+		mkdir -p $$OUTPUT_DIR; \
+		TMP_OUTPUT=$$OUTPUT_FILE.tmp; \
+		rm -f $$TMP_OUTPUT; \
+		if CC=$$CC $(CGO_FLAG) GOOS=$$GOOS GOARCH=$$GOARCH go build $(LDFLAGS) -o $$TMP_OUTPUT main.go; then \
+			mv $$TMP_OUTPUT $$OUTPUT_FILE; \
+			echo "✅ $$GOOS/$$GOARCH built to $$OUTPUT_FILE"; \
+		else \
+			rm -f $$TMP_OUTPUT; \
+			echo "ERROR: $$GOOS/$$GOARCH build failed; continuing with remaining platforms." >&2; \
+			BUILD_FAILED=1; \
+		fi; \
+	done; \
+	if [ "$$BUILD_FAILED" -ne 0 ]; then \
+		echo "=== All platforms were attempted, but one or more builds failed. ===" >&2; \
+		exit 1; \
+	fi
 	@echo "=== All platforms build completed! ==="
 
 # 打包产物（同样用行内循环，避免语法错误）

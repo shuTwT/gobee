@@ -1,9 +1,11 @@
 import { NButton, NPopconfirm, type MessageReactive } from 'naive-ui'
 import * as postApi from '@/api/content/post'
+import * as settingApi from '@/api/system/setting'
 import { addDialog } from '@/components/dialog'
 import type { FormProps } from './types'
 import SettingForm from '../settingForm.vue'
 import ImportForm from '../importForm.vue'
+import ShareDialog from '../shareDialog.vue'
 
 export function usePostHook() {
   const message = useMessage()
@@ -144,20 +146,125 @@ export function usePostHook() {
 
   // 分享文章
   const sharePost = (row: any) => {
-    // TODO: 实现分享功能
-    message.info('分享功能开发中')
+    return new Promise<void>((resolve, reject) => {
+      Promise.all([
+        postApi.queryPost(row.id),
+        settingApi.getSettingsMap('basic'),
+      ])
+        .then(([postRes, settingRes]) => {
+          const post = postRes.data
+          const siteUrl = (settingRes.data?.siteUrl || settingRes.data?.site_url || '').replace(
+            /\/$/,
+            '',
+          )
+          if (!siteUrl) {
+            message.warning('请先在系统设置中配置站点地址')
+            reject(new Error('site_url not configured'))
+            return
+          }
+          const slug = post.slug || post.id
+          const shareUrl = `${siteUrl}/post/${slug}`
+
+          const dialogRef = ref()
+          addDialog({
+            title: '分享文章',
+            contentRenderer: ({ options }) =>
+              h(ShareDialog, {
+                ref: dialogRef,
+                formInline: {
+                  title: post.title,
+                  shareUrl,
+                },
+              }),
+            beforeSure: (done) => {
+              done()
+              resolve()
+            },
+            positiveText: '关闭',
+            negativeText: undefined,
+          })
+        })
+        .catch((err) => {
+          message.error('获取文章信息失败')
+          reject(err)
+        })
+    })
   }
 
   // 导出文章
   const exportPost = (row: any) => {
-    // TODO: 实现导出功能
-    message.info('导出功能开发中')
+    return new Promise<void>((resolve, reject) => {
+      postApi
+        .queryPost(row.id)
+        .then((res) => {
+          const post = res.data
+          const content = post.md_content || post.content || ''
+          if (!content.trim()) {
+            message.warning('文章内容为空，无法导出')
+            reject(new Error('empty content'))
+            return
+          }
+
+          const safeTitle = post.title.replace(/[\\/:*?"<>|\r\n\t]/g, '_')
+          const fileName = `${safeTitle}.md`
+
+          const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = fileName
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+          URL.revokeObjectURL(url)
+
+          message.success('导出成功')
+          resolve()
+        })
+        .catch((err) => {
+          message.error('导出失败')
+          reject(err)
+        })
+    })
   }
 
   // 复制文章内容
   const copyPostContent = (row: any) => {
-    // TODO: 实现复制内容功能
-    message.info('复制内容功能开发中')
+    return new Promise<void>((resolve, reject) => {
+      postApi
+        .queryPost(row.id)
+        .then((res) => {
+          const post = res.data
+          const content = post.md_content || post.content || ''
+          if (!content.trim()) {
+            message.warning('文章内容为空，无法复制')
+            reject(new Error('empty content'))
+            return
+          }
+
+          const doCopy = async () => {
+            try {
+              await navigator.clipboard.writeText(content)
+            } catch {
+              const textarea = document.createElement('textarea')
+              textarea.value = content
+              textarea.style.position = 'fixed'
+              textarea.style.opacity = '0'
+              document.body.appendChild(textarea)
+              textarea.select()
+              document.execCommand('copy')
+              document.body.removeChild(textarea)
+            }
+            message.success('内容已复制到剪贴板')
+            resolve()
+          }
+          doCopy()
+        })
+        .catch((err) => {
+          message.error('复制失败')
+          reject(err)
+        })
+    })
   }
 
   /**

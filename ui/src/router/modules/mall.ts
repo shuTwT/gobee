@@ -35,7 +35,7 @@ export default [
         },
       },
       {
-        path: '/member/level',
+        path: '/mall/member-level',
         name: 'MemberLevelManagement',
         component: () => import('@/views/mall/member-level/index.vue'),
         meta: {

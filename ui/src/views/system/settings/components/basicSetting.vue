@@ -26,6 +26,7 @@ const basicForm = ref({
   siteDescription: '',
   siteLogo: '',
   siteFavicon: '',
+  siteUrl: '',
   keywords: '',
   author: '',
   language: 'zh-CN',
@@ -85,6 +86,9 @@ onMounted(()=>{
     </n-form-item>
     <n-form-item label="网站图标" path="siteFavicon">
       <n-input v-model:value="basicForm.siteFavicon" placeholder="请输入图标地址" />
+    </n-form-item>
+    <n-form-item label="站点地址" path="siteUrl">
+      <n-input v-model:value="basicForm.siteUrl" placeholder="例如: https://example.com" />
     </n-form-item>
     <n-form-item label="关键词" path="keywords">
       <n-input v-model:value="basicForm.keywords" placeholder="请输入关键词，用逗号分隔" />

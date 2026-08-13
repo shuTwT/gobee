@@ -3,6 +3,7 @@ export type basicSetting = {
   site_description: string
   site_logo: string
   site_favicon: string
+  site_url: string
   author: string
   language: string
   timezone: string

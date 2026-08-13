@@ -17,6 +17,7 @@ node_modules
 .claude/*
 .codex/*
 .agents/*
+.zcode/*
 
 # keep shared instructions
 !.claude/CLAUDE.md

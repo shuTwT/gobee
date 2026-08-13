@@ -51,6 +51,7 @@ type AIService interface {
 	DeleteSession(ctx context.Context, userID, sessionID int) error
 	ClearSession(ctx context.Context, userID, sessionID int) error
 	StreamChat(ctx context.Context, userID, sessionID int, content string, onDelta func(string) error) (*model.AIChatMessageResp, error)
+	GenerateSummary(ctx context.Context, title, content string) (string, error)
 }
 
 type AIServiceImpl struct {
@@ -377,6 +378,65 @@ func (s *AIServiceImpl) StreamChat(ctx context.Context, userID, sessionID int, c
 	}
 	resp := messageResponse(assistant)
 	return &resp, nil
+}
+
+const (
+	summarySystemPrompt = "你是一名专业的中文文章摘要助手，请用简洁的中文总结文章内容，字数控制在 200 字以内。"
+	maxSummaryInputRunes = 8000
+	maxSummaryOutputRunes = 512
+)
+
+func (s *AIServiceImpl) GenerateSummary(ctx context.Context, title, content string) (string, error) {
+	if err := s.ensureCipher(); err != nil {
+		return "", err
+	}
+
+	provider, err := s.providerConfig(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	// 截断过长的文章内容，避免超出模型上下文
+	input := content
+	if utf8.RuneCountInString(input) > maxSummaryInputRunes {
+		runes := []rune(input)
+		input = string(runes[:maxSummaryInputRunes])
+	}
+
+	userContent := fmt.Sprintf("标题：%s\n\n内容：%s", title, input)
+
+	resp, err := newOpenAIClient(provider.BaseURL, provider.APIKey).CreateChatCompletion(ctx, openai.ChatCompletionRequest{
+		Model: provider.Model,
+		Messages: []openai.ChatCompletionMessage{
+			{Role: openai.ChatMessageRoleSystem, Content: summarySystemPrompt},
+			{Role: openai.ChatMessageRoleUser, Content: userContent},
+		},
+		MaxTokens:        provider.MaxTokens,
+		Temperature:      float32(provider.Temperature),
+		TopP:             float32(provider.TopP),
+		FrequencyPenalty: float32(provider.FrequencyPenalty),
+		PresencePenalty:  float32(provider.PresencePenalty),
+	})
+	if err != nil {
+		return "", providerError(err)
+	}
+
+	if len(resp.Choices) == 0 {
+		return "", ErrAIProviderEmptyResponse
+	}
+
+	summary := strings.TrimSpace(resp.Choices[0].Message.Content)
+	if summary == "" {
+		return "", ErrAIProviderEmptyResponse
+	}
+
+	// 截断到 512 字符，匹配 post.summary 字段的 MaxLen(512)
+	if utf8.RuneCountInString(summary) > maxSummaryOutputRunes {
+		runes := []rune(summary)
+		summary = string(runes[:maxSummaryOutputRunes])
+	}
+
+	return summary, nil
 }
 
 type providerConfig struct {

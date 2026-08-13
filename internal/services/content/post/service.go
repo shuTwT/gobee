@@ -3,6 +3,7 @@ package post
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"math/rand/v2"
 	"sort"
@@ -13,6 +14,7 @@ import (
 	"github.com/shuTwT/hoshikuzu/ent/category"
 	"github.com/shuTwT/hoshikuzu/ent/post"
 	"github.com/shuTwT/hoshikuzu/ent/tag"
+	ai_service "github.com/shuTwT/hoshikuzu/internal/services/ai/chat"
 	"github.com/shuTwT/hoshikuzu/pkg/cache"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
 	"github.com/shuTwT/hoshikuzu/pkg/utils"
@@ -37,11 +39,12 @@ type PostService interface {
 }
 
 type PostServiceImpl struct {
-	client *ent.Client
+	client    *ent.Client
+	aiService ai_service.AIService
 }
 
-func NewPostServiceImpl(client *ent.Client) *PostServiceImpl {
-	return &PostServiceImpl{client: client}
+func NewPostServiceImpl(client *ent.Client, aiService ai_service.AIService) *PostServiceImpl {
+	return &PostServiceImpl{client: client, aiService: aiService}
 }
 
 func (s *PostServiceImpl) QueryPostList(c context.Context, req model.PostListReq) ([]*ent.Post, error) {
@@ -207,8 +210,15 @@ func (s *PostServiceImpl) UpdatePostContent(c context.Context, id int, content s
 func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, updateReq model.PostUpdateReq) (*ent.Post, error) {
 	client := s.client
 	var summary string
+	needAsyncGen := false
+
 	if updateReq.IsAutogenSummary {
-		summary = "生成失败"
+		if strings.TrimSpace(updateReq.Summary) == "" {
+			summary = "生成中..."
+			needAsyncGen = true
+		} else {
+			summary = updateReq.Summary
+		}
 	} else {
 		summary = updateReq.Summary
 	}
@@ -244,6 +254,32 @@ func (s *PostServiceImpl) UpdatePostSetting(c context.Context, id int, updateReq
 		AddCategoryIDs(updateReq.Categories...).
 		AddTagIDs(updateReq.Tags...).
 		Save(c)
+
+	// 异步生成 AI 摘要
+	if needAsyncGen && err == nil {
+		go func(postID int, title string, content string) {
+			ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+			defer cancel()
+
+			generated, genErr := s.aiService.GenerateSummary(ctx, title, content)
+			if genErr != nil {
+				slog.Error("AI 摘要生成失败", "post_id", postID, "error", genErr.Error())
+				if _, updateErr := s.client.Post.UpdateOneID(postID).
+					SetSummary("生成失败").
+					Save(context.Background()); updateErr != nil {
+					slog.Error("更新摘要失败状态失败", "post_id", postID, "error", updateErr.Error())
+				}
+				return
+			}
+
+			if _, updateErr := s.client.Post.UpdateOneID(postID).
+				SetSummary(generated).
+				Save(context.Background()); updateErr != nil {
+				slog.Error("保存 AI 生成摘要失败", "post_id", postID, "error", updateErr.Error())
+			}
+		}(id, updateReq.Title, updateReq.Content)
+	}
+
 	return newPost, err
 }
 

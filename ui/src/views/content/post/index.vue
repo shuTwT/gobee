@@ -35,6 +35,9 @@ import * as categoryApi from '@/api/content/category'
 import * as tagApi from '@/api/content/tag'
 import { usePostHook } from './utils/hook'
 import dayjs from 'dayjs'
+import { addDialog } from '@/components/dialog'
+import ShareDialog from './shareDialog.vue'
+import * as settingApi from '@/api/system/setting'
 
 const message = useMessage()
 const dialog = useDialog()
@@ -354,21 +357,104 @@ const handleSettingPost = (row: any) => {
 }
 
 // 分享文章
-const sharePost = (row: any) => {
-  // TODO: 实现分享功能
-  message.info('分享功能开发中')
+const sharePost = async (row: any) => {
+  try {
+    const [postRes, settingRes] = await Promise.all([
+      postApi.queryPost(row.id),
+      settingApi.getSettingsMap('basic'),
+    ])
+    const post = postRes.data
+    const siteUrl = (settingRes.data?.siteUrl || settingRes.data?.site_url || '').replace(/\/$/, '')
+    if (!siteUrl) {
+      message.warning('请先在系统设置中配置站点地址')
+      return
+    }
+    const slug = post.slug || post.id
+    const shareUrl = `${siteUrl}/post/${slug}`
+
+    const dialogRef = ref()
+    addDialog({
+      title: '分享文章',
+      contentRenderer: ({ options }) =>
+        h(ShareDialog, {
+          ref: dialogRef,
+          formInline: {
+            title: post.title,
+            shareUrl,
+          },
+        }),
+      beforeSure: (done) => {
+        done()
+      },
+      positiveText: '关闭',
+      negativeText: undefined,
+    })
+  } catch {
+    message.error('获取文章信息失败')
+  }
 }
 
 // 导出文章
-const exportPost = (row: any) => {
-  // TODO: 实现导出功能
-  message.info('导出功能开发中')
+const exportPost = async (row: any) => {
+  try {
+    const res = await postApi.queryPost(row.id)
+    const post = res.data
+    const content = post.md_content || post.content || ''
+    if (!content.trim()) {
+      message.warning('文章内容为空，无法导出')
+      return
+    }
+
+    // 生成文件名，替换非法字符
+    const safeTitle = post.title.replace(/[\\/:*?"<>|\r\n\t]/g, '_')
+    const fileName = `${safeTitle}.md`
+
+    // 创建 Blob 并触发下载
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = fileName
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+
+    message.success('导出成功')
+  } catch {
+    message.error('导出失败')
+  }
 }
 
 // 复制文章内容
-const copyPostContent = (row: any) => {
-  // TODO: 实现复制内容功能
-  message.info('复制内容功能开发中')
+const copyPostContent = async (row: any) => {
+  try {
+    const res = await postApi.queryPost(row.id)
+    const post = res.data
+    const content = post.md_content || post.content || ''
+    if (!content.trim()) {
+      message.warning('文章内容为空，无法复制')
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(content)
+    } catch {
+      // 降级方案
+      const textarea = document.createElement('textarea')
+      textarea.value = content
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+    }
+
+    message.success('内容已复制到剪贴板')
+  } catch {
+    message.error('复制失败')
+  }
 }
 
 // 克隆文章

@@ -151,9 +151,6 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 	authService := auth_service.NewAuthServiceImpl(db)
 	categoryService := category_service.NewCategoryServiceImpl(db)
 	commentService := comment_service.NewCommentServiceImpl(db)
-	commonService := common_service.NewCommonServiceImpl(db, user_service.NewUserServiceImpl(db), post_service.NewPostServiceImpl(db), comment_service.NewCommentServiceImpl(db))
-	couponService := coupon_service.NewCouponServiceImpl(db)
-	couponUsageService := couponusage_service.NewCouponUsageServiceImpl(db)
 	essayService := essay_service.NewEssayServiceImpl(db)
 	fileService := file_service.NewFileServiceImpl(db)
 	licenseService := license_service.NewLicenseServiceImpl(db)
@@ -166,7 +163,6 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 	payOderService := payorder_service.NewPayOrderServiceImpl(db)
 	permissionService := permission_service.NewPermissionServiceImpl(db)
 	pluginService := plugin_service.NewPluginServiceImpl(db)
-	postService := post_service.NewPostServiceImpl(db)
 	productService := product_service.NewProductServiceImpl(db)
 	roleService := role_service.NewRoleServiceImpl(db)
 	settingService := setting_service.NewSettingServiceImpl(db)
@@ -174,6 +170,10 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 	if err := aiService.CleanupLegacySettings(context.Background()); err != nil {
 		panic("failed cleaning legacy AI settings: " + err.Error())
 	}
+	postService := post_service.NewPostServiceImpl(db, aiService)
+	commonService := common_service.NewCommonServiceImpl(db, user_service.NewUserServiceImpl(db), postService, comment_service.NewCommentServiceImpl(db))
+	couponService := coupon_service.NewCouponServiceImpl(db)
+	couponUsageService := couponusage_service.NewCouponUsageServiceImpl(db)
 	storageStrategyService := storagestrategy_service.NewStorageStrategyServiceImpl(db)
 	themeService := theme_service.NewThemeServiceImpl(db)
 	tagService := tag_service.NewTagServiceImpl(db)
