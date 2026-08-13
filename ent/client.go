@@ -43,6 +43,7 @@ import (
 	"github.com/shuTwT/hoshikuzu/ent/plugin"
 	"github.com/shuTwT/hoshikuzu/ent/post"
 	"github.com/shuTwT/hoshikuzu/ent/product"
+	"github.com/shuTwT/hoshikuzu/ent/refreshtoken"
 	"github.com/shuTwT/hoshikuzu/ent/role"
 	"github.com/shuTwT/hoshikuzu/ent/schedulejob"
 	"github.com/shuTwT/hoshikuzu/ent/setting"
@@ -116,6 +117,8 @@ type Client struct {
 	Post *PostClient
 	// Product is the client for interacting with the Product builders.
 	Product *ProductClient
+	// RefreshToken is the client for interacting with the RefreshToken builders.
+	RefreshToken *RefreshTokenClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// ScheduleJob is the client for interacting with the ScheduleJob builders.
@@ -175,6 +178,7 @@ func (c *Client) init() {
 	c.Plugin = NewPluginClient(c.config)
 	c.Post = NewPostClient(c.config)
 	c.Product = NewProductClient(c.config)
+	c.RefreshToken = NewRefreshTokenClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.ScheduleJob = NewScheduleJobClient(c.config)
 	c.Setting = NewSettingClient(c.config)
@@ -305,6 +309,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Plugin:              NewPluginClient(cfg),
 		Post:                NewPostClient(cfg),
 		Product:             NewProductClient(cfg),
+		RefreshToken:        NewRefreshTokenClient(cfg),
 		Role:                NewRoleClient(cfg),
 		ScheduleJob:         NewScheduleJobClient(cfg),
 		Setting:             NewSettingClient(cfg),
@@ -362,6 +367,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Plugin:              NewPluginClient(cfg),
 		Post:                NewPostClient(cfg),
 		Product:             NewProductClient(cfg),
+		RefreshToken:        NewRefreshTokenClient(cfg),
 		Role:                NewRoleClient(cfg),
 		ScheduleJob:         NewScheduleJobClient(cfg),
 		Setting:             NewSettingClient(cfg),
@@ -406,8 +412,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.FLinkGroup, c.File, c.FriendCircleRecord, c.License, c.Member, c.MemberLevel,
 		c.Menu, c.Notification, c.Oauth2AccessToken, c.Oauth2Code,
 		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post,
-		c.Product, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.Theme,
-		c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Product, c.RefreshToken, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy,
+		c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -422,8 +428,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.FLinkGroup, c.File, c.FriendCircleRecord, c.License, c.Member, c.MemberLevel,
 		c.Menu, c.Notification, c.Oauth2AccessToken, c.Oauth2Code,
 		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post,
-		c.Product, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.Theme,
-		c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Product, c.RefreshToken, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy,
+		c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -488,6 +494,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Post.mutate(ctx, m)
 	case *ProductMutation:
 		return c.Product.mutate(ctx, m)
+	case *RefreshTokenMutation:
+		return c.RefreshToken.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
 	case *ScheduleJobMutation:
@@ -4413,6 +4421,139 @@ func (c *ProductClient) mutate(ctx context.Context, m *ProductMutation) (Value, 
 	}
 }
 
+// RefreshTokenClient is a client for the RefreshToken schema.
+type RefreshTokenClient struct {
+	config
+}
+
+// NewRefreshTokenClient returns a client for the RefreshToken from the given config.
+func NewRefreshTokenClient(c config) *RefreshTokenClient {
+	return &RefreshTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `refreshtoken.Hooks(f(g(h())))`.
+func (c *RefreshTokenClient) Use(hooks ...Hook) {
+	c.hooks.RefreshToken = append(c.hooks.RefreshToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `refreshtoken.Intercept(f(g(h())))`.
+func (c *RefreshTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.RefreshToken = append(c.inters.RefreshToken, interceptors...)
+}
+
+// Create returns a builder for creating a RefreshToken entity.
+func (c *RefreshTokenClient) Create() *RefreshTokenCreate {
+	mutation := newRefreshTokenMutation(c.config, OpCreate)
+	return &RefreshTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RefreshToken entities.
+func (c *RefreshTokenClient) CreateBulk(builders ...*RefreshTokenCreate) *RefreshTokenCreateBulk {
+	return &RefreshTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RefreshTokenClient) MapCreateBulk(slice any, setFunc func(*RefreshTokenCreate, int)) *RefreshTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RefreshTokenCreateBulk{err: fmt.Errorf("calling to RefreshTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RefreshTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RefreshTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RefreshToken.
+func (c *RefreshTokenClient) Update() *RefreshTokenUpdate {
+	mutation := newRefreshTokenMutation(c.config, OpUpdate)
+	return &RefreshTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RefreshTokenClient) UpdateOne(_m *RefreshToken) *RefreshTokenUpdateOne {
+	mutation := newRefreshTokenMutation(c.config, OpUpdateOne, withRefreshToken(_m))
+	return &RefreshTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RefreshTokenClient) UpdateOneID(id int) *RefreshTokenUpdateOne {
+	mutation := newRefreshTokenMutation(c.config, OpUpdateOne, withRefreshTokenID(id))
+	return &RefreshTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RefreshToken.
+func (c *RefreshTokenClient) Delete() *RefreshTokenDelete {
+	mutation := newRefreshTokenMutation(c.config, OpDelete)
+	return &RefreshTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RefreshTokenClient) DeleteOne(_m *RefreshToken) *RefreshTokenDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RefreshTokenClient) DeleteOneID(id int) *RefreshTokenDeleteOne {
+	builder := c.Delete().Where(refreshtoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RefreshTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for RefreshToken.
+func (c *RefreshTokenClient) Query() *RefreshTokenQuery {
+	return &RefreshTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRefreshToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a RefreshToken entity by its id.
+func (c *RefreshTokenClient) Get(ctx context.Context, id int) (*RefreshToken, error) {
+	return c.Query().Where(refreshtoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RefreshTokenClient) GetX(ctx context.Context, id int) *RefreshToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *RefreshTokenClient) Hooks() []Hook {
+	return c.hooks.RefreshToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *RefreshTokenClient) Interceptors() []Interceptor {
+	return c.inters.RefreshToken
+}
+
+func (c *RefreshTokenClient) mutate(ctx context.Context, m *RefreshTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RefreshTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RefreshTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RefreshTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RefreshTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown RefreshToken mutation op: %q", m.Op())
+	}
+}
+
 // RoleClient is a client for the Role schema.
 type RoleClient struct {
 	config
@@ -5878,15 +6019,17 @@ type (
 		Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
 		FriendCircleRecord, License, Member, MemberLevel, Menu, Notification,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
-		PersonalAccessToken, Plugin, Post, Product, Role, ScheduleJob, Setting,
-		StorageStrategy, Tag, Theme, User, VisitLog, Wallet, WebHook []ent.Hook
+		PersonalAccessToken, Plugin, Post, Product, RefreshToken, Role, ScheduleJob,
+		Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,
+		WebHook []ent.Hook
 	}
 	inters struct {
 		AIChatMessage, AIChatSession, AIConfig, Album, AlbumPhoto, Category, Comment,
 		Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
 		FriendCircleRecord, License, Member, MemberLevel, Menu, Notification,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
-		PersonalAccessToken, Plugin, Post, Product, Role, ScheduleJob, Setting,
-		StorageStrategy, Tag, Theme, User, VisitLog, Wallet, WebHook []ent.Interceptor
+		PersonalAccessToken, Plugin, Post, Product, RefreshToken, Role, ScheduleJob,
+		Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,
+		WebHook []ent.Interceptor
 	}
 )

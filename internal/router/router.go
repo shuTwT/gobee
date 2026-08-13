@@ -385,6 +385,8 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap, dbClient *ent
 	auth := router.Group("/api/auth")
 	{
 		auth.Post("/login/password", handlerMap.AuthHandler.Login)
+		auth.Post("/refresh-token", handlerMap.AuthHandler.RefreshToken)
+		auth.Post("/logout", handlerMap.AuthHandler.Logout)
 	}
 
 	api := router.Group("/api")

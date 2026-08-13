@@ -34,12 +34,10 @@ export function getToken(): DataInfo<number> | null{
 }
 
 export function setToken(data:DataInfo<Date>){
-  console.log(data)
   let expires = 0;
   const {accessToken,refreshToken} = data
   const {isRemembered,loginDay} = useUserStoreHook()
   expires = new Date(Number(data.expires)).getTime()
-  console.log(expires)
   const cookieString = JSON.stringify({accessToken,refreshToken,expires})
 
   if(expires > 0){

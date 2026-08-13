@@ -7,10 +7,25 @@ type LoginRequest struct {
 }
 
 type LoginResp struct {
-	AccessToken string   `json:"accessToken"`
-	Expires     int64    `json:"expires"`
-	Username    string   `json:"username"`
-	Roles       []string `json:"roles"`
+	AccessToken  string   `json:"accessToken"`
+	RefreshToken string   `json:"refreshToken"`
+	Expires      int64    `json:"expires"`
+	Username     string   `json:"username"`
+	Roles        []string `json:"roles"`
+}
+
+// RefreshTokenRequest 刷新令牌请求
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refreshToken" validate:"required"`
+}
+
+// RefreshTokenResp 刷新令牌响应，字段与 LoginResp 对齐
+type RefreshTokenResp struct {
+	AccessToken  string   `json:"accessToken"`
+	RefreshToken string   `json:"refreshToken"`
+	Expires      int64    `json:"expires"`
+	Username     string   `json:"username"`
+	Roles        []string `json:"roles"`
 }
 
 type PersonalAccessTokenCreateReq struct {

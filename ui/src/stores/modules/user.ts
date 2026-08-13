@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { store } from '..'
 import { useStorageLocal } from '@/utils/utils'
-import { removeToken, setToken, userKey, type DataInfo } from '@/utils/auth'
-import { passwordLogin } from '@/api/system/auth'
+import { removeToken, setToken, getToken, userKey, type DataInfo } from '@/utils/auth'
+import { passwordLogin, refreshToken as refreshTokenApi, logout as logoutApi } from '@/api/system/auth'
 import router, { resetRouter } from '@/router'
 
 export const useUserStore = defineStore('user', () => {
@@ -87,8 +87,17 @@ export const useUserStore = defineStore('user', () => {
     })
   }
 
-  async function logOut(){
-    username.value = ""
+  async function logOut() {
+    // 尽力通知后端吊销 refresh token，失败不阻塞登出
+    const refreshTokenValue = getToken()?.refreshToken
+    if (refreshTokenValue) {
+      try {
+        await logoutApi(refreshTokenValue)
+      } catch {
+        // 忽略网络错误，继续本地登出
+      }
+    }
+    username.value = ''
     roles.value = []
     permissions.value = []
     removeToken()
@@ -96,8 +105,9 @@ export const useUserStore = defineStore('user', () => {
     router.push({path: '/login'})
   }
 
-  async function handleRefreshToken(data:any){
-
+  // 刷新 access token，返回新的令牌数据供调用方使用
+  async function handleRefreshToken() {
+    await refreshAccessToken()
   }
 
   return {
@@ -124,6 +134,32 @@ export const useUserStore = defineStore('user', () => {
     handleRefreshToken,
   }
 })
+
+/**
+ * 共享的 access token 刷新 Promise。
+ * 多个 HTTP 客户端在 token 过期时共享同一次刷新，避免并发刷新导致 refresh token 轮换冲突。
+ */
+let accessTokenRefreshPromise: Promise<string> | null = null
+
+export function refreshAccessToken(): Promise<string> {
+  if (accessTokenRefreshPromise) {
+    return accessTokenRefreshPromise
+  }
+  const data = getToken()
+  if (!data?.refreshToken) {
+    return Promise.reject(new Error('缺少 refreshToken'))
+  }
+  accessTokenRefreshPromise = (async () => {
+    try {
+      const { data: tokenData } = await refreshTokenApi({ refreshToken: data.refreshToken })
+      setToken(tokenData)
+      return tokenData.accessToken as string
+    } finally {
+      accessTokenRefreshPromise = null
+    }
+  })()
+  return accessTokenRefreshPromise
+}
 
 export function useUserStoreHook() {
   return useUserStore(store)
