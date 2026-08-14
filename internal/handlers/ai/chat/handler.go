@@ -27,92 +27,240 @@ func NewAIHandler(service ai_service.AIService, client *ent.Client) *AIHandler {
 	return &AIHandler{service: service, client: client}
 }
 
-// @Summary 获取 AI 配置
-// @Description 获取脱敏后的 OpenAI 兼容配置，仅超级管理员可用
+// @Summary 获取 AI 提供商列表
+// @Description 获取全部 AI 提供商及各自的模型列表（API Key 脱敏），仅超级管理员可用
 // @Tags 后台管理接口/AI
 // @Produce json
-// @Success 200 {object} model.HttpSuccess{data=model.AIConfigResp}
+// @Success 200 {object} model.HttpSuccess{data=[]model.AIProviderResp}
 // @Failure 403 {object} model.HttpError
 // @Failure 503 {object} model.HttpError
-// @Router /api/v1/ai/config [get]
-func (h *AIHandler) GetConfig(c *fiber.Ctx) error {
+// @Router /api/v1/ai/providers/list [get]
+func (h *AIHandler) ListProviders(c *fiber.Ctx) error {
 	if err := h.requireSuperAdmin(c); err != nil {
 		return err
 	}
-	config, err := h.service.GetConfig(c.Context())
+	providers, err := h.service.ListProviders(c.Context())
 	if err != nil {
 		return h.writeError(c, err)
 	}
-	return c.JSON(model.NewSuccess("success", config))
+	return c.JSON(model.NewSuccess("success", providers))
 }
 
-// @Summary 保存 AI 配置
-// @Description 保存完整的 OpenAI 兼容配置，API Key 只写入服务端密文
+// @Summary 创建 AI 提供商
+// @Description 新增一个 OpenAI 兼容提供商，API Key 仅以密文落库
 // @Tags 后台管理接口/AI
 // @Accept json
 // @Produce json
-// @Param req body model.AIConfigUpdateReq true "AI 配置"
+// @Param req body model.AIProviderReq true "提供商配置"
 // @Success 200 {object} model.HttpSuccess
 // @Failure 400 {object} model.HttpError
 // @Failure 403 {object} model.HttpError
-// @Failure 503 {object} model.HttpError
-// @Router /api/v1/ai/config [put]
-func (h *AIHandler) SaveConfig(c *fiber.Ctx) error {
+// @Router /api/v1/ai/providers/create [post]
+func (h *AIHandler) CreateProvider(c *fiber.Ctx) error {
 	if err := h.requireSuperAdmin(c); err != nil {
 		return err
 	}
-	var req model.AIConfigUpdateReq
+	var req model.AIProviderReq
 	if err := c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	if err := h.service.SaveConfig(c.Context(), req); err != nil {
+	if err := h.service.CreateProvider(c.Context(), req); err != nil {
 		return h.writeError(c, err)
 	}
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
-// @Summary 测试 AI 配置
-// @Description 服务端测试未保存的 OpenAI 兼容配置
+// @Summary 更新 AI 提供商
+// @Description 更新提供商信息；api_key 留空表示保留原密钥
 // @Tags 后台管理接口/AI
 // @Accept json
 // @Produce json
-// @Param req body model.AIConfigTestReq true "测试配置"
+// @Param id path int true "提供商 ID"
+// @Param req body model.AIProviderReq true "提供商配置"
 // @Success 200 {object} model.HttpSuccess
 // @Failure 400 {object} model.HttpError
 // @Failure 403 {object} model.HttpError
-// @Failure 502 {object} model.HttpError
-// @Router /api/v1/ai/config/test [post]
-func (h *AIHandler) TestConfig(c *fiber.Ctx) error {
+// @Failure 404 {object} model.HttpError
+// @Router /api/v1/ai/providers/update/{id} [put]
+func (h *AIHandler) UpdateProvider(c *fiber.Ctx) error {
 	if err := h.requireSuperAdmin(c); err != nil {
 		return err
 	}
-	var req model.AIConfigTestReq
+	id, err := parseIDParam(c, "id", "provider")
+	if err != nil {
+		return err
+	}
+	var req model.AIProviderReq
 	if err := c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
-	if err := h.service.TestConfig(c.Context(), req); err != nil {
+	if err := h.service.UpdateProvider(c.Context(), id, req); err != nil {
 		return h.writeError(c, err)
 	}
 	return c.JSON(model.NewSuccess("success", nil))
 }
 
-// @Summary 获取 AI 模型列表
-// @Description 由服务端使用已保存配置请求供应商模型列表
+// @Summary 删除 AI 提供商
+// @Description 删除提供商及其全部模型
 // @Tags 后台管理接口/AI
 // @Produce json
-// @Success 200 {object} model.HttpSuccess{data=[]model.AIModelResp}
+// @Param id path int true "提供商 ID"
+// @Success 200 {object} model.HttpSuccess
 // @Failure 403 {object} model.HttpError
-// @Failure 502 {object} model.HttpError
-// @Router /api/v1/ai/config/models [get]
-func (h *AIHandler) ListModels(c *fiber.Ctx) error {
+// @Failure 404 {object} model.HttpError
+// @Router /api/v1/ai/providers/delete/{id} [delete]
+func (h *AIHandler) DeleteProvider(c *fiber.Ctx) error {
 	if err := h.requireSuperAdmin(c); err != nil {
 		return err
 	}
-	models, err := h.service.ListModels(c.Context())
+	id, err := parseIDParam(c, "id", "provider")
 	if err != nil {
+		return err
+	}
+	if err := h.service.DeleteProvider(c.Context(), id); err != nil {
 		return h.writeError(c, err)
 	}
-	return c.JSON(model.NewSuccess("success", models))
+	return c.JSON(model.NewSuccess("success", nil))
+}
+
+// @Summary 测试 AI 提供商连接
+// @Description 服务端用未保存的 base_url/api_key 请求供应商模型列表验证连通性
+// @Tags 后台管理接口/AI
+// @Accept json
+// @Produce json
+// @Param req body model.AIProviderTestReq true "测试配置"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 403 {object} model.HttpError
+// @Failure 502 {object} model.HttpError
+// @Router /api/v1/ai/providers/test [post]
+func (h *AIHandler) TestProvider(c *fiber.Ctx) error {
+	if err := h.requireSuperAdmin(c); err != nil {
+		return err
+	}
+	var req model.AIProviderTestReq
+	if err := c.BodyParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	if err := h.service.TestProvider(c.Context(), req); err != nil {
+		return h.writeError(c, err)
+	}
+	return c.JSON(model.NewSuccess("success", nil))
+}
+
+// @Summary 从供应商同步模型列表
+// @Description 请求供应商模型接口并用结果替换该提供商下的全部模型
+// @Tags 后台管理接口/AI
+// @Produce json
+// @Param id path int true "提供商 ID"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 403 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Failure 502 {object} model.HttpError
+// @Router /api/v1/ai/providers/{id}/models/sync [post]
+func (h *AIHandler) SyncProviderModels(c *fiber.Ctx) error {
+	if err := h.requireSuperAdmin(c); err != nil {
+		return err
+	}
+	id, err := parseIDParam(c, "id", "provider")
+	if err != nil {
+		return err
+	}
+	if err := h.service.SyncProviderModels(c.Context(), id); err != nil {
+		return h.writeError(c, err)
+	}
+	return c.JSON(model.NewSuccess("success", nil))
+}
+
+// @Summary 创建提供商模型
+// @Description 为指定提供商添加一条模型记录
+// @Tags 后台管理接口/AI
+// @Accept json
+// @Produce json
+// @Param id path int true "提供商 ID"
+// @Param req body model.AIModelReq true "模型配置"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 403 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Router /api/v1/ai/providers/{id}/models/create [post]
+func (h *AIHandler) CreateProviderModel(c *fiber.Ctx) error {
+	if err := h.requireSuperAdmin(c); err != nil {
+		return err
+	}
+	providerID, err := parseIDParam(c, "id", "provider")
+	if err != nil {
+		return err
+	}
+	var req model.AIModelReq
+	if err := c.BodyParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	if err := h.service.CreateProviderModel(c.Context(), providerID, req); err != nil {
+		return h.writeError(c, err)
+	}
+	return c.JSON(model.NewSuccess("success", nil))
+}
+
+// @Summary 更新提供商模型
+// @Tags 后台管理接口/AI
+// @Accept json
+// @Produce json
+// @Param id path int true "提供商 ID"
+// @Param modelId path int true "模型 ID"
+// @Param req body model.AIModelReq true "模型配置"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 403 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Router /api/v1/ai/providers/{id}/models/update/{modelId} [put]
+func (h *AIHandler) UpdateProviderModel(c *fiber.Ctx) error {
+	if err := h.requireSuperAdmin(c); err != nil {
+		return err
+	}
+	providerID, err := parseIDParam(c, "id", "provider")
+	if err != nil {
+		return err
+	}
+	modelID, err := parseIDParam(c, "modelId", "model")
+	if err != nil {
+		return err
+	}
+	var req model.AIModelReq
+	if err := c.BodyParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	if err := h.service.UpdateProviderModel(c.Context(), providerID, modelID, req); err != nil {
+		return h.writeError(c, err)
+	}
+	return c.JSON(model.NewSuccess("success", nil))
+}
+
+// @Summary 删除提供商模型
+// @Tags 后台管理接口/AI
+// @Produce json
+// @Param id path int true "提供商 ID"
+// @Param modelId path int true "模型 ID"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 403 {object} model.HttpError
+// @Failure 404 {object} model.HttpError
+// @Router /api/v1/ai/providers/{id}/models/delete/{modelId} [delete]
+func (h *AIHandler) DeleteProviderModel(c *fiber.Ctx) error {
+	if err := h.requireSuperAdmin(c); err != nil {
+		return err
+	}
+	providerID, err := parseIDParam(c, "id", "provider")
+	if err != nil {
+		return err
+	}
+	modelID, err := parseIDParam(c, "modelId", "model")
+	if err != nil {
+		return err
+	}
+	if err := h.service.DeleteProviderModel(c.Context(), providerID, modelID); err != nil {
+		return h.writeError(c, err)
+	}
+	return c.JSON(model.NewSuccess("success", nil))
 }
 
 // @Summary 获取聊天会话列表
@@ -308,6 +456,14 @@ func parseID(c *fiber.Ctx) (int, error) {
 	return id, nil
 }
 
+func parseIDParam(c *fiber.Ctx, name, label string) (int, error) {
+	id, err := strconv.Atoi(c.Params(name))
+	if err != nil || id <= 0 {
+		return 0, c.Status(fiber.StatusBadRequest).JSON(model.NewError(fiber.StatusBadRequest, "Invalid "+label+" ID"))
+	}
+	return id, nil
+}
+
 func (h *AIHandler) writeError(c *fiber.Ctx, err error) error {
 	status := fiber.StatusInternalServerError
 	message := "AI request failed"
@@ -318,7 +474,7 @@ func (h *AIHandler) writeError(c *fiber.Ctx, err error) error {
 	case errors.Is(err, ai_service.ErrAIChatSessionNotFound):
 		status = fiber.StatusNotFound
 		message = "AI chat session not found"
-	case errors.Is(err, ai_service.ErrAIConfigNotFound), errors.Is(err, infra_ai.ErrConfigEncryptionKeyUnavailable), errors.Is(err, infra_ai.ErrConfigDecryptionFailed):
+	case errors.Is(err, ai_service.ErrAIProviderNotFound), errors.Is(err, ai_service.ErrAIModelNotFound), errors.Is(err, infra_ai.ErrConfigEncryptionKeyUnavailable), errors.Is(err, infra_ai.ErrConfigDecryptionFailed):
 		status = fiber.StatusServiceUnavailable
 		message = "AI service is not configured"
 	case errors.Is(err, ai_service.ErrAIProviderEmptyResponse):
@@ -335,7 +491,7 @@ func (h *AIHandler) writeError(c *fiber.Ctx, err error) error {
 
 func streamErrorCode(err error) string {
 	switch {
-	case errors.Is(err, ai_service.ErrAIConfigNotFound), errors.Is(err, infra_ai.ErrConfigEncryptionKeyUnavailable), errors.Is(err, infra_ai.ErrConfigDecryptionFailed):
+	case errors.Is(err, ai_service.ErrAIProviderNotFound), errors.Is(err, ai_service.ErrAIModelNotFound), errors.Is(err, infra_ai.ErrConfigEncryptionKeyUnavailable), errors.Is(err, infra_ai.ErrConfigDecryptionFailed):
 		return "configuration_unavailable"
 	case errors.Is(err, ai_service.ErrAIChatSessionNotFound):
 		return "session_not_found"
@@ -350,7 +506,7 @@ func streamErrorCode(err error) string {
 
 func streamErrorMessage(err error) string {
 	switch {
-	case errors.Is(err, ai_service.ErrAIConfigNotFound), errors.Is(err, infra_ai.ErrConfigEncryptionKeyUnavailable), errors.Is(err, infra_ai.ErrConfigDecryptionFailed):
+	case errors.Is(err, ai_service.ErrAIProviderNotFound), errors.Is(err, ai_service.ErrAIModelNotFound), errors.Is(err, infra_ai.ErrConfigEncryptionKeyUnavailable), errors.Is(err, infra_ai.ErrConfigDecryptionFailed):
 		return "AI service is not configured"
 	case errors.Is(err, ai_service.ErrAIChatSessionNotFound):
 		return "AI chat session not found"

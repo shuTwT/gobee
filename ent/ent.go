@@ -14,7 +14,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/shuTwT/hoshikuzu/ent/aichatmessage"
 	"github.com/shuTwT/hoshikuzu/ent/aichatsession"
-	"github.com/shuTwT/hoshikuzu/ent/aiconfig"
+	"github.com/shuTwT/hoshikuzu/ent/aimodel"
+	"github.com/shuTwT/hoshikuzu/ent/aiprovider"
 	"github.com/shuTwT/hoshikuzu/ent/album"
 	"github.com/shuTwT/hoshikuzu/ent/albumphoto"
 	"github.com/shuTwT/hoshikuzu/ent/category"
@@ -113,7 +114,8 @@ func checkColumn(t, c string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			aichatmessage.Table:       aichatmessage.ValidColumn,
 			aichatsession.Table:       aichatsession.ValidColumn,
-			aiconfig.Table:            aiconfig.ValidColumn,
+			aimodel.Table:             aimodel.ValidColumn,
+			aiprovider.Table:          aiprovider.ValidColumn,
 			album.Table:               album.ValidColumn,
 			albumphoto.Table:          albumphoto.ValidColumn,
 			category.Table:            category.ValidColumn,

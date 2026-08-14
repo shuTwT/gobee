@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -11,68 +12,92 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shuTwT/hoshikuzu/ent/aiconfig"
+	"github.com/shuTwT/hoshikuzu/ent/aimodel"
+	"github.com/shuTwT/hoshikuzu/ent/aiprovider"
 	"github.com/shuTwT/hoshikuzu/ent/predicate"
 )
 
-// AIConfigQuery is the builder for querying AIConfig entities.
-type AIConfigQuery struct {
+// AIProviderQuery is the builder for querying AIProvider entities.
+type AIProviderQuery struct {
 	config
 	ctx        *QueryContext
-	order      []aiconfig.OrderOption
+	order      []aiprovider.OrderOption
 	inters     []Interceptor
-	predicates []predicate.AIConfig
+	predicates []predicate.AIProvider
+	withModels *AIModelQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the AIConfigQuery builder.
-func (_q *AIConfigQuery) Where(ps ...predicate.AIConfig) *AIConfigQuery {
+// Where adds a new predicate for the AIProviderQuery builder.
+func (_q *AIProviderQuery) Where(ps ...predicate.AIProvider) *AIProviderQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *AIConfigQuery) Limit(limit int) *AIConfigQuery {
+func (_q *AIProviderQuery) Limit(limit int) *AIProviderQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *AIConfigQuery) Offset(offset int) *AIConfigQuery {
+func (_q *AIProviderQuery) Offset(offset int) *AIProviderQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *AIConfigQuery) Unique(unique bool) *AIConfigQuery {
+func (_q *AIProviderQuery) Unique(unique bool) *AIProviderQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *AIConfigQuery) Order(o ...aiconfig.OrderOption) *AIConfigQuery {
+func (_q *AIProviderQuery) Order(o ...aiprovider.OrderOption) *AIProviderQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
-// First returns the first AIConfig entity from the query.
-// Returns a *NotFoundError when no AIConfig was found.
-func (_q *AIConfigQuery) First(ctx context.Context) (*AIConfig, error) {
+// QueryModels chains the current query on the "models" edge.
+func (_q *AIProviderQuery) QueryModels() *AIModelQuery {
+	query := (&AIModelClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(aiprovider.Table, aiprovider.FieldID, selector),
+			sqlgraph.To(aimodel.Table, aimodel.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, aiprovider.ModelsTable, aiprovider.ModelsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// First returns the first AIProvider entity from the query.
+// Returns a *NotFoundError when no AIProvider was found.
+func (_q *AIProviderQuery) First(ctx context.Context) (*AIProvider, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{aiconfig.Label}
+		return nil, &NotFoundError{aiprovider.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *AIConfigQuery) FirstX(ctx context.Context) *AIConfig {
+func (_q *AIProviderQuery) FirstX(ctx context.Context) *AIProvider {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -80,22 +105,22 @@ func (_q *AIConfigQuery) FirstX(ctx context.Context) *AIConfig {
 	return node
 }
 
-// FirstID returns the first AIConfig ID from the query.
-// Returns a *NotFoundError when no AIConfig ID was found.
-func (_q *AIConfigQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first AIProvider ID from the query.
+// Returns a *NotFoundError when no AIProvider ID was found.
+func (_q *AIProviderQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{aiconfig.Label}
+		err = &NotFoundError{aiprovider.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *AIConfigQuery) FirstIDX(ctx context.Context) int {
+func (_q *AIProviderQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -103,10 +128,10 @@ func (_q *AIConfigQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single AIConfig entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one AIConfig entity is found.
-// Returns a *NotFoundError when no AIConfig entities are found.
-func (_q *AIConfigQuery) Only(ctx context.Context) (*AIConfig, error) {
+// Only returns a single AIProvider entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one AIProvider entity is found.
+// Returns a *NotFoundError when no AIProvider entities are found.
+func (_q *AIProviderQuery) Only(ctx context.Context) (*AIProvider, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -115,14 +140,14 @@ func (_q *AIConfigQuery) Only(ctx context.Context) (*AIConfig, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{aiconfig.Label}
+		return nil, &NotFoundError{aiprovider.Label}
 	default:
-		return nil, &NotSingularError{aiconfig.Label}
+		return nil, &NotSingularError{aiprovider.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *AIConfigQuery) OnlyX(ctx context.Context) *AIConfig {
+func (_q *AIProviderQuery) OnlyX(ctx context.Context) *AIProvider {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -130,10 +155,10 @@ func (_q *AIConfigQuery) OnlyX(ctx context.Context) *AIConfig {
 	return node
 }
 
-// OnlyID is like Only, but returns the only AIConfig ID in the query.
-// Returns a *NotSingularError when more than one AIConfig ID is found.
+// OnlyID is like Only, but returns the only AIProvider ID in the query.
+// Returns a *NotSingularError when more than one AIProvider ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *AIConfigQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *AIProviderQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
@@ -142,15 +167,15 @@ func (_q *AIConfigQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{aiconfig.Label}
+		err = &NotFoundError{aiprovider.Label}
 	default:
-		err = &NotSingularError{aiconfig.Label}
+		err = &NotSingularError{aiprovider.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *AIConfigQuery) OnlyIDX(ctx context.Context) int {
+func (_q *AIProviderQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -158,18 +183,18 @@ func (_q *AIConfigQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of AIConfigs.
-func (_q *AIConfigQuery) All(ctx context.Context) ([]*AIConfig, error) {
+// All executes the query and returns a list of AIProviders.
+func (_q *AIProviderQuery) All(ctx context.Context) ([]*AIProvider, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*AIConfig, *AIConfigQuery]()
-	return withInterceptors[[]*AIConfig](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*AIProvider, *AIProviderQuery]()
+	return withInterceptors[[]*AIProvider](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *AIConfigQuery) AllX(ctx context.Context) []*AIConfig {
+func (_q *AIProviderQuery) AllX(ctx context.Context) []*AIProvider {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -177,20 +202,20 @@ func (_q *AIConfigQuery) AllX(ctx context.Context) []*AIConfig {
 	return nodes
 }
 
-// IDs executes the query and returns a list of AIConfig IDs.
-func (_q *AIConfigQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of AIProvider IDs.
+func (_q *AIProviderQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(aiconfig.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(aiprovider.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *AIConfigQuery) IDsX(ctx context.Context) []int {
+func (_q *AIProviderQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -199,16 +224,16 @@ func (_q *AIConfigQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (_q *AIConfigQuery) Count(ctx context.Context) (int, error) {
+func (_q *AIProviderQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*AIConfigQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*AIProviderQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *AIConfigQuery) CountX(ctx context.Context) int {
+func (_q *AIProviderQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -217,7 +242,7 @@ func (_q *AIConfigQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *AIConfigQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *AIProviderQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -230,7 +255,7 @@ func (_q *AIConfigQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *AIConfigQuery) ExistX(ctx context.Context) bool {
+func (_q *AIProviderQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -238,22 +263,34 @@ func (_q *AIConfigQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the AIConfigQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the AIProviderQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *AIConfigQuery) Clone() *AIConfigQuery {
+func (_q *AIProviderQuery) Clone() *AIProviderQuery {
 	if _q == nil {
 		return nil
 	}
-	return &AIConfigQuery{
+	return &AIProviderQuery{
 		config:     _q.config,
 		ctx:        _q.ctx.Clone(),
-		order:      append([]aiconfig.OrderOption{}, _q.order...),
+		order:      append([]aiprovider.OrderOption{}, _q.order...),
 		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.AIConfig{}, _q.predicates...),
+		predicates: append([]predicate.AIProvider{}, _q.predicates...),
+		withModels: _q.withModels.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
+}
+
+// WithModels tells the query-builder to eager-load the nodes that are connected to
+// the "models" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *AIProviderQuery) WithModels(opts ...func(*AIModelQuery)) *AIProviderQuery {
+	query := (&AIModelClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withModels = query
+	return _q
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -266,15 +303,15 @@ func (_q *AIConfigQuery) Clone() *AIConfigQuery {
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.AIConfig.Query().
-//		GroupBy(aiconfig.FieldCreatedAt).
+//	client.AIProvider.Query().
+//		GroupBy(aiprovider.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *AIConfigQuery) GroupBy(field string, fields ...string) *AIConfigGroupBy {
+func (_q *AIProviderQuery) GroupBy(field string, fields ...string) *AIProviderGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &AIConfigGroupBy{build: _q}
+	grbuild := &AIProviderGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = aiconfig.Label
+	grbuild.label = aiprovider.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -288,23 +325,23 @@ func (_q *AIConfigQuery) GroupBy(field string, fields ...string) *AIConfigGroupB
 //		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
-//	client.AIConfig.Query().
-//		Select(aiconfig.FieldCreatedAt).
+//	client.AIProvider.Query().
+//		Select(aiprovider.FieldCreatedAt).
 //		Scan(ctx, &v)
-func (_q *AIConfigQuery) Select(fields ...string) *AIConfigSelect {
+func (_q *AIProviderQuery) Select(fields ...string) *AIProviderSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &AIConfigSelect{AIConfigQuery: _q}
-	sbuild.label = aiconfig.Label
+	sbuild := &AIProviderSelect{AIProviderQuery: _q}
+	sbuild.label = aiprovider.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a AIConfigSelect configured with the given aggregations.
-func (_q *AIConfigQuery) Aggregate(fns ...AggregateFunc) *AIConfigSelect {
+// Aggregate returns a AIProviderSelect configured with the given aggregations.
+func (_q *AIProviderQuery) Aggregate(fns ...AggregateFunc) *AIProviderSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *AIConfigQuery) prepareQuery(ctx context.Context) error {
+func (_q *AIProviderQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -316,7 +353,7 @@ func (_q *AIConfigQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !aiconfig.ValidColumn(f) {
+		if !aiprovider.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -330,17 +367,21 @@ func (_q *AIConfigQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *AIConfigQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*AIConfig, error) {
+func (_q *AIProviderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*AIProvider, error) {
 	var (
-		nodes = []*AIConfig{}
-		_spec = _q.querySpec()
+		nodes       = []*AIProvider{}
+		_spec       = _q.querySpec()
+		loadedTypes = [1]bool{
+			_q.withModels != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*AIConfig).scanValues(nil, columns)
+		return (*AIProvider).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &AIConfig{config: _q.config}
+		node := &AIProvider{config: _q.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -352,10 +393,48 @@ func (_q *AIConfigQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*AIC
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := _q.withModels; query != nil {
+		if err := _q.loadModels(ctx, query, nodes,
+			func(n *AIProvider) { n.Edges.Models = []*AIModel{} },
+			func(n *AIProvider, e *AIModel) { n.Edges.Models = append(n.Edges.Models, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
-func (_q *AIConfigQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *AIProviderQuery) loadModels(ctx context.Context, query *AIModelQuery, nodes []*AIProvider, init func(*AIProvider), assign func(*AIProvider, *AIModel)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*AIProvider)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(aimodel.FieldProviderID)
+	}
+	query.Where(predicate.AIModel(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(aiprovider.ModelsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ProviderID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "provider_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+
+func (_q *AIProviderQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -364,8 +443,8 @@ func (_q *AIConfigQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *AIConfigQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(aiconfig.Table, aiconfig.Columns, sqlgraph.NewFieldSpec(aiconfig.FieldID, field.TypeInt))
+func (_q *AIProviderQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(aiprovider.Table, aiprovider.Columns, sqlgraph.NewFieldSpec(aiprovider.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -374,9 +453,9 @@ func (_q *AIConfigQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, aiconfig.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, aiprovider.FieldID)
 		for i := range fields {
-			if fields[i] != aiconfig.FieldID {
+			if fields[i] != aiprovider.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -404,12 +483,12 @@ func (_q *AIConfigQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *AIConfigQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *AIProviderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(aiconfig.Table)
+	t1 := builder.Table(aiprovider.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = aiconfig.Columns
+		columns = aiprovider.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -436,28 +515,28 @@ func (_q *AIConfigQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// AIConfigGroupBy is the group-by builder for AIConfig entities.
-type AIConfigGroupBy struct {
+// AIProviderGroupBy is the group-by builder for AIProvider entities.
+type AIProviderGroupBy struct {
 	selector
-	build *AIConfigQuery
+	build *AIProviderQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *AIConfigGroupBy) Aggregate(fns ...AggregateFunc) *AIConfigGroupBy {
+func (_g *AIProviderGroupBy) Aggregate(fns ...AggregateFunc) *AIProviderGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *AIConfigGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *AIProviderGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*AIConfigQuery, *AIConfigGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*AIProviderQuery, *AIProviderGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *AIConfigGroupBy) sqlScan(ctx context.Context, root *AIConfigQuery, v any) error {
+func (_g *AIProviderGroupBy) sqlScan(ctx context.Context, root *AIProviderQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -484,28 +563,28 @@ func (_g *AIConfigGroupBy) sqlScan(ctx context.Context, root *AIConfigQuery, v a
 	return sql.ScanSlice(rows, v)
 }
 
-// AIConfigSelect is the builder for selecting fields of AIConfig entities.
-type AIConfigSelect struct {
-	*AIConfigQuery
+// AIProviderSelect is the builder for selecting fields of AIProvider entities.
+type AIProviderSelect struct {
+	*AIProviderQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *AIConfigSelect) Aggregate(fns ...AggregateFunc) *AIConfigSelect {
+func (_s *AIProviderSelect) Aggregate(fns ...AggregateFunc) *AIProviderSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *AIConfigSelect) Scan(ctx context.Context, v any) error {
+func (_s *AIProviderSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*AIConfigQuery, *AIConfigSelect](ctx, _s.AIConfigQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*AIProviderQuery, *AIProviderSelect](ctx, _s.AIProviderQuery, _s, _s.inters, v)
 }
 
-func (_s *AIConfigSelect) sqlScan(ctx context.Context, root *AIConfigQuery, v any) error {
+func (_s *AIProviderSelect) sqlScan(ctx context.Context, root *AIProviderQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {

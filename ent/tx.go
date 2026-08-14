@@ -16,8 +16,10 @@ type Tx struct {
 	AIChatMessage *AIChatMessageClient
 	// AIChatSession is the client for interacting with the AIChatSession builders.
 	AIChatSession *AIChatSessionClient
-	// AIConfig is the client for interacting with the AIConfig builders.
-	AIConfig *AIConfigClient
+	// AIModel is the client for interacting with the AIModel builders.
+	AIModel *AIModelClient
+	// AIProvider is the client for interacting with the AIProvider builders.
+	AIProvider *AIProviderClient
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
 	// AlbumPhoto is the client for interacting with the AlbumPhoto builders.
@@ -223,7 +225,8 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.AIChatMessage = NewAIChatMessageClient(tx.config)
 	tx.AIChatSession = NewAIChatSessionClient(tx.config)
-	tx.AIConfig = NewAIConfigClient(tx.config)
+	tx.AIModel = NewAIModelClient(tx.config)
+	tx.AIProvider = NewAIProviderClient(tx.config)
 	tx.Album = NewAlbumClient(tx.config)
 	tx.AlbumPhoto = NewAlbumPhotoClient(tx.config)
 	tx.Category = NewCategoryClient(tx.config)

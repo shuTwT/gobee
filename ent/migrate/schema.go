@@ -54,26 +54,55 @@ var (
 			},
 		},
 	}
-	// AiConfigsColumns holds the columns for the "ai_configs" table.
-	AiConfigsColumns = []*schema.Column{
+	// AiModelsColumns holds the columns for the "ai_models" table.
+	AiModelsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "config_key", Type: field.TypeString, Unique: true},
+		{Name: "model_name", Type: field.TypeString, Size: 255},
+		{Name: "display_name", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "is_enabled", Type: field.TypeBool, Default: true},
+		{Name: "sort", Type: field.TypeInt, Default: 0},
+		{Name: "provider_id", Type: field.TypeInt},
+	}
+	// AiModelsTable holds the schema information for the "ai_models" table.
+	AiModelsTable = &schema.Table{
+		Name:       "ai_models",
+		Columns:    AiModelsColumns,
+		PrimaryKey: []*schema.Column{AiModelsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "ai_models_ai_providers_models",
+				Columns:    []*schema.Column{AiModelsColumns[7]},
+				RefColumns: []*schema.Column{AiProvidersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// AiProvidersColumns holds the columns for the "ai_providers" table.
+	AiProvidersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 100},
+		{Name: "provider_type", Type: field.TypeString, Size: 50},
 		{Name: "base_url", Type: field.TypeString, Size: 2048},
-		{Name: "model", Type: field.TypeString, Size: 255},
+		{Name: "api_key_ciphertext", Type: field.TypeString, Nullable: true},
 		{Name: "temperature", Type: field.TypeFloat64, Default: 0.7},
 		{Name: "max_tokens", Type: field.TypeInt, Default: 2048},
 		{Name: "top_p", Type: field.TypeFloat64, Default: 1},
 		{Name: "frequency_penalty", Type: field.TypeFloat64, Default: 0},
 		{Name: "presence_penalty", Type: field.TypeFloat64, Default: 0},
-		{Name: "api_key_ciphertext", Type: field.TypeString},
+		{Name: "is_default", Type: field.TypeBool, Default: false},
+		{Name: "is_enabled", Type: field.TypeBool, Default: true},
+		{Name: "sort", Type: field.TypeInt, Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 255},
 	}
-	// AiConfigsTable holds the schema information for the "ai_configs" table.
-	AiConfigsTable = &schema.Table{
-		Name:       "ai_configs",
-		Columns:    AiConfigsColumns,
-		PrimaryKey: []*schema.Column{AiConfigsColumns[0]},
+	// AiProvidersTable holds the schema information for the "ai_providers" table.
+	AiProvidersTable = &schema.Table{
+		Name:       "ai_providers",
+		Columns:    AiProvidersColumns,
+		PrimaryKey: []*schema.Column{AiProvidersColumns[0]},
 	}
 	// AlbumsColumns holds the columns for the "albums" table.
 	AlbumsColumns = []*schema.Column{
@@ -941,7 +970,8 @@ var (
 	Tables = []*schema.Table{
 		AiChatMessagesTable,
 		AiChatSessionsTable,
-		AiConfigsTable,
+		AiModelsTable,
+		AiProvidersTable,
 		AlbumsTable,
 		AlbumPhotosTable,
 		CategoriesTable,
@@ -986,6 +1016,7 @@ var (
 func init() {
 	AiChatMessagesTable.ForeignKeys[0].RefTable = AiChatSessionsTable
 	AiChatSessionsTable.ForeignKeys[0].RefTable = UsersTable
+	AiModelsTable.ForeignKeys[0].RefTable = AiProvidersTable
 	FlinksTable.ForeignKeys[0].RefTable = FlinkGroupsTable
 	FilesTable.ForeignKeys[0].RefTable = StorageStrategiesTable
 	MembersTable.ForeignKeys[0].RefTable = MemberLevelsTable

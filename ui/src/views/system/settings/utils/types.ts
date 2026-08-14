@@ -10,16 +10,6 @@ export type basicSetting = {
   date_format: string
   time_format: string
 }
-export type AiSetting = {
-  base_url: string
-  api_key: string
-  model: string
-  temperature: number
-  max_tokens: number
-  top_p: number
-  frequency_penalty: number
-  presence_penalty: number
-}
 export type EmailSetting = {
   smtp_host: string
   smtp_port: number

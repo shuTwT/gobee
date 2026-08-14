@@ -170,6 +170,9 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 	if err := aiService.CleanupLegacySettings(context.Background()); err != nil {
 		panic("failed cleaning legacy AI settings: " + err.Error())
 	}
+	if err := aiService.MigrateLegacyConfig(context.Background()); err != nil {
+		panic("failed migrating legacy AI config: " + err.Error())
+	}
 	postService := post_service.NewPostServiceImpl(db, aiService)
 	commonService := common_service.NewCommonServiceImpl(db, user_service.NewUserServiceImpl(db), postService, comment_service.NewCommentServiceImpl(db))
 	couponService := coupon_service.NewCouponServiceImpl(db)

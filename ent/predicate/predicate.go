@@ -12,8 +12,11 @@ type AIChatMessage func(*sql.Selector)
 // AIChatSession is the predicate function for aichatsession builders.
 type AIChatSession func(*sql.Selector)
 
-// AIConfig is the predicate function for aiconfig builders.
-type AIConfig func(*sql.Selector)
+// AIModel is the predicate function for aimodel builders.
+type AIModel func(*sql.Selector)
+
+// AIProvider is the predicate function for aiprovider builders.
+type AIProvider func(*sql.Selector)
 
 // Album is the predicate function for album builders.
 type Album func(*sql.Selector)

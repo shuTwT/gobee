@@ -8,30 +8,30 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shuTwT/hoshikuzu/ent/aiconfig"
+	"github.com/shuTwT/hoshikuzu/ent/aimodel"
 	"github.com/shuTwT/hoshikuzu/ent/predicate"
 )
 
-// AIConfigDelete is the builder for deleting a AIConfig entity.
-type AIConfigDelete struct {
+// AIModelDelete is the builder for deleting a AIModel entity.
+type AIModelDelete struct {
 	config
 	hooks    []Hook
-	mutation *AIConfigMutation
+	mutation *AIModelMutation
 }
 
-// Where appends a list predicates to the AIConfigDelete builder.
-func (_d *AIConfigDelete) Where(ps ...predicate.AIConfig) *AIConfigDelete {
+// Where appends a list predicates to the AIModelDelete builder.
+func (_d *AIModelDelete) Where(ps ...predicate.AIModel) *AIModelDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *AIConfigDelete) Exec(ctx context.Context) (int, error) {
+func (_d *AIModelDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *AIConfigDelete) ExecX(ctx context.Context) int {
+func (_d *AIModelDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *AIConfigDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *AIConfigDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(aiconfig.Table, sqlgraph.NewFieldSpec(aiconfig.FieldID, field.TypeInt))
+func (_d *AIModelDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(aimodel.Table, sqlgraph.NewFieldSpec(aimodel.FieldID, field.TypeInt))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *AIConfigDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// AIConfigDeleteOne is the builder for deleting a single AIConfig entity.
-type AIConfigDeleteOne struct {
-	_d *AIConfigDelete
+// AIModelDeleteOne is the builder for deleting a single AIModel entity.
+type AIModelDeleteOne struct {
+	_d *AIModelDelete
 }
 
-// Where appends a list predicates to the AIConfigDelete builder.
-func (_d *AIConfigDeleteOne) Where(ps ...predicate.AIConfig) *AIConfigDeleteOne {
+// Where appends a list predicates to the AIModelDelete builder.
+func (_d *AIModelDeleteOne) Where(ps ...predicate.AIModel) *AIModelDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *AIConfigDeleteOne) Exec(ctx context.Context) error {
+func (_d *AIModelDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{aiconfig.Label}
+		return &NotFoundError{aimodel.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *AIConfigDeleteOne) ExecX(ctx context.Context) {
+func (_d *AIModelDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

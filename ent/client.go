@@ -17,7 +17,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/shuTwT/hoshikuzu/ent/aichatmessage"
 	"github.com/shuTwT/hoshikuzu/ent/aichatsession"
-	"github.com/shuTwT/hoshikuzu/ent/aiconfig"
+	"github.com/shuTwT/hoshikuzu/ent/aimodel"
+	"github.com/shuTwT/hoshikuzu/ent/aiprovider"
 	"github.com/shuTwT/hoshikuzu/ent/album"
 	"github.com/shuTwT/hoshikuzu/ent/albumphoto"
 	"github.com/shuTwT/hoshikuzu/ent/category"
@@ -65,8 +66,10 @@ type Client struct {
 	AIChatMessage *AIChatMessageClient
 	// AIChatSession is the client for interacting with the AIChatSession builders.
 	AIChatSession *AIChatSessionClient
-	// AIConfig is the client for interacting with the AIConfig builders.
-	AIConfig *AIConfigClient
+	// AIModel is the client for interacting with the AIModel builders.
+	AIModel *AIModelClient
+	// AIProvider is the client for interacting with the AIProvider builders.
+	AIProvider *AIProviderClient
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
 	// AlbumPhoto is the client for interacting with the AlbumPhoto builders.
@@ -152,7 +155,8 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.AIChatMessage = NewAIChatMessageClient(c.config)
 	c.AIChatSession = NewAIChatSessionClient(c.config)
-	c.AIConfig = NewAIConfigClient(c.config)
+	c.AIModel = NewAIModelClient(c.config)
+	c.AIProvider = NewAIProviderClient(c.config)
 	c.Album = NewAlbumClient(c.config)
 	c.AlbumPhoto = NewAlbumPhotoClient(c.config)
 	c.Category = NewCategoryClient(c.config)
@@ -283,7 +287,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:              cfg,
 		AIChatMessage:       NewAIChatMessageClient(cfg),
 		AIChatSession:       NewAIChatSessionClient(cfg),
-		AIConfig:            NewAIConfigClient(cfg),
+		AIModel:             NewAIModelClient(cfg),
+		AIProvider:          NewAIProviderClient(cfg),
 		Album:               NewAlbumClient(cfg),
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		Category:            NewCategoryClient(cfg),
@@ -341,7 +346,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:              cfg,
 		AIChatMessage:       NewAIChatMessageClient(cfg),
 		AIChatSession:       NewAIChatSessionClient(cfg),
-		AIConfig:            NewAIConfigClient(cfg),
+		AIModel:             NewAIModelClient(cfg),
+		AIProvider:          NewAIProviderClient(cfg),
 		Album:               NewAlbumClient(cfg),
 		AlbumPhoto:          NewAlbumPhotoClient(cfg),
 		Category:            NewCategoryClient(cfg),
@@ -407,13 +413,13 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.AIChatMessage, c.AIChatSession, c.AIConfig, c.Album, c.AlbumPhoto, c.Category,
-		c.Comment, c.Coupon, c.CouponUsage, c.Essay, c.FLink, c.FLinkApplication,
-		c.FLinkGroup, c.File, c.FriendCircleRecord, c.License, c.Member, c.MemberLevel,
-		c.Menu, c.Notification, c.Oauth2AccessToken, c.Oauth2Code,
-		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post,
-		c.Product, c.RefreshToken, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy,
-		c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.AIChatMessage, c.AIChatSession, c.AIModel, c.AIProvider, c.Album,
+		c.AlbumPhoto, c.Category, c.Comment, c.Coupon, c.CouponUsage, c.Essay, c.FLink,
+		c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord, c.License,
+		c.Member, c.MemberLevel, c.Menu, c.Notification, c.Oauth2AccessToken,
+		c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken,
+		c.Plugin, c.Post, c.Product, c.RefreshToken, c.Role, c.ScheduleJob, c.Setting,
+		c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -423,13 +429,13 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.AIChatMessage, c.AIChatSession, c.AIConfig, c.Album, c.AlbumPhoto, c.Category,
-		c.Comment, c.Coupon, c.CouponUsage, c.Essay, c.FLink, c.FLinkApplication,
-		c.FLinkGroup, c.File, c.FriendCircleRecord, c.License, c.Member, c.MemberLevel,
-		c.Menu, c.Notification, c.Oauth2AccessToken, c.Oauth2Code,
-		c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken, c.Plugin, c.Post,
-		c.Product, c.RefreshToken, c.Role, c.ScheduleJob, c.Setting, c.StorageStrategy,
-		c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.AIChatMessage, c.AIChatSession, c.AIModel, c.AIProvider, c.Album,
+		c.AlbumPhoto, c.Category, c.Comment, c.Coupon, c.CouponUsage, c.Essay, c.FLink,
+		c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord, c.License,
+		c.Member, c.MemberLevel, c.Menu, c.Notification, c.Oauth2AccessToken,
+		c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken,
+		c.Plugin, c.Post, c.Product, c.RefreshToken, c.Role, c.ScheduleJob, c.Setting,
+		c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -442,8 +448,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.AIChatMessage.mutate(ctx, m)
 	case *AIChatSessionMutation:
 		return c.AIChatSession.mutate(ctx, m)
-	case *AIConfigMutation:
-		return c.AIConfig.mutate(ctx, m)
+	case *AIModelMutation:
+		return c.AIModel.mutate(ctx, m)
+	case *AIProviderMutation:
+		return c.AIProvider.mutate(ctx, m)
 	case *AlbumMutation:
 		return c.Album.mutate(ctx, m)
 	case *AlbumPhotoMutation:
@@ -835,107 +843,107 @@ func (c *AIChatSessionClient) mutate(ctx context.Context, m *AIChatSessionMutati
 	}
 }
 
-// AIConfigClient is a client for the AIConfig schema.
-type AIConfigClient struct {
+// AIModelClient is a client for the AIModel schema.
+type AIModelClient struct {
 	config
 }
 
-// NewAIConfigClient returns a client for the AIConfig from the given config.
-func NewAIConfigClient(c config) *AIConfigClient {
-	return &AIConfigClient{config: c}
+// NewAIModelClient returns a client for the AIModel from the given config.
+func NewAIModelClient(c config) *AIModelClient {
+	return &AIModelClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `aiconfig.Hooks(f(g(h())))`.
-func (c *AIConfigClient) Use(hooks ...Hook) {
-	c.hooks.AIConfig = append(c.hooks.AIConfig, hooks...)
+// A call to `Use(f, g, h)` equals to `aimodel.Hooks(f(g(h())))`.
+func (c *AIModelClient) Use(hooks ...Hook) {
+	c.hooks.AIModel = append(c.hooks.AIModel, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `aiconfig.Intercept(f(g(h())))`.
-func (c *AIConfigClient) Intercept(interceptors ...Interceptor) {
-	c.inters.AIConfig = append(c.inters.AIConfig, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `aimodel.Intercept(f(g(h())))`.
+func (c *AIModelClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AIModel = append(c.inters.AIModel, interceptors...)
 }
 
-// Create returns a builder for creating a AIConfig entity.
-func (c *AIConfigClient) Create() *AIConfigCreate {
-	mutation := newAIConfigMutation(c.config, OpCreate)
-	return &AIConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a AIModel entity.
+func (c *AIModelClient) Create() *AIModelCreate {
+	mutation := newAIModelMutation(c.config, OpCreate)
+	return &AIModelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of AIConfig entities.
-func (c *AIConfigClient) CreateBulk(builders ...*AIConfigCreate) *AIConfigCreateBulk {
-	return &AIConfigCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of AIModel entities.
+func (c *AIModelClient) CreateBulk(builders ...*AIModelCreate) *AIModelCreateBulk {
+	return &AIModelCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *AIConfigClient) MapCreateBulk(slice any, setFunc func(*AIConfigCreate, int)) *AIConfigCreateBulk {
+func (c *AIModelClient) MapCreateBulk(slice any, setFunc func(*AIModelCreate, int)) *AIModelCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &AIConfigCreateBulk{err: fmt.Errorf("calling to AIConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &AIModelCreateBulk{err: fmt.Errorf("calling to AIModelClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*AIConfigCreate, rv.Len())
+	builders := make([]*AIModelCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &AIConfigCreateBulk{config: c.config, builders: builders}
+	return &AIModelCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for AIConfig.
-func (c *AIConfigClient) Update() *AIConfigUpdate {
-	mutation := newAIConfigMutation(c.config, OpUpdate)
-	return &AIConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for AIModel.
+func (c *AIModelClient) Update() *AIModelUpdate {
+	mutation := newAIModelMutation(c.config, OpUpdate)
+	return &AIModelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *AIConfigClient) UpdateOne(_m *AIConfig) *AIConfigUpdateOne {
-	mutation := newAIConfigMutation(c.config, OpUpdateOne, withAIConfig(_m))
-	return &AIConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AIModelClient) UpdateOne(_m *AIModel) *AIModelUpdateOne {
+	mutation := newAIModelMutation(c.config, OpUpdateOne, withAIModel(_m))
+	return &AIModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AIConfigClient) UpdateOneID(id int) *AIConfigUpdateOne {
-	mutation := newAIConfigMutation(c.config, OpUpdateOne, withAIConfigID(id))
-	return &AIConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AIModelClient) UpdateOneID(id int) *AIModelUpdateOne {
+	mutation := newAIModelMutation(c.config, OpUpdateOne, withAIModelID(id))
+	return &AIModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for AIConfig.
-func (c *AIConfigClient) Delete() *AIConfigDelete {
-	mutation := newAIConfigMutation(c.config, OpDelete)
-	return &AIConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for AIModel.
+func (c *AIModelClient) Delete() *AIModelDelete {
+	mutation := newAIModelMutation(c.config, OpDelete)
+	return &AIModelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *AIConfigClient) DeleteOne(_m *AIConfig) *AIConfigDeleteOne {
+func (c *AIModelClient) DeleteOne(_m *AIModel) *AIModelDeleteOne {
 	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AIConfigClient) DeleteOneID(id int) *AIConfigDeleteOne {
-	builder := c.Delete().Where(aiconfig.ID(id))
+func (c *AIModelClient) DeleteOneID(id int) *AIModelDeleteOne {
+	builder := c.Delete().Where(aimodel.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &AIConfigDeleteOne{builder}
+	return &AIModelDeleteOne{builder}
 }
 
-// Query returns a query builder for AIConfig.
-func (c *AIConfigClient) Query() *AIConfigQuery {
-	return &AIConfigQuery{
+// Query returns a query builder for AIModel.
+func (c *AIModelClient) Query() *AIModelQuery {
+	return &AIModelQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeAIConfig},
+		ctx:    &QueryContext{Type: TypeAIModel},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a AIConfig entity by its id.
-func (c *AIConfigClient) Get(ctx context.Context, id int) (*AIConfig, error) {
-	return c.Query().Where(aiconfig.ID(id)).Only(ctx)
+// Get returns a AIModel entity by its id.
+func (c *AIModelClient) Get(ctx context.Context, id int) (*AIModel, error) {
+	return c.Query().Where(aimodel.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AIConfigClient) GetX(ctx context.Context, id int) *AIConfig {
+func (c *AIModelClient) GetX(ctx context.Context, id int) *AIModel {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -943,28 +951,193 @@ func (c *AIConfigClient) GetX(ctx context.Context, id int) *AIConfig {
 	return obj
 }
 
+// QueryProvider queries the provider edge of a AIModel.
+func (c *AIModelClient) QueryProvider(_m *AIModel) *AIProviderQuery {
+	query := (&AIProviderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(aimodel.Table, aimodel.FieldID, id),
+			sqlgraph.To(aiprovider.Table, aiprovider.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, aimodel.ProviderTable, aimodel.ProviderColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
-func (c *AIConfigClient) Hooks() []Hook {
-	return c.hooks.AIConfig
+func (c *AIModelClient) Hooks() []Hook {
+	return c.hooks.AIModel
 }
 
 // Interceptors returns the client interceptors.
-func (c *AIConfigClient) Interceptors() []Interceptor {
-	return c.inters.AIConfig
+func (c *AIModelClient) Interceptors() []Interceptor {
+	return c.inters.AIModel
 }
 
-func (c *AIConfigClient) mutate(ctx context.Context, m *AIConfigMutation) (Value, error) {
+func (c *AIModelClient) mutate(ctx context.Context, m *AIModelMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&AIConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&AIModelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&AIConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&AIModelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&AIConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&AIModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&AIConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&AIModelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown AIConfig mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown AIModel mutation op: %q", m.Op())
+	}
+}
+
+// AIProviderClient is a client for the AIProvider schema.
+type AIProviderClient struct {
+	config
+}
+
+// NewAIProviderClient returns a client for the AIProvider from the given config.
+func NewAIProviderClient(c config) *AIProviderClient {
+	return &AIProviderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `aiprovider.Hooks(f(g(h())))`.
+func (c *AIProviderClient) Use(hooks ...Hook) {
+	c.hooks.AIProvider = append(c.hooks.AIProvider, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `aiprovider.Intercept(f(g(h())))`.
+func (c *AIProviderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AIProvider = append(c.inters.AIProvider, interceptors...)
+}
+
+// Create returns a builder for creating a AIProvider entity.
+func (c *AIProviderClient) Create() *AIProviderCreate {
+	mutation := newAIProviderMutation(c.config, OpCreate)
+	return &AIProviderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AIProvider entities.
+func (c *AIProviderClient) CreateBulk(builders ...*AIProviderCreate) *AIProviderCreateBulk {
+	return &AIProviderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AIProviderClient) MapCreateBulk(slice any, setFunc func(*AIProviderCreate, int)) *AIProviderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AIProviderCreateBulk{err: fmt.Errorf("calling to AIProviderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AIProviderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AIProviderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AIProvider.
+func (c *AIProviderClient) Update() *AIProviderUpdate {
+	mutation := newAIProviderMutation(c.config, OpUpdate)
+	return &AIProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AIProviderClient) UpdateOne(_m *AIProvider) *AIProviderUpdateOne {
+	mutation := newAIProviderMutation(c.config, OpUpdateOne, withAIProvider(_m))
+	return &AIProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AIProviderClient) UpdateOneID(id int) *AIProviderUpdateOne {
+	mutation := newAIProviderMutation(c.config, OpUpdateOne, withAIProviderID(id))
+	return &AIProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AIProvider.
+func (c *AIProviderClient) Delete() *AIProviderDelete {
+	mutation := newAIProviderMutation(c.config, OpDelete)
+	return &AIProviderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AIProviderClient) DeleteOne(_m *AIProvider) *AIProviderDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AIProviderClient) DeleteOneID(id int) *AIProviderDeleteOne {
+	builder := c.Delete().Where(aiprovider.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AIProviderDeleteOne{builder}
+}
+
+// Query returns a query builder for AIProvider.
+func (c *AIProviderClient) Query() *AIProviderQuery {
+	return &AIProviderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAIProvider},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AIProvider entity by its id.
+func (c *AIProviderClient) Get(ctx context.Context, id int) (*AIProvider, error) {
+	return c.Query().Where(aiprovider.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AIProviderClient) GetX(ctx context.Context, id int) *AIProvider {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryModels queries the models edge of a AIProvider.
+func (c *AIProviderClient) QueryModels(_m *AIProvider) *AIModelQuery {
+	query := (&AIModelClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(aiprovider.Table, aiprovider.FieldID, id),
+			sqlgraph.To(aimodel.Table, aimodel.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, aiprovider.ModelsTable, aiprovider.ModelsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AIProviderClient) Hooks() []Hook {
+	return c.hooks.AIProvider
+}
+
+// Interceptors returns the client interceptors.
+func (c *AIProviderClient) Interceptors() []Interceptor {
+	return c.inters.AIProvider
+}
+
+func (c *AIProviderClient) mutate(ctx context.Context, m *AIProviderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AIProviderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AIProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AIProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AIProviderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AIProvider mutation op: %q", m.Op())
 	}
 }
 
@@ -6015,8 +6188,8 @@ func (c *WebHookClient) mutate(ctx context.Context, m *WebHookMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		AIChatMessage, AIChatSession, AIConfig, Album, AlbumPhoto, Category, Comment,
-		Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
+		AIChatMessage, AIChatSession, AIModel, AIProvider, Album, AlbumPhoto, Category,
+		Comment, Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
 		FriendCircleRecord, License, Member, MemberLevel, Menu, Notification,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
 		PersonalAccessToken, Plugin, Post, Product, RefreshToken, Role, ScheduleJob,
@@ -6024,8 +6197,8 @@ type (
 		WebHook []ent.Hook
 	}
 	inters struct {
-		AIChatMessage, AIChatSession, AIConfig, Album, AlbumPhoto, Category, Comment,
-		Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
+		AIChatMessage, AIChatSession, AIModel, AIProvider, Album, AlbumPhoto, Category,
+		Comment, Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
 		FriendCircleRecord, License, Member, MemberLevel, Menu, Notification,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
 		PersonalAccessToken, Plugin, Post, Product, RefreshToken, Role, ScheduleJob,

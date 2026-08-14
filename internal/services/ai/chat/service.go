@@ -2,12 +2,12 @@ package ai
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
-	"sort"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -15,22 +15,25 @@ import (
 	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/ent/aichatmessage"
 	"github.com/shuTwT/hoshikuzu/ent/aichatsession"
-	"github.com/shuTwT/hoshikuzu/ent/aiconfig"
+	"github.com/shuTwT/hoshikuzu/ent/aimodel"
+	"github.com/shuTwT/hoshikuzu/ent/aiprovider"
 	"github.com/shuTwT/hoshikuzu/ent/setting"
 	infra_ai "github.com/shuTwT/hoshikuzu/internal/infra/ai"
+	"github.com/shuTwT/hoshikuzu/internal/infra/logger"
+	"github.com/shuTwT/hoshikuzu/pkg/config"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
 
 	openai "github.com/sashabaranov/go-openai"
 )
 
 const (
-	defaultAIConfigKey = "default"
-	newSessionTitle    = "新对话"
-	maxMessageRunes    = 16000
+	newSessionTitle = "新对话"
+	maxMessageRunes = 16000
 )
 
 var (
-	ErrAIConfigNotFound        = errors.New("AI provider is not configured")
+	ErrAIProviderNotFound      = errors.New("AI provider is not configured")
+	ErrAIModelNotFound         = errors.New("no enabled AI model configured for the provider")
 	ErrInvalidAIConfig         = errors.New("invalid AI provider configuration")
 	ErrAIChatSessionNotFound   = errors.New("AI chat session not found")
 	ErrInvalidAIChatContent    = errors.New("invalid AI chat content")
@@ -41,10 +44,16 @@ var (
 // data. It never returns a decrypted provider key to its callers.
 type AIService interface {
 	CleanupLegacySettings(ctx context.Context) error
-	GetConfig(ctx context.Context) (*model.AIConfigResp, error)
-	SaveConfig(ctx context.Context, req model.AIConfigUpdateReq) error
-	TestConfig(ctx context.Context, req model.AIConfigTestReq) error
-	ListModels(ctx context.Context) ([]model.AIModelResp, error)
+	MigrateLegacyConfig(ctx context.Context) error
+	ListProviders(ctx context.Context) ([]model.AIProviderResp, error)
+	CreateProvider(ctx context.Context, req model.AIProviderReq) error
+	UpdateProvider(ctx context.Context, id int, req model.AIProviderReq) error
+	DeleteProvider(ctx context.Context, id int) error
+	TestProvider(ctx context.Context, req model.AIProviderTestReq) error
+	SyncProviderModels(ctx context.Context, id int) error
+	CreateProviderModel(ctx context.Context, providerID int, req model.AIModelReq) error
+	UpdateProviderModel(ctx context.Context, providerID, modelID int, req model.AIModelReq) error
+	DeleteProviderModel(ctx context.Context, providerID, modelID int) error
 	CreateSession(ctx context.Context, userID int) (*model.AIChatSessionResp, error)
 	ListSessions(ctx context.Context, userID int) ([]model.AIChatSessionResp, error)
 	ListMessages(ctx context.Context, userID, sessionID int) ([]model.AIChatMessageResp, error)
@@ -83,107 +92,366 @@ func (s *AIServiceImpl) CleanupLegacySettings(ctx context.Context) error {
 	return err
 }
 
-func (s *AIServiceImpl) GetConfig(ctx context.Context) (*model.AIConfigResp, error) {
-	if _, err := s.cipher(); err != nil {
-		return nil, err
+// MigrateLegacyConfig moves a pre-multi-provider AIConfig row (if any) into
+// the AIProvider/AIModel tables so existing deployments keep their key after
+// the singleton configuration was replaced. It is idempotent: it only runs
+// when the legacy table exists and no provider has been created yet.
+func (s *AIServiceImpl) MigrateLegacyConfig(ctx context.Context) error {
+	if config.GetString(config.DATABASE_TYPE) != "sqlite" {
+		return nil
 	}
-	config, err := s.client.AIConfig.Query().
-		Where(aiconfig.ConfigKeyEQ(defaultAIConfigKey)).
-		Only(ctx)
+	// The legacy table is not part of the schema anymore, so it is read and
+	// dropped through a raw connection to the same SQLite file.
+	db, err := sql.Open("sqlite3", config.GetString(config.DATABASE_URL))
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return &model.AIConfigResp{APIKeyConfigured: false}, nil
+		return err
+	}
+	defer db.Close()
+
+	var legacyTableCount int
+	if err = db.QueryRowContext(ctx,
+		"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='aiconfig'",
+	).Scan(&legacyTableCount); err != nil {
+		return err
+	}
+	if legacyTableCount == 0 {
+		return nil
+	}
+	count, err := s.client.AIProvider.Query().Count(ctx)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return nil
+	}
+
+	var legacy struct {
+		baseURL          string
+		model            string
+		apiKeyCiphertext string
+		temperature      float64
+		maxTokens        int
+		topP             float64
+		frequencyPenalty float64
+		presencePenalty  float64
+	}
+	err = db.QueryRowContext(ctx,
+		`SELECT base_url, model, api_key_ciphertext, temperature, max_tokens, top_p, frequency_penalty, presence_penalty
+		 FROM aiconfig WHERE config_key = 'default'`,
+	).Scan(&legacy.baseURL, &legacy.model, &legacy.apiKeyCiphertext, &legacy.temperature, &legacy.maxTokens, &legacy.topP, &legacy.frequencyPenalty, &legacy.presencePenalty)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return s.dropLegacyConfigTable(ctx, db)
 		}
-		return nil, err
+		return err
 	}
-	cipher, err := s.cipher()
+
+	provider, err := s.client.AIProvider.Create().
+		SetName(defaultProviderName(legacy.baseURL)).
+		SetProviderType("custom").
+		SetBaseURL(strings.TrimRight(legacy.baseURL, "/")).
+		SetAPIKeyCiphertext(legacy.apiKeyCiphertext).
+		SetTemperature(legacy.temperature).
+		SetMaxTokens(legacy.maxTokens).
+		SetTopP(legacy.topP).
+		SetFrequencyPenalty(legacy.frequencyPenalty).
+		SetPresencePenalty(legacy.presencePenalty).
+		SetIsDefault(true).
+		SetIsEnabled(true).
+		Save(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	if _, err := cipher.Decrypt(config.APIKeyCiphertext); err != nil {
-		return nil, err
+	if _, err = s.client.AIModel.Create().
+		SetProviderID(provider.ID).
+		SetModelName(legacy.model).
+		SetIsEnabled(true).
+		Save(ctx); err != nil {
+		return err
 	}
-	return configResponse(config), nil
+	if err = s.dropLegacyConfigTable(ctx, db); err != nil {
+		return err
+	}
+	logger.Info("已将旧 AI 配置迁移为默认提供商", "provider_id", provider.ID, "model", legacy.model)
+	return nil
 }
 
-func (s *AIServiceImpl) SaveConfig(ctx context.Context, req model.AIConfigUpdateReq) error {
-	if err := validateConfig(req); err != nil {
+func (s *AIServiceImpl) dropLegacyConfigTable(ctx context.Context, db *sql.DB) error {
+	if _, err := db.ExecContext(ctx, "DROP TABLE IF EXISTS aiconfig"); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *AIServiceImpl) ListProviders(ctx context.Context) ([]model.AIProviderResp, error) {
+	providers, err := s.client.AIProvider.Query().
+		WithModels(func(q *ent.AIModelQuery) {
+			q.Order(ent.Asc(aimodel.FieldSort), ent.Asc(aimodel.FieldID))
+		}).
+		Order(ent.Desc(aiprovider.FieldIsDefault), ent.Asc(aiprovider.FieldSort), ent.Asc(aiprovider.FieldID)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	result := make([]model.AIProviderResp, 0, len(providers))
+	for _, provider := range providers {
+		result = append(result, providerResponse(provider))
+	}
+	return result, nil
+}
+
+func (s *AIServiceImpl) CreateProvider(ctx context.Context, req model.AIProviderReq) error {
+	if err := validateProvider(req); err != nil {
 		return err
 	}
 	cipher, err := s.cipher()
 	if err != nil {
 		return err
 	}
-	ciphertext, err := cipher.Encrypt(strings.TrimSpace(req.APIKey))
+	apiKeyCiphertext, err := encryptAPIKey(cipher, req.APIKey)
 	if err != nil {
-		return fmt.Errorf("encrypt AI API key: %w", err)
-	}
-
-	baseURL := strings.TrimRight(strings.TrimSpace(req.BaseURL), "/")
-	config, err := s.client.AIConfig.Query().
-		Where(aiconfig.ConfigKeyEQ(defaultAIConfigKey)).
-		Only(ctx)
-	if err != nil {
-		if !ent.IsNotFound(err) {
-			return err
-		}
-		_, err = s.client.AIConfig.Create().
-			SetConfigKey(defaultAIConfigKey).
-			SetBaseURL(baseURL).
-			SetModel(strings.TrimSpace(req.Model)).
-			SetTemperature(req.Temperature).
-			SetMaxTokens(req.MaxTokens).
-			SetTopP(req.TopP).
-			SetFrequencyPenalty(req.FrequencyPenalty).
-			SetPresencePenalty(req.PresencePenalty).
-			SetAPIKeyCiphertext(ciphertext).
-			Save(ctx)
 		return err
 	}
+	count, err := s.client.AIProvider.Query().Count(ctx)
+	if err != nil {
+		return err
+	}
+	first := count == 0
 
-	return s.client.AIConfig.UpdateOneID(config.ID).
-		SetBaseURL(baseURL).
-		SetModel(strings.TrimSpace(req.Model)).
+	tx, err := s.client.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	if req.IsDefault || first {
+		if err = tx.AIProvider.Update().SetIsDefault(false).Exec(ctx); err != nil {
+			return err
+		}
+	}
+	_, err = tx.AIProvider.Create().
+		SetName(strings.TrimSpace(req.Name)).
+		SetProviderType(strings.TrimSpace(req.ProviderType)).
+		SetBaseURL(strings.TrimRight(strings.TrimSpace(req.BaseURL), "/")).
+		SetAPIKeyCiphertext(apiKeyCiphertext).
 		SetTemperature(req.Temperature).
 		SetMaxTokens(req.MaxTokens).
 		SetTopP(req.TopP).
 		SetFrequencyPenalty(req.FrequencyPenalty).
 		SetPresencePenalty(req.PresencePenalty).
-		SetAPIKeyCiphertext(ciphertext).
-		Exec(ctx)
+		SetIsDefault(req.IsDefault || first).
+		SetIsEnabled(req.IsEnabled).
+		SetSort(req.Sort).
+		SetRemark(req.Remark).
+		Save(ctx)
+	if err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
-func (s *AIServiceImpl) TestConfig(ctx context.Context, req model.AIConfigTestReq) error {
+func (s *AIServiceImpl) UpdateProvider(ctx context.Context, id int, req model.AIProviderReq) error {
+	if err := validateProvider(req); err != nil {
+		return err
+	}
+	provider, err := s.client.AIProvider.Query().Where(aiprovider.IDEQ(id)).Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrAIProviderNotFound
+		}
+		return err
+	}
+
+	tx, err := s.client.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	if req.IsDefault {
+		if err = tx.AIProvider.Update().Where(aiprovider.IDNEQ(id)).SetIsDefault(false).Exec(ctx); err != nil {
+			return err
+		}
+	}
+	update := tx.AIProvider.UpdateOneID(provider.ID).
+		SetName(strings.TrimSpace(req.Name)).
+		SetProviderType(strings.TrimSpace(req.ProviderType)).
+		SetBaseURL(strings.TrimRight(strings.TrimSpace(req.BaseURL), "/")).
+		SetTemperature(req.Temperature).
+		SetMaxTokens(req.MaxTokens).
+		SetTopP(req.TopP).
+		SetFrequencyPenalty(req.FrequencyPenalty).
+		SetPresencePenalty(req.PresencePenalty).
+		SetIsDefault(req.IsDefault).
+		SetIsEnabled(req.IsEnabled).
+		SetSort(req.Sort).
+		SetRemark(req.Remark)
+	if strings.TrimSpace(req.APIKey) != "" {
+		cipher, err := s.cipher()
+		if err != nil {
+			return err
+		}
+		apiKeyCiphertext, err := encryptAPIKey(cipher, req.APIKey)
+		if err != nil {
+			return err
+		}
+		update = update.SetAPIKeyCiphertext(apiKeyCiphertext)
+	}
+	if err = update.Exec(ctx); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
+func (s *AIServiceImpl) DeleteProvider(ctx context.Context, id int) error {
+	tx, err := s.client.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	if _, err = tx.AIModel.Delete().Where(aimodel.ProviderIDEQ(id)).Exec(ctx); err != nil {
+		return err
+	}
+	if err = tx.AIProvider.DeleteOneID(id).Exec(ctx); err != nil {
+		if ent.IsNotFound(err) {
+			return ErrAIProviderNotFound
+		}
+		return err
+	}
+	return tx.Commit()
+}
+
+func (s *AIServiceImpl) TestProvider(ctx context.Context, req model.AIProviderTestReq) error {
 	if _, err := s.cipher(); err != nil {
 		return err
 	}
 	if err := validateBaseURL(req.BaseURL); err != nil {
 		return err
 	}
-	if strings.TrimSpace(req.APIKey) == "" {
-		return fmt.Errorf("%w: api_key is required", ErrInvalidAIConfig)
-	}
 	_, err := newOpenAIClient(strings.TrimSpace(req.BaseURL), strings.TrimSpace(req.APIKey)).ListModels(ctx)
 	return providerError(err)
 }
 
-func (s *AIServiceImpl) ListModels(ctx context.Context) ([]model.AIModelResp, error) {
-	provider, err := s.providerConfig(ctx)
+func (s *AIServiceImpl) SyncProviderModels(ctx context.Context, id int) error {
+	provider, err := s.client.AIProvider.Query().Where(aiprovider.IDEQ(id)).Only(ctx)
 	if err != nil {
-		return nil, err
-	}
-	models, err := newOpenAIClient(provider.BaseURL, provider.APIKey).ListModels(ctx)
-	if err != nil {
-		return nil, providerError(err)
-	}
-	result := make([]model.AIModelResp, 0, len(models.Models))
-	for _, item := range models.Models {
-		if item.ID != "" {
-			result = append(result, model.AIModelResp{ID: item.ID})
+		if ent.IsNotFound(err) {
+			return ErrAIProviderNotFound
 		}
+		return err
 	}
-	sort.Slice(result, func(i, j int) bool { return result[i].ID < result[j].ID })
-	return result, nil
+	cipher, err := s.cipher()
+	if err != nil {
+		return err
+	}
+	apiKey, err := decryptProviderKey(cipher, provider.APIKeyCiphertext)
+	if err != nil {
+		return err
+	}
+	models, err := newOpenAIClient(provider.BaseURL, apiKey).ListModels(ctx)
+	if err != nil {
+		return providerError(err)
+	}
+	if len(models.Models) == 0 {
+		return ErrAIProviderEmptyResponse
+	}
+
+	tx, err := s.client.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	if _, err = tx.AIModel.Delete().Where(aimodel.ProviderIDEQ(id)).Exec(ctx); err != nil {
+		return err
+	}
+	added := 0
+	for _, m := range models.Models {
+		if strings.TrimSpace(m.ID) == "" {
+			continue
+		}
+		if _, err = tx.AIModel.Create().
+			SetProviderID(id).
+			SetModelName(m.ID).
+			SetIsEnabled(true).
+			Save(ctx); err != nil {
+			return err
+		}
+		added++
+	}
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+	logger.Info("已从供应商同步模型", "provider_id", id, "provider", provider.Name, "models", added)
+	return nil
+}
+
+func (s *AIServiceImpl) CreateProviderModel(ctx context.Context, providerID int, req model.AIModelReq) error {
+	if err := validateModel(req); err != nil {
+		return err
+	}
+	if _, err := s.providerForUpdate(ctx, providerID); err != nil {
+		return err
+	}
+	_, err := s.client.AIModel.Create().
+		SetProviderID(providerID).
+		SetModelName(strings.TrimSpace(req.ModelName)).
+		SetDisplayName(strings.TrimSpace(req.DisplayName)).
+		SetIsEnabled(req.IsEnabled).
+		SetSort(req.Sort).
+		Save(ctx)
+	return err
+}
+
+func (s *AIServiceImpl) UpdateProviderModel(ctx context.Context, providerID, modelID int, req model.AIModelReq) error {
+	if err := validateModel(req); err != nil {
+		return err
+	}
+	if _, err := s.providerForUpdate(ctx, providerID); err != nil {
+		return err
+	}
+	m, err := s.client.AIModel.Query().
+		Where(aimodel.IDEQ(modelID), aimodel.ProviderIDEQ(providerID)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrAIModelNotFound
+		}
+		return err
+	}
+	_, err = s.client.AIModel.UpdateOneID(m.ID).
+		SetModelName(strings.TrimSpace(req.ModelName)).
+		SetDisplayName(strings.TrimSpace(req.DisplayName)).
+		SetIsEnabled(req.IsEnabled).
+		SetSort(req.Sort).
+		Save(ctx)
+	return err
+}
+
+func (s *AIServiceImpl) DeleteProviderModel(ctx context.Context, providerID, modelID int) error {
+	m, err := s.client.AIModel.Query().
+		Where(aimodel.IDEQ(modelID), aimodel.ProviderIDEQ(providerID)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrAIModelNotFound
+		}
+		return err
+	}
+	return s.client.AIModel.DeleteOneID(m.ID).Exec(ctx)
 }
 
 func (s *AIServiceImpl) CreateSession(ctx context.Context, userID int) (*model.AIChatSessionResp, error) {
@@ -381,8 +649,8 @@ func (s *AIServiceImpl) StreamChat(ctx context.Context, userID, sessionID int, c
 }
 
 const (
-	summarySystemPrompt = "你是一名专业的中文文章摘要助手，请用简洁的中文总结文章内容，字数控制在 200 字以内。"
-	maxSummaryInputRunes = 8000
+	summarySystemPrompt   = "你是一名专业的中文文章摘要助手，请用简洁的中文总结文章内容，字数控制在 200 字以内。"
+	maxSummaryInputRunes  = 8000
 	maxSummaryOutputRunes = 512
 )
 
@@ -456,32 +724,43 @@ func (s *AIServiceImpl) ensureCipher() error {
 }
 
 func (s *AIServiceImpl) providerConfig(ctx context.Context) (*providerConfig, error) {
+	provider, err := s.client.AIProvider.Query().
+		Where(aiprovider.IsEnabledEQ(true)).
+		Order(ent.Desc(aiprovider.FieldIsDefault), ent.Asc(aiprovider.FieldSort), ent.Asc(aiprovider.FieldID)).
+		First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrAIProviderNotFound
+		}
+		return nil, err
+	}
+	m, err := s.client.AIModel.Query().
+		Where(aimodel.ProviderIDEQ(provider.ID), aimodel.IsEnabledEQ(true)).
+		Order(ent.Asc(aimodel.FieldSort), ent.Asc(aimodel.FieldID)).
+		First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrAIModelNotFound
+		}
+		return nil, err
+	}
 	cipher, err := s.cipher()
 	if err != nil {
 		return nil, err
 	}
-	config, err := s.client.AIConfig.Query().
-		Where(aiconfig.ConfigKeyEQ(defaultAIConfigKey)).
-		Only(ctx)
-	if err != nil {
-		if ent.IsNotFound(err) {
-			return nil, ErrAIConfigNotFound
-		}
-		return nil, err
-	}
-	apiKey, err := cipher.Decrypt(config.APIKeyCiphertext)
+	apiKey, err := decryptProviderKey(cipher, provider.APIKeyCiphertext)
 	if err != nil {
 		return nil, err
 	}
 	return &providerConfig{
-		BaseURL:          config.BaseURL,
+		BaseURL:          provider.BaseURL,
 		APIKey:           apiKey,
-		Model:            config.Model,
-		Temperature:      config.Temperature,
-		MaxTokens:        config.MaxTokens,
-		TopP:             config.TopP,
-		FrequencyPenalty: config.FrequencyPenalty,
-		PresencePenalty:  config.PresencePenalty,
+		Model:            m.ModelName,
+		Temperature:      provider.Temperature,
+		MaxTokens:        provider.MaxTokens,
+		TopP:             provider.TopP,
+		FrequencyPenalty: provider.FrequencyPenalty,
+		PresencePenalty:  provider.PresencePenalty,
 	}, nil
 }
 
@@ -502,17 +781,74 @@ func (s *AIServiceImpl) touchSession(ctx context.Context, session *ent.AIChatSes
 	return s.client.AIChatSession.UpdateOneID(session.ID).SetTitle(session.Title).Exec(ctx)
 }
 
-func configResponse(config *ent.AIConfig) *model.AIConfigResp {
-	return &model.AIConfigResp{
-		BaseURL:          config.BaseURL,
-		Model:            config.Model,
-		Temperature:      config.Temperature,
-		MaxTokens:        config.MaxTokens,
-		TopP:             config.TopP,
-		FrequencyPenalty: config.FrequencyPenalty,
-		PresencePenalty:  config.PresencePenalty,
-		APIKeyConfigured: config.APIKeyCiphertext != "",
+func providerResponse(provider *ent.AIProvider) model.AIProviderResp {
+	resp := model.AIProviderResp{
+		ID:               provider.ID,
+		Name:             provider.Name,
+		ProviderType:     provider.ProviderType,
+		BaseURL:          provider.BaseURL,
+		APIKeyConfigured: provider.APIKeyCiphertext != "",
+		Temperature:      provider.Temperature,
+		MaxTokens:        provider.MaxTokens,
+		TopP:             provider.TopP,
+		FrequencyPenalty: provider.FrequencyPenalty,
+		PresencePenalty:  provider.PresencePenalty,
+		IsDefault:        provider.IsDefault,
+		IsEnabled:        provider.IsEnabled,
+		Sort:             provider.Sort,
+		Remark:           provider.Remark,
+		CreatedAt:        model.LocalTime(provider.CreatedAt),
+		UpdatedAt:        model.LocalTime(provider.UpdatedAt),
+		Models:           []model.AIModelResp{},
 	}
+	for _, m := range provider.Edges.Models {
+		resp.Models = append(resp.Models, model.AIModelResp{
+			ID:          m.ID,
+			ModelName:   m.ModelName,
+			DisplayName: m.DisplayName,
+			IsEnabled:   m.IsEnabled,
+			Sort:        m.Sort,
+		})
+	}
+	return resp
+}
+
+func encryptAPIKey(cipher infra_ai.SecretCipher, apiKey string) (string, error) {
+	apiKey = strings.TrimSpace(apiKey)
+	if apiKey == "" {
+		return "", nil
+	}
+	ciphertext, err := cipher.Encrypt(apiKey)
+	if err != nil {
+		return "", fmt.Errorf("encrypt AI API key: %w", err)
+	}
+	return ciphertext, nil
+}
+
+func decryptProviderKey(cipher infra_ai.SecretCipher, ciphertext string) (string, error) {
+	if ciphertext == "" {
+		return "", nil
+	}
+	return cipher.Decrypt(ciphertext)
+}
+
+func (s *AIServiceImpl) providerForUpdate(ctx context.Context, providerID int) (*ent.AIProvider, error) {
+	provider, err := s.client.AIProvider.Query().Where(aiprovider.IDEQ(providerID)).Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrAIProviderNotFound
+		}
+		return nil, err
+	}
+	return provider, nil
+}
+
+func defaultProviderName(rawURL string) string {
+	parsed, err := url.Parse(strings.TrimSpace(rawURL))
+	if err != nil || parsed.Host == "" {
+		return "默认提供商"
+	}
+	return parsed.Host
 }
 
 func sessionResponse(session *ent.AIChatSession) model.AIChatSessionResp {
@@ -534,15 +870,15 @@ func messageResponse(message *ent.AIChatMessage) model.AIChatMessageResp {
 	}
 }
 
-func validateConfig(req model.AIConfigUpdateReq) error {
+func validateProvider(req model.AIProviderReq) error {
+	if strings.TrimSpace(req.Name) == "" {
+		return fmt.Errorf("%w: name is required", ErrInvalidAIConfig)
+	}
+	if strings.TrimSpace(req.ProviderType) == "" {
+		return fmt.Errorf("%w: provider_type is required", ErrInvalidAIConfig)
+	}
 	if err := validateBaseURL(req.BaseURL); err != nil {
 		return err
-	}
-	if strings.TrimSpace(req.APIKey) == "" {
-		return fmt.Errorf("%w: api_key is required", ErrInvalidAIConfig)
-	}
-	if strings.TrimSpace(req.Model) == "" {
-		return fmt.Errorf("%w: model is required", ErrInvalidAIConfig)
 	}
 	if req.Temperature < 0 || req.Temperature > 2 {
 		return fmt.Errorf("%w: temperature must be between 0 and 2", ErrInvalidAIConfig)
@@ -562,13 +898,17 @@ func validateConfig(req model.AIConfigUpdateReq) error {
 	return nil
 }
 
+func validateModel(req model.AIModelReq) error {
+	if strings.TrimSpace(req.ModelName) == "" {
+		return fmt.Errorf("%w: model_name is required", ErrInvalidAIConfig)
+	}
+	return nil
+}
+
 func validateBaseURL(rawURL string) error {
 	parsed, err := url.ParseRequestURI(strings.TrimSpace(rawURL))
 	if err != nil || parsed.Host == "" || parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" || (parsed.Scheme != "https" && parsed.Scheme != "http") {
 		return fmt.Errorf("%w: base_url must be an absolute HTTP(S) URL", ErrInvalidAIConfig)
-	}
-	if !strings.HasSuffix(strings.TrimRight(parsed.Path, "/"), "/v1") {
-		return fmt.Errorf("%w: base_url must include the OpenAI-compatible /v1 path", ErrInvalidAIConfig)
 	}
 	return nil
 }

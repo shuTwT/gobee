@@ -4,30 +4,55 @@ import { BASE_URL, type ApiResponse } from '@/api/utils'
 
 const AI_BASE_URL = `${BASE_URL}/v1/ai`
 
-export interface AIConfig {
+export interface AIModelItem {
+  id: number
+  model_name: string
+  display_name?: string
+  is_enabled: boolean
+  sort: number
+}
+
+export interface AIProvider {
+  id: number
+  name: string
+  provider_type: string
   base_url: string
-  model: string
+  api_key_configured: boolean
   temperature: number
   max_tokens: number
   top_p: number
   frequency_penalty: number
   presence_penalty: number
-  api_key_configured: boolean
+  is_default: boolean
+  is_enabled: boolean
+  sort: number
+  remark: string
+  created_at: number
+  updated_at: number
+  models: AIModelItem[]
 }
 
-export interface AIConfigInput {
+export interface AIProviderInput {
+  name: string
+  provider_type: string
   base_url: string
   api_key: string
-  model: string
   temperature: number
   max_tokens: number
   top_p: number
   frequency_penalty: number
   presence_penalty: number
+  is_default: boolean
+  is_enabled: boolean
+  sort: number
+  remark: string
 }
 
-export interface AIModel {
-  id: string
+export interface AIModelInput {
+  model_name: string
+  display_name: string
+  is_enabled: boolean
+  sort: number
 }
 
 export interface ChatSession {
@@ -52,20 +77,40 @@ export interface AIStreamEvent {
   message?: string
 }
 
-export const getConfig = () => {
-  return http.request<ApiResponse<AIConfig>>('get', `${AI_BASE_URL}/config`)
+export const listProviders = () => {
+  return http.request<ApiResponse<AIProvider[]>>('get', `${AI_BASE_URL}/providers/list`)
 }
 
-export const saveConfig = (data: AIConfigInput) => {
-  return http.request<ApiResponse<null>>('put', `${AI_BASE_URL}/config`, { data })
+export const createProvider = (data: AIProviderInput) => {
+  return http.request<ApiResponse<null>>('post', `${AI_BASE_URL}/providers/create`, { data })
 }
 
-export const testConfig = (data: Pick<AIConfigInput, 'base_url' | 'api_key'>) => {
-  return http.request<ApiResponse<null>>('post', `${AI_BASE_URL}/config/test`, { data })
+export const updateProvider = (id: number, data: AIProviderInput) => {
+  return http.request<ApiResponse<null>>('put', `${AI_BASE_URL}/providers/update/${id}`, { data })
 }
 
-export const getModels = () => {
-  return http.request<ApiResponse<AIModel[]>>('get', `${AI_BASE_URL}/config/models`)
+export const deleteProvider = (id: number) => {
+  return http.request<ApiResponse<null>>('delete', `${AI_BASE_URL}/providers/delete/${id}`)
+}
+
+export const testProvider = (data: Pick<AIProviderInput, 'base_url' | 'api_key'>) => {
+  return http.request<ApiResponse<null>>('post', `${AI_BASE_URL}/providers/test`, { data })
+}
+
+export const syncProviderModels = (providerId: number) => {
+  return http.request<ApiResponse<null>>('post', `${AI_BASE_URL}/providers/${providerId}/models/sync`)
+}
+
+export const createProviderModel = (providerId: number, data: AIModelInput) => {
+  return http.request<ApiResponse<null>>('post', `${AI_BASE_URL}/providers/${providerId}/models/create`, { data })
+}
+
+export const updateProviderModel = (providerId: number, modelId: number, data: AIModelInput) => {
+  return http.request<ApiResponse<null>>('put', `${AI_BASE_URL}/providers/${providerId}/models/update/${modelId}`, { data })
+}
+
+export const deleteProviderModel = (providerId: number, modelId: number) => {
+  return http.request<ApiResponse<null>>('delete', `${AI_BASE_URL}/providers/${providerId}/models/delete/${modelId}`)
 }
 
 export const listSessions = () => {

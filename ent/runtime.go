@@ -7,7 +7,8 @@ import (
 
 	"github.com/shuTwT/hoshikuzu/ent/aichatmessage"
 	"github.com/shuTwT/hoshikuzu/ent/aichatsession"
-	"github.com/shuTwT/hoshikuzu/ent/aiconfig"
+	"github.com/shuTwT/hoshikuzu/ent/aimodel"
+	"github.com/shuTwT/hoshikuzu/ent/aiprovider"
 	"github.com/shuTwT/hoshikuzu/ent/album"
 	"github.com/shuTwT/hoshikuzu/ent/albumphoto"
 	"github.com/shuTwT/hoshikuzu/ent/category"
@@ -117,26 +118,111 @@ func init() {
 			return nil
 		}
 	}()
-	aiconfigMixin := schema.AIConfig{}.Mixin()
-	aiconfigMixinFields0 := aiconfigMixin[0].Fields()
-	_ = aiconfigMixinFields0
-	aiconfigFields := schema.AIConfig{}.Fields()
-	_ = aiconfigFields
-	// aiconfigDescCreatedAt is the schema descriptor for created_at field.
-	aiconfigDescCreatedAt := aiconfigMixinFields0[1].Descriptor()
-	// aiconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
-	aiconfig.DefaultCreatedAt = aiconfigDescCreatedAt.Default.(func() time.Time)
-	// aiconfigDescUpdatedAt is the schema descriptor for updated_at field.
-	aiconfigDescUpdatedAt := aiconfigMixinFields0[2].Descriptor()
-	// aiconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	aiconfig.DefaultUpdatedAt = aiconfigDescUpdatedAt.Default.(func() time.Time)
-	// aiconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	aiconfig.UpdateDefaultUpdatedAt = aiconfigDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// aiconfigDescBaseURL is the schema descriptor for base_url field.
-	aiconfigDescBaseURL := aiconfigFields[1].Descriptor()
-	// aiconfig.BaseURLValidator is a validator for the "base_url" field. It is called by the builders before save.
-	aiconfig.BaseURLValidator = func() func(string) error {
-		validators := aiconfigDescBaseURL.Validators
+	aimodelMixin := schema.AIModel{}.Mixin()
+	aimodelMixinFields0 := aimodelMixin[0].Fields()
+	_ = aimodelMixinFields0
+	aimodelFields := schema.AIModel{}.Fields()
+	_ = aimodelFields
+	// aimodelDescCreatedAt is the schema descriptor for created_at field.
+	aimodelDescCreatedAt := aimodelMixinFields0[1].Descriptor()
+	// aimodel.DefaultCreatedAt holds the default value on creation for the created_at field.
+	aimodel.DefaultCreatedAt = aimodelDescCreatedAt.Default.(func() time.Time)
+	// aimodelDescUpdatedAt is the schema descriptor for updated_at field.
+	aimodelDescUpdatedAt := aimodelMixinFields0[2].Descriptor()
+	// aimodel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	aimodel.DefaultUpdatedAt = aimodelDescUpdatedAt.Default.(func() time.Time)
+	// aimodel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	aimodel.UpdateDefaultUpdatedAt = aimodelDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// aimodelDescProviderID is the schema descriptor for provider_id field.
+	aimodelDescProviderID := aimodelFields[0].Descriptor()
+	// aimodel.ProviderIDValidator is a validator for the "provider_id" field. It is called by the builders before save.
+	aimodel.ProviderIDValidator = aimodelDescProviderID.Validators[0].(func(int) error)
+	// aimodelDescModelName is the schema descriptor for model_name field.
+	aimodelDescModelName := aimodelFields[1].Descriptor()
+	// aimodel.ModelNameValidator is a validator for the "model_name" field. It is called by the builders before save.
+	aimodel.ModelNameValidator = func() func(string) error {
+		validators := aimodelDescModelName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(model_name string) error {
+			for _, fn := range fns {
+				if err := fn(model_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// aimodelDescDisplayName is the schema descriptor for display_name field.
+	aimodelDescDisplayName := aimodelFields[2].Descriptor()
+	// aimodel.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	aimodel.DisplayNameValidator = aimodelDescDisplayName.Validators[0].(func(string) error)
+	// aimodelDescIsEnabled is the schema descriptor for is_enabled field.
+	aimodelDescIsEnabled := aimodelFields[3].Descriptor()
+	// aimodel.DefaultIsEnabled holds the default value on creation for the is_enabled field.
+	aimodel.DefaultIsEnabled = aimodelDescIsEnabled.Default.(bool)
+	// aimodelDescSort is the schema descriptor for sort field.
+	aimodelDescSort := aimodelFields[4].Descriptor()
+	// aimodel.DefaultSort holds the default value on creation for the sort field.
+	aimodel.DefaultSort = aimodelDescSort.Default.(int)
+	aiproviderMixin := schema.AIProvider{}.Mixin()
+	aiproviderMixinFields0 := aiproviderMixin[0].Fields()
+	_ = aiproviderMixinFields0
+	aiproviderFields := schema.AIProvider{}.Fields()
+	_ = aiproviderFields
+	// aiproviderDescCreatedAt is the schema descriptor for created_at field.
+	aiproviderDescCreatedAt := aiproviderMixinFields0[1].Descriptor()
+	// aiprovider.DefaultCreatedAt holds the default value on creation for the created_at field.
+	aiprovider.DefaultCreatedAt = aiproviderDescCreatedAt.Default.(func() time.Time)
+	// aiproviderDescUpdatedAt is the schema descriptor for updated_at field.
+	aiproviderDescUpdatedAt := aiproviderMixinFields0[2].Descriptor()
+	// aiprovider.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	aiprovider.DefaultUpdatedAt = aiproviderDescUpdatedAt.Default.(func() time.Time)
+	// aiprovider.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	aiprovider.UpdateDefaultUpdatedAt = aiproviderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// aiproviderDescName is the schema descriptor for name field.
+	aiproviderDescName := aiproviderFields[0].Descriptor()
+	// aiprovider.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	aiprovider.NameValidator = func() func(string) error {
+		validators := aiproviderDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// aiproviderDescProviderType is the schema descriptor for provider_type field.
+	aiproviderDescProviderType := aiproviderFields[1].Descriptor()
+	// aiprovider.ProviderTypeValidator is a validator for the "provider_type" field. It is called by the builders before save.
+	aiprovider.ProviderTypeValidator = func() func(string) error {
+		validators := aiproviderDescProviderType.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(provider_type string) error {
+			for _, fn := range fns {
+				if err := fn(provider_type); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// aiproviderDescBaseURL is the schema descriptor for base_url field.
+	aiproviderDescBaseURL := aiproviderFields[2].Descriptor()
+	// aiprovider.BaseURLValidator is a validator for the "base_url" field. It is called by the builders before save.
+	aiprovider.BaseURLValidator = func() func(string) error {
+		validators := aiproviderDescBaseURL.Validators
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
@@ -150,50 +236,44 @@ func init() {
 			return nil
 		}
 	}()
-	// aiconfigDescModel is the schema descriptor for model field.
-	aiconfigDescModel := aiconfigFields[2].Descriptor()
-	// aiconfig.ModelValidator is a validator for the "model" field. It is called by the builders before save.
-	aiconfig.ModelValidator = func() func(string) error {
-		validators := aiconfigDescModel.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(model string) error {
-			for _, fn := range fns {
-				if err := fn(model); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// aiconfigDescTemperature is the schema descriptor for temperature field.
-	aiconfigDescTemperature := aiconfigFields[3].Descriptor()
-	// aiconfig.DefaultTemperature holds the default value on creation for the temperature field.
-	aiconfig.DefaultTemperature = aiconfigDescTemperature.Default.(float64)
-	// aiconfigDescMaxTokens is the schema descriptor for max_tokens field.
-	aiconfigDescMaxTokens := aiconfigFields[4].Descriptor()
-	// aiconfig.DefaultMaxTokens holds the default value on creation for the max_tokens field.
-	aiconfig.DefaultMaxTokens = aiconfigDescMaxTokens.Default.(int)
-	// aiconfig.MaxTokensValidator is a validator for the "max_tokens" field. It is called by the builders before save.
-	aiconfig.MaxTokensValidator = aiconfigDescMaxTokens.Validators[0].(func(int) error)
-	// aiconfigDescTopP is the schema descriptor for top_p field.
-	aiconfigDescTopP := aiconfigFields[5].Descriptor()
-	// aiconfig.DefaultTopP holds the default value on creation for the top_p field.
-	aiconfig.DefaultTopP = aiconfigDescTopP.Default.(float64)
-	// aiconfigDescFrequencyPenalty is the schema descriptor for frequency_penalty field.
-	aiconfigDescFrequencyPenalty := aiconfigFields[6].Descriptor()
-	// aiconfig.DefaultFrequencyPenalty holds the default value on creation for the frequency_penalty field.
-	aiconfig.DefaultFrequencyPenalty = aiconfigDescFrequencyPenalty.Default.(float64)
-	// aiconfigDescPresencePenalty is the schema descriptor for presence_penalty field.
-	aiconfigDescPresencePenalty := aiconfigFields[7].Descriptor()
-	// aiconfig.DefaultPresencePenalty holds the default value on creation for the presence_penalty field.
-	aiconfig.DefaultPresencePenalty = aiconfigDescPresencePenalty.Default.(float64)
-	// aiconfigDescAPIKeyCiphertext is the schema descriptor for api_key_ciphertext field.
-	aiconfigDescAPIKeyCiphertext := aiconfigFields[8].Descriptor()
-	// aiconfig.APIKeyCiphertextValidator is a validator for the "api_key_ciphertext" field. It is called by the builders before save.
-	aiconfig.APIKeyCiphertextValidator = aiconfigDescAPIKeyCiphertext.Validators[0].(func(string) error)
+	// aiproviderDescTemperature is the schema descriptor for temperature field.
+	aiproviderDescTemperature := aiproviderFields[4].Descriptor()
+	// aiprovider.DefaultTemperature holds the default value on creation for the temperature field.
+	aiprovider.DefaultTemperature = aiproviderDescTemperature.Default.(float64)
+	// aiproviderDescMaxTokens is the schema descriptor for max_tokens field.
+	aiproviderDescMaxTokens := aiproviderFields[5].Descriptor()
+	// aiprovider.DefaultMaxTokens holds the default value on creation for the max_tokens field.
+	aiprovider.DefaultMaxTokens = aiproviderDescMaxTokens.Default.(int)
+	// aiprovider.MaxTokensValidator is a validator for the "max_tokens" field. It is called by the builders before save.
+	aiprovider.MaxTokensValidator = aiproviderDescMaxTokens.Validators[0].(func(int) error)
+	// aiproviderDescTopP is the schema descriptor for top_p field.
+	aiproviderDescTopP := aiproviderFields[6].Descriptor()
+	// aiprovider.DefaultTopP holds the default value on creation for the top_p field.
+	aiprovider.DefaultTopP = aiproviderDescTopP.Default.(float64)
+	// aiproviderDescFrequencyPenalty is the schema descriptor for frequency_penalty field.
+	aiproviderDescFrequencyPenalty := aiproviderFields[7].Descriptor()
+	// aiprovider.DefaultFrequencyPenalty holds the default value on creation for the frequency_penalty field.
+	aiprovider.DefaultFrequencyPenalty = aiproviderDescFrequencyPenalty.Default.(float64)
+	// aiproviderDescPresencePenalty is the schema descriptor for presence_penalty field.
+	aiproviderDescPresencePenalty := aiproviderFields[8].Descriptor()
+	// aiprovider.DefaultPresencePenalty holds the default value on creation for the presence_penalty field.
+	aiprovider.DefaultPresencePenalty = aiproviderDescPresencePenalty.Default.(float64)
+	// aiproviderDescIsDefault is the schema descriptor for is_default field.
+	aiproviderDescIsDefault := aiproviderFields[9].Descriptor()
+	// aiprovider.DefaultIsDefault holds the default value on creation for the is_default field.
+	aiprovider.DefaultIsDefault = aiproviderDescIsDefault.Default.(bool)
+	// aiproviderDescIsEnabled is the schema descriptor for is_enabled field.
+	aiproviderDescIsEnabled := aiproviderFields[10].Descriptor()
+	// aiprovider.DefaultIsEnabled holds the default value on creation for the is_enabled field.
+	aiprovider.DefaultIsEnabled = aiproviderDescIsEnabled.Default.(bool)
+	// aiproviderDescSort is the schema descriptor for sort field.
+	aiproviderDescSort := aiproviderFields[11].Descriptor()
+	// aiprovider.DefaultSort holds the default value on creation for the sort field.
+	aiprovider.DefaultSort = aiproviderDescSort.Default.(int)
+	// aiproviderDescRemark is the schema descriptor for remark field.
+	aiproviderDescRemark := aiproviderFields[12].Descriptor()
+	// aiprovider.RemarkValidator is a validator for the "remark" field. It is called by the builders before save.
+	aiprovider.RemarkValidator = aiproviderDescRemark.Validators[0].(func(string) error)
 	albumMixin := schema.Album{}.Mixin()
 	albumMixinFields0 := albumMixin[0].Fields()
 	_ = albumMixinFields0

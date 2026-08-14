@@ -33,16 +33,28 @@ func (f AIChatSessionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AIChatSessionMutation", m)
 }
 
-// The AIConfigFunc type is an adapter to allow the use of ordinary
-// function as AIConfig mutator.
-type AIConfigFunc func(context.Context, *ent.AIConfigMutation) (ent.Value, error)
+// The AIModelFunc type is an adapter to allow the use of ordinary
+// function as AIModel mutator.
+type AIModelFunc func(context.Context, *ent.AIModelMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f AIConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.AIConfigMutation); ok {
+func (f AIModelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AIModelMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AIConfigMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AIModelMutation", m)
+}
+
+// The AIProviderFunc type is an adapter to allow the use of ordinary
+// function as AIProvider mutator.
+type AIProviderFunc func(context.Context, *ent.AIProviderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AIProviderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AIProviderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AIProviderMutation", m)
 }
 
 // The AlbumFunc type is an adapter to allow the use of ordinary

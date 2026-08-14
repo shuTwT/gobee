@@ -46,12 +46,17 @@ func initSystemRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 
 // 注册 AI 路由。该组位于 FlexibleAuth 之后，聊天和管理接口都必须先通过登录认证。
 func initAIRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
-	aiConfig := router.Group("/ai/config")
+	aiProvider := router.Group("/ai/providers")
 	{
-		router.Get("/ai/config", handlerMap.AIHandler.GetConfig)
-		router.Put("/ai/config", handlerMap.AIHandler.SaveConfig)
-		aiConfig.Post("/test", handlerMap.AIHandler.TestConfig)
-		aiConfig.Get("/models", handlerMap.AIHandler.ListModels)
+		router.Get("/ai/providers/list", handlerMap.AIHandler.ListProviders)
+		aiProvider.Post("/create", handlerMap.AIHandler.CreateProvider)
+		aiProvider.Put("/update/:id", handlerMap.AIHandler.UpdateProvider)
+		aiProvider.Delete("/delete/:id", handlerMap.AIHandler.DeleteProvider)
+		aiProvider.Post("/test", handlerMap.AIHandler.TestProvider)
+		aiProvider.Post("/:id/models/sync", handlerMap.AIHandler.SyncProviderModels)
+		aiProvider.Post("/:id/models/create", handlerMap.AIHandler.CreateProviderModel)
+		aiProvider.Put("/:id/models/update/:modelId", handlerMap.AIHandler.UpdateProviderModel)
+		aiProvider.Delete("/:id/models/delete/:modelId", handlerMap.AIHandler.DeleteProviderModel)
 	}
 	aiChat := router.Group("/ai/chat/sessions")
 	{
