@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/shuTwT/hoshikuzu/ent/essay"
 	"github.com/shuTwT/hoshikuzu/ent/predicate"
+	"github.com/shuTwT/hoshikuzu/ent/user"
 )
 
 // EssayUpdate is the builder for updating Essay entities.
@@ -37,7 +38,6 @@ func (_u *EssayUpdate) SetUpdatedAt(v time.Time) *EssayUpdate {
 
 // SetUserID sets the "user_id" field.
 func (_u *EssayUpdate) SetUserID(v int) *EssayUpdate {
-	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
@@ -47,12 +47,6 @@ func (_u *EssayUpdate) SetNillableUserID(v *int) *EssayUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
-	return _u
-}
-
-// AddUserID adds value to the "user_id" field.
-func (_u *EssayUpdate) AddUserID(v int) *EssayUpdate {
-	_u.mutation.AddUserID(v)
 	return _u
 }
 
@@ -217,9 +211,20 @@ func (_u *EssayUpdate) ClearTags() *EssayUpdate {
 	return _u
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_u *EssayUpdate) SetUser(v *User) *EssayUpdate {
+	return _u.SetUserID(v.ID)
+}
+
 // Mutation returns the EssayMutation object of the builder.
 func (_u *EssayUpdate) Mutation() *EssayMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *EssayUpdate) ClearUser() *EssayUpdate {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -270,6 +275,9 @@ func (_u *EssayUpdate) check() error {
 			return &ValidationError{Name: "location", err: fmt.Errorf(`ent: validator failed for field "Essay.location": %w`, err)}
 		}
 	}
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Essay.user"`)
+	}
 	return nil
 }
 
@@ -287,12 +295,6 @@ func (_u *EssayUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(essay.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(essay.FieldUserID, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(essay.FieldUserID, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(essay.FieldContent, field.TypeString, value)
@@ -349,6 +351,35 @@ func (_u *EssayUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.TagsCleared() {
 		_spec.ClearField(essay.FieldTags, field.TypeJSON)
 	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   essay.UserTable,
+			Columns: []string{essay.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   essay.UserTable,
+			Columns: []string{essay.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{essay.Label}
@@ -377,7 +408,6 @@ func (_u *EssayUpdateOne) SetUpdatedAt(v time.Time) *EssayUpdateOne {
 
 // SetUserID sets the "user_id" field.
 func (_u *EssayUpdateOne) SetUserID(v int) *EssayUpdateOne {
-	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
@@ -387,12 +417,6 @@ func (_u *EssayUpdateOne) SetNillableUserID(v *int) *EssayUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
-	return _u
-}
-
-// AddUserID adds value to the "user_id" field.
-func (_u *EssayUpdateOne) AddUserID(v int) *EssayUpdateOne {
-	_u.mutation.AddUserID(v)
 	return _u
 }
 
@@ -557,9 +581,20 @@ func (_u *EssayUpdateOne) ClearTags() *EssayUpdateOne {
 	return _u
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_u *EssayUpdateOne) SetUser(v *User) *EssayUpdateOne {
+	return _u.SetUserID(v.ID)
+}
+
 // Mutation returns the EssayMutation object of the builder.
 func (_u *EssayUpdateOne) Mutation() *EssayMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *EssayUpdateOne) ClearUser() *EssayUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // Where appends a list predicates to the EssayUpdate builder.
@@ -623,6 +658,9 @@ func (_u *EssayUpdateOne) check() error {
 			return &ValidationError{Name: "location", err: fmt.Errorf(`ent: validator failed for field "Essay.location": %w`, err)}
 		}
 	}
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Essay.user"`)
+	}
 	return nil
 }
 
@@ -657,12 +695,6 @@ func (_u *EssayUpdateOne) sqlSave(ctx context.Context) (_node *Essay, err error)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(essay.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(essay.FieldUserID, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(essay.FieldUserID, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(essay.FieldContent, field.TypeString, value)
@@ -718,6 +750,35 @@ func (_u *EssayUpdateOne) sqlSave(ctx context.Context) (_node *Essay, err error)
 	}
 	if _u.mutation.TagsCleared() {
 		_spec.ClearField(essay.FieldTags, field.TypeJSON)
+	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   essay.UserTable,
+			Columns: []string{essay.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   essay.UserTable,
+			Columns: []string{essay.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Essay{config: _u.config}
 	_spec.Assign = _node.assignValues

@@ -467,13 +467,21 @@ func (h *PublicHandler) GetEssayPage(c *fiber.Ctx) error {
 	}
 	resp := make([]model.EssayResp, 0, len(essays))
 	for _, e := range essays {
-		resp = append(resp, model.EssayResp{
+		essayResp := model.EssayResp{
 			ID:       e.ID,
 			Content:  e.Content,
 			Draft:    e.Draft,
 			Images:   e.Images,
 			CreateAt: (*model.LocalTime)(&e.CreatedAt),
-		})
+		}
+		if e.Edges.User != nil {
+			essayResp.UserID = e.Edges.User.ID
+			essayResp.UserName = e.Edges.User.Nickname
+			if essayResp.UserName == "" {
+				essayResp.UserName = e.Edges.User.Name
+			}
+		}
+		resp = append(resp, essayResp)
 	}
 	return c.JSON(model.NewSuccess("success", model.PageResult[model.EssayResp]{
 		Total:   int64(total),
@@ -499,13 +507,21 @@ func (h *PublicHandler) ListEssay(c *fiber.Ctx) error {
 	}
 	resp := make([]model.EssayResp, 0, len(essays))
 	for _, e := range essays {
-		resp = append(resp, model.EssayResp{
+		essayResp := model.EssayResp{
 			ID:       e.ID,
 			Content:  e.Content,
 			Draft:    e.Draft,
 			Images:   e.Images,
 			CreateAt: (*model.LocalTime)(&e.CreatedAt),
-		})
+		}
+		if e.Edges.User != nil {
+			essayResp.UserID = e.Edges.User.ID
+			essayResp.UserName = e.Edges.User.Nickname
+			if essayResp.UserName == "" {
+				essayResp.UserName = e.Edges.User.Name
+			}
+		}
+		resp = append(resp, essayResp)
 	}
 	return c.JSON(model.NewSuccess("success", resp))
 }

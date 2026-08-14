@@ -60,6 +60,7 @@ func (s *EssayServiceImpl) GetEssayPage(ctx context.Context, page, pageSize int)
 		return nil, 0, err
 	}
 	essays, err := s.client.Essay.Query().
+		WithUser().
 		Order(ent.Desc(essay.FieldID)).
 		Limit(pageSize).
 		Offset((page - 1) * pageSize).
@@ -72,6 +73,7 @@ func (s *EssayServiceImpl) GetEssayPage(ctx context.Context, page, pageSize int)
 
 func (s *EssayServiceImpl) GetEssayList(ctx context.Context, limit int) ([]*ent.Essay, error) {
 	essays, err := s.client.Essay.Query().
+		WithUser().
 		Order(ent.Desc(essay.FieldID)).
 		Limit(limit).
 		All(ctx)

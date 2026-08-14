@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/shuTwT/hoshikuzu/ent/essay"
+	"github.com/shuTwT/hoshikuzu/ent/user"
 )
 
 // EssayCreate is the builder for creating a Essay entity.
@@ -162,6 +163,11 @@ func (_c *EssayCreate) SetID(v int) *EssayCreate {
 	return _c
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_c *EssayCreate) SetUser(v *User) *EssayCreate {
+	return _c.SetUserID(v.ID)
+}
+
 // Mutation returns the EssayMutation object of the builder.
 func (_c *EssayCreate) Mutation() *EssayMutation {
 	return _c.mutation
@@ -266,6 +272,9 @@ func (_c *EssayCreate) check() error {
 			return &ValidationError{Name: "location", err: fmt.Errorf(`ent: validator failed for field "Essay.location": %w`, err)}
 		}
 	}
+	if len(_c.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Essay.user"`)}
+	}
 	return nil
 }
 
@@ -306,10 +315,6 @@ func (_c *EssayCreate) createSpec() (*Essay, *sqlgraph.CreateSpec) {
 		_spec.SetField(essay.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(essay.FieldUserID, field.TypeInt, value)
-		_node.UserID = value
-	}
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(essay.FieldContent, field.TypeString, value)
 		_node.Content = value
@@ -345,6 +350,23 @@ func (_c *EssayCreate) createSpec() (*Essay, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Tags(); ok {
 		_spec.SetField(essay.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
+	}
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   essay.UserTable,
+			Columns: []string{essay.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

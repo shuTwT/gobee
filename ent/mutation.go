@@ -9697,8 +9697,6 @@ type EssayMutation struct {
 	id               *int
 	created_at       *time.Time
 	updated_at       *time.Time
-	user_id          *int
-	adduser_id       *int
 	content          *string
 	draft            *bool
 	images           *[]string
@@ -9714,6 +9712,8 @@ type EssayMutation struct {
 	tags             *[]string
 	appendtags       []string
 	clearedFields    map[string]struct{}
+	user             *int
+	cleareduser      bool
 	done             bool
 	oldValue         func(context.Context) (*Essay, error)
 	predicates       []predicate.Essay
@@ -9897,13 +9897,12 @@ func (m *EssayMutation) ResetUpdatedAt() {
 
 // SetUserID sets the "user_id" field.
 func (m *EssayMutation) SetUserID(i int) {
-	m.user_id = &i
-	m.adduser_id = nil
+	m.user = &i
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
 func (m *EssayMutation) UserID() (r int, exists bool) {
-	v := m.user_id
+	v := m.user
 	if v == nil {
 		return
 	}
@@ -9927,28 +9926,9 @@ func (m *EssayMutation) OldUserID(ctx context.Context) (v int, err error) {
 	return oldValue.UserID, nil
 }
 
-// AddUserID adds i to the "user_id" field.
-func (m *EssayMutation) AddUserID(i int) {
-	if m.adduser_id != nil {
-		*m.adduser_id += i
-	} else {
-		m.adduser_id = &i
-	}
-}
-
-// AddedUserID returns the value that was added to the "user_id" field in this mutation.
-func (m *EssayMutation) AddedUserID() (r int, exists bool) {
-	v := m.adduser_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetUserID resets all changes to the "user_id" field.
 func (m *EssayMutation) ResetUserID() {
-	m.user_id = nil
-	m.adduser_id = nil
+	m.user = nil
 }
 
 // SetContent sets the "content" field.
@@ -10406,6 +10386,33 @@ func (m *EssayMutation) ResetTags() {
 	delete(m.clearedFields, essay.FieldTags)
 }
 
+// ClearUser clears the "user" edge to the User entity.
+func (m *EssayMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[essay.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *EssayMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *EssayMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *EssayMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
 // Where appends a list predicates to the EssayMutation builder.
 func (m *EssayMutation) Where(ps ...predicate.Essay) {
 	m.predicates = append(m.predicates, ps...)
@@ -10447,7 +10454,7 @@ func (m *EssayMutation) Fields() []string {
 	if m.updated_at != nil {
 		fields = append(fields, essay.FieldUpdatedAt)
 	}
-	if m.user_id != nil {
+	if m.user != nil {
 		fields = append(fields, essay.FieldUserID)
 	}
 	if m.content != nil {
@@ -10643,9 +10650,6 @@ func (m *EssayMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *EssayMutation) AddedFields() []string {
 	var fields []string
-	if m.adduser_id != nil {
-		fields = append(fields, essay.FieldUserID)
-	}
 	if m.addlike_count != nil {
 		fields = append(fields, essay.FieldLikeCount)
 	}
@@ -10663,8 +10667,6 @@ func (m *EssayMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *EssayMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case essay.FieldUserID:
-		return m.AddedUserID()
 	case essay.FieldLikeCount:
 		return m.AddedLikeCount()
 	case essay.FieldCommentCount:
@@ -10680,13 +10682,6 @@ func (m *EssayMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *EssayMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case essay.FieldUserID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddUserID(v)
-		return nil
 	case essay.FieldLikeCount:
 		v, ok := value.(int)
 		if !ok {
@@ -10798,19 +10793,28 @@ func (m *EssayMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EssayMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, essay.EdgeUser)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *EssayMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case essay.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EssayMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -10822,25 +10826,42 @@ func (m *EssayMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EssayMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, essay.EdgeUser)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *EssayMutation) EdgeCleared(name string) bool {
+	switch name {
+	case essay.EdgeUser:
+		return m.cleareduser
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *EssayMutation) ClearEdge(name string) error {
+	switch name {
+	case essay.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
 	return fmt.Errorf("unknown Essay unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *EssayMutation) ResetEdge(name string) error {
+	switch name {
+	case essay.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
 	return fmt.Errorf("unknown Essay edge %s", name)
 }
 

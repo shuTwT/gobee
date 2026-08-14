@@ -229,7 +229,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "user_id", Type: field.TypeInt},
 		{Name: "content", Type: field.TypeString, Size: 1000},
 		{Name: "draft", Type: field.TypeBool, Default: false},
 		{Name: "images", Type: field.TypeJSON, Nullable: true},
@@ -239,12 +238,21 @@ var (
 		{Name: "public", Type: field.TypeBool, Default: true},
 		{Name: "location", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt},
 	}
 	// EssaysTable holds the schema information for the "essays" table.
 	EssaysTable = &schema.Table{
 		Name:       "essays",
 		Columns:    EssaysColumns,
 		PrimaryKey: []*schema.Column{EssaysColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "essays_users_user",
+				Columns:    []*schema.Column{EssaysColumns[12]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// FlinksColumns holds the columns for the "flinks" table.
 	FlinksColumns = []*schema.Column{
@@ -1017,6 +1025,7 @@ func init() {
 	AiChatMessagesTable.ForeignKeys[0].RefTable = AiChatSessionsTable
 	AiChatSessionsTable.ForeignKeys[0].RefTable = UsersTable
 	AiModelsTable.ForeignKeys[0].RefTable = AiProvidersTable
+	EssaysTable.ForeignKeys[0].RefTable = UsersTable
 	FlinksTable.ForeignKeys[0].RefTable = FlinkGroupsTable
 	FilesTable.ForeignKeys[0].RefTable = StorageStrategiesTable
 	MembersTable.ForeignKeys[0].RefTable = MemberLevelsTable

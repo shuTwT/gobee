@@ -3,6 +3,7 @@ package essay
 import (
 	"strconv"
 
+	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/internal/middleware"
 	"github.com/shuTwT/hoshikuzu/internal/services/content/essay"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
@@ -16,6 +17,25 @@ type EssayHandler struct {
 
 func NewEssayHandler(service essay.EssayService) *EssayHandler {
 	return &EssayHandler{service: service}
+}
+
+// toEssayResp 将实体转换为响应模型，附带发布用户信息
+func toEssayResp(e *ent.Essay) model.EssayResp {
+	resp := model.EssayResp{
+		ID:       e.ID,
+		Content:  e.Content,
+		Draft:    e.Draft,
+		Images:   e.Images,
+		CreateAt: (*model.LocalTime)(&e.CreatedAt),
+	}
+	if e.Edges.User != nil {
+		resp.UserID = e.Edges.User.ID
+		resp.UserName = e.Edges.User.Nickname
+		if resp.UserName == "" {
+			resp.UserName = e.Edges.User.Name
+		}
+	}
+	return resp
 }
 
 // @Summary 创建说说
@@ -90,13 +110,7 @@ func (h *EssayHandler) GetEssayPage(c *fiber.Ctx) error {
 	}
 	resp := make([]model.EssayResp, 0, len(essays))
 	for _, e := range essays {
-		resp = append(resp, model.EssayResp{
-			ID:       e.ID,
-			Content:  e.Content,
-			Draft:    e.Draft,
-			Images:   e.Images,
-			CreateAt: (*model.LocalTime)(&e.CreatedAt),
-		})
+		resp = append(resp, toEssayResp(e))
 	}
 	return c.JSON(model.NewSuccess("success", model.PageResult[model.EssayResp]{
 		Total:   int64(total),
@@ -122,13 +136,7 @@ func (h *EssayHandler) ListEssay(c *fiber.Ctx) error {
 	}
 	resp := make([]model.EssayResp, 0, len(essays))
 	for _, e := range essays {
-		resp = append(resp, model.EssayResp{
-			ID:       e.ID,
-			Content:  e.Content,
-			Draft:    e.Draft,
-			Images:   e.Images,
-			CreateAt: (*model.LocalTime)(&e.CreatedAt),
-		})
+		resp = append(resp, toEssayResp(e))
 	}
 	return c.JSON(model.NewSuccess("success", resp))
 }

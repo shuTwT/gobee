@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -55,5 +56,11 @@ func (Essay) Fields() []ent.Field {
 
 // Edges of the Essay.
 func (Essay) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("user", User.Type).
+			Unique().
+			Required().
+			Field("user_id").
+			Comment("发布用户"),
+	}
 }

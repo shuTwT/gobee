@@ -10,11 +10,12 @@
 创建一个新的说说
 
 ```go
-func (s *EssayServiceImpl) CreateEssay(ctx context.Context, req *model.EssayCreateReq) (*ent.Essay, error)
+func (s *EssayServiceImpl) CreateEssay(ctx context.Context, userId int, req *model.EssayCreateReq) (*ent.Essay, error)
 ```
 
 **参数**:
 - `ctx`: context.Context - 上下文
+- `userId`: int - 发布用户ID
 - `req`: *model.EssayCreateReq - 创建请求
 
 **返回**:

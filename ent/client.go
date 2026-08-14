@@ -2063,6 +2063,22 @@ func (c *EssayClient) GetX(ctx context.Context, id int) *Essay {
 	return obj
 }
 
+// QueryUser queries the user edge of a Essay.
+func (c *EssayClient) QueryUser(_m *Essay) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(essay.Table, essay.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, essay.UserTable, essay.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *EssayClient) Hooks() []Hook {
 	return c.hooks.Essay

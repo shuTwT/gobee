@@ -18,5 +18,7 @@ type EssayResp struct {
 	Content  string     `json:"content"`
 	Draft    bool       `json:"draft"`
 	Images   []string   `json:"images"`
+	UserID   int        `json:"user_id"`
+	UserName string     `json:"user_name"`
 	CreateAt *LocalTime `json:"create_at"`
 }
