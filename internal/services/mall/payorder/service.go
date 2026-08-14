@@ -9,6 +9,7 @@ import (
 
 	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/ent/payorder"
+	"github.com/shuTwT/hoshikuzu/ent/postpurchase"
 	"github.com/shuTwT/hoshikuzu/internal/infra/pay/epay"
 	setting_service "github.com/shuTwT/hoshikuzu/internal/services/system/setting"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
@@ -17,6 +18,8 @@ import (
 type PayOrderService interface {
 	ListPayOrderPage(ctx context.Context, req *model.PageQuery) ([]*ent.PayOrder, int, error)
 	SubmitPayOrder(ctx context.Context, userID int, req *model.PayOrderSubmitReq) (*model.PayOrderSubmitResp, error)
+	HandleNotify(ctx context.Context, params map[string]string) error
+	SyncOrderStatus(ctx context.Context, orderID int) (*model.PayOrderStatusResp, error)
 	GetTodayStats(ctx context.Context) (*model.PayOrderTodayStats, error)
 }
 
@@ -159,6 +162,136 @@ func (s *PayOrderServiceImpl) SubmitPayOrder(ctx context.Context, userID int, re
 		PayURL:     payURL,
 		TradeNO:    resp.TradeNO,
 	}, nil
+}
+
+// handlePaySuccess 标记订单为已支付并执行业务履约（文章付费写购买记录），幂等。
+func (s *PayOrderServiceImpl) handlePaySuccess(ctx context.Context, order *ent.PayOrder) error {
+	if order.State == "2" {
+		return nil
+	}
+
+	order, err := s.db.PayOrder.UpdateOneID(order.ID).SetState("2").Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	// 文章付费：写购买记录（唯一索引保证不重复）
+	if order.OrderType == model.PayOrderTypePost && order.PostID != 0 {
+		exist, err := s.db.PostPurchase.Query().
+			Where(postpurchase.UserIDEQ(order.UserID), postpurchase.PostIDEQ(order.PostID)).
+			Exist(ctx)
+		if err != nil {
+			return err
+		}
+		if !exist {
+			if _, err := s.db.PostPurchase.Create().
+				SetUserID(order.UserID).
+				SetPostID(order.PostID).
+				SetOrderID(order.ID).
+				Save(ctx); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// HandleNotify 处理易支付异步回调：验签 -> 找订单 -> 支付成功则履约。
+func (s *PayOrderServiceImpl) HandleNotify(ctx context.Context, params map[string]string) error {
+	cfg, _, err := s.loadEpayConfig(ctx)
+	if err != nil {
+		return err
+	}
+
+	sign, ok := params["sign"]
+	if !ok {
+		return fmt.Errorf("缺少签名参数")
+	}
+	if !epay.VerifySign(params, cfg.Key, sign) {
+		return fmt.Errorf("签名校验失败")
+	}
+
+	// 仅处理支付成功的通知
+	if params["trade_status"] != "TRADE_SUCCESS" {
+		return nil
+	}
+
+	outTradeNo := params["out_trade_no"]
+	order, err := s.db.PayOrder.Query().
+		Where(payorder.OutTradeNoEQ(outTradeNo)).
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+
+	return s.handlePaySuccess(ctx, order)
+}
+
+// SyncOrderStatus 主动查询易支付订单状态并同步本地（用于补单/后台手动刷新）。
+func (s *PayOrderServiceImpl) SyncOrderStatus(ctx context.Context, orderID int) (*model.PayOrderStatusResp, error) {
+	order, err := s.db.PayOrder.Get(ctx, orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 已支付的订单无需同步
+	if order.State == "2" {
+		return toPayOrderStatusResp(order), nil
+	}
+
+	cfg, enabled, err := s.loadEpayConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if !enabled {
+		return nil, fmt.Errorf("易支付未启用")
+	}
+
+	pid, err := strconv.Atoi(cfg.MchID)
+	if err != nil {
+		return nil, fmt.Errorf("商户ID无效: %w", err)
+	}
+	tradeNo := ""
+	if order.OrderID != nil {
+		tradeNo = *order.OrderID
+	}
+	outTradeNo := ""
+	if order.OutTradeNo != nil {
+		outTradeNo = *order.OutTradeNo
+	}
+
+	queryResp, err := epay.NewV1Client(cfg).QueryOrder(pid, cfg.Key, tradeNo, outTradeNo)
+	if err != nil {
+		return nil, err
+	}
+
+	// 易支付 status=2 表示已支付
+	if queryResp.Status == 2 {
+		if err := s.handlePaySuccess(ctx, order); err != nil {
+			return nil, err
+		}
+		order, err = s.db.PayOrder.Get(ctx, orderID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return toPayOrderStatusResp(order), nil
+}
+
+func toPayOrderStatusResp(o *ent.PayOrder) *model.PayOrderStatusResp {
+	outTradeNo := ""
+	if o.OutTradeNo != nil {
+		outTradeNo = *o.OutTradeNo
+	}
+	return &model.PayOrderStatusResp{
+		ID:         o.ID,
+		OutTradeNo: outTradeNo,
+		State:      o.State,
+		Subject:    o.Subject,
+		Price:      o.Price,
+	}
 }
 
 func (s *PayOrderServiceImpl) GetTodayStats(ctx context.Context) (*model.PayOrderTodayStats, error) {

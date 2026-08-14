@@ -203,6 +203,49 @@ func (h *PayOrderHandler) SubmitPayOrder(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", resp))
 }
 
+// @Summary 支付回调
+// @Description 易支付异步通知回调，公开接口
+// @Tags 后台管理接口/支付订单
+// @Accept json
+// @Produce plain
+// @Success 200 {string} string
+// @Router /api/v1/pay-order/notify [post]
+func (h *PayOrderHandler) NotifyPayOrder(c *fiber.Ctx) error {
+	params := make(map[string]string)
+	c.Context().QueryArgs().VisitAll(func(k, v []byte) {
+		params[string(k)] = string(v)
+	})
+	c.Context().PostArgs().VisitAll(func(k, v []byte) {
+		params[string(k)] = string(v)
+	})
+
+	if err := h.payOrderService.HandleNotify(c.Context(), params); err != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString("fail")
+	}
+	return c.SendString("success")
+}
+
+// @Summary 查询订单状态
+// @Description 主动同步易支付订单状态并返回
+// @Tags 后台管理接口/支付订单
+// @Accept json
+// @Produce json
+// @Param id path string true "支付订单ID"
+// @Success 200 {object} model.HttpSuccess{data=model.PayOrderStatusResp}
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/pay-order/status/{id} [get]
+func (h *PayOrderHandler) QueryOrderStatus(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
+	}
+	resp, err := h.payOrderService.SyncOrderStatus(c.Context(), id)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", resp))
+}
+
 // @Summary 获取今日统计
 // @Description 获取今日支付订单统计信息
 // @Tags 后台管理接口/支付订单

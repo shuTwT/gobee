@@ -90,3 +90,12 @@ type PayOrderSubmitResp struct {
 	PayURL     string `json:"pay_url"`      // 支付链接
 	TradeNO    string `json:"trade_no"`     // 易支付订单号
 }
+
+// PayOrderStatusResp 订单状态查询响应
+type PayOrderStatusResp struct {
+	ID         int    `json:"id"`
+	OutTradeNo string `json:"out_trade_no"`
+	State      string `json:"state"`
+	Subject    string `json:"subject"`
+	Price      int    `json:"price"`
+}

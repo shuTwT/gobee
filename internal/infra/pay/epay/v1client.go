@@ -113,9 +113,8 @@ func NewV1Client(config Config) *V1Client {
 	return &V1Client{config: config}
 }
 
-// 生成签名
-func (c *V1Client) generateSign(params map[string]string, key string) string {
-	// 1. 收集所有需要签名的 k=v 字符串（排除 sign 和空值）
+// signParams 按易支付规则生成签名：排除 sign 与空值，按 key 排序拼接后追加 key，MD5。
+func signParams(params map[string]string, key string) string {
 	var pairs []string
 	for k, v := range params {
 		if k == "sign" || v == "" {
@@ -123,22 +122,21 @@ func (c *V1Client) generateSign(params map[string]string, key string) string {
 		}
 		pairs = append(pairs, fmt.Sprintf("%s=%s", k, v))
 	}
-
-	// 2. 按 key 排序
 	sort.Strings(pairs)
-
-	// 3. 拼接为 a=b&c=d&e=f
-	signStr := strings.Join(pairs, "&")
-
-	// 4. 直接拼接 key（前面无 &）
-	signStr += key
-
-	log.Printf("签名前字符串: %s", signStr)
-
-	// 5. MD5 加密
+	signStr := strings.Join(pairs, "&") + key
 	md5Ctx := md5.New()
 	md5Ctx.Write([]byte(signStr))
 	return hex.EncodeToString(md5Ctx.Sum(nil))
+}
+
+// 生成签名
+func (c *V1Client) generateSign(params map[string]string, key string) string {
+	return signParams(params, key)
+}
+
+// VerifySign 校验易支付回调签名。
+func VerifySign(params map[string]string, key, sign string) bool {
+	return signParams(params, key) == sign
 }
 
 // 创建支付订单

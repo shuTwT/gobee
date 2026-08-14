@@ -279,6 +279,7 @@ func initMallRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		payOrderApi.Get("/query/:id", handlerMap.PayOrderHandler.QueryPayOrder).Name("payOrderQuery")
 		payOrderApi.Delete("/delete/:id", handlerMap.PayOrderHandler.DeletePayOrder).Name("payOrderDelete")
 		payOrderApi.Post("/submit", handlerMap.PayOrderHandler.SubmitPayOrder).Name("payOrderSubmit")
+		payOrderApi.Get("/status/:id", handlerMap.PayOrderHandler.QueryOrderStatus).Name("payOrderStatus")
 		payOrderApi.Get("/today-stats", handlerMap.PayOrderHandler.GetTodayStats).Name("payOrderTodayStats")
 	}
 
@@ -405,6 +406,10 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap, dbClient *ent
 			// 路由列表接口
 			apiV1.Get("/routes", handlerMap.RouteHandler.GetRoutes)
 			apiV1.Get("/settings", handlerMap.SettingHandler.GetSettings)
+
+			// 支付回调（公开，易支付服务器不带认证）
+			apiV1.Post("/pay-order/notify", handlerMap.PayOrderHandler.NotifyPayOrder)
+			apiV1.Get("/pay-order/notify", handlerMap.PayOrderHandler.NotifyPayOrder)
 
 			apiV1.Use(middleware.FlexibleAuth(dbClient))
 			initAIRouter(apiV1, handlerMap)
