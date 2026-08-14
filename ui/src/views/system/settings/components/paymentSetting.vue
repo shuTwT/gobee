@@ -7,6 +7,11 @@ const paymentFormRef = ref<FormInst | null>(null)
 
 const defaultForm = {
   enableEpay: false,
+  epayApiUrl: '',
+  epayMerchantId: '',
+  epayMerchantKey: '',
+  epayNotifyUrl: '',
+  epayReturnUrl: '',
   enableAlipay: false,
   alipayAppId: '',
   alipayPrivateKey: '',
@@ -21,6 +26,11 @@ const defaultForm = {
 }
 const paymentForm = ref({
   enableEpay: false,
+  epayApiUrl: '',
+  epayMerchantId: '',
+  epayMerchantKey: '',
+  epayNotifyUrl: '',
+  epayReturnUrl: '',
   enableAlipay: false,
   alipayAppId: '',
   alipayPrivateKey: '',
@@ -83,6 +93,32 @@ onMounted(() => {
       <n-text>
         启用易支付后，支付宝和微信的渠道将被易支付替代。
       </n-text>
+    </n-form-item>
+    <n-form-item label="易支付网关地址" path="epayApiUrl">
+      <n-input v-model:value="paymentForm.epayApiUrl" placeholder="https://api.pay.com" />
+    </n-form-item>
+    <n-form-item label="易支付商户ID" path="epayMerchantId">
+      <n-input v-model:value="paymentForm.epayMerchantId" placeholder="请输入易支付商户ID" />
+    </n-form-item>
+    <n-form-item label="易支付商户密钥" path="epayMerchantKey">
+      <n-input
+        v-model:value="paymentForm.epayMerchantKey"
+        type="password"
+        show-password-on="click"
+        placeholder="请输入易支付商户密钥"
+      />
+    </n-form-item>
+    <n-form-item label="易支付异步通知URL" path="epayNotifyUrl">
+      <n-input
+        v-model:value="paymentForm.epayNotifyUrl"
+        placeholder="https://yourdomain.com/api/v1/pay-order/notify"
+      />
+    </n-form-item>
+    <n-form-item label="易支付同步返回URL" path="epayReturnUrl">
+      <n-input
+        v-model:value="paymentForm.epayReturnUrl"
+        placeholder="https://yourdomain.com/api/v1/pay-order/return"
+      />
     </n-form-item>
     <n-divider />
     <n-form-item label="启用支付宝" path="enableAlipay">

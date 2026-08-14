@@ -33,15 +33,6 @@ var SettingKeys = struct {
 	MailSmtpPassword         string //smtp密码
 	MailSmtpEncryption       string //smtp加密方式
 	MailSmtpSender           string //smtp发件人
-	PayEnableEPay            string //启用已支付
-	PayEnableAliPay          string //启用支付宝支付
-	PayAliPayAppID           string //支付宝应用ID
-	PayAliPayAppSecret       string //支付宝应用密钥
-	PayEnableWxPay           string //启用微信支付
-	PayWxPayAppID            string //微信支付应用ID
-	PayWxPayAppSecret        string //微信支付应用密钥
-	PayNotifyUrl             string //支付回调URL
-	PayOrderExpire           string //订单过期时间（分钟）
 	NotifyEnableEmail        string //是否开启邮件通知
 	NotifyEnableRegister     string //是否开启注册通知
 	NotifyEnableComment      string //是否开启评论通知
@@ -76,15 +67,6 @@ var SettingKeys = struct {
 	MailSmtpPassword:         "mail_smtp_password",
 	MailSmtpEncryption:       "mail_smtp_encryption",
 	MailSmtpSender:           "mail_smtp_sender",
-	PayEnableEPay:            "pay_enable_epay",
-	PayEnableAliPay:          "pay_enable_ali_pay",
-	PayAliPayAppID:           "pay_ali_pay_app_id",
-	PayAliPayAppSecret:       "pay_ali_pay_app_secret",
-	PayEnableWxPay:           "pay_enable_wx_pay",
-	PayWxPayAppID:            "pay_wx_pay_app_id",
-	PayWxPayAppSecret:        "pay_wx_pay_app_secret",
-	PayNotifyUrl:             "pay_notify_url",
-	PayOrderExpire:           "pay_order_expire",
 	NotifyEnableEmail:        "notify_enable_email",
 	NotifyEnableRegister:     "notify_enable_register",
 	NotifyEnableComment:      "notify_enable_comment",

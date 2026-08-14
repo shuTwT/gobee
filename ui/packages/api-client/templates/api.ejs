@@ -3,8 +3,6 @@ const { apiConfig, routes, utils, config } = it;
 const { info, servers, externalDocs } = apiConfig;
 const { _, require, formatDescription } = utils;
 
-const server = (servers && servers[0]) || { url: "" };
-
 const descriptionLines = _.compact([
   `@title ${info.title || "No title"}`,
   info.version && `@version ${info.version}`,
@@ -13,7 +11,6 @@ const descriptionLines = _.compact([
     info.license.url && `(${info.license.url})`,
   ]).join(" ")}`,
   info.termsOfService && `@termsOfService ${info.termsOfService}`,
-  server.url && `@baseUrl ${server.url}`,
   externalDocs.url && `@externalDocs ${externalDocs.url}`,
   info.contact && `@contact ${_.compact([
     info.contact.name,
