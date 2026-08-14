@@ -82,3 +82,11 @@ type PayOrderTodayStats struct {
 	SuccessRate float64 `json:"success_rate"`
 	Pending     int     `json:"pending"`
 }
+
+// PayOrderSubmitResp 提交支付订单后返回给前端的信息
+type PayOrderSubmitResp struct {
+	OrderID    int    `json:"order_id"`     // 系统订单ID
+	OutTradeNo string `json:"out_trade_no"` // 商户订单号
+	PayURL     string `json:"pay_url"`      // 支付链接
+	TradeNO    string `json:"trade_no"`     // 易支付订单号
+}

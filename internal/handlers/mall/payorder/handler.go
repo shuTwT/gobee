@@ -7,6 +7,7 @@ import (
 
 	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/ent/payorder"
+	"github.com/shuTwT/hoshikuzu/internal/middleware"
 	payorder_service "github.com/shuTwT/hoshikuzu/internal/services/mall/payorder"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
 )
@@ -166,9 +167,17 @@ func (h *PayOrderHandler) DeletePayOrder(c *fiber.Ctx) error {
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/pay-order/submit [post]
 func (h *PayOrderHandler) SubmitPayOrder(c *fiber.Ctx) error {
+	loginUser := middleware.GetCurrentUser(c)
+	if loginUser == nil {
+		return c.JSON(model.NewError(fiber.StatusUnauthorized, "请先登录"))
+	}
+
 	var req model.PayOrderSubmitReq
 	if err := c.BodyParser(&req); err != nil {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	if req.Money <= 0 {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "金额必须大于0"))
 	}
 	switch req.OrderType {
 	case model.PayOrderTypePost:
@@ -183,12 +192,15 @@ func (h *PayOrderHandler) SubmitPayOrder(c *fiber.Ctx) error {
 				"ProductId is required",
 			))
 		}
+	default:
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "无效的订单类型"))
 	}
-	err := h.payOrderService.SubmitPayOrder(c.Context(), &req)
+
+	resp, err := h.payOrderService.SubmitPayOrder(c.Context(), loginUser.ID, &req)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
-	return nil
+	return c.JSON(model.NewSuccess("success", resp))
 }
 
 // @Summary 获取今日统计
