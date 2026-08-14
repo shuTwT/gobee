@@ -75,6 +75,86 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/auth/logout": {
+            "post": {
+                "description": "吊销当前refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "公开接口/认证"
+                ],
+                "summary": "登出",
+                "parameters": [
+                    {
+                        "description": "登出请求",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.RefreshTokenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/refresh-token": {
+            "post": {
+                "description": "使用refresh token换取新的access/refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "公开接口/认证"
+                ],
+                "summary": "刷新令牌",
+                "parameters": [
+                    {
+                        "description": "刷新请求",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.RefreshTokenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/initialize": {
             "post": {
                 "description": "首次运行系统时进行初始化设置，包括数据库配置和创建管理员账户",
@@ -384,51 +464,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ai/config": {
-            "get": {
-                "description": "获取脱敏后的 OpenAI 兼容配置，仅超级管理员可用",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后台管理接口/AI"
-                ],
-                "summary": "获取 AI 配置",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.AIConfigResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpError"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "保存完整的 OpenAI 兼容配置，API Key 只写入服务端密文",
+        "/api/v1/ai/providers/create": {
+            "post": {
+                "description": "新增一个 OpenAI 兼容提供商，API Key 仅以密文落库",
                 "consumes": [
                     "application/json"
                 ],
@@ -438,15 +476,15 @@ const docTemplate = `{
                 "tags": [
                     "后台管理接口/AI"
                 ],
-                "summary": "保存 AI 配置",
+                "summary": "创建 AI 提供商",
                 "parameters": [
                     {
-                        "description": "AI 配置",
+                        "description": "提供商配置",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AIConfigUpdateReq"
+                            "$ref": "#/definitions/model.AIProviderReq"
                         }
                     }
                 ],
@@ -468,9 +506,44 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/providers/delete/{id}": {
+            "delete": {
+                "description": "删除提供商及其全部模型",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "删除 AI 提供商",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提供商 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
                     },
-                    "503": {
-                        "description": "Service Unavailable",
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
@@ -478,16 +551,16 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ai/config/models": {
+        "/api/v1/ai/providers/list": {
             "get": {
-                "description": "由服务端使用已保存配置请求供应商模型列表",
+                "description": "获取全部 AI 提供商及各自的模型列表（API Key 脱敏），仅超级管理员可用",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "后台管理接口/AI"
                 ],
-                "summary": "获取 AI 模型列表",
+                "summary": "获取 AI 提供商列表",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -502,7 +575,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.AIModelResp"
+                                                "$ref": "#/definitions/model.AIProviderResp"
                                             }
                                         }
                                     }
@@ -516,8 +589,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.HttpError"
                         }
                     },
-                    "502": {
-                        "description": "Bad Gateway",
+                    "503": {
+                        "description": "Service Unavailable",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
@@ -525,9 +598,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/ai/config/test": {
+        "/api/v1/ai/providers/test": {
             "post": {
-                "description": "服务端测试未保存的 OpenAI 兼容配置",
+                "description": "服务端用未保存的 base_url/api_key 请求供应商模型列表验证连通性",
                 "consumes": [
                     "application/json"
                 ],
@@ -537,7 +610,7 @@ const docTemplate = `{
                 "tags": [
                     "后台管理接口/AI"
                 ],
-                "summary": "测试 AI 配置",
+                "summary": "测试 AI 提供商连接",
                 "parameters": [
                     {
                         "description": "测试配置",
@@ -545,7 +618,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AIConfigTestReq"
+                            "$ref": "#/definitions/model.AIProviderTestReq"
                         }
                     }
                 ],
@@ -570,6 +643,283 @@ const docTemplate = `{
                     },
                     "502": {
                         "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/providers/update/{id}": {
+            "put": {
+                "description": "更新提供商信息；api_key 留空表示保留原密钥",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "更新 AI 提供商",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提供商 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "提供商配置",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AIProviderReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/providers/{id}/models/create": {
+            "post": {
+                "description": "为指定提供商添加一条模型记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "创建提供商模型",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提供商 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "模型配置",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AIModelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/providers/{id}/models/delete/{modelId}": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "删除提供商模型",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提供商 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "模型 ID",
+                        "name": "modelId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/providers/{id}/models/sync": {
+            "post": {
+                "description": "请求供应商模型接口并用结果替换该提供商下的全部模型",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "从供应商同步模型列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提供商 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/providers/{id}/models/update/{modelId}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/AI"
+                ],
+                "summary": "更新提供商模型",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提供商 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "模型 ID",
+                        "name": "modelId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "模型配置",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AIModelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
@@ -5954,6 +6304,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/pay-order/notify": {
+            "post": {
+                "description": "易支付异步通知回调，公开接口",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "后台管理接口/支付订单"
+                ],
+                "summary": "支付回调",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/pay-order/query/{id}": {
             "get": {
                 "description": "查询指定支付订单的详细信息",
@@ -5993,6 +6366,121 @@ const docTemplate = `{
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pay-order/refund/{id}": {
+            "post": {
+                "description": "对已支付订单发起全额退款（后台管理接口）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/支付订单"
+                ],
+                "summary": "订单退款",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "支付订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "退款请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PayOrderRefundReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PayOrderRefundResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pay-order/status/{id}": {
+            "get": {
+                "description": "主动同步易支付订单状态并返回",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/支付订单"
+                ],
+                "summary": "查询订单状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "支付订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PayOrderStatusResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
@@ -11921,6 +12409,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/user/profile/update": {
+            "put": {
+                "description": "更新当前登录用户的昵称与个人简介",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/用户"
+                ],
+                "summary": "更新个人资料",
+                "parameters": [
+                    {
+                        "description": "个人资料更新请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateProfileReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/query/{id}": {
             "get": {
                 "description": "查询指定用户的详细信息",
@@ -13300,6 +13840,14 @@ const docTemplate = `{
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
                     "type": "string"
                 },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the PayOrderQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.PayOrderEdges"
+                        }
+                    ]
+                },
                 "error_msg": {
                     "description": "错误信息",
                     "type": "string"
@@ -13328,6 +13876,10 @@ const docTemplate = `{
                     "description": "订单金额,单位分",
                     "type": "integer"
                 },
+                "order_type": {
+                    "description": "订单类型 1文章付费 2商品购买",
+                    "type": "string"
+                },
                 "out_trade_no": {
                     "description": "外部订单号,对应支付渠道那里的",
                     "type": "string"
@@ -13336,12 +13888,32 @@ const docTemplate = `{
                     "description": "支付链接",
                     "type": "string"
                 },
+                "post_id": {
+                    "description": "文章付费关联",
+                    "type": "integer"
+                },
                 "price": {
                     "description": "支付金额,单位分",
                     "type": "integer"
                 },
+                "product_id": {
+                    "description": "商品购买关联",
+                    "type": "integer"
+                },
                 "raw": {
                     "description": "原始响应",
+                    "type": "string"
+                },
+                "refund_amount": {
+                    "description": "退款金额,单位分",
+                    "type": "integer"
+                },
+                "refund_at": {
+                    "description": "退款时间",
+                    "type": "string"
+                },
+                "refund_no": {
+                    "description": "商户退款单号",
                     "type": "string"
                 },
                 "return_url": {
@@ -13359,6 +13931,39 @@ const docTemplate = `{
                 "updated_at": {
                     "description": "UpdatedAt holds the value of the \"updated_at\" field.",
                     "type": "string"
+                },
+                "user_id": {
+                    "description": "下单用户",
+                    "type": "integer"
+                }
+            }
+        },
+        "ent.PayOrderEdges": {
+            "type": "object",
+            "properties": {
+                "post": {
+                    "description": "文章付费关联",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Post"
+                        }
+                    ]
+                },
+                "product": {
+                    "description": "商品购买关联",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Product"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "下单用户",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
                 }
             }
         },
@@ -13828,6 +14433,10 @@ const docTemplate = `{
         "ent.User": {
             "type": "object",
             "properties": {
+                "bio": {
+                    "description": "个人简介",
+                    "type": "string"
+                },
                 "created_at": {
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
                     "type": "string"
@@ -13854,6 +14463,10 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "昵称",
                     "type": "string"
                 },
                 "phone_number": {
@@ -14062,7 +14675,99 @@ const docTemplate = `{
                 }
             }
         },
-        "model.AIConfigResp": {
+        "model.AIModelReq": {
+            "type": "object",
+            "required": [
+                "model_name"
+            ],
+            "properties": {
+                "display_name": {
+                    "type": "string"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "model_name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "sort": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.AIModelResp": {
+            "type": "object",
+            "properties": {
+                "display_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "model_name": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.AIProviderReq": {
+            "type": "object",
+            "required": [
+                "base_url",
+                "name",
+                "provider_type"
+            ],
+            "properties": {
+                "api_key": {
+                    "type": "string"
+                },
+                "base_url": {
+                    "type": "string"
+                },
+                "frequency_penalty": {
+                    "type": "number"
+                },
+                "is_default": {
+                    "type": "boolean"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "max_tokens": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "presence_penalty": {
+                    "type": "number"
+                },
+                "provider_type": {
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "temperature": {
+                    "type": "number"
+                },
+                "top_p": {
+                    "type": "number"
+                }
+            }
+        },
+        "model.AIProviderResp": {
             "type": "object",
             "properties": {
                 "api_key_configured": {
@@ -14071,70 +14776,69 @@ const docTemplate = `{
                 "base_url": {
                     "type": "string"
                 },
-                "frequency_penalty": {
-                    "type": "number"
-                },
-                "max_tokens": {
-                    "type": "integer"
-                },
-                "model": {
-                    "type": "string"
-                },
-                "presence_penalty": {
-                    "type": "number"
-                },
-                "temperature": {
-                    "type": "number"
-                },
-                "top_p": {
-                    "type": "number"
-                }
-            }
-        },
-        "model.AIConfigTestReq": {
-            "type": "object",
-            "properties": {
-                "api_key": {
-                    "type": "string"
-                },
-                "base_url": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.AIConfigUpdateReq": {
-            "type": "object",
-            "properties": {
-                "api_key": {
-                    "type": "string"
-                },
-                "base_url": {
+                "created_at": {
                     "type": "string"
                 },
                 "frequency_penalty": {
                     "type": "number"
                 },
-                "max_tokens": {
-                    "type": "integer"
-                },
-                "model": {
-                    "type": "string"
-                },
-                "presence_penalty": {
-                    "type": "number"
-                },
-                "temperature": {
-                    "type": "number"
-                },
-                "top_p": {
-                    "type": "number"
-                }
-            }
-        },
-        "model.AIModelResp": {
-            "type": "object",
-            "properties": {
                 "id": {
+                    "type": "integer"
+                },
+                "is_default": {
+                    "type": "boolean"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "max_tokens": {
+                    "type": "integer"
+                },
+                "models": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AIModelResp"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "presence_penalty": {
+                    "type": "number"
+                },
+                "provider_type": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "temperature": {
+                    "type": "number"
+                },
+                "top_p": {
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.AIProviderTestReq": {
+            "type": "object",
+            "required": [
+                "base_url"
+            ],
+            "properties": {
+                "api_key": {
+                    "type": "string"
+                },
+                "base_url": {
+                    "type": "string"
+                },
+                "provider_type": {
                     "type": "string"
                 }
             }
@@ -14621,6 +15325,12 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
                 }
             }
         },
@@ -15851,6 +16561,52 @@ const docTemplate = `{
                 }
             }
         },
+        "model.PayOrderRefundReq": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "退款金额,单位分,0 表示全额退款",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PayOrderRefundResp": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "integer"
+                },
+                "refund_amount": {
+                    "type": "integer"
+                },
+                "refund_no": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PayOrderStatusResp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "out_trade_no": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            }
+        },
         "model.PayOrderSubmitReq": {
             "type": "object",
             "required": [
@@ -16707,6 +17463,17 @@ const docTemplate = `{
                 }
             }
         },
+        "model.RefreshTokenRequest": {
+            "type": "object",
+            "required": [
+                "refreshToken"
+            ],
+            "properties": {
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
         "model.RoleCreateReq": {
             "type": "object",
             "required": [
@@ -17060,6 +17827,19 @@ const docTemplate = `{
                 }
             }
         },
+        "model.UpdateProfileReq": {
+            "type": "object",
+            "properties": {
+                "bio": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "nickname": {
+                    "type": "string",
+                    "maxLength": 50
+                }
+            }
+        },
         "model.UpdateScheduleJobReq": {
             "type": "object",
             "properties": {
@@ -17098,6 +17878,9 @@ const docTemplate = `{
         "model.UserProfileResp": {
             "type": "object",
             "properties": {
+                "bio": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -17105,6 +17888,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "nickname": {
                     "type": "string"
                 },
                 "phone_number": {

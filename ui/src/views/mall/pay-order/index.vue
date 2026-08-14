@@ -588,18 +588,19 @@ const handleCancelOrder = () => {
 }
 
 // 退款订单
-const handleRefundOrder = () => {
+const handleRefundOrder = async () => {
   if (currentOrder.value && currentOrder.value.status === 'paid') {
-    // 模拟API调用
-    setTimeout(() => {
-      const order = orderList.value.find((item) => item.id === currentOrder.value?.id)
-      if (order) {
-        order.status = 'refunded'
-        order.updatedAt = new Date().toLocaleString('zh-CN')
+    try {
+      const res = await payOrderApi.refundPayOrder(currentOrder.value.id, { amount: 0 })
+      if (res.code === 200) {
+        message.success(res.msg || '退款成功')
+        showDetailModal.value = false
+        loadOrderList()
+        loadTodayStats()
       }
-      message.success('退款申请已提交')
-      showDetailModal.value = false
-    }, 500)
+    } catch (error) {
+      console.error('退款失败:', error)
+    }
   }
 }
 

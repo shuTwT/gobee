@@ -617,6 +617,12 @@ definitions:
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.PayOrderEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the PayOrderQuery when eager-loading is set.
       error_msg:
         description: 错误信息
         type: string
@@ -638,17 +644,35 @@ definitions:
       order_price:
         description: 订单金额,单位分
         type: integer
+      order_type:
+        description: 订单类型 1文章付费 2商品购买
+        type: string
       out_trade_no:
         description: 外部订单号,对应支付渠道那里的
         type: string
       pay_url:
         description: 支付链接
         type: string
+      post_id:
+        description: 文章付费关联
+        type: integer
       price:
         description: 支付金额,单位分
         type: integer
+      product_id:
+        description: 商品购买关联
+        type: integer
       raw:
         description: 原始响应
+        type: string
+      refund_amount:
+        description: 退款金额,单位分
+        type: integer
+      refund_at:
+        description: 退款时间
+        type: string
+      refund_no:
+        description: 商户退款单号
         type: string
       return_url:
         description: 同步通知地址
@@ -662,6 +686,24 @@ definitions:
       updated_at:
         description: UpdatedAt holds the value of the "updated_at" field.
         type: string
+      user_id:
+        description: 下单用户
+        type: integer
+    type: object
+  ent.PayOrderEdges:
+    properties:
+      post:
+        allOf:
+        - $ref: '#/definitions/ent.Post'
+        description: 文章付费关联
+      product:
+        allOf:
+        - $ref: '#/definitions/ent.Product'
+        description: 商品购买关联
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: 下单用户
     type: object
   ent.Post:
     properties:
@@ -998,6 +1040,9 @@ definitions:
     type: object
   ent.User:
     properties:
+      bio:
+        description: 个人简介
+        type: string
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
@@ -1018,6 +1063,9 @@ definitions:
         type: integer
       name:
         description: Name holds the value of the "name" field.
+        type: string
+      nickname:
+        description: 昵称
         type: string
       phone_number:
         description: PhoneNumber holds the value of the "phone_number" field.
@@ -1158,55 +1206,117 @@ definitions:
       content:
         type: string
     type: object
-  model.AIConfigResp:
+  model.AIModelReq:
+    properties:
+      display_name:
+        type: string
+      is_enabled:
+        type: boolean
+      model_name:
+        maxLength: 255
+        type: string
+      sort:
+        type: integer
+    required:
+    - model_name
+    type: object
+  model.AIModelResp:
+    properties:
+      display_name:
+        type: string
+      id:
+        type: integer
+      is_enabled:
+        type: boolean
+      model_name:
+        type: string
+      sort:
+        type: integer
+    type: object
+  model.AIProviderReq:
+    properties:
+      api_key:
+        type: string
+      base_url:
+        type: string
+      frequency_penalty:
+        type: number
+      is_default:
+        type: boolean
+      is_enabled:
+        type: boolean
+      max_tokens:
+        type: integer
+      name:
+        maxLength: 100
+        type: string
+      presence_penalty:
+        type: number
+      provider_type:
+        maxLength: 50
+        type: string
+      remark:
+        type: string
+      sort:
+        type: integer
+      temperature:
+        type: number
+      top_p:
+        type: number
+    required:
+    - base_url
+    - name
+    - provider_type
+    type: object
+  model.AIProviderResp:
     properties:
       api_key_configured:
         type: boolean
       base_url:
         type: string
-      frequency_penalty:
-        type: number
-      max_tokens:
-        type: integer
-      model:
-        type: string
-      presence_penalty:
-        type: number
-      temperature:
-        type: number
-      top_p:
-        type: number
-    type: object
-  model.AIConfigTestReq:
-    properties:
-      api_key:
-        type: string
-      base_url:
-        type: string
-    type: object
-  model.AIConfigUpdateReq:
-    properties:
-      api_key:
-        type: string
-      base_url:
+      created_at:
         type: string
       frequency_penalty:
         type: number
-      max_tokens:
-        type: integer
-      model:
-        type: string
-      presence_penalty:
-        type: number
-      temperature:
-        type: number
-      top_p:
-        type: number
-    type: object
-  model.AIModelResp:
-    properties:
       id:
+        type: integer
+      is_default:
+        type: boolean
+      is_enabled:
+        type: boolean
+      max_tokens:
+        type: integer
+      models:
+        items:
+          $ref: '#/definitions/model.AIModelResp'
+        type: array
+      name:
         type: string
+      presence_penalty:
+        type: number
+      provider_type:
+        type: string
+      remark:
+        type: string
+      sort:
+        type: integer
+      temperature:
+        type: number
+      top_p:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  model.AIProviderTestReq:
+    properties:
+      api_key:
+        type: string
+      base_url:
+        type: string
+      provider_type:
+        type: string
+    required:
+    - base_url
     type: object
   model.AIResponse:
     properties:
@@ -1530,6 +1640,10 @@ definitions:
         items:
           type: string
         type: array
+      user_id:
+        type: integer
+      user_name:
+        type: string
     type: object
   model.EssayUpdateReq:
     properties:
@@ -2348,6 +2462,36 @@ definitions:
       total:
         type: integer
     type: object
+  model.PayOrderRefundReq:
+    properties:
+      amount:
+        description: 退款金额,单位分,0 表示全额退款
+        type: integer
+    type: object
+  model.PayOrderRefundResp:
+    properties:
+      order_id:
+        type: integer
+      refund_amount:
+        type: integer
+      refund_no:
+        type: string
+      state:
+        type: string
+    type: object
+  model.PayOrderStatusResp:
+    properties:
+      id:
+        type: integer
+      out_trade_no:
+        type: string
+      price:
+        type: integer
+      state:
+        type: string
+      subject:
+        type: string
+    type: object
   model.PayOrderSubmitReq:
     properties:
       channel_type:
@@ -2948,6 +3092,13 @@ definitions:
       weight:
         type: number
     type: object
+  model.RefreshTokenRequest:
+    properties:
+      refreshToken:
+        type: string
+    required:
+    - refreshToken
+    type: object
   model.RoleCreateReq:
     properties:
       code:
@@ -3182,6 +3333,15 @@ definitions:
           type: string
         type: array
     type: object
+  model.UpdateProfileReq:
+    properties:
+      bio:
+        maxLength: 255
+        type: string
+      nickname:
+        maxLength: 50
+        type: string
+    type: object
   model.UpdateScheduleJobReq:
     properties:
       description:
@@ -3208,11 +3368,15 @@ definitions:
     type: object
   model.UserProfileResp:
     properties:
+      bio:
+        type: string
       email:
         type: string
       email_verified:
         type: boolean
       name:
+        type: string
+      nickname:
         type: string
       phone_number:
         type: string
@@ -3376,6 +3540,58 @@ paths:
           schema:
             $ref: '#/definitions/model.HttpError'
       summary: 用户登录
+      tags:
+      - 公开接口/认证
+  /api/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: 吊销当前refresh token
+      parameters:
+      - description: 登出请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+      summary: 登出
+      tags:
+      - 公开接口/认证
+  /api/auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: 使用refresh token换取新的access/refresh token
+      parameters:
+      - description: 刷新请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 刷新令牌
       tags:
       - 公开接口/认证
   /api/initialize:
@@ -3573,43 +3789,23 @@ paths:
       summary: 流式发送聊天消息
       tags:
       - 后台管理接口/AI聊天
-  /api/v1/ai/config:
-    get:
-      description: 获取脱敏后的 OpenAI 兼容配置，仅超级管理员可用
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpSuccess'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.AIConfigResp'
-              type: object
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/model.HttpError'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/model.HttpError'
-      summary: 获取 AI 配置
-      tags:
-      - 后台管理接口/AI
-    put:
+  /api/v1/ai/providers/{id}/models/create:
+    post:
       consumes:
       - application/json
-      description: 保存完整的 OpenAI 兼容配置，API Key 只写入服务端密文
+      description: 为指定提供商添加一条模型记录
       parameters:
-      - description: AI 配置
+      - description: 提供商 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 模型配置
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/model.AIConfigUpdateReq'
+          $ref: '#/definitions/model.AIModelReq'
       produces:
       - application/json
       responses:
@@ -3625,16 +3821,178 @@ paths:
           description: Forbidden
           schema:
             $ref: '#/definitions/model.HttpError'
-        "503":
-          description: Service Unavailable
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 保存 AI 配置
+      summary: 创建提供商模型
       tags:
       - 后台管理接口/AI
-  /api/v1/ai/config/models:
+  /api/v1/ai/providers/{id}/models/delete/{modelId}:
+    delete:
+      parameters:
+      - description: 提供商 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 模型 ID
+        in: path
+        name: modelId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除提供商模型
+      tags:
+      - 后台管理接口/AI
+  /api/v1/ai/providers/{id}/models/sync:
+    post:
+      description: 请求供应商模型接口并用结果替换该提供商下的全部模型
+      parameters:
+      - description: 提供商 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 从供应商同步模型列表
+      tags:
+      - 后台管理接口/AI
+  /api/v1/ai/providers/{id}/models/update/{modelId}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 提供商 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 模型 ID
+        in: path
+        name: modelId
+        required: true
+        type: integer
+      - description: 模型配置
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AIModelReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新提供商模型
+      tags:
+      - 后台管理接口/AI
+  /api/v1/ai/providers/create:
+    post:
+      consumes:
+      - application/json
+      description: 新增一个 OpenAI 兼容提供商，API Key 仅以密文落库
+      parameters:
+      - description: 提供商配置
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AIProviderReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 创建 AI 提供商
+      tags:
+      - 后台管理接口/AI
+  /api/v1/ai/providers/delete/{id}:
+    delete:
+      description: 删除提供商及其全部模型
+      parameters:
+      - description: 提供商 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 删除 AI 提供商
+      tags:
+      - 后台管理接口/AI
+  /api/v1/ai/providers/list:
     get:
-      description: 由服务端使用已保存配置请求供应商模型列表
+      description: 获取全部 AI 提供商及各自的模型列表（API Key 脱敏），仅超级管理员可用
       produces:
       - application/json
       responses:
@@ -3646,32 +4004,32 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/model.AIModelResp'
+                    $ref: '#/definitions/model.AIProviderResp'
                   type: array
               type: object
         "403":
           description: Forbidden
           schema:
             $ref: '#/definitions/model.HttpError'
-        "502":
-          description: Bad Gateway
+        "503":
+          description: Service Unavailable
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 获取 AI 模型列表
+      summary: 获取 AI 提供商列表
       tags:
       - 后台管理接口/AI
-  /api/v1/ai/config/test:
+  /api/v1/ai/providers/test:
     post:
       consumes:
       - application/json
-      description: 服务端测试未保存的 OpenAI 兼容配置
+      description: 服务端用未保存的 base_url/api_key 请求供应商模型列表验证连通性
       parameters:
       - description: 测试配置
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/model.AIConfigTestReq'
+          $ref: '#/definitions/model.AIProviderTestReq'
       produces:
       - application/json
       responses:
@@ -3691,7 +4049,46 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/model.HttpError'
-      summary: 测试 AI 配置
+      summary: 测试 AI 提供商连接
+      tags:
+      - 后台管理接口/AI
+  /api/v1/ai/providers/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 更新提供商信息；api_key 留空表示保留原密钥
+      parameters:
+      - description: 提供商 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 提供商配置
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.AIProviderReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新 AI 提供商
       tags:
       - 后台管理接口/AI
   /api/v1/album-photo/create:
@@ -6978,6 +7375,21 @@ paths:
       summary: 获取支付订单列表
       tags:
       - 后台管理接口/支付订单
+  /api/v1/pay-order/notify:
+    post:
+      consumes:
+      - application/json
+      description: 易支付异步通知回调，公开接口
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: 支付回调
+      tags:
+      - 后台管理接口/支付订单
   /api/v1/pay-order/query/{id}:
     get:
       consumes:
@@ -7009,6 +7421,76 @@ paths:
           schema:
             $ref: '#/definitions/model.HttpError'
       summary: 查询支付订单
+      tags:
+      - 后台管理接口/支付订单
+  /api/v1/pay-order/refund/{id}:
+    post:
+      consumes:
+      - application/json
+      description: 对已支付订单发起全额退款（后台管理接口）
+      parameters:
+      - description: 支付订单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 退款请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.PayOrderRefundReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PayOrderRefundResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 订单退款
+      tags:
+      - 后台管理接口/支付订单
+  /api/v1/pay-order/status/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 主动同步易支付订单状态并返回
+      parameters:
+      - description: 支付订单ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PayOrderStatusResp'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 查询订单状态
       tags:
       - 后台管理接口/支付订单
   /api/v1/pay-order/submit:
@@ -10631,6 +11113,40 @@ paths:
           schema:
             $ref: '#/definitions/model.HttpError'
       summary: 查询用户个人信息
+      tags:
+      - 后台管理接口/用户
+  /api/v1/user/profile/update:
+    put:
+      consumes:
+      - application/json
+      description: 更新当前登录用户的昵称与个人简介
+      parameters:
+      - description: 个人资料更新请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateProfileReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 更新个人资料
       tags:
       - 后台管理接口/用户
   /api/v1/user/query/{id}:

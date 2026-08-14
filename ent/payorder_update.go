@@ -452,6 +452,73 @@ func (_u *PayOrderUpdate) ClearRaw() *PayOrderUpdate {
 	return _u
 }
 
+// SetRefundNo sets the "refund_no" field.
+func (_u *PayOrderUpdate) SetRefundNo(v string) *PayOrderUpdate {
+	_u.mutation.SetRefundNo(v)
+	return _u
+}
+
+// SetNillableRefundNo sets the "refund_no" field if the given value is not nil.
+func (_u *PayOrderUpdate) SetNillableRefundNo(v *string) *PayOrderUpdate {
+	if v != nil {
+		_u.SetRefundNo(*v)
+	}
+	return _u
+}
+
+// ClearRefundNo clears the value of the "refund_no" field.
+func (_u *PayOrderUpdate) ClearRefundNo() *PayOrderUpdate {
+	_u.mutation.ClearRefundNo()
+	return _u
+}
+
+// SetRefundAmount sets the "refund_amount" field.
+func (_u *PayOrderUpdate) SetRefundAmount(v int) *PayOrderUpdate {
+	_u.mutation.ResetRefundAmount()
+	_u.mutation.SetRefundAmount(v)
+	return _u
+}
+
+// SetNillableRefundAmount sets the "refund_amount" field if the given value is not nil.
+func (_u *PayOrderUpdate) SetNillableRefundAmount(v *int) *PayOrderUpdate {
+	if v != nil {
+		_u.SetRefundAmount(*v)
+	}
+	return _u
+}
+
+// AddRefundAmount adds value to the "refund_amount" field.
+func (_u *PayOrderUpdate) AddRefundAmount(v int) *PayOrderUpdate {
+	_u.mutation.AddRefundAmount(v)
+	return _u
+}
+
+// ClearRefundAmount clears the value of the "refund_amount" field.
+func (_u *PayOrderUpdate) ClearRefundAmount() *PayOrderUpdate {
+	_u.mutation.ClearRefundAmount()
+	return _u
+}
+
+// SetRefundAt sets the "refund_at" field.
+func (_u *PayOrderUpdate) SetRefundAt(v time.Time) *PayOrderUpdate {
+	_u.mutation.SetRefundAt(v)
+	return _u
+}
+
+// SetNillableRefundAt sets the "refund_at" field if the given value is not nil.
+func (_u *PayOrderUpdate) SetNillableRefundAt(v *time.Time) *PayOrderUpdate {
+	if v != nil {
+		_u.SetRefundAt(*v)
+	}
+	return _u
+}
+
+// ClearRefundAt clears the value of the "refund_at" field.
+func (_u *PayOrderUpdate) ClearRefundAt() *PayOrderUpdate {
+	_u.mutation.ClearRefundAt()
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *PayOrderUpdate) SetUser(v *User) *PayOrderUpdate {
 	return _u.SetUserID(v.ID)
@@ -659,6 +726,27 @@ func (_u *PayOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.RawCleared() {
 		_spec.ClearField(payorder.FieldRaw, field.TypeString)
+	}
+	if value, ok := _u.mutation.RefundNo(); ok {
+		_spec.SetField(payorder.FieldRefundNo, field.TypeString, value)
+	}
+	if _u.mutation.RefundNoCleared() {
+		_spec.ClearField(payorder.FieldRefundNo, field.TypeString)
+	}
+	if value, ok := _u.mutation.RefundAmount(); ok {
+		_spec.SetField(payorder.FieldRefundAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedRefundAmount(); ok {
+		_spec.AddField(payorder.FieldRefundAmount, field.TypeInt, value)
+	}
+	if _u.mutation.RefundAmountCleared() {
+		_spec.ClearField(payorder.FieldRefundAmount, field.TypeInt)
+	}
+	if value, ok := _u.mutation.RefundAt(); ok {
+		_spec.SetField(payorder.FieldRefundAt, field.TypeTime, value)
+	}
+	if _u.mutation.RefundAtCleared() {
+		_spec.ClearField(payorder.FieldRefundAt, field.TypeTime)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1188,6 +1276,73 @@ func (_u *PayOrderUpdateOne) ClearRaw() *PayOrderUpdateOne {
 	return _u
 }
 
+// SetRefundNo sets the "refund_no" field.
+func (_u *PayOrderUpdateOne) SetRefundNo(v string) *PayOrderUpdateOne {
+	_u.mutation.SetRefundNo(v)
+	return _u
+}
+
+// SetNillableRefundNo sets the "refund_no" field if the given value is not nil.
+func (_u *PayOrderUpdateOne) SetNillableRefundNo(v *string) *PayOrderUpdateOne {
+	if v != nil {
+		_u.SetRefundNo(*v)
+	}
+	return _u
+}
+
+// ClearRefundNo clears the value of the "refund_no" field.
+func (_u *PayOrderUpdateOne) ClearRefundNo() *PayOrderUpdateOne {
+	_u.mutation.ClearRefundNo()
+	return _u
+}
+
+// SetRefundAmount sets the "refund_amount" field.
+func (_u *PayOrderUpdateOne) SetRefundAmount(v int) *PayOrderUpdateOne {
+	_u.mutation.ResetRefundAmount()
+	_u.mutation.SetRefundAmount(v)
+	return _u
+}
+
+// SetNillableRefundAmount sets the "refund_amount" field if the given value is not nil.
+func (_u *PayOrderUpdateOne) SetNillableRefundAmount(v *int) *PayOrderUpdateOne {
+	if v != nil {
+		_u.SetRefundAmount(*v)
+	}
+	return _u
+}
+
+// AddRefundAmount adds value to the "refund_amount" field.
+func (_u *PayOrderUpdateOne) AddRefundAmount(v int) *PayOrderUpdateOne {
+	_u.mutation.AddRefundAmount(v)
+	return _u
+}
+
+// ClearRefundAmount clears the value of the "refund_amount" field.
+func (_u *PayOrderUpdateOne) ClearRefundAmount() *PayOrderUpdateOne {
+	_u.mutation.ClearRefundAmount()
+	return _u
+}
+
+// SetRefundAt sets the "refund_at" field.
+func (_u *PayOrderUpdateOne) SetRefundAt(v time.Time) *PayOrderUpdateOne {
+	_u.mutation.SetRefundAt(v)
+	return _u
+}
+
+// SetNillableRefundAt sets the "refund_at" field if the given value is not nil.
+func (_u *PayOrderUpdateOne) SetNillableRefundAt(v *time.Time) *PayOrderUpdateOne {
+	if v != nil {
+		_u.SetRefundAt(*v)
+	}
+	return _u
+}
+
+// ClearRefundAt clears the value of the "refund_at" field.
+func (_u *PayOrderUpdateOne) ClearRefundAt() *PayOrderUpdateOne {
+	_u.mutation.ClearRefundAt()
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *PayOrderUpdateOne) SetUser(v *User) *PayOrderUpdateOne {
 	return _u.SetUserID(v.ID)
@@ -1425,6 +1580,27 @@ func (_u *PayOrderUpdateOne) sqlSave(ctx context.Context) (_node *PayOrder, err 
 	}
 	if _u.mutation.RawCleared() {
 		_spec.ClearField(payorder.FieldRaw, field.TypeString)
+	}
+	if value, ok := _u.mutation.RefundNo(); ok {
+		_spec.SetField(payorder.FieldRefundNo, field.TypeString, value)
+	}
+	if _u.mutation.RefundNoCleared() {
+		_spec.ClearField(payorder.FieldRefundNo, field.TypeString)
+	}
+	if value, ok := _u.mutation.RefundAmount(); ok {
+		_spec.SetField(payorder.FieldRefundAmount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedRefundAmount(); ok {
+		_spec.AddField(payorder.FieldRefundAmount, field.TypeInt, value)
+	}
+	if _u.mutation.RefundAmountCleared() {
+		_spec.ClearField(payorder.FieldRefundAmount, field.TypeInt)
+	}
+	if value, ok := _u.mutation.RefundAt(); ok {
+		_spec.SetField(payorder.FieldRefundAt, field.TypeTime, value)
+	}
+	if _u.mutation.RefundAtCleared() {
+		_spec.ClearField(payorder.FieldRefundAt, field.TypeTime)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

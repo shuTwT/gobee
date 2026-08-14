@@ -246,6 +246,40 @@ func (h *PayOrderHandler) QueryOrderStatus(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", resp))
 }
 
+// @Summary 订单退款
+// @Description 对已支付订单发起全额退款（后台管理接口）
+// @Tags 后台管理接口/支付订单
+// @Accept json
+// @Produce json
+// @Param id path int true "支付订单ID"
+// @Param req body model.PayOrderRefundReq true "退款请求"
+// @Success 200 {object} model.HttpSuccess{data=model.PayOrderRefundResp}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/pay-order/refund/{id} [post]
+func (h *PayOrderHandler) RefundPayOrder(c *fiber.Ctx) error {
+	loginUser := middleware.GetCurrentUser(c)
+	if loginUser == nil {
+		return c.JSON(model.NewError(fiber.StatusUnauthorized, "请先登录"))
+	}
+
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "Invalid ID format"))
+	}
+
+	var req model.PayOrderRefundReq
+	if err := c.BodyParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+
+	resp, err := h.payOrderService.RefundOrder(c.Context(), id, &req)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("退款成功", resp))
+}
+
 // @Summary 获取今日统计
 // @Description 获取今日支付订单统计信息
 // @Tags 后台管理接口/支付订单

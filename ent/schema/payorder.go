@@ -87,6 +87,17 @@ func (PayOrder) Fields() []ent.Field {
 		field.String("raw").
 			Optional().
 			Comment("原始响应"),
+		field.String("refund_no").
+			Optional().
+			Nillable().
+			Comment("商户退款单号"),
+		field.Int("refund_amount").
+			Optional().
+			Comment("退款金额,单位分"),
+		field.Time("refund_at").
+			Optional().
+			Nillable().
+			Comment("退款时间"),
 	}
 }
 

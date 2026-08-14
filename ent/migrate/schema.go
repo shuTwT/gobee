@@ -552,6 +552,9 @@ var (
 		{Name: "state", Type: field.TypeString, Nullable: true, Default: "1"},
 		{Name: "error_msg", Type: field.TypeString, Nullable: true},
 		{Name: "raw", Type: field.TypeString, Nullable: true},
+		{Name: "refund_no", Type: field.TypeString, Nullable: true},
+		{Name: "refund_amount", Type: field.TypeInt, Nullable: true},
+		{Name: "refund_at", Type: field.TypeTime, Nullable: true},
 		{Name: "user_id", Type: field.TypeInt},
 		{Name: "post_id", Type: field.TypeInt, Nullable: true},
 		{Name: "product_id", Type: field.TypeInt, Nullable: true},
@@ -564,19 +567,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pay_orders_users_user",
-				Columns:    []*schema.Column{PayOrdersColumns[20]},
+				Columns:    []*schema.Column{PayOrdersColumns[23]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "pay_orders_posts_post",
-				Columns:    []*schema.Column{PayOrdersColumns[21]},
+				Columns:    []*schema.Column{PayOrdersColumns[24]},
 				RefColumns: []*schema.Column{PostsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "pay_orders_products_product",
-				Columns:    []*schema.Column{PayOrdersColumns[22]},
+				Columns:    []*schema.Column{PayOrdersColumns[25]},
 				RefColumns: []*schema.Column{ProductsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

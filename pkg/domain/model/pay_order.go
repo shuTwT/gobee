@@ -99,3 +99,17 @@ type PayOrderStatusResp struct {
 	Subject    string `json:"subject"`
 	Price      int    `json:"price"`
 }
+
+// PayOrderRefundReq 退款请求（金额可选，为空或大于等于订单支付金额时全额退款）
+type PayOrderRefundReq struct {
+	// 退款金额,单位分,0 表示全额退款
+	Amount int `json:"amount"`
+}
+
+// PayOrderRefundResp 退款响应
+type PayOrderRefundResp struct {
+	OrderID      int    `json:"order_id"`
+	RefundNo     string `json:"refund_no"`
+	RefundAmount int    `json:"refund_amount"`
+	State        string `json:"state"`
+}

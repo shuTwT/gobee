@@ -279,6 +279,7 @@ func initMallRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		payOrderApi.Get("/query/:id", handlerMap.PayOrderHandler.QueryPayOrder).Name("payOrderQuery")
 		payOrderApi.Delete("/delete/:id", handlerMap.PayOrderHandler.DeletePayOrder).Name("payOrderDelete")
 		payOrderApi.Post("/submit", handlerMap.PayOrderHandler.SubmitPayOrder).Name("payOrderSubmit")
+		payOrderApi.Post("/refund/:id", handlerMap.PayOrderHandler.RefundPayOrder).Name("payOrderRefund")
 		payOrderApi.Get("/status/:id", handlerMap.PayOrderHandler.QueryOrderStatus).Name("payOrderStatus")
 		payOrderApi.Get("/today-stats", handlerMap.PayOrderHandler.GetTodayStats).Name("payOrderTodayStats")
 	}

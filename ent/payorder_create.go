@@ -323,6 +323,48 @@ func (_c *PayOrderCreate) SetNillableRaw(v *string) *PayOrderCreate {
 	return _c
 }
 
+// SetRefundNo sets the "refund_no" field.
+func (_c *PayOrderCreate) SetRefundNo(v string) *PayOrderCreate {
+	_c.mutation.SetRefundNo(v)
+	return _c
+}
+
+// SetNillableRefundNo sets the "refund_no" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableRefundNo(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetRefundNo(*v)
+	}
+	return _c
+}
+
+// SetRefundAmount sets the "refund_amount" field.
+func (_c *PayOrderCreate) SetRefundAmount(v int) *PayOrderCreate {
+	_c.mutation.SetRefundAmount(v)
+	return _c
+}
+
+// SetNillableRefundAmount sets the "refund_amount" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableRefundAmount(v *int) *PayOrderCreate {
+	if v != nil {
+		_c.SetRefundAmount(*v)
+	}
+	return _c
+}
+
+// SetRefundAt sets the "refund_at" field.
+func (_c *PayOrderCreate) SetRefundAt(v time.Time) *PayOrderCreate {
+	_c.mutation.SetRefundAt(v)
+	return _c
+}
+
+// SetNillableRefundAt sets the "refund_at" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableRefundAt(v *time.Time) *PayOrderCreate {
+	if v != nil {
+		_c.SetRefundAt(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *PayOrderCreate) SetID(v int) *PayOrderCreate {
 	_c.mutation.SetID(v)
@@ -514,6 +556,18 @@ func (_c *PayOrderCreate) createSpec() (*PayOrder, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Raw(); ok {
 		_spec.SetField(payorder.FieldRaw, field.TypeString, value)
 		_node.Raw = value
+	}
+	if value, ok := _c.mutation.RefundNo(); ok {
+		_spec.SetField(payorder.FieldRefundNo, field.TypeString, value)
+		_node.RefundNo = &value
+	}
+	if value, ok := _c.mutation.RefundAmount(); ok {
+		_spec.SetField(payorder.FieldRefundAmount, field.TypeInt, value)
+		_node.RefundAmount = value
+	}
+	if value, ok := _c.mutation.RefundAt(); ok {
+		_spec.SetField(payorder.FieldRefundAt, field.TypeTime, value)
+		_node.RefundAt = &value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

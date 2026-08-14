@@ -58,6 +58,12 @@ const (
 	FieldErrorMsg = "error_msg"
 	// FieldRaw holds the string denoting the raw field in the database.
 	FieldRaw = "raw"
+	// FieldRefundNo holds the string denoting the refund_no field in the database.
+	FieldRefundNo = "refund_no"
+	// FieldRefundAmount holds the string denoting the refund_amount field in the database.
+	FieldRefundAmount = "refund_amount"
+	// FieldRefundAt holds the string denoting the refund_at field in the database.
+	FieldRefundAt = "refund_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgePost holds the string denoting the post edge name in mutations.
@@ -114,6 +120,9 @@ var Columns = []string{
 	FieldState,
 	FieldErrorMsg,
 	FieldRaw,
+	FieldRefundNo,
+	FieldRefundAmount,
+	FieldRefundAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -253,6 +262,21 @@ func ByErrorMsg(opts ...sql.OrderTermOption) OrderOption {
 // ByRaw orders the results by the raw field.
 func ByRaw(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRaw, opts...).ToFunc()
+}
+
+// ByRefundNo orders the results by the refund_no field.
+func ByRefundNo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRefundNo, opts...).ToFunc()
+}
+
+// ByRefundAmount orders the results by the refund_amount field.
+func ByRefundAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRefundAmount, opts...).ToFunc()
+}
+
+// ByRefundAt orders the results by the refund_at field.
+func ByRefundAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRefundAt, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

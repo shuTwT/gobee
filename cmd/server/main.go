@@ -109,7 +109,7 @@ func InitializeApp(assetsRes embed.FS, frontendRes embed.FS) (*fiber.App, func()
 
 	if !fiber.IsChild() {
 		// 主进程程初始化定时任务
-		err := schedule.InitializeSchedule(db, scheduleManager, serviceMap.FriendCircleService)
+		err := schedule.InitializeSchedule(db, scheduleManager, serviceMap.FriendCircleService, serviceMap.PayOrderService)
 		if err != nil {
 			defer scheduleManager.Shutdown()
 		}

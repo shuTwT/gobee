@@ -22162,6 +22162,10 @@ type PayOrderMutation struct {
 	state                *string
 	error_msg            *string
 	raw                  *string
+	refund_no            *string
+	refund_amount        *int
+	addrefund_amount     *int
+	refund_at            *time.Time
 	clearedFields        map[string]struct{}
 	user                 *int
 	cleareduser          bool
@@ -23380,6 +23384,174 @@ func (m *PayOrderMutation) ResetRaw() {
 	delete(m.clearedFields, payorder.FieldRaw)
 }
 
+// SetRefundNo sets the "refund_no" field.
+func (m *PayOrderMutation) SetRefundNo(s string) {
+	m.refund_no = &s
+}
+
+// RefundNo returns the value of the "refund_no" field in the mutation.
+func (m *PayOrderMutation) RefundNo() (r string, exists bool) {
+	v := m.refund_no
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRefundNo returns the old "refund_no" field's value of the PayOrder entity.
+// If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayOrderMutation) OldRefundNo(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRefundNo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRefundNo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRefundNo: %w", err)
+	}
+	return oldValue.RefundNo, nil
+}
+
+// ClearRefundNo clears the value of the "refund_no" field.
+func (m *PayOrderMutation) ClearRefundNo() {
+	m.refund_no = nil
+	m.clearedFields[payorder.FieldRefundNo] = struct{}{}
+}
+
+// RefundNoCleared returns if the "refund_no" field was cleared in this mutation.
+func (m *PayOrderMutation) RefundNoCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldRefundNo]
+	return ok
+}
+
+// ResetRefundNo resets all changes to the "refund_no" field.
+func (m *PayOrderMutation) ResetRefundNo() {
+	m.refund_no = nil
+	delete(m.clearedFields, payorder.FieldRefundNo)
+}
+
+// SetRefundAmount sets the "refund_amount" field.
+func (m *PayOrderMutation) SetRefundAmount(i int) {
+	m.refund_amount = &i
+	m.addrefund_amount = nil
+}
+
+// RefundAmount returns the value of the "refund_amount" field in the mutation.
+func (m *PayOrderMutation) RefundAmount() (r int, exists bool) {
+	v := m.refund_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRefundAmount returns the old "refund_amount" field's value of the PayOrder entity.
+// If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayOrderMutation) OldRefundAmount(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRefundAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRefundAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRefundAmount: %w", err)
+	}
+	return oldValue.RefundAmount, nil
+}
+
+// AddRefundAmount adds i to the "refund_amount" field.
+func (m *PayOrderMutation) AddRefundAmount(i int) {
+	if m.addrefund_amount != nil {
+		*m.addrefund_amount += i
+	} else {
+		m.addrefund_amount = &i
+	}
+}
+
+// AddedRefundAmount returns the value that was added to the "refund_amount" field in this mutation.
+func (m *PayOrderMutation) AddedRefundAmount() (r int, exists bool) {
+	v := m.addrefund_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRefundAmount clears the value of the "refund_amount" field.
+func (m *PayOrderMutation) ClearRefundAmount() {
+	m.refund_amount = nil
+	m.addrefund_amount = nil
+	m.clearedFields[payorder.FieldRefundAmount] = struct{}{}
+}
+
+// RefundAmountCleared returns if the "refund_amount" field was cleared in this mutation.
+func (m *PayOrderMutation) RefundAmountCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldRefundAmount]
+	return ok
+}
+
+// ResetRefundAmount resets all changes to the "refund_amount" field.
+func (m *PayOrderMutation) ResetRefundAmount() {
+	m.refund_amount = nil
+	m.addrefund_amount = nil
+	delete(m.clearedFields, payorder.FieldRefundAmount)
+}
+
+// SetRefundAt sets the "refund_at" field.
+func (m *PayOrderMutation) SetRefundAt(t time.Time) {
+	m.refund_at = &t
+}
+
+// RefundAt returns the value of the "refund_at" field in the mutation.
+func (m *PayOrderMutation) RefundAt() (r time.Time, exists bool) {
+	v := m.refund_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRefundAt returns the old "refund_at" field's value of the PayOrder entity.
+// If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayOrderMutation) OldRefundAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRefundAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRefundAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRefundAt: %w", err)
+	}
+	return oldValue.RefundAt, nil
+}
+
+// ClearRefundAt clears the value of the "refund_at" field.
+func (m *PayOrderMutation) ClearRefundAt() {
+	m.refund_at = nil
+	m.clearedFields[payorder.FieldRefundAt] = struct{}{}
+}
+
+// RefundAtCleared returns if the "refund_at" field was cleared in this mutation.
+func (m *PayOrderMutation) RefundAtCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldRefundAt]
+	return ok
+}
+
+// ResetRefundAt resets all changes to the "refund_at" field.
+func (m *PayOrderMutation) ResetRefundAt() {
+	m.refund_at = nil
+	delete(m.clearedFields, payorder.FieldRefundAt)
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *PayOrderMutation) ClearUser() {
 	m.cleareduser = true
@@ -23495,7 +23667,7 @@ func (m *PayOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PayOrderMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 25)
 	if m.created_at != nil {
 		fields = append(fields, payorder.FieldCreatedAt)
 	}
@@ -23562,6 +23734,15 @@ func (m *PayOrderMutation) Fields() []string {
 	if m.raw != nil {
 		fields = append(fields, payorder.FieldRaw)
 	}
+	if m.refund_no != nil {
+		fields = append(fields, payorder.FieldRefundNo)
+	}
+	if m.refund_amount != nil {
+		fields = append(fields, payorder.FieldRefundAmount)
+	}
+	if m.refund_at != nil {
+		fields = append(fields, payorder.FieldRefundAt)
+	}
 	return fields
 }
 
@@ -23614,6 +23795,12 @@ func (m *PayOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.ErrorMsg()
 	case payorder.FieldRaw:
 		return m.Raw()
+	case payorder.FieldRefundNo:
+		return m.RefundNo()
+	case payorder.FieldRefundAmount:
+		return m.RefundAmount()
+	case payorder.FieldRefundAt:
+		return m.RefundAt()
 	}
 	return nil, false
 }
@@ -23667,6 +23854,12 @@ func (m *PayOrderMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldErrorMsg(ctx)
 	case payorder.FieldRaw:
 		return m.OldRaw(ctx)
+	case payorder.FieldRefundNo:
+		return m.OldRefundNo(ctx)
+	case payorder.FieldRefundAmount:
+		return m.OldRefundAmount(ctx)
+	case payorder.FieldRefundAt:
+		return m.OldRefundAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown PayOrder field %s", name)
 }
@@ -23830,6 +24023,27 @@ func (m *PayOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRaw(v)
 		return nil
+	case payorder.FieldRefundNo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRefundNo(v)
+		return nil
+	case payorder.FieldRefundAmount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRefundAmount(v)
+		return nil
+	case payorder.FieldRefundAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRefundAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown PayOrder field %s", name)
 }
@@ -23847,6 +24061,9 @@ func (m *PayOrderMutation) AddedFields() []string {
 	if m.addchannel_fee_price != nil {
 		fields = append(fields, payorder.FieldChannelFeePrice)
 	}
+	if m.addrefund_amount != nil {
+		fields = append(fields, payorder.FieldRefundAmount)
+	}
 	return fields
 }
 
@@ -23861,6 +24078,8 @@ func (m *PayOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedPrice()
 	case payorder.FieldChannelFeePrice:
 		return m.AddedChannelFeePrice()
+	case payorder.FieldRefundAmount:
+		return m.AddedRefundAmount()
 	}
 	return nil, false
 }
@@ -23890,6 +24109,13 @@ func (m *PayOrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddChannelFeePrice(v)
+		return nil
+	case payorder.FieldRefundAmount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRefundAmount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown PayOrder numeric field %s", name)
@@ -23955,6 +24181,15 @@ func (m *PayOrderMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(payorder.FieldRaw) {
 		fields = append(fields, payorder.FieldRaw)
+	}
+	if m.FieldCleared(payorder.FieldRefundNo) {
+		fields = append(fields, payorder.FieldRefundNo)
+	}
+	if m.FieldCleared(payorder.FieldRefundAmount) {
+		fields = append(fields, payorder.FieldRefundAmount)
+	}
+	if m.FieldCleared(payorder.FieldRefundAt) {
+		fields = append(fields, payorder.FieldRefundAt)
 	}
 	return fields
 }
@@ -24026,6 +24261,15 @@ func (m *PayOrderMutation) ClearField(name string) error {
 		return nil
 	case payorder.FieldRaw:
 		m.ClearRaw()
+		return nil
+	case payorder.FieldRefundNo:
+		m.ClearRefundNo()
+		return nil
+	case payorder.FieldRefundAmount:
+		m.ClearRefundAmount()
+		return nil
+	case payorder.FieldRefundAt:
+		m.ClearRefundAt()
 		return nil
 	}
 	return fmt.Errorf("unknown PayOrder nullable field %s", name)
@@ -24100,6 +24344,15 @@ func (m *PayOrderMutation) ResetField(name string) error {
 		return nil
 	case payorder.FieldRaw:
 		m.ResetRaw()
+		return nil
+	case payorder.FieldRefundNo:
+		m.ResetRefundNo()
+		return nil
+	case payorder.FieldRefundAmount:
+		m.ResetRefundAmount()
+		return nil
+	case payorder.FieldRefundAt:
+		m.ResetRefundAt()
 		return nil
 	}
 	return fmt.Errorf("unknown PayOrder field %s", name)

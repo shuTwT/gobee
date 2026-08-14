@@ -24,3 +24,7 @@ export const queryPayOrder = (id: number) => {
 export const deletePayOrder = (id: number) => {
   return http.request<ApiResponse<any>>('delete', `${BASE_URL}/v1/pay-order/delete/${id}`)
 }
+
+export const refundPayOrder = (id: number, data?: { amount?: number }) => {
+  return http.request<ApiResponse<any>>('post', `${BASE_URL}/v1/pay-order/refund/${id}`, { data })
+}

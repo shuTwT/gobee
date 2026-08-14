@@ -64,6 +64,12 @@ type PayOrder struct {
 	ErrorMsg string `json:"error_msg,omitempty"`
 	// 原始响应
 	Raw string `json:"raw,omitempty"`
+	// 商户退款单号
+	RefundNo *string `json:"refund_no,omitempty"`
+	// 退款金额,单位分
+	RefundAmount int `json:"refund_amount,omitempty"`
+	// 退款时间
+	RefundAt *time.Time `json:"refund_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PayOrderQuery when eager-loading is set.
 	Edges        PayOrderEdges `json:"edges"`
@@ -121,11 +127,11 @@ func (*PayOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case payorder.FieldID, payorder.FieldUserID, payorder.FieldPostID, payorder.FieldProductID, payorder.FieldOrderPrice, payorder.FieldPrice, payorder.FieldChannelFeePrice:
+		case payorder.FieldID, payorder.FieldUserID, payorder.FieldPostID, payorder.FieldProductID, payorder.FieldOrderPrice, payorder.FieldPrice, payorder.FieldChannelFeePrice, payorder.FieldRefundAmount:
 			values[i] = new(sql.NullInt64)
-		case payorder.FieldOrderType, payorder.FieldChannelType, payorder.FieldOrderID, payorder.FieldMerchantOrderID, payorder.FieldOutTradeNo, payorder.FieldSubject, payorder.FieldBody, payorder.FieldNotifyURL, payorder.FieldReturnURL, payorder.FieldExtra, payorder.FieldPayURL, payorder.FieldState, payorder.FieldErrorMsg, payorder.FieldRaw:
+		case payorder.FieldOrderType, payorder.FieldChannelType, payorder.FieldOrderID, payorder.FieldMerchantOrderID, payorder.FieldOutTradeNo, payorder.FieldSubject, payorder.FieldBody, payorder.FieldNotifyURL, payorder.FieldReturnURL, payorder.FieldExtra, payorder.FieldPayURL, payorder.FieldState, payorder.FieldErrorMsg, payorder.FieldRaw, payorder.FieldRefundNo:
 			values[i] = new(sql.NullString)
-		case payorder.FieldCreatedAt, payorder.FieldUpdatedAt:
+		case payorder.FieldCreatedAt, payorder.FieldUpdatedAt, payorder.FieldRefundAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -287,6 +293,26 @@ func (_m *PayOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Raw = value.String
 			}
+		case payorder.FieldRefundNo:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field refund_no", values[i])
+			} else if value.Valid {
+				_m.RefundNo = new(string)
+				*_m.RefundNo = value.String
+			}
+		case payorder.FieldRefundAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field refund_amount", values[i])
+			} else if value.Valid {
+				_m.RefundAmount = int(value.Int64)
+			}
+		case payorder.FieldRefundAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field refund_at", values[i])
+			} else if value.Valid {
+				_m.RefundAt = new(time.Time)
+				*_m.RefundAt = value.Time
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -417,6 +443,19 @@ func (_m *PayOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("raw=")
 	builder.WriteString(_m.Raw)
+	builder.WriteString(", ")
+	if v := _m.RefundNo; v != nil {
+		builder.WriteString("refund_no=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("refund_amount=")
+	builder.WriteString(fmt.Sprintf("%v", _m.RefundAmount))
+	builder.WriteString(", ")
+	if v := _m.RefundAt; v != nil {
+		builder.WriteString("refund_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }
