@@ -12,7 +12,10 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/shuTwT/hoshikuzu/ent/payorder"
+	"github.com/shuTwT/hoshikuzu/ent/post"
 	"github.com/shuTwT/hoshikuzu/ent/predicate"
+	"github.com/shuTwT/hoshikuzu/ent/product"
+	"github.com/shuTwT/hoshikuzu/ent/user"
 )
 
 // PayOrderUpdate is the builder for updating PayOrder entities.
@@ -31,6 +34,80 @@ func (_u *PayOrderUpdate) Where(ps ...predicate.PayOrder) *PayOrderUpdate {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *PayOrderUpdate) SetUpdatedAt(v time.Time) *PayOrderUpdate {
 	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *PayOrderUpdate) SetUserID(v int) *PayOrderUpdate {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *PayOrderUpdate) SetNillableUserID(v *int) *PayOrderUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// SetOrderType sets the "order_type" field.
+func (_u *PayOrderUpdate) SetOrderType(v string) *PayOrderUpdate {
+	_u.mutation.SetOrderType(v)
+	return _u
+}
+
+// SetNillableOrderType sets the "order_type" field if the given value is not nil.
+func (_u *PayOrderUpdate) SetNillableOrderType(v *string) *PayOrderUpdate {
+	if v != nil {
+		_u.SetOrderType(*v)
+	}
+	return _u
+}
+
+// ClearOrderType clears the value of the "order_type" field.
+func (_u *PayOrderUpdate) ClearOrderType() *PayOrderUpdate {
+	_u.mutation.ClearOrderType()
+	return _u
+}
+
+// SetPostID sets the "post_id" field.
+func (_u *PayOrderUpdate) SetPostID(v int) *PayOrderUpdate {
+	_u.mutation.SetPostID(v)
+	return _u
+}
+
+// SetNillablePostID sets the "post_id" field if the given value is not nil.
+func (_u *PayOrderUpdate) SetNillablePostID(v *int) *PayOrderUpdate {
+	if v != nil {
+		_u.SetPostID(*v)
+	}
+	return _u
+}
+
+// ClearPostID clears the value of the "post_id" field.
+func (_u *PayOrderUpdate) ClearPostID() *PayOrderUpdate {
+	_u.mutation.ClearPostID()
+	return _u
+}
+
+// SetProductID sets the "product_id" field.
+func (_u *PayOrderUpdate) SetProductID(v int) *PayOrderUpdate {
+	_u.mutation.SetProductID(v)
+	return _u
+}
+
+// SetNillableProductID sets the "product_id" field if the given value is not nil.
+func (_u *PayOrderUpdate) SetNillableProductID(v *int) *PayOrderUpdate {
+	if v != nil {
+		_u.SetProductID(*v)
+	}
+	return _u
+}
+
+// ClearProductID clears the value of the "product_id" field.
+func (_u *PayOrderUpdate) ClearProductID() *PayOrderUpdate {
+	_u.mutation.ClearProductID()
 	return _u
 }
 
@@ -375,9 +452,42 @@ func (_u *PayOrderUpdate) ClearRaw() *PayOrderUpdate {
 	return _u
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_u *PayOrderUpdate) SetUser(v *User) *PayOrderUpdate {
+	return _u.SetUserID(v.ID)
+}
+
+// SetPost sets the "post" edge to the Post entity.
+func (_u *PayOrderUpdate) SetPost(v *Post) *PayOrderUpdate {
+	return _u.SetPostID(v.ID)
+}
+
+// SetProduct sets the "product" edge to the Product entity.
+func (_u *PayOrderUpdate) SetProduct(v *Product) *PayOrderUpdate {
+	return _u.SetProductID(v.ID)
+}
+
 // Mutation returns the PayOrderMutation object of the builder.
 func (_u *PayOrderUpdate) Mutation() *PayOrderMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *PayOrderUpdate) ClearUser() *PayOrderUpdate {
+	_u.mutation.ClearUser()
+	return _u
+}
+
+// ClearPost clears the "post" edge to the Post entity.
+func (_u *PayOrderUpdate) ClearPost() *PayOrderUpdate {
+	_u.mutation.ClearPost()
+	return _u
+}
+
+// ClearProduct clears the "product" edge to the Product entity.
+func (_u *PayOrderUpdate) ClearProduct() *PayOrderUpdate {
+	_u.mutation.ClearProduct()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -416,7 +526,18 @@ func (_u *PayOrderUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *PayOrderUpdate) check() error {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "PayOrder.user"`)
+	}
+	return nil
+}
+
 func (_u *PayOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(payorder.Table, payorder.Columns, sqlgraph.NewFieldSpec(payorder.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -427,6 +548,12 @@ func (_u *PayOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(payorder.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.OrderType(); ok {
+		_spec.SetField(payorder.FieldOrderType, field.TypeString, value)
+	}
+	if _u.mutation.OrderTypeCleared() {
+		_spec.ClearField(payorder.FieldOrderType, field.TypeString)
 	}
 	if value, ok := _u.mutation.ChannelType(); ok {
 		_spec.SetField(payorder.FieldChannelType, field.TypeString, value)
@@ -533,6 +660,93 @@ func (_u *PayOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.RawCleared() {
 		_spec.ClearField(payorder.FieldRaw, field.TypeString)
 	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.UserTable,
+			Columns: []string{payorder.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.UserTable,
+			Columns: []string{payorder.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PostCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.PostTable,
+			Columns: []string{payorder.PostColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PostIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.PostTable,
+			Columns: []string{payorder.PostColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ProductCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.ProductTable,
+			Columns: []string{payorder.ProductColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ProductIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.ProductTable,
+			Columns: []string{payorder.ProductColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{payorder.Label}
@@ -556,6 +770,80 @@ type PayOrderUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *PayOrderUpdateOne) SetUpdatedAt(v time.Time) *PayOrderUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *PayOrderUpdateOne) SetUserID(v int) *PayOrderUpdateOne {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *PayOrderUpdateOne) SetNillableUserID(v *int) *PayOrderUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// SetOrderType sets the "order_type" field.
+func (_u *PayOrderUpdateOne) SetOrderType(v string) *PayOrderUpdateOne {
+	_u.mutation.SetOrderType(v)
+	return _u
+}
+
+// SetNillableOrderType sets the "order_type" field if the given value is not nil.
+func (_u *PayOrderUpdateOne) SetNillableOrderType(v *string) *PayOrderUpdateOne {
+	if v != nil {
+		_u.SetOrderType(*v)
+	}
+	return _u
+}
+
+// ClearOrderType clears the value of the "order_type" field.
+func (_u *PayOrderUpdateOne) ClearOrderType() *PayOrderUpdateOne {
+	_u.mutation.ClearOrderType()
+	return _u
+}
+
+// SetPostID sets the "post_id" field.
+func (_u *PayOrderUpdateOne) SetPostID(v int) *PayOrderUpdateOne {
+	_u.mutation.SetPostID(v)
+	return _u
+}
+
+// SetNillablePostID sets the "post_id" field if the given value is not nil.
+func (_u *PayOrderUpdateOne) SetNillablePostID(v *int) *PayOrderUpdateOne {
+	if v != nil {
+		_u.SetPostID(*v)
+	}
+	return _u
+}
+
+// ClearPostID clears the value of the "post_id" field.
+func (_u *PayOrderUpdateOne) ClearPostID() *PayOrderUpdateOne {
+	_u.mutation.ClearPostID()
+	return _u
+}
+
+// SetProductID sets the "product_id" field.
+func (_u *PayOrderUpdateOne) SetProductID(v int) *PayOrderUpdateOne {
+	_u.mutation.SetProductID(v)
+	return _u
+}
+
+// SetNillableProductID sets the "product_id" field if the given value is not nil.
+func (_u *PayOrderUpdateOne) SetNillableProductID(v *int) *PayOrderUpdateOne {
+	if v != nil {
+		_u.SetProductID(*v)
+	}
+	return _u
+}
+
+// ClearProductID clears the value of the "product_id" field.
+func (_u *PayOrderUpdateOne) ClearProductID() *PayOrderUpdateOne {
+	_u.mutation.ClearProductID()
 	return _u
 }
 
@@ -900,9 +1188,42 @@ func (_u *PayOrderUpdateOne) ClearRaw() *PayOrderUpdateOne {
 	return _u
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_u *PayOrderUpdateOne) SetUser(v *User) *PayOrderUpdateOne {
+	return _u.SetUserID(v.ID)
+}
+
+// SetPost sets the "post" edge to the Post entity.
+func (_u *PayOrderUpdateOne) SetPost(v *Post) *PayOrderUpdateOne {
+	return _u.SetPostID(v.ID)
+}
+
+// SetProduct sets the "product" edge to the Product entity.
+func (_u *PayOrderUpdateOne) SetProduct(v *Product) *PayOrderUpdateOne {
+	return _u.SetProductID(v.ID)
+}
+
 // Mutation returns the PayOrderMutation object of the builder.
 func (_u *PayOrderUpdateOne) Mutation() *PayOrderMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *PayOrderUpdateOne) ClearUser() *PayOrderUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
+}
+
+// ClearPost clears the "post" edge to the Post entity.
+func (_u *PayOrderUpdateOne) ClearPost() *PayOrderUpdateOne {
+	_u.mutation.ClearPost()
+	return _u
+}
+
+// ClearProduct clears the "product" edge to the Product entity.
+func (_u *PayOrderUpdateOne) ClearProduct() *PayOrderUpdateOne {
+	_u.mutation.ClearProduct()
+	return _u
 }
 
 // Where appends a list predicates to the PayOrderUpdate builder.
@@ -954,7 +1275,18 @@ func (_u *PayOrderUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *PayOrderUpdateOne) check() error {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "PayOrder.user"`)
+	}
+	return nil
+}
+
 func (_u *PayOrderUpdateOne) sqlSave(ctx context.Context) (_node *PayOrder, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(payorder.Table, payorder.Columns, sqlgraph.NewFieldSpec(payorder.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -982,6 +1314,12 @@ func (_u *PayOrderUpdateOne) sqlSave(ctx context.Context) (_node *PayOrder, err 
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(payorder.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.OrderType(); ok {
+		_spec.SetField(payorder.FieldOrderType, field.TypeString, value)
+	}
+	if _u.mutation.OrderTypeCleared() {
+		_spec.ClearField(payorder.FieldOrderType, field.TypeString)
 	}
 	if value, ok := _u.mutation.ChannelType(); ok {
 		_spec.SetField(payorder.FieldChannelType, field.TypeString, value)
@@ -1087,6 +1425,93 @@ func (_u *PayOrderUpdateOne) sqlSave(ctx context.Context) (_node *PayOrder, err 
 	}
 	if _u.mutation.RawCleared() {
 		_spec.ClearField(payorder.FieldRaw, field.TypeString)
+	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.UserTable,
+			Columns: []string{payorder.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.UserTable,
+			Columns: []string{payorder.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PostCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.PostTable,
+			Columns: []string{payorder.PostColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PostIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.PostTable,
+			Columns: []string{payorder.PostColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ProductCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.ProductTable,
+			Columns: []string{payorder.ProductColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ProductIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.ProductTable,
+			Columns: []string{payorder.ProductColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &PayOrder{config: _u.config}
 	_spec.Assign = _node.assignValues

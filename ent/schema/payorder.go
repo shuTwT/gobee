@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -19,6 +20,17 @@ func (PayOrder) Mixin() []ent.Mixin {
 // Fields of the PayOrder.
 func (PayOrder) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("user_id").
+			Comment("下单用户"),
+		field.String("order_type").
+			Optional().
+			Comment("订单类型 1文章付费 2商品购买"),
+		field.Int("post_id").
+			Optional().
+			Comment("文章付费关联"),
+		field.Int("product_id").
+			Optional().
+			Comment("商品购买关联"),
 		field.String("channel_type").
 			Optional().
 			Nillable().
@@ -80,5 +92,19 @@ func (PayOrder) Fields() []ent.Field {
 
 // Edges of the PayOrder.
 func (PayOrder) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("user", User.Type).
+			Unique().
+			Required().
+			Field("user_id").
+			Comment("下单用户"),
+		edge.To("post", Post.Type).
+			Unique().
+			Field("post_id").
+			Comment("文章付费关联"),
+		edge.To("product", Product.Type).
+			Unique().
+			Field("product_id").
+			Comment("商品购买关联"),
+	}
 }

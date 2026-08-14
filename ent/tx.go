@@ -68,6 +68,8 @@ type Tx struct {
 	Plugin *PluginClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
+	// PostPurchase is the client for interacting with the PostPurchase builders.
+	PostPurchase *PostPurchaseClient
 	// Product is the client for interacting with the Product builders.
 	Product *ProductClient
 	// RefreshToken is the client for interacting with the RefreshToken builders.
@@ -251,6 +253,7 @@ func (tx *Tx) init() {
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.Plugin = NewPluginClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
+	tx.PostPurchase = NewPostPurchaseClient(tx.config)
 	tx.Product = NewProductClient(tx.config)
 	tx.RefreshToken = NewRefreshTokenClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)

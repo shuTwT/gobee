@@ -90,6 +90,9 @@ type Plugin func(*sql.Selector)
 // Post is the predicate function for post builders.
 type Post func(*sql.Selector)
 
+// PostPurchase is the predicate function for postpurchase builders.
+type PostPurchase func(*sql.Selector)
+
 // Product is the predicate function for product builders.
 type Product func(*sql.Selector)
 

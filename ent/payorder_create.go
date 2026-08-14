@@ -11,6 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/shuTwT/hoshikuzu/ent/payorder"
+	"github.com/shuTwT/hoshikuzu/ent/post"
+	"github.com/shuTwT/hoshikuzu/ent/product"
+	"github.com/shuTwT/hoshikuzu/ent/user"
 )
 
 // PayOrderCreate is the builder for creating a PayOrder entity.
@@ -44,6 +47,54 @@ func (_c *PayOrderCreate) SetUpdatedAt(v time.Time) *PayOrderCreate {
 func (_c *PayOrderCreate) SetNillableUpdatedAt(v *time.Time) *PayOrderCreate {
 	if v != nil {
 		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
+// SetUserID sets the "user_id" field.
+func (_c *PayOrderCreate) SetUserID(v int) *PayOrderCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetOrderType sets the "order_type" field.
+func (_c *PayOrderCreate) SetOrderType(v string) *PayOrderCreate {
+	_c.mutation.SetOrderType(v)
+	return _c
+}
+
+// SetNillableOrderType sets the "order_type" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableOrderType(v *string) *PayOrderCreate {
+	if v != nil {
+		_c.SetOrderType(*v)
+	}
+	return _c
+}
+
+// SetPostID sets the "post_id" field.
+func (_c *PayOrderCreate) SetPostID(v int) *PayOrderCreate {
+	_c.mutation.SetPostID(v)
+	return _c
+}
+
+// SetNillablePostID sets the "post_id" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillablePostID(v *int) *PayOrderCreate {
+	if v != nil {
+		_c.SetPostID(*v)
+	}
+	return _c
+}
+
+// SetProductID sets the "product_id" field.
+func (_c *PayOrderCreate) SetProductID(v int) *PayOrderCreate {
+	_c.mutation.SetProductID(v)
+	return _c
+}
+
+// SetNillableProductID sets the "product_id" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillableProductID(v *int) *PayOrderCreate {
+	if v != nil {
+		_c.SetProductID(*v)
 	}
 	return _c
 }
@@ -278,6 +329,21 @@ func (_c *PayOrderCreate) SetID(v int) *PayOrderCreate {
 	return _c
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_c *PayOrderCreate) SetUser(v *User) *PayOrderCreate {
+	return _c.SetUserID(v.ID)
+}
+
+// SetPost sets the "post" edge to the Post entity.
+func (_c *PayOrderCreate) SetPost(v *Post) *PayOrderCreate {
+	return _c.SetPostID(v.ID)
+}
+
+// SetProduct sets the "product" edge to the Product entity.
+func (_c *PayOrderCreate) SetProduct(v *Product) *PayOrderCreate {
+	return _c.SetProductID(v.ID)
+}
+
 // Mutation returns the PayOrderMutation object of the builder.
 func (_c *PayOrderCreate) Mutation() *PayOrderMutation {
 	return _c.mutation
@@ -335,6 +401,12 @@ func (_c *PayOrderCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "PayOrder.updated_at"`)}
 	}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "PayOrder.user_id"`)}
+	}
+	if len(_c.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "PayOrder.user"`)}
+	}
 	return nil
 }
 
@@ -374,6 +446,10 @@ func (_c *PayOrderCreate) createSpec() (*PayOrder, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(payorder.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := _c.mutation.OrderType(); ok {
+		_spec.SetField(payorder.FieldOrderType, field.TypeString, value)
+		_node.OrderType = value
 	}
 	if value, ok := _c.mutation.ChannelType(); ok {
 		_spec.SetField(payorder.FieldChannelType, field.TypeString, value)
@@ -438,6 +514,57 @@ func (_c *PayOrderCreate) createSpec() (*PayOrder, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Raw(); ok {
 		_spec.SetField(payorder.FieldRaw, field.TypeString, value)
 		_node.Raw = value
+	}
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.UserTable,
+			Columns: []string{payorder.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PostIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.PostTable,
+			Columns: []string{payorder.PostColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.PostID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ProductIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   payorder.ProductTable,
+			Columns: []string{payorder.ProductColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ProductID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

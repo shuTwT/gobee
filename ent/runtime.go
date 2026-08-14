@@ -33,6 +33,7 @@ import (
 	"github.com/shuTwT/hoshikuzu/ent/personalaccesstoken"
 	"github.com/shuTwT/hoshikuzu/ent/plugin"
 	"github.com/shuTwT/hoshikuzu/ent/post"
+	"github.com/shuTwT/hoshikuzu/ent/postpurchase"
 	"github.com/shuTwT/hoshikuzu/ent/product"
 	"github.com/shuTwT/hoshikuzu/ent/refreshtoken"
 	"github.com/shuTwT/hoshikuzu/ent/role"
@@ -1292,7 +1293,7 @@ func init() {
 	// payorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	payorder.UpdateDefaultUpdatedAt = payorderDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// payorderDescState is the schema descriptor for state field.
-	payorderDescState := payorderFields[13].Descriptor()
+	payorderDescState := payorderFields[17].Descriptor()
 	// payorder.DefaultState holds the default value on creation for the state field.
 	payorder.DefaultState = payorderDescState.Default.(string)
 	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
@@ -1548,6 +1549,21 @@ func init() {
 	postDescSummary := postFields[21].Descriptor()
 	// post.SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
 	post.SummaryValidator = postDescSummary.Validators[0].(func(string) error)
+	postpurchaseMixin := schema.PostPurchase{}.Mixin()
+	postpurchaseMixinFields0 := postpurchaseMixin[0].Fields()
+	_ = postpurchaseMixinFields0
+	postpurchaseFields := schema.PostPurchase{}.Fields()
+	_ = postpurchaseFields
+	// postpurchaseDescCreatedAt is the schema descriptor for created_at field.
+	postpurchaseDescCreatedAt := postpurchaseMixinFields0[1].Descriptor()
+	// postpurchase.DefaultCreatedAt holds the default value on creation for the created_at field.
+	postpurchase.DefaultCreatedAt = postpurchaseDescCreatedAt.Default.(func() time.Time)
+	// postpurchaseDescUpdatedAt is the schema descriptor for updated_at field.
+	postpurchaseDescUpdatedAt := postpurchaseMixinFields0[2].Descriptor()
+	// postpurchase.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	postpurchase.DefaultUpdatedAt = postpurchaseDescUpdatedAt.Default.(func() time.Time)
+	// postpurchase.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	postpurchase.UpdateDefaultUpdatedAt = postpurchaseDescUpdatedAt.UpdateDefault.(func() time.Time)
 	productMixin := schema.Product{}.Mixin()
 	productMixinFields0 := productMixin[0].Fields()
 	_ = productMixinFields0

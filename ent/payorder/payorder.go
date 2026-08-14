@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -17,6 +18,14 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
+	// FieldOrderType holds the string denoting the order_type field in the database.
+	FieldOrderType = "order_type"
+	// FieldPostID holds the string denoting the post_id field in the database.
+	FieldPostID = "post_id"
+	// FieldProductID holds the string denoting the product_id field in the database.
+	FieldProductID = "product_id"
 	// FieldChannelType holds the string denoting the channel_type field in the database.
 	FieldChannelType = "channel_type"
 	// FieldOrderID holds the string denoting the order_id field in the database.
@@ -49,8 +58,35 @@ const (
 	FieldErrorMsg = "error_msg"
 	// FieldRaw holds the string denoting the raw field in the database.
 	FieldRaw = "raw"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
+	// EdgePost holds the string denoting the post edge name in mutations.
+	EdgePost = "post"
+	// EdgeProduct holds the string denoting the product edge name in mutations.
+	EdgeProduct = "product"
 	// Table holds the table name of the payorder in the database.
 	Table = "pay_orders"
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "pay_orders"
+	// UserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_id"
+	// PostTable is the table that holds the post relation/edge.
+	PostTable = "pay_orders"
+	// PostInverseTable is the table name for the Post entity.
+	// It exists in this package in order to avoid circular dependency with the "post" package.
+	PostInverseTable = "posts"
+	// PostColumn is the table column denoting the post relation/edge.
+	PostColumn = "post_id"
+	// ProductTable is the table that holds the product relation/edge.
+	ProductTable = "pay_orders"
+	// ProductInverseTable is the table name for the Product entity.
+	// It exists in this package in order to avoid circular dependency with the "product" package.
+	ProductInverseTable = "products"
+	// ProductColumn is the table column denoting the product relation/edge.
+	ProductColumn = "product_id"
 )
 
 // Columns holds all SQL columns for payorder fields.
@@ -58,6 +94,10 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldUserID,
+	FieldOrderType,
+	FieldPostID,
+	FieldProductID,
 	FieldChannelType,
 	FieldOrderID,
 	FieldMerchantOrderID,
@@ -113,6 +153,26 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// ByOrderType orders the results by the order_type field.
+func ByOrderType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrderType, opts...).ToFunc()
+}
+
+// ByPostID orders the results by the post_id field.
+func ByPostID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPostID, opts...).ToFunc()
+}
+
+// ByProductID orders the results by the product_id field.
+func ByProductID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldProductID, opts...).ToFunc()
 }
 
 // ByChannelType orders the results by the channel_type field.
@@ -193,4 +253,46 @@ func ByErrorMsg(opts ...sql.OrderTermOption) OrderOption {
 // ByRaw orders the results by the raw field.
 func ByRaw(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRaw, opts...).ToFunc()
+}
+
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByPostField orders the results by post field.
+func ByPostField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPostStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByProductField orders the results by product field.
+func ByProductField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProductStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
+	)
+}
+func newPostStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PostInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, PostTable, PostColumn),
+	)
+}
+func newProductStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProductInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, ProductTable, ProductColumn),
+	)
 }

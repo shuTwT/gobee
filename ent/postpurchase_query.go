@@ -13,59 +13,59 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/shuTwT/hoshikuzu/ent/payorder"
 	"github.com/shuTwT/hoshikuzu/ent/post"
+	"github.com/shuTwT/hoshikuzu/ent/postpurchase"
 	"github.com/shuTwT/hoshikuzu/ent/predicate"
-	"github.com/shuTwT/hoshikuzu/ent/product"
 	"github.com/shuTwT/hoshikuzu/ent/user"
 )
 
-// PayOrderQuery is the builder for querying PayOrder entities.
-type PayOrderQuery struct {
+// PostPurchaseQuery is the builder for querying PostPurchase entities.
+type PostPurchaseQuery struct {
 	config
-	ctx         *QueryContext
-	order       []payorder.OrderOption
-	inters      []Interceptor
-	predicates  []predicate.PayOrder
-	withUser    *UserQuery
-	withPost    *PostQuery
-	withProduct *ProductQuery
+	ctx        *QueryContext
+	order      []postpurchase.OrderOption
+	inters     []Interceptor
+	predicates []predicate.PostPurchase
+	withUser   *UserQuery
+	withPost   *PostQuery
+	withOrder  *PayOrderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the PayOrderQuery builder.
-func (_q *PayOrderQuery) Where(ps ...predicate.PayOrder) *PayOrderQuery {
+// Where adds a new predicate for the PostPurchaseQuery builder.
+func (_q *PostPurchaseQuery) Where(ps ...predicate.PostPurchase) *PostPurchaseQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *PayOrderQuery) Limit(limit int) *PayOrderQuery {
+func (_q *PostPurchaseQuery) Limit(limit int) *PostPurchaseQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *PayOrderQuery) Offset(offset int) *PayOrderQuery {
+func (_q *PostPurchaseQuery) Offset(offset int) *PostPurchaseQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *PayOrderQuery) Unique(unique bool) *PayOrderQuery {
+func (_q *PostPurchaseQuery) Unique(unique bool) *PostPurchaseQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *PayOrderQuery) Order(o ...payorder.OrderOption) *PayOrderQuery {
+func (_q *PostPurchaseQuery) Order(o ...postpurchase.OrderOption) *PostPurchaseQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
 // QueryUser chains the current query on the "user" edge.
-func (_q *PayOrderQuery) QueryUser() *UserQuery {
+func (_q *PostPurchaseQuery) QueryUser() *UserQuery {
 	query := (&UserClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -76,9 +76,9 @@ func (_q *PayOrderQuery) QueryUser() *UserQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(payorder.Table, payorder.FieldID, selector),
+			sqlgraph.From(postpurchase.Table, postpurchase.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, payorder.UserTable, payorder.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, postpurchase.UserTable, postpurchase.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -87,7 +87,7 @@ func (_q *PayOrderQuery) QueryUser() *UserQuery {
 }
 
 // QueryPost chains the current query on the "post" edge.
-func (_q *PayOrderQuery) QueryPost() *PostQuery {
+func (_q *PostPurchaseQuery) QueryPost() *PostQuery {
 	query := (&PostClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -98,9 +98,9 @@ func (_q *PayOrderQuery) QueryPost() *PostQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(payorder.Table, payorder.FieldID, selector),
+			sqlgraph.From(postpurchase.Table, postpurchase.FieldID, selector),
 			sqlgraph.To(post.Table, post.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, payorder.PostTable, payorder.PostColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, postpurchase.PostTable, postpurchase.PostColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -108,9 +108,9 @@ func (_q *PayOrderQuery) QueryPost() *PostQuery {
 	return query
 }
 
-// QueryProduct chains the current query on the "product" edge.
-func (_q *PayOrderQuery) QueryProduct() *ProductQuery {
-	query := (&ProductClient{config: _q.config}).Query()
+// QueryOrder chains the current query on the "order" edge.
+func (_q *PostPurchaseQuery) QueryOrder() *PayOrderQuery {
+	query := (&PayOrderClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -120,9 +120,9 @@ func (_q *PayOrderQuery) QueryProduct() *ProductQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(payorder.Table, payorder.FieldID, selector),
-			sqlgraph.To(product.Table, product.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, payorder.ProductTable, payorder.ProductColumn),
+			sqlgraph.From(postpurchase.Table, postpurchase.FieldID, selector),
+			sqlgraph.To(payorder.Table, payorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, postpurchase.OrderTable, postpurchase.OrderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -130,21 +130,21 @@ func (_q *PayOrderQuery) QueryProduct() *ProductQuery {
 	return query
 }
 
-// First returns the first PayOrder entity from the query.
-// Returns a *NotFoundError when no PayOrder was found.
-func (_q *PayOrderQuery) First(ctx context.Context) (*PayOrder, error) {
+// First returns the first PostPurchase entity from the query.
+// Returns a *NotFoundError when no PostPurchase was found.
+func (_q *PostPurchaseQuery) First(ctx context.Context) (*PostPurchase, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{payorder.Label}
+		return nil, &NotFoundError{postpurchase.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *PayOrderQuery) FirstX(ctx context.Context) *PayOrder {
+func (_q *PostPurchaseQuery) FirstX(ctx context.Context) *PostPurchase {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -152,22 +152,22 @@ func (_q *PayOrderQuery) FirstX(ctx context.Context) *PayOrder {
 	return node
 }
 
-// FirstID returns the first PayOrder ID from the query.
-// Returns a *NotFoundError when no PayOrder ID was found.
-func (_q *PayOrderQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first PostPurchase ID from the query.
+// Returns a *NotFoundError when no PostPurchase ID was found.
+func (_q *PostPurchaseQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{payorder.Label}
+		err = &NotFoundError{postpurchase.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *PayOrderQuery) FirstIDX(ctx context.Context) int {
+func (_q *PostPurchaseQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -175,10 +175,10 @@ func (_q *PayOrderQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single PayOrder entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one PayOrder entity is found.
-// Returns a *NotFoundError when no PayOrder entities are found.
-func (_q *PayOrderQuery) Only(ctx context.Context) (*PayOrder, error) {
+// Only returns a single PostPurchase entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one PostPurchase entity is found.
+// Returns a *NotFoundError when no PostPurchase entities are found.
+func (_q *PostPurchaseQuery) Only(ctx context.Context) (*PostPurchase, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -187,14 +187,14 @@ func (_q *PayOrderQuery) Only(ctx context.Context) (*PayOrder, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{payorder.Label}
+		return nil, &NotFoundError{postpurchase.Label}
 	default:
-		return nil, &NotSingularError{payorder.Label}
+		return nil, &NotSingularError{postpurchase.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *PayOrderQuery) OnlyX(ctx context.Context) *PayOrder {
+func (_q *PostPurchaseQuery) OnlyX(ctx context.Context) *PostPurchase {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -202,10 +202,10 @@ func (_q *PayOrderQuery) OnlyX(ctx context.Context) *PayOrder {
 	return node
 }
 
-// OnlyID is like Only, but returns the only PayOrder ID in the query.
-// Returns a *NotSingularError when more than one PayOrder ID is found.
+// OnlyID is like Only, but returns the only PostPurchase ID in the query.
+// Returns a *NotSingularError when more than one PostPurchase ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *PayOrderQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *PostPurchaseQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
@@ -214,15 +214,15 @@ func (_q *PayOrderQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{payorder.Label}
+		err = &NotFoundError{postpurchase.Label}
 	default:
-		err = &NotSingularError{payorder.Label}
+		err = &NotSingularError{postpurchase.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *PayOrderQuery) OnlyIDX(ctx context.Context) int {
+func (_q *PostPurchaseQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -230,18 +230,18 @@ func (_q *PayOrderQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of PayOrders.
-func (_q *PayOrderQuery) All(ctx context.Context) ([]*PayOrder, error) {
+// All executes the query and returns a list of PostPurchases.
+func (_q *PostPurchaseQuery) All(ctx context.Context) ([]*PostPurchase, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*PayOrder, *PayOrderQuery]()
-	return withInterceptors[[]*PayOrder](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*PostPurchase, *PostPurchaseQuery]()
+	return withInterceptors[[]*PostPurchase](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *PayOrderQuery) AllX(ctx context.Context) []*PayOrder {
+func (_q *PostPurchaseQuery) AllX(ctx context.Context) []*PostPurchase {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -249,20 +249,20 @@ func (_q *PayOrderQuery) AllX(ctx context.Context) []*PayOrder {
 	return nodes
 }
 
-// IDs executes the query and returns a list of PayOrder IDs.
-func (_q *PayOrderQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of PostPurchase IDs.
+func (_q *PostPurchaseQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(payorder.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(postpurchase.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *PayOrderQuery) IDsX(ctx context.Context) []int {
+func (_q *PostPurchaseQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -271,16 +271,16 @@ func (_q *PayOrderQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (_q *PayOrderQuery) Count(ctx context.Context) (int, error) {
+func (_q *PostPurchaseQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*PayOrderQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*PostPurchaseQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *PayOrderQuery) CountX(ctx context.Context) int {
+func (_q *PostPurchaseQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -289,7 +289,7 @@ func (_q *PayOrderQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *PayOrderQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *PostPurchaseQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -302,7 +302,7 @@ func (_q *PayOrderQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *PayOrderQuery) ExistX(ctx context.Context) bool {
+func (_q *PostPurchaseQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -310,21 +310,21 @@ func (_q *PayOrderQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the PayOrderQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the PostPurchaseQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *PayOrderQuery) Clone() *PayOrderQuery {
+func (_q *PostPurchaseQuery) Clone() *PostPurchaseQuery {
 	if _q == nil {
 		return nil
 	}
-	return &PayOrderQuery{
-		config:      _q.config,
-		ctx:         _q.ctx.Clone(),
-		order:       append([]payorder.OrderOption{}, _q.order...),
-		inters:      append([]Interceptor{}, _q.inters...),
-		predicates:  append([]predicate.PayOrder{}, _q.predicates...),
-		withUser:    _q.withUser.Clone(),
-		withPost:    _q.withPost.Clone(),
-		withProduct: _q.withProduct.Clone(),
+	return &PostPurchaseQuery{
+		config:     _q.config,
+		ctx:        _q.ctx.Clone(),
+		order:      append([]postpurchase.OrderOption{}, _q.order...),
+		inters:     append([]Interceptor{}, _q.inters...),
+		predicates: append([]predicate.PostPurchase{}, _q.predicates...),
+		withUser:   _q.withUser.Clone(),
+		withPost:   _q.withPost.Clone(),
+		withOrder:  _q.withOrder.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -333,7 +333,7 @@ func (_q *PayOrderQuery) Clone() *PayOrderQuery {
 
 // WithUser tells the query-builder to eager-load the nodes that are connected to
 // the "user" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *PayOrderQuery) WithUser(opts ...func(*UserQuery)) *PayOrderQuery {
+func (_q *PostPurchaseQuery) WithUser(opts ...func(*UserQuery)) *PostPurchaseQuery {
 	query := (&UserClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -344,7 +344,7 @@ func (_q *PayOrderQuery) WithUser(opts ...func(*UserQuery)) *PayOrderQuery {
 
 // WithPost tells the query-builder to eager-load the nodes that are connected to
 // the "post" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *PayOrderQuery) WithPost(opts ...func(*PostQuery)) *PayOrderQuery {
+func (_q *PostPurchaseQuery) WithPost(opts ...func(*PostQuery)) *PostPurchaseQuery {
 	query := (&PostClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -353,14 +353,14 @@ func (_q *PayOrderQuery) WithPost(opts ...func(*PostQuery)) *PayOrderQuery {
 	return _q
 }
 
-// WithProduct tells the query-builder to eager-load the nodes that are connected to
-// the "product" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *PayOrderQuery) WithProduct(opts ...func(*ProductQuery)) *PayOrderQuery {
-	query := (&ProductClient{config: _q.config}).Query()
+// WithOrder tells the query-builder to eager-load the nodes that are connected to
+// the "order" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *PostPurchaseQuery) WithOrder(opts ...func(*PayOrderQuery)) *PostPurchaseQuery {
+	query := (&PayOrderClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withProduct = query
+	_q.withOrder = query
 	return _q
 }
 
@@ -374,15 +374,15 @@ func (_q *PayOrderQuery) WithProduct(opts ...func(*ProductQuery)) *PayOrderQuery
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.PayOrder.Query().
-//		GroupBy(payorder.FieldCreatedAt).
+//	client.PostPurchase.Query().
+//		GroupBy(postpurchase.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *PayOrderQuery) GroupBy(field string, fields ...string) *PayOrderGroupBy {
+func (_q *PostPurchaseQuery) GroupBy(field string, fields ...string) *PostPurchaseGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &PayOrderGroupBy{build: _q}
+	grbuild := &PostPurchaseGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = payorder.Label
+	grbuild.label = postpurchase.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -396,23 +396,23 @@ func (_q *PayOrderQuery) GroupBy(field string, fields ...string) *PayOrderGroupB
 //		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
-//	client.PayOrder.Query().
-//		Select(payorder.FieldCreatedAt).
+//	client.PostPurchase.Query().
+//		Select(postpurchase.FieldCreatedAt).
 //		Scan(ctx, &v)
-func (_q *PayOrderQuery) Select(fields ...string) *PayOrderSelect {
+func (_q *PostPurchaseQuery) Select(fields ...string) *PostPurchaseSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &PayOrderSelect{PayOrderQuery: _q}
-	sbuild.label = payorder.Label
+	sbuild := &PostPurchaseSelect{PostPurchaseQuery: _q}
+	sbuild.label = postpurchase.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a PayOrderSelect configured with the given aggregations.
-func (_q *PayOrderQuery) Aggregate(fns ...AggregateFunc) *PayOrderSelect {
+// Aggregate returns a PostPurchaseSelect configured with the given aggregations.
+func (_q *PostPurchaseQuery) Aggregate(fns ...AggregateFunc) *PostPurchaseSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *PayOrderQuery) prepareQuery(ctx context.Context) error {
+func (_q *PostPurchaseQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -424,7 +424,7 @@ func (_q *PayOrderQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !payorder.ValidColumn(f) {
+		if !postpurchase.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -438,21 +438,21 @@ func (_q *PayOrderQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *PayOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*PayOrder, error) {
+func (_q *PostPurchaseQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*PostPurchase, error) {
 	var (
-		nodes       = []*PayOrder{}
+		nodes       = []*PostPurchase{}
 		_spec       = _q.querySpec()
 		loadedTypes = [3]bool{
 			_q.withUser != nil,
 			_q.withPost != nil,
-			_q.withProduct != nil,
+			_q.withOrder != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*PayOrder).scanValues(nil, columns)
+		return (*PostPurchase).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &PayOrder{config: _q.config}
+		node := &PostPurchase{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -468,28 +468,28 @@ func (_q *PayOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Pay
 	}
 	if query := _q.withUser; query != nil {
 		if err := _q.loadUser(ctx, query, nodes, nil,
-			func(n *PayOrder, e *User) { n.Edges.User = e }); err != nil {
+			func(n *PostPurchase, e *User) { n.Edges.User = e }); err != nil {
 			return nil, err
 		}
 	}
 	if query := _q.withPost; query != nil {
 		if err := _q.loadPost(ctx, query, nodes, nil,
-			func(n *PayOrder, e *Post) { n.Edges.Post = e }); err != nil {
+			func(n *PostPurchase, e *Post) { n.Edges.Post = e }); err != nil {
 			return nil, err
 		}
 	}
-	if query := _q.withProduct; query != nil {
-		if err := _q.loadProduct(ctx, query, nodes, nil,
-			func(n *PayOrder, e *Product) { n.Edges.Product = e }); err != nil {
+	if query := _q.withOrder; query != nil {
+		if err := _q.loadOrder(ctx, query, nodes, nil,
+			func(n *PostPurchase, e *PayOrder) { n.Edges.Order = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (_q *PayOrderQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*PayOrder, init func(*PayOrder), assign func(*PayOrder, *User)) error {
+func (_q *PostPurchaseQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*PostPurchase, init func(*PostPurchase), assign func(*PostPurchase, *User)) error {
 	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*PayOrder)
+	nodeids := make(map[int][]*PostPurchase)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
@@ -516,9 +516,9 @@ func (_q *PayOrderQuery) loadUser(ctx context.Context, query *UserQuery, nodes [
 	}
 	return nil
 }
-func (_q *PayOrderQuery) loadPost(ctx context.Context, query *PostQuery, nodes []*PayOrder, init func(*PayOrder), assign func(*PayOrder, *Post)) error {
+func (_q *PostPurchaseQuery) loadPost(ctx context.Context, query *PostQuery, nodes []*PostPurchase, init func(*PostPurchase), assign func(*PostPurchase, *Post)) error {
 	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*PayOrder)
+	nodeids := make(map[int][]*PostPurchase)
 	for i := range nodes {
 		fk := nodes[i].PostID
 		if _, ok := nodeids[fk]; !ok {
@@ -545,11 +545,11 @@ func (_q *PayOrderQuery) loadPost(ctx context.Context, query *PostQuery, nodes [
 	}
 	return nil
 }
-func (_q *PayOrderQuery) loadProduct(ctx context.Context, query *ProductQuery, nodes []*PayOrder, init func(*PayOrder), assign func(*PayOrder, *Product)) error {
+func (_q *PostPurchaseQuery) loadOrder(ctx context.Context, query *PayOrderQuery, nodes []*PostPurchase, init func(*PostPurchase), assign func(*PostPurchase, *PayOrder)) error {
 	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*PayOrder)
+	nodeids := make(map[int][]*PostPurchase)
 	for i := range nodes {
-		fk := nodes[i].ProductID
+		fk := nodes[i].OrderID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -558,7 +558,7 @@ func (_q *PayOrderQuery) loadProduct(ctx context.Context, query *ProductQuery, n
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(product.IDIn(ids...))
+	query.Where(payorder.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -566,7 +566,7 @@ func (_q *PayOrderQuery) loadProduct(ctx context.Context, query *ProductQuery, n
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "product_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "order_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -575,7 +575,7 @@ func (_q *PayOrderQuery) loadProduct(ctx context.Context, query *ProductQuery, n
 	return nil
 }
 
-func (_q *PayOrderQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *PostPurchaseQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -584,8 +584,8 @@ func (_q *PayOrderQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *PayOrderQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(payorder.Table, payorder.Columns, sqlgraph.NewFieldSpec(payorder.FieldID, field.TypeInt))
+func (_q *PostPurchaseQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(postpurchase.Table, postpurchase.Columns, sqlgraph.NewFieldSpec(postpurchase.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -594,20 +594,20 @@ func (_q *PayOrderQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, payorder.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, postpurchase.FieldID)
 		for i := range fields {
-			if fields[i] != payorder.FieldID {
+			if fields[i] != postpurchase.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
 		if _q.withUser != nil {
-			_spec.Node.AddColumnOnce(payorder.FieldUserID)
+			_spec.Node.AddColumnOnce(postpurchase.FieldUserID)
 		}
 		if _q.withPost != nil {
-			_spec.Node.AddColumnOnce(payorder.FieldPostID)
+			_spec.Node.AddColumnOnce(postpurchase.FieldPostID)
 		}
-		if _q.withProduct != nil {
-			_spec.Node.AddColumnOnce(payorder.FieldProductID)
+		if _q.withOrder != nil {
+			_spec.Node.AddColumnOnce(postpurchase.FieldOrderID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {
@@ -633,12 +633,12 @@ func (_q *PayOrderQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *PayOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *PostPurchaseQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(payorder.Table)
+	t1 := builder.Table(postpurchase.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = payorder.Columns
+		columns = postpurchase.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -665,28 +665,28 @@ func (_q *PayOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// PayOrderGroupBy is the group-by builder for PayOrder entities.
-type PayOrderGroupBy struct {
+// PostPurchaseGroupBy is the group-by builder for PostPurchase entities.
+type PostPurchaseGroupBy struct {
 	selector
-	build *PayOrderQuery
+	build *PostPurchaseQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *PayOrderGroupBy) Aggregate(fns ...AggregateFunc) *PayOrderGroupBy {
+func (_g *PostPurchaseGroupBy) Aggregate(fns ...AggregateFunc) *PostPurchaseGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *PayOrderGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *PostPurchaseGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*PayOrderQuery, *PayOrderGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*PostPurchaseQuery, *PostPurchaseGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *PayOrderGroupBy) sqlScan(ctx context.Context, root *PayOrderQuery, v any) error {
+func (_g *PostPurchaseGroupBy) sqlScan(ctx context.Context, root *PostPurchaseQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -713,28 +713,28 @@ func (_g *PayOrderGroupBy) sqlScan(ctx context.Context, root *PayOrderQuery, v a
 	return sql.ScanSlice(rows, v)
 }
 
-// PayOrderSelect is the builder for selecting fields of PayOrder entities.
-type PayOrderSelect struct {
-	*PayOrderQuery
+// PostPurchaseSelect is the builder for selecting fields of PostPurchase entities.
+type PostPurchaseSelect struct {
+	*PostPurchaseQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *PayOrderSelect) Aggregate(fns ...AggregateFunc) *PayOrderSelect {
+func (_s *PostPurchaseSelect) Aggregate(fns ...AggregateFunc) *PostPurchaseSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *PayOrderSelect) Scan(ctx context.Context, v any) error {
+func (_s *PostPurchaseSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*PayOrderQuery, *PayOrderSelect](ctx, _s.PayOrderQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*PostPurchaseQuery, *PostPurchaseSelect](ctx, _s.PostPurchaseQuery, _s, _s.inters, v)
 }
 
-func (_s *PayOrderSelect) sqlScan(ctx context.Context, root *PayOrderQuery, v any) error {
+func (_s *PostPurchaseSelect) sqlScan(ctx context.Context, root *PostPurchaseQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {

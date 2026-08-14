@@ -39,6 +39,7 @@ import (
 	"github.com/shuTwT/hoshikuzu/ent/personalaccesstoken"
 	"github.com/shuTwT/hoshikuzu/ent/plugin"
 	"github.com/shuTwT/hoshikuzu/ent/post"
+	"github.com/shuTwT/hoshikuzu/ent/postpurchase"
 	"github.com/shuTwT/hoshikuzu/ent/predicate"
 	"github.com/shuTwT/hoshikuzu/ent/product"
 	"github.com/shuTwT/hoshikuzu/ent/refreshtoken"
@@ -91,6 +92,7 @@ const (
 	TypePersonalAccessToken = "PersonalAccessToken"
 	TypePlugin              = "Plugin"
 	TypePost                = "Post"
+	TypePostPurchase        = "PostPurchase"
 	TypeProduct             = "Product"
 	TypeRefreshToken        = "RefreshToken"
 	TypeRole                = "Role"
@@ -22140,6 +22142,7 @@ type PayOrderMutation struct {
 	id                   *int
 	created_at           *time.Time
 	updated_at           *time.Time
+	order_type           *string
 	channel_type         *string
 	order_id             *string
 	merchant_order_id    *string
@@ -22160,6 +22163,12 @@ type PayOrderMutation struct {
 	error_msg            *string
 	raw                  *string
 	clearedFields        map[string]struct{}
+	user                 *int
+	cleareduser          bool
+	post                 *int
+	clearedpost          bool
+	product              *int
+	clearedproduct       bool
 	done                 bool
 	oldValue             func(context.Context) (*PayOrder, error)
 	predicates           []predicate.PayOrder
@@ -22339,6 +22348,189 @@ func (m *PayOrderMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err e
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *PayOrderMutation) ResetUpdatedAt() {
 	m.updated_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *PayOrderMutation) SetUserID(i int) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PayOrderMutation) UserID() (r int, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PayOrder entity.
+// If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayOrderMutation) OldUserID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PayOrderMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetOrderType sets the "order_type" field.
+func (m *PayOrderMutation) SetOrderType(s string) {
+	m.order_type = &s
+}
+
+// OrderType returns the value of the "order_type" field in the mutation.
+func (m *PayOrderMutation) OrderType() (r string, exists bool) {
+	v := m.order_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrderType returns the old "order_type" field's value of the PayOrder entity.
+// If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayOrderMutation) OldOrderType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrderType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrderType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrderType: %w", err)
+	}
+	return oldValue.OrderType, nil
+}
+
+// ClearOrderType clears the value of the "order_type" field.
+func (m *PayOrderMutation) ClearOrderType() {
+	m.order_type = nil
+	m.clearedFields[payorder.FieldOrderType] = struct{}{}
+}
+
+// OrderTypeCleared returns if the "order_type" field was cleared in this mutation.
+func (m *PayOrderMutation) OrderTypeCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldOrderType]
+	return ok
+}
+
+// ResetOrderType resets all changes to the "order_type" field.
+func (m *PayOrderMutation) ResetOrderType() {
+	m.order_type = nil
+	delete(m.clearedFields, payorder.FieldOrderType)
+}
+
+// SetPostID sets the "post_id" field.
+func (m *PayOrderMutation) SetPostID(i int) {
+	m.post = &i
+}
+
+// PostID returns the value of the "post_id" field in the mutation.
+func (m *PayOrderMutation) PostID() (r int, exists bool) {
+	v := m.post
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPostID returns the old "post_id" field's value of the PayOrder entity.
+// If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayOrderMutation) OldPostID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPostID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPostID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPostID: %w", err)
+	}
+	return oldValue.PostID, nil
+}
+
+// ClearPostID clears the value of the "post_id" field.
+func (m *PayOrderMutation) ClearPostID() {
+	m.post = nil
+	m.clearedFields[payorder.FieldPostID] = struct{}{}
+}
+
+// PostIDCleared returns if the "post_id" field was cleared in this mutation.
+func (m *PayOrderMutation) PostIDCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldPostID]
+	return ok
+}
+
+// ResetPostID resets all changes to the "post_id" field.
+func (m *PayOrderMutation) ResetPostID() {
+	m.post = nil
+	delete(m.clearedFields, payorder.FieldPostID)
+}
+
+// SetProductID sets the "product_id" field.
+func (m *PayOrderMutation) SetProductID(i int) {
+	m.product = &i
+}
+
+// ProductID returns the value of the "product_id" field in the mutation.
+func (m *PayOrderMutation) ProductID() (r int, exists bool) {
+	v := m.product
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProductID returns the old "product_id" field's value of the PayOrder entity.
+// If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayOrderMutation) OldProductID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProductID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProductID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProductID: %w", err)
+	}
+	return oldValue.ProductID, nil
+}
+
+// ClearProductID clears the value of the "product_id" field.
+func (m *PayOrderMutation) ClearProductID() {
+	m.product = nil
+	m.clearedFields[payorder.FieldProductID] = struct{}{}
+}
+
+// ProductIDCleared returns if the "product_id" field was cleared in this mutation.
+func (m *PayOrderMutation) ProductIDCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldProductID]
+	return ok
+}
+
+// ResetProductID resets all changes to the "product_id" field.
+func (m *PayOrderMutation) ResetProductID() {
+	m.product = nil
+	delete(m.clearedFields, payorder.FieldProductID)
 }
 
 // SetChannelType sets the "channel_type" field.
@@ -23188,6 +23380,87 @@ func (m *PayOrderMutation) ResetRaw() {
 	delete(m.clearedFields, payorder.FieldRaw)
 }
 
+// ClearUser clears the "user" edge to the User entity.
+func (m *PayOrderMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[payorder.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *PayOrderMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *PayOrderMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *PayOrderMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearPost clears the "post" edge to the Post entity.
+func (m *PayOrderMutation) ClearPost() {
+	m.clearedpost = true
+	m.clearedFields[payorder.FieldPostID] = struct{}{}
+}
+
+// PostCleared reports if the "post" edge to the Post entity was cleared.
+func (m *PayOrderMutation) PostCleared() bool {
+	return m.PostIDCleared() || m.clearedpost
+}
+
+// PostIDs returns the "post" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PostID instead. It exists only for internal usage by the builders.
+func (m *PayOrderMutation) PostIDs() (ids []int) {
+	if id := m.post; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPost resets all changes to the "post" edge.
+func (m *PayOrderMutation) ResetPost() {
+	m.post = nil
+	m.clearedpost = false
+}
+
+// ClearProduct clears the "product" edge to the Product entity.
+func (m *PayOrderMutation) ClearProduct() {
+	m.clearedproduct = true
+	m.clearedFields[payorder.FieldProductID] = struct{}{}
+}
+
+// ProductCleared reports if the "product" edge to the Product entity was cleared.
+func (m *PayOrderMutation) ProductCleared() bool {
+	return m.ProductIDCleared() || m.clearedproduct
+}
+
+// ProductIDs returns the "product" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ProductID instead. It exists only for internal usage by the builders.
+func (m *PayOrderMutation) ProductIDs() (ids []int) {
+	if id := m.product; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetProduct resets all changes to the "product" edge.
+func (m *PayOrderMutation) ResetProduct() {
+	m.product = nil
+	m.clearedproduct = false
+}
+
 // Where appends a list predicates to the PayOrderMutation builder.
 func (m *PayOrderMutation) Where(ps ...predicate.PayOrder) {
 	m.predicates = append(m.predicates, ps...)
@@ -23222,12 +23495,24 @@ func (m *PayOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PayOrderMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, payorder.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, payorder.FieldUpdatedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, payorder.FieldUserID)
+	}
+	if m.order_type != nil {
+		fields = append(fields, payorder.FieldOrderType)
+	}
+	if m.post != nil {
+		fields = append(fields, payorder.FieldPostID)
+	}
+	if m.product != nil {
+		fields = append(fields, payorder.FieldProductID)
 	}
 	if m.channel_type != nil {
 		fields = append(fields, payorder.FieldChannelType)
@@ -23289,6 +23574,14 @@ func (m *PayOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case payorder.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case payorder.FieldUserID:
+		return m.UserID()
+	case payorder.FieldOrderType:
+		return m.OrderType()
+	case payorder.FieldPostID:
+		return m.PostID()
+	case payorder.FieldProductID:
+		return m.ProductID()
 	case payorder.FieldChannelType:
 		return m.ChannelType()
 	case payorder.FieldOrderID:
@@ -23334,6 +23627,14 @@ func (m *PayOrderMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldCreatedAt(ctx)
 	case payorder.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case payorder.FieldUserID:
+		return m.OldUserID(ctx)
+	case payorder.FieldOrderType:
+		return m.OldOrderType(ctx)
+	case payorder.FieldPostID:
+		return m.OldPostID(ctx)
+	case payorder.FieldProductID:
+		return m.OldProductID(ctx)
 	case payorder.FieldChannelType:
 		return m.OldChannelType(ctx)
 	case payorder.FieldOrderID:
@@ -23388,6 +23689,34 @@ func (m *PayOrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case payorder.FieldUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case payorder.FieldOrderType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrderType(v)
+		return nil
+	case payorder.FieldPostID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPostID(v)
+		return nil
+	case payorder.FieldProductID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProductID(v)
 		return nil
 	case payorder.FieldChannelType:
 		v, ok := value.(string)
@@ -23570,6 +23899,15 @@ func (m *PayOrderMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *PayOrderMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(payorder.FieldOrderType) {
+		fields = append(fields, payorder.FieldOrderType)
+	}
+	if m.FieldCleared(payorder.FieldPostID) {
+		fields = append(fields, payorder.FieldPostID)
+	}
+	if m.FieldCleared(payorder.FieldProductID) {
+		fields = append(fields, payorder.FieldProductID)
+	}
 	if m.FieldCleared(payorder.FieldChannelType) {
 		fields = append(fields, payorder.FieldChannelType)
 	}
@@ -23632,6 +23970,15 @@ func (m *PayOrderMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *PayOrderMutation) ClearField(name string) error {
 	switch name {
+	case payorder.FieldOrderType:
+		m.ClearOrderType()
+		return nil
+	case payorder.FieldPostID:
+		m.ClearPostID()
+		return nil
+	case payorder.FieldProductID:
+		m.ClearProductID()
+		return nil
 	case payorder.FieldChannelType:
 		m.ClearChannelType()
 		return nil
@@ -23694,6 +24041,18 @@ func (m *PayOrderMutation) ResetField(name string) error {
 	case payorder.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
+	case payorder.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case payorder.FieldOrderType:
+		m.ResetOrderType()
+		return nil
+	case payorder.FieldPostID:
+		m.ResetPostID()
+		return nil
+	case payorder.FieldProductID:
+		m.ResetProductID()
+		return nil
 	case payorder.FieldChannelType:
 		m.ResetChannelType()
 		return nil
@@ -23748,19 +24107,42 @@ func (m *PayOrderMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PayOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 3)
+	if m.user != nil {
+		edges = append(edges, payorder.EdgeUser)
+	}
+	if m.post != nil {
+		edges = append(edges, payorder.EdgePost)
+	}
+	if m.product != nil {
+		edges = append(edges, payorder.EdgeProduct)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *PayOrderMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case payorder.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case payorder.EdgePost:
+		if id := m.post; id != nil {
+			return []ent.Value{*id}
+		}
+	case payorder.EdgeProduct:
+		if id := m.product; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PayOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -23772,25 +24154,64 @@ func (m *PayOrderMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PayOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 3)
+	if m.cleareduser {
+		edges = append(edges, payorder.EdgeUser)
+	}
+	if m.clearedpost {
+		edges = append(edges, payorder.EdgePost)
+	}
+	if m.clearedproduct {
+		edges = append(edges, payorder.EdgeProduct)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *PayOrderMutation) EdgeCleared(name string) bool {
+	switch name {
+	case payorder.EdgeUser:
+		return m.cleareduser
+	case payorder.EdgePost:
+		return m.clearedpost
+	case payorder.EdgeProduct:
+		return m.clearedproduct
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *PayOrderMutation) ClearEdge(name string) error {
+	switch name {
+	case payorder.EdgeUser:
+		m.ClearUser()
+		return nil
+	case payorder.EdgePost:
+		m.ClearPost()
+		return nil
+	case payorder.EdgeProduct:
+		m.ClearProduct()
+		return nil
+	}
 	return fmt.Errorf("unknown PayOrder unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *PayOrderMutation) ResetEdge(name string) error {
+	switch name {
+	case payorder.EdgeUser:
+		m.ResetUser()
+		return nil
+	case payorder.EdgePost:
+		m.ResetPost()
+		return nil
+	case payorder.EdgeProduct:
+		m.ResetProduct()
+		return nil
+	}
 	return fmt.Errorf("unknown PayOrder edge %s", name)
 }
 
@@ -27952,6 +28373,725 @@ func (m *PostMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Post edge %s", name)
+}
+
+// PostPurchaseMutation represents an operation that mutates the PostPurchase nodes in the graph.
+type PostPurchaseMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	created_at    *time.Time
+	updated_at    *time.Time
+	clearedFields map[string]struct{}
+	user          *int
+	cleareduser   bool
+	post          *int
+	clearedpost   bool
+	_order        *int
+	cleared_order bool
+	done          bool
+	oldValue      func(context.Context) (*PostPurchase, error)
+	predicates    []predicate.PostPurchase
+}
+
+var _ ent.Mutation = (*PostPurchaseMutation)(nil)
+
+// postpurchaseOption allows management of the mutation configuration using functional options.
+type postpurchaseOption func(*PostPurchaseMutation)
+
+// newPostPurchaseMutation creates new mutation for the PostPurchase entity.
+func newPostPurchaseMutation(c config, op Op, opts ...postpurchaseOption) *PostPurchaseMutation {
+	m := &PostPurchaseMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePostPurchase,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPostPurchaseID sets the ID field of the mutation.
+func withPostPurchaseID(id int) postpurchaseOption {
+	return func(m *PostPurchaseMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PostPurchase
+		)
+		m.oldValue = func(ctx context.Context) (*PostPurchase, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PostPurchase.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPostPurchase sets the old PostPurchase of the mutation.
+func withPostPurchase(node *PostPurchase) postpurchaseOption {
+	return func(m *PostPurchaseMutation) {
+		m.oldValue = func(context.Context) (*PostPurchase, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PostPurchaseMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PostPurchaseMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PostPurchase entities.
+func (m *PostPurchaseMutation) SetID(id int) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PostPurchaseMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PostPurchaseMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PostPurchase.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PostPurchaseMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PostPurchaseMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PostPurchase entity.
+// If the PostPurchase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostPurchaseMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PostPurchaseMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PostPurchaseMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PostPurchaseMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PostPurchase entity.
+// If the PostPurchase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostPurchaseMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PostPurchaseMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *PostPurchaseMutation) SetUserID(i int) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PostPurchaseMutation) UserID() (r int, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PostPurchase entity.
+// If the PostPurchase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostPurchaseMutation) OldUserID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PostPurchaseMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetPostID sets the "post_id" field.
+func (m *PostPurchaseMutation) SetPostID(i int) {
+	m.post = &i
+}
+
+// PostID returns the value of the "post_id" field in the mutation.
+func (m *PostPurchaseMutation) PostID() (r int, exists bool) {
+	v := m.post
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPostID returns the old "post_id" field's value of the PostPurchase entity.
+// If the PostPurchase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostPurchaseMutation) OldPostID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPostID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPostID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPostID: %w", err)
+	}
+	return oldValue.PostID, nil
+}
+
+// ResetPostID resets all changes to the "post_id" field.
+func (m *PostPurchaseMutation) ResetPostID() {
+	m.post = nil
+}
+
+// SetOrderID sets the "order_id" field.
+func (m *PostPurchaseMutation) SetOrderID(i int) {
+	m._order = &i
+}
+
+// OrderID returns the value of the "order_id" field in the mutation.
+func (m *PostPurchaseMutation) OrderID() (r int, exists bool) {
+	v := m._order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrderID returns the old "order_id" field's value of the PostPurchase entity.
+// If the PostPurchase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostPurchaseMutation) OldOrderID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrderID: %w", err)
+	}
+	return oldValue.OrderID, nil
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (m *PostPurchaseMutation) ClearOrderID() {
+	m._order = nil
+	m.clearedFields[postpurchase.FieldOrderID] = struct{}{}
+}
+
+// OrderIDCleared returns if the "order_id" field was cleared in this mutation.
+func (m *PostPurchaseMutation) OrderIDCleared() bool {
+	_, ok := m.clearedFields[postpurchase.FieldOrderID]
+	return ok
+}
+
+// ResetOrderID resets all changes to the "order_id" field.
+func (m *PostPurchaseMutation) ResetOrderID() {
+	m._order = nil
+	delete(m.clearedFields, postpurchase.FieldOrderID)
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *PostPurchaseMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[postpurchase.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *PostPurchaseMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *PostPurchaseMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *PostPurchaseMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearPost clears the "post" edge to the Post entity.
+func (m *PostPurchaseMutation) ClearPost() {
+	m.clearedpost = true
+	m.clearedFields[postpurchase.FieldPostID] = struct{}{}
+}
+
+// PostCleared reports if the "post" edge to the Post entity was cleared.
+func (m *PostPurchaseMutation) PostCleared() bool {
+	return m.clearedpost
+}
+
+// PostIDs returns the "post" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PostID instead. It exists only for internal usage by the builders.
+func (m *PostPurchaseMutation) PostIDs() (ids []int) {
+	if id := m.post; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPost resets all changes to the "post" edge.
+func (m *PostPurchaseMutation) ResetPost() {
+	m.post = nil
+	m.clearedpost = false
+}
+
+// ClearOrder clears the "order" edge to the PayOrder entity.
+func (m *PostPurchaseMutation) ClearOrder() {
+	m.cleared_order = true
+	m.clearedFields[postpurchase.FieldOrderID] = struct{}{}
+}
+
+// OrderCleared reports if the "order" edge to the PayOrder entity was cleared.
+func (m *PostPurchaseMutation) OrderCleared() bool {
+	return m.OrderIDCleared() || m.cleared_order
+}
+
+// OrderIDs returns the "order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OrderID instead. It exists only for internal usage by the builders.
+func (m *PostPurchaseMutation) OrderIDs() (ids []int) {
+	if id := m._order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOrder resets all changes to the "order" edge.
+func (m *PostPurchaseMutation) ResetOrder() {
+	m._order = nil
+	m.cleared_order = false
+}
+
+// Where appends a list predicates to the PostPurchaseMutation builder.
+func (m *PostPurchaseMutation) Where(ps ...predicate.PostPurchase) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PostPurchaseMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PostPurchaseMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PostPurchase, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PostPurchaseMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PostPurchaseMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PostPurchase).
+func (m *PostPurchaseMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PostPurchaseMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.created_at != nil {
+		fields = append(fields, postpurchase.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, postpurchase.FieldUpdatedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, postpurchase.FieldUserID)
+	}
+	if m.post != nil {
+		fields = append(fields, postpurchase.FieldPostID)
+	}
+	if m._order != nil {
+		fields = append(fields, postpurchase.FieldOrderID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PostPurchaseMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case postpurchase.FieldCreatedAt:
+		return m.CreatedAt()
+	case postpurchase.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case postpurchase.FieldUserID:
+		return m.UserID()
+	case postpurchase.FieldPostID:
+		return m.PostID()
+	case postpurchase.FieldOrderID:
+		return m.OrderID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PostPurchaseMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case postpurchase.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case postpurchase.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case postpurchase.FieldUserID:
+		return m.OldUserID(ctx)
+	case postpurchase.FieldPostID:
+		return m.OldPostID(ctx)
+	case postpurchase.FieldOrderID:
+		return m.OldOrderID(ctx)
+	}
+	return nil, fmt.Errorf("unknown PostPurchase field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostPurchaseMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case postpurchase.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case postpurchase.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case postpurchase.FieldUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case postpurchase.FieldPostID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPostID(v)
+		return nil
+	case postpurchase.FieldOrderID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrderID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PostPurchase field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PostPurchaseMutation) AddedFields() []string {
+	var fields []string
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PostPurchaseMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostPurchaseMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown PostPurchase numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PostPurchaseMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(postpurchase.FieldOrderID) {
+		fields = append(fields, postpurchase.FieldOrderID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PostPurchaseMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PostPurchaseMutation) ClearField(name string) error {
+	switch name {
+	case postpurchase.FieldOrderID:
+		m.ClearOrderID()
+		return nil
+	}
+	return fmt.Errorf("unknown PostPurchase nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PostPurchaseMutation) ResetField(name string) error {
+	switch name {
+	case postpurchase.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case postpurchase.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case postpurchase.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case postpurchase.FieldPostID:
+		m.ResetPostID()
+		return nil
+	case postpurchase.FieldOrderID:
+		m.ResetOrderID()
+		return nil
+	}
+	return fmt.Errorf("unknown PostPurchase field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PostPurchaseMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.user != nil {
+		edges = append(edges, postpurchase.EdgeUser)
+	}
+	if m.post != nil {
+		edges = append(edges, postpurchase.EdgePost)
+	}
+	if m._order != nil {
+		edges = append(edges, postpurchase.EdgeOrder)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PostPurchaseMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case postpurchase.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case postpurchase.EdgePost:
+		if id := m.post; id != nil {
+			return []ent.Value{*id}
+		}
+	case postpurchase.EdgeOrder:
+		if id := m._order; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PostPurchaseMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PostPurchaseMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PostPurchaseMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.cleareduser {
+		edges = append(edges, postpurchase.EdgeUser)
+	}
+	if m.clearedpost {
+		edges = append(edges, postpurchase.EdgePost)
+	}
+	if m.cleared_order {
+		edges = append(edges, postpurchase.EdgeOrder)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PostPurchaseMutation) EdgeCleared(name string) bool {
+	switch name {
+	case postpurchase.EdgeUser:
+		return m.cleareduser
+	case postpurchase.EdgePost:
+		return m.clearedpost
+	case postpurchase.EdgeOrder:
+		return m.cleared_order
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PostPurchaseMutation) ClearEdge(name string) error {
+	switch name {
+	case postpurchase.EdgeUser:
+		m.ClearUser()
+		return nil
+	case postpurchase.EdgePost:
+		m.ClearPost()
+		return nil
+	case postpurchase.EdgeOrder:
+		m.ClearOrder()
+		return nil
+	}
+	return fmt.Errorf("unknown PostPurchase unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PostPurchaseMutation) ResetEdge(name string) error {
+	switch name {
+	case postpurchase.EdgeUser:
+		m.ResetUser()
+		return nil
+	case postpurchase.EdgePost:
+		m.ResetPost()
+		return nil
+	case postpurchase.EdgeOrder:
+		m.ResetOrder()
+		return nil
+	}
+	return fmt.Errorf("unknown PostPurchase edge %s", name)
 }
 
 // ProductMutation represents an operation that mutates the Product nodes in the graph.

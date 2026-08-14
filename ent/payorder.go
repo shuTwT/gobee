@@ -10,6 +10,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/shuTwT/hoshikuzu/ent/payorder"
+	"github.com/shuTwT/hoshikuzu/ent/post"
+	"github.com/shuTwT/hoshikuzu/ent/product"
+	"github.com/shuTwT/hoshikuzu/ent/user"
 )
 
 // PayOrder is the model entity for the PayOrder schema.
@@ -21,6 +24,14 @@ type PayOrder struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 下单用户
+	UserID int `json:"user_id,omitempty"`
+	// 订单类型 1文章付费 2商品购买
+	OrderType string `json:"order_type,omitempty"`
+	// 文章付费关联
+	PostID int `json:"post_id,omitempty"`
+	// 商品购买关联
+	ProductID int `json:"product_id,omitempty"`
 	// 支付渠道类型
 	ChannelType *string `json:"channel_type,omitempty"`
 	// 支付订单ID
@@ -52,8 +63,57 @@ type PayOrder struct {
 	// 错误信息
 	ErrorMsg string `json:"error_msg,omitempty"`
 	// 原始响应
-	Raw          string `json:"raw,omitempty"`
+	Raw string `json:"raw,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the PayOrderQuery when eager-loading is set.
+	Edges        PayOrderEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// PayOrderEdges holds the relations/edges for other nodes in the graph.
+type PayOrderEdges struct {
+	// 下单用户
+	User *User `json:"user,omitempty"`
+	// 文章付费关联
+	Post *Post `json:"post,omitempty"`
+	// 商品购买关联
+	Product *Product `json:"product,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [3]bool
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PayOrderEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "user"}
+}
+
+// PostOrErr returns the Post value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PayOrderEdges) PostOrErr() (*Post, error) {
+	if e.Post != nil {
+		return e.Post, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: post.Label}
+	}
+	return nil, &NotLoadedError{edge: "post"}
+}
+
+// ProductOrErr returns the Product value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PayOrderEdges) ProductOrErr() (*Product, error) {
+	if e.Product != nil {
+		return e.Product, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: product.Label}
+	}
+	return nil, &NotLoadedError{edge: "product"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -61,9 +121,9 @@ func (*PayOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case payorder.FieldID, payorder.FieldOrderPrice, payorder.FieldPrice, payorder.FieldChannelFeePrice:
+		case payorder.FieldID, payorder.FieldUserID, payorder.FieldPostID, payorder.FieldProductID, payorder.FieldOrderPrice, payorder.FieldPrice, payorder.FieldChannelFeePrice:
 			values[i] = new(sql.NullInt64)
-		case payorder.FieldChannelType, payorder.FieldOrderID, payorder.FieldMerchantOrderID, payorder.FieldOutTradeNo, payorder.FieldSubject, payorder.FieldBody, payorder.FieldNotifyURL, payorder.FieldReturnURL, payorder.FieldExtra, payorder.FieldPayURL, payorder.FieldState, payorder.FieldErrorMsg, payorder.FieldRaw:
+		case payorder.FieldOrderType, payorder.FieldChannelType, payorder.FieldOrderID, payorder.FieldMerchantOrderID, payorder.FieldOutTradeNo, payorder.FieldSubject, payorder.FieldBody, payorder.FieldNotifyURL, payorder.FieldReturnURL, payorder.FieldExtra, payorder.FieldPayURL, payorder.FieldState, payorder.FieldErrorMsg, payorder.FieldRaw:
 			values[i] = new(sql.NullString)
 		case payorder.FieldCreatedAt, payorder.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -99,6 +159,30 @@ func (_m *PayOrder) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
+			}
+		case payorder.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				_m.UserID = int(value.Int64)
+			}
+		case payorder.FieldOrderType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field order_type", values[i])
+			} else if value.Valid {
+				_m.OrderType = value.String
+			}
+		case payorder.FieldPostID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field post_id", values[i])
+			} else if value.Valid {
+				_m.PostID = int(value.Int64)
+			}
+		case payorder.FieldProductID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field product_id", values[i])
+			} else if value.Valid {
+				_m.ProductID = int(value.Int64)
 			}
 		case payorder.FieldChannelType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -216,6 +300,21 @@ func (_m *PayOrder) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
+// QueryUser queries the "user" edge of the PayOrder entity.
+func (_m *PayOrder) QueryUser() *UserQuery {
+	return NewPayOrderClient(_m.config).QueryUser(_m)
+}
+
+// QueryPost queries the "post" edge of the PayOrder entity.
+func (_m *PayOrder) QueryPost() *PostQuery {
+	return NewPayOrderClient(_m.config).QueryPost(_m)
+}
+
+// QueryProduct queries the "product" edge of the PayOrder entity.
+func (_m *PayOrder) QueryProduct() *ProductQuery {
+	return NewPayOrderClient(_m.config).QueryProduct(_m)
+}
+
 // Update returns a builder for updating this PayOrder.
 // Note that you need to call PayOrder.Unwrap() before calling this method if this PayOrder
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -244,6 +343,18 @@ func (_m *PayOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("order_type=")
+	builder.WriteString(_m.OrderType)
+	builder.WriteString(", ")
+	builder.WriteString("post_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.PostID))
+	builder.WriteString(", ")
+	builder.WriteString("product_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ProductID))
 	builder.WriteString(", ")
 	if v := _m.ChannelType; v != nil {
 		builder.WriteString("channel_type=")

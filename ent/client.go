@@ -43,6 +43,7 @@ import (
 	"github.com/shuTwT/hoshikuzu/ent/personalaccesstoken"
 	"github.com/shuTwT/hoshikuzu/ent/plugin"
 	"github.com/shuTwT/hoshikuzu/ent/post"
+	"github.com/shuTwT/hoshikuzu/ent/postpurchase"
 	"github.com/shuTwT/hoshikuzu/ent/product"
 	"github.com/shuTwT/hoshikuzu/ent/refreshtoken"
 	"github.com/shuTwT/hoshikuzu/ent/role"
@@ -118,6 +119,8 @@ type Client struct {
 	Plugin *PluginClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
+	// PostPurchase is the client for interacting with the PostPurchase builders.
+	PostPurchase *PostPurchaseClient
 	// Product is the client for interacting with the Product builders.
 	Product *ProductClient
 	// RefreshToken is the client for interacting with the RefreshToken builders.
@@ -181,6 +184,7 @@ func (c *Client) init() {
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.Plugin = NewPluginClient(c.config)
 	c.Post = NewPostClient(c.config)
+	c.PostPurchase = NewPostPurchaseClient(c.config)
 	c.Product = NewProductClient(c.config)
 	c.RefreshToken = NewRefreshTokenClient(c.config)
 	c.Role = NewRoleClient(c.config)
@@ -313,6 +317,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
 		Plugin:              NewPluginClient(cfg),
 		Post:                NewPostClient(cfg),
+		PostPurchase:        NewPostPurchaseClient(cfg),
 		Product:             NewProductClient(cfg),
 		RefreshToken:        NewRefreshTokenClient(cfg),
 		Role:                NewRoleClient(cfg),
@@ -372,6 +377,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
 		Plugin:              NewPluginClient(cfg),
 		Post:                NewPostClient(cfg),
+		PostPurchase:        NewPostPurchaseClient(cfg),
 		Product:             NewProductClient(cfg),
 		RefreshToken:        NewRefreshTokenClient(cfg),
 		Role:                NewRoleClient(cfg),
@@ -418,8 +424,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord, c.License,
 		c.Member, c.MemberLevel, c.Menu, c.Notification, c.Oauth2AccessToken,
 		c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken,
-		c.Plugin, c.Post, c.Product, c.RefreshToken, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Plugin, c.Post, c.PostPurchase, c.Product, c.RefreshToken, c.Role,
+		c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User,
+		c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Use(hooks...)
 	}
@@ -434,8 +441,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.FLinkApplication, c.FLinkGroup, c.File, c.FriendCircleRecord, c.License,
 		c.Member, c.MemberLevel, c.Menu, c.Notification, c.Oauth2AccessToken,
 		c.Oauth2Code, c.Oauth2RefreshToken, c.PayOrder, c.PersonalAccessToken,
-		c.Plugin, c.Post, c.Product, c.RefreshToken, c.Role, c.ScheduleJob, c.Setting,
-		c.StorageStrategy, c.Tag, c.Theme, c.User, c.VisitLog, c.Wallet, c.WebHook,
+		c.Plugin, c.Post, c.PostPurchase, c.Product, c.RefreshToken, c.Role,
+		c.ScheduleJob, c.Setting, c.StorageStrategy, c.Tag, c.Theme, c.User,
+		c.VisitLog, c.Wallet, c.WebHook,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -500,6 +508,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Plugin.mutate(ctx, m)
 	case *PostMutation:
 		return c.Post.mutate(ctx, m)
+	case *PostPurchaseMutation:
+		return c.PostPurchase.mutate(ctx, m)
 	case *ProductMutation:
 		return c.Product.mutate(ctx, m)
 	case *RefreshTokenMutation:
@@ -4021,6 +4031,54 @@ func (c *PayOrderClient) GetX(ctx context.Context, id int) *PayOrder {
 	return obj
 }
 
+// QueryUser queries the user edge of a PayOrder.
+func (c *PayOrderClient) QueryUser(_m *PayOrder) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(payorder.Table, payorder.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, payorder.UserTable, payorder.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPost queries the post edge of a PayOrder.
+func (c *PayOrderClient) QueryPost(_m *PayOrder) *PostQuery {
+	query := (&PostClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(payorder.Table, payorder.FieldID, id),
+			sqlgraph.To(post.Table, post.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, payorder.PostTable, payorder.PostColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProduct queries the product edge of a PayOrder.
+func (c *PayOrderClient) QueryProduct(_m *PayOrder) *ProductQuery {
+	query := (&ProductClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(payorder.Table, payorder.FieldID, id),
+			sqlgraph.To(product.Table, product.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, payorder.ProductTable, payorder.ProductColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PayOrderClient) Hooks() []Hook {
 	return c.hooks.PayOrder
@@ -4474,6 +4532,187 @@ func (c *PostClient) mutate(ctx context.Context, m *PostMutation) (Value, error)
 		return (&PostDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Post mutation op: %q", m.Op())
+	}
+}
+
+// PostPurchaseClient is a client for the PostPurchase schema.
+type PostPurchaseClient struct {
+	config
+}
+
+// NewPostPurchaseClient returns a client for the PostPurchase from the given config.
+func NewPostPurchaseClient(c config) *PostPurchaseClient {
+	return &PostPurchaseClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `postpurchase.Hooks(f(g(h())))`.
+func (c *PostPurchaseClient) Use(hooks ...Hook) {
+	c.hooks.PostPurchase = append(c.hooks.PostPurchase, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `postpurchase.Intercept(f(g(h())))`.
+func (c *PostPurchaseClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PostPurchase = append(c.inters.PostPurchase, interceptors...)
+}
+
+// Create returns a builder for creating a PostPurchase entity.
+func (c *PostPurchaseClient) Create() *PostPurchaseCreate {
+	mutation := newPostPurchaseMutation(c.config, OpCreate)
+	return &PostPurchaseCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PostPurchase entities.
+func (c *PostPurchaseClient) CreateBulk(builders ...*PostPurchaseCreate) *PostPurchaseCreateBulk {
+	return &PostPurchaseCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PostPurchaseClient) MapCreateBulk(slice any, setFunc func(*PostPurchaseCreate, int)) *PostPurchaseCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PostPurchaseCreateBulk{err: fmt.Errorf("calling to PostPurchaseClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PostPurchaseCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PostPurchaseCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PostPurchase.
+func (c *PostPurchaseClient) Update() *PostPurchaseUpdate {
+	mutation := newPostPurchaseMutation(c.config, OpUpdate)
+	return &PostPurchaseUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PostPurchaseClient) UpdateOne(_m *PostPurchase) *PostPurchaseUpdateOne {
+	mutation := newPostPurchaseMutation(c.config, OpUpdateOne, withPostPurchase(_m))
+	return &PostPurchaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PostPurchaseClient) UpdateOneID(id int) *PostPurchaseUpdateOne {
+	mutation := newPostPurchaseMutation(c.config, OpUpdateOne, withPostPurchaseID(id))
+	return &PostPurchaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PostPurchase.
+func (c *PostPurchaseClient) Delete() *PostPurchaseDelete {
+	mutation := newPostPurchaseMutation(c.config, OpDelete)
+	return &PostPurchaseDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PostPurchaseClient) DeleteOne(_m *PostPurchase) *PostPurchaseDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PostPurchaseClient) DeleteOneID(id int) *PostPurchaseDeleteOne {
+	builder := c.Delete().Where(postpurchase.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PostPurchaseDeleteOne{builder}
+}
+
+// Query returns a query builder for PostPurchase.
+func (c *PostPurchaseClient) Query() *PostPurchaseQuery {
+	return &PostPurchaseQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePostPurchase},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PostPurchase entity by its id.
+func (c *PostPurchaseClient) Get(ctx context.Context, id int) (*PostPurchase, error) {
+	return c.Query().Where(postpurchase.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PostPurchaseClient) GetX(ctx context.Context, id int) *PostPurchase {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a PostPurchase.
+func (c *PostPurchaseClient) QueryUser(_m *PostPurchase) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(postpurchase.Table, postpurchase.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, postpurchase.UserTable, postpurchase.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPost queries the post edge of a PostPurchase.
+func (c *PostPurchaseClient) QueryPost(_m *PostPurchase) *PostQuery {
+	query := (&PostClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(postpurchase.Table, postpurchase.FieldID, id),
+			sqlgraph.To(post.Table, post.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, postpurchase.PostTable, postpurchase.PostColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOrder queries the order edge of a PostPurchase.
+func (c *PostPurchaseClient) QueryOrder(_m *PostPurchase) *PayOrderQuery {
+	query := (&PayOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(postpurchase.Table, postpurchase.FieldID, id),
+			sqlgraph.To(payorder.Table, payorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, postpurchase.OrderTable, postpurchase.OrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PostPurchaseClient) Hooks() []Hook {
+	return c.hooks.PostPurchase
+}
+
+// Interceptors returns the client interceptors.
+func (c *PostPurchaseClient) Interceptors() []Interceptor {
+	return c.inters.PostPurchase
+}
+
+func (c *PostPurchaseClient) mutate(ctx context.Context, m *PostPurchaseMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PostPurchaseCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PostPurchaseUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PostPurchaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PostPurchaseDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PostPurchase mutation op: %q", m.Op())
 	}
 }
 
@@ -6208,8 +6447,8 @@ type (
 		Comment, Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
 		FriendCircleRecord, License, Member, MemberLevel, Menu, Notification,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
-		PersonalAccessToken, Plugin, Post, Product, RefreshToken, Role, ScheduleJob,
-		Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,
+		PersonalAccessToken, Plugin, Post, PostPurchase, Product, RefreshToken, Role,
+		ScheduleJob, Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,
 		WebHook []ent.Hook
 	}
 	inters struct {
@@ -6217,8 +6456,8 @@ type (
 		Comment, Coupon, CouponUsage, Essay, FLink, FLinkApplication, FLinkGroup, File,
 		FriendCircleRecord, License, Member, MemberLevel, Menu, Notification,
 		Oauth2AccessToken, Oauth2Code, Oauth2RefreshToken, PayOrder,
-		PersonalAccessToken, Plugin, Post, Product, RefreshToken, Role, ScheduleJob,
-		Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,
+		PersonalAccessToken, Plugin, Post, PostPurchase, Product, RefreshToken, Role,
+		ScheduleJob, Setting, StorageStrategy, Tag, Theme, User, VisitLog, Wallet,
 		WebHook []ent.Interceptor
 	}
 )

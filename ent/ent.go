@@ -40,6 +40,7 @@ import (
 	"github.com/shuTwT/hoshikuzu/ent/personalaccesstoken"
 	"github.com/shuTwT/hoshikuzu/ent/plugin"
 	"github.com/shuTwT/hoshikuzu/ent/post"
+	"github.com/shuTwT/hoshikuzu/ent/postpurchase"
 	"github.com/shuTwT/hoshikuzu/ent/product"
 	"github.com/shuTwT/hoshikuzu/ent/refreshtoken"
 	"github.com/shuTwT/hoshikuzu/ent/role"
@@ -140,6 +141,7 @@ func checkColumn(t, c string) error {
 			personalaccesstoken.Table: personalaccesstoken.ValidColumn,
 			plugin.Table:              plugin.ValidColumn,
 			post.Table:                post.ValidColumn,
+			postpurchase.Table:        postpurchase.ValidColumn,
 			product.Table:             product.ValidColumn,
 			refreshtoken.Table:        refreshtoken.ValidColumn,
 			role.Table:                role.ValidColumn,

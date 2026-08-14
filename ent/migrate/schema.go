@@ -535,6 +535,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "order_type", Type: field.TypeString, Nullable: true},
 		{Name: "channel_type", Type: field.TypeString, Nullable: true},
 		{Name: "order_id", Type: field.TypeString, Nullable: true},
 		{Name: "merchant_order_id", Type: field.TypeString, Nullable: true},
@@ -551,12 +552,35 @@ var (
 		{Name: "state", Type: field.TypeString, Nullable: true, Default: "1"},
 		{Name: "error_msg", Type: field.TypeString, Nullable: true},
 		{Name: "raw", Type: field.TypeString, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "post_id", Type: field.TypeInt, Nullable: true},
+		{Name: "product_id", Type: field.TypeInt, Nullable: true},
 	}
 	// PayOrdersTable holds the schema information for the "pay_orders" table.
 	PayOrdersTable = &schema.Table{
 		Name:       "pay_orders",
 		Columns:    PayOrdersColumns,
 		PrimaryKey: []*schema.Column{PayOrdersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "pay_orders_users_user",
+				Columns:    []*schema.Column{PayOrdersColumns[20]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "pay_orders_posts_post",
+				Columns:    []*schema.Column{PayOrdersColumns[21]},
+				RefColumns: []*schema.Column{PostsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "pay_orders_products_product",
+				Columns:    []*schema.Column{PayOrdersColumns[22]},
+				RefColumns: []*schema.Column{ProductsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// PersonalAccessTokensColumns holds the columns for the "personal_access_tokens" table.
 	PersonalAccessTokensColumns = []*schema.Column{
@@ -636,6 +660,48 @@ var (
 		Name:       "posts",
 		Columns:    PostsColumns,
 		PrimaryKey: []*schema.Column{PostsColumns[0]},
+	}
+	// PostPurchasesColumns holds the columns for the "post_purchases" table.
+	PostPurchasesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "post_id", Type: field.TypeInt},
+		{Name: "order_id", Type: field.TypeInt, Nullable: true},
+	}
+	// PostPurchasesTable holds the schema information for the "post_purchases" table.
+	PostPurchasesTable = &schema.Table{
+		Name:       "post_purchases",
+		Columns:    PostPurchasesColumns,
+		PrimaryKey: []*schema.Column{PostPurchasesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "post_purchases_users_user",
+				Columns:    []*schema.Column{PostPurchasesColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "post_purchases_posts_post",
+				Columns:    []*schema.Column{PostPurchasesColumns[4]},
+				RefColumns: []*schema.Column{PostsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "post_purchases_pay_orders_order",
+				Columns:    []*schema.Column{PostPurchasesColumns[5]},
+				RefColumns: []*schema.Column{PayOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "postpurchase_user_id_post_id",
+				Unique:  true,
+				Columns: []*schema.Column{PostPurchasesColumns[3], PostPurchasesColumns[4]},
+			},
+		},
 	}
 	// ProductsColumns holds the columns for the "products" table.
 	ProductsColumns = []*schema.Column{
@@ -1004,6 +1070,7 @@ var (
 		PersonalAccessTokensTable,
 		PluginsTable,
 		PostsTable,
+		PostPurchasesTable,
 		ProductsTable,
 		RefreshTokensTable,
 		RolesTable,
@@ -1030,6 +1097,12 @@ func init() {
 	FilesTable.ForeignKeys[0].RefTable = StorageStrategiesTable
 	MembersTable.ForeignKeys[0].RefTable = MemberLevelsTable
 	MembersTable.ForeignKeys[1].RefTable = UsersTable
+	PayOrdersTable.ForeignKeys[0].RefTable = UsersTable
+	PayOrdersTable.ForeignKeys[1].RefTable = PostsTable
+	PayOrdersTable.ForeignKeys[2].RefTable = ProductsTable
+	PostPurchasesTable.ForeignKeys[0].RefTable = UsersTable
+	PostPurchasesTable.ForeignKeys[1].RefTable = PostsTable
+	PostPurchasesTable.ForeignKeys[2].RefTable = PayOrdersTable
 	UsersTable.ForeignKeys[0].RefTable = RolesTable
 	WalletsTable.ForeignKeys[0].RefTable = UsersTable
 	CategoryPostsTable.ForeignKeys[0].RefTable = CategoriesTable

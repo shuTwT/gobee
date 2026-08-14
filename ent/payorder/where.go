@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/shuTwT/hoshikuzu/ent/predicate"
 )
 
@@ -62,6 +63,26 @@ func CreatedAt(v time.Time) predicate.PayOrder {
 // UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
 func UpdatedAt(v time.Time) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldUserID, v))
+}
+
+// OrderType applies equality check predicate on the "order_type" field. It's identical to OrderTypeEQ.
+func OrderType(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldOrderType, v))
+}
+
+// PostID applies equality check predicate on the "post_id" field. It's identical to PostIDEQ.
+func PostID(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldPostID, v))
+}
+
+// ProductID applies equality check predicate on the "product_id" field. It's identical to ProductIDEQ.
+func ProductID(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldProductID, v))
 }
 
 // ChannelType applies equality check predicate on the "channel_type" field. It's identical to ChannelTypeEQ.
@@ -222,6 +243,161 @@ func UpdatedAtLT(v time.Time) predicate.PayOrder {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// OrderTypeEQ applies the EQ predicate on the "order_type" field.
+func OrderTypeEQ(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldOrderType, v))
+}
+
+// OrderTypeNEQ applies the NEQ predicate on the "order_type" field.
+func OrderTypeNEQ(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNEQ(FieldOrderType, v))
+}
+
+// OrderTypeIn applies the In predicate on the "order_type" field.
+func OrderTypeIn(vs ...string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIn(FieldOrderType, vs...))
+}
+
+// OrderTypeNotIn applies the NotIn predicate on the "order_type" field.
+func OrderTypeNotIn(vs ...string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotIn(FieldOrderType, vs...))
+}
+
+// OrderTypeGT applies the GT predicate on the "order_type" field.
+func OrderTypeGT(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldGT(FieldOrderType, v))
+}
+
+// OrderTypeGTE applies the GTE predicate on the "order_type" field.
+func OrderTypeGTE(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldGTE(FieldOrderType, v))
+}
+
+// OrderTypeLT applies the LT predicate on the "order_type" field.
+func OrderTypeLT(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldLT(FieldOrderType, v))
+}
+
+// OrderTypeLTE applies the LTE predicate on the "order_type" field.
+func OrderTypeLTE(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldLTE(FieldOrderType, v))
+}
+
+// OrderTypeContains applies the Contains predicate on the "order_type" field.
+func OrderTypeContains(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldContains(FieldOrderType, v))
+}
+
+// OrderTypeHasPrefix applies the HasPrefix predicate on the "order_type" field.
+func OrderTypeHasPrefix(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldHasPrefix(FieldOrderType, v))
+}
+
+// OrderTypeHasSuffix applies the HasSuffix predicate on the "order_type" field.
+func OrderTypeHasSuffix(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldHasSuffix(FieldOrderType, v))
+}
+
+// OrderTypeIsNil applies the IsNil predicate on the "order_type" field.
+func OrderTypeIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldOrderType))
+}
+
+// OrderTypeNotNil applies the NotNil predicate on the "order_type" field.
+func OrderTypeNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldOrderType))
+}
+
+// OrderTypeEqualFold applies the EqualFold predicate on the "order_type" field.
+func OrderTypeEqualFold(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEqualFold(FieldOrderType, v))
+}
+
+// OrderTypeContainsFold applies the ContainsFold predicate on the "order_type" field.
+func OrderTypeContainsFold(v string) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldContainsFold(FieldOrderType, v))
+}
+
+// PostIDEQ applies the EQ predicate on the "post_id" field.
+func PostIDEQ(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldPostID, v))
+}
+
+// PostIDNEQ applies the NEQ predicate on the "post_id" field.
+func PostIDNEQ(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNEQ(FieldPostID, v))
+}
+
+// PostIDIn applies the In predicate on the "post_id" field.
+func PostIDIn(vs ...int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIn(FieldPostID, vs...))
+}
+
+// PostIDNotIn applies the NotIn predicate on the "post_id" field.
+func PostIDNotIn(vs ...int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotIn(FieldPostID, vs...))
+}
+
+// PostIDIsNil applies the IsNil predicate on the "post_id" field.
+func PostIDIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldPostID))
+}
+
+// PostIDNotNil applies the NotNil predicate on the "post_id" field.
+func PostIDNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldPostID))
+}
+
+// ProductIDEQ applies the EQ predicate on the "product_id" field.
+func ProductIDEQ(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldProductID, v))
+}
+
+// ProductIDNEQ applies the NEQ predicate on the "product_id" field.
+func ProductIDNEQ(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNEQ(FieldProductID, v))
+}
+
+// ProductIDIn applies the In predicate on the "product_id" field.
+func ProductIDIn(vs ...int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIn(FieldProductID, vs...))
+}
+
+// ProductIDNotIn applies the NotIn predicate on the "product_id" field.
+func ProductIDNotIn(vs ...int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotIn(FieldProductID, vs...))
+}
+
+// ProductIDIsNil applies the IsNil predicate on the "product_id" field.
+func ProductIDIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldProductID))
+}
+
+// ProductIDNotNil applies the NotNil predicate on the "product_id" field.
+func ProductIDNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldProductID))
 }
 
 // ChannelTypeEQ applies the EQ predicate on the "channel_type" field.
@@ -1347,6 +1523,75 @@ func RawEqualFold(v string) predicate.PayOrder {
 // RawContainsFold applies the ContainsFold predicate on the "raw" field.
 func RawContainsFold(v string) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldContainsFold(FieldRaw, v))
+}
+
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.PayOrder {
+	return predicate.PayOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.PayOrder {
+	return predicate.PayOrder(func(s *sql.Selector) {
+		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPost applies the HasEdge predicate on the "post" edge.
+func HasPost() predicate.PayOrder {
+	return predicate.PayOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, PostTable, PostColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPostWith applies the HasEdge predicate on the "post" edge with a given conditions (other predicates).
+func HasPostWith(preds ...predicate.Post) predicate.PayOrder {
+	return predicate.PayOrder(func(s *sql.Selector) {
+		step := newPostStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasProduct applies the HasEdge predicate on the "product" edge.
+func HasProduct() predicate.PayOrder {
+	return predicate.PayOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, ProductTable, ProductColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasProductWith applies the HasEdge predicate on the "product" edge with a given conditions (other predicates).
+func HasProductWith(preds ...predicate.Product) predicate.PayOrder {
+	return predicate.PayOrder(func(s *sql.Selector) {
+		step := newProductStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.
