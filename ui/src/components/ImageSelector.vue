@@ -1,31 +1,25 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
-import { NUpload, NImage, NButton, NInput, NSelect, NTag, NPagination } from 'naive-ui';
-import { Search, Refresh, Grid, List } from '@vicons/ionicons5';
+import { ref, onMounted, watch } from 'vue';
+import { NUpload, NImage, NButton, NInput, NTag, NPagination, NIcon } from 'naive-ui';
+import { Search, Refresh, CloudUploadOutline } from '@vicons/ionicons5';
 import { getStorageStrategyListAll } from '@/api/infra/storage';
 import { getFilePage } from '@/api/infra/file';
 import type { StorageStrategy } from '@/api/infra/storage';
 
 const props = withDefaults(defineProps<{
   visible: boolean;
-  modelValue: string;
+  modelValue: string | string[];
   limit?: number;
 }>(), {
   limit: 1
 });
 
 const emit = defineEmits<{
-  (e: 'update:visible', visible: boolean): void;
-  (e: 'update:modelValue', value: string): void;
-  (e: 'confirm', value: string): void;
-  (e: 'cancel'): void;
+  (e: 'update:modelValue', value: string | string[]): void;
 }>();
 
 // 状态管理
-const activeTab = ref('attachment'); // attachment 或 imageStream
 const searchKeyword = ref('');
-const sortOption = ref('default');
-const viewMode = ref('grid'); // grid 或 list
 const storageFilter = ref('all');
 
 // 分页
@@ -66,15 +60,15 @@ const fetchImages = async () => {
       page_size: pageSize.value,
       type: 'image'
     };
-    
+
     if (searchKeyword.value) {
-      params.keyword = searchKeyword.value;
+      params.name = searchKeyword.value;
     }
-    
+
     if (storageFilter.value !== 'all') {
       params.storage_strategy_id = storageFilter.value;
     }
-    
+
     const response = await getFilePage(params);
     if (response.code === 200) {
       imageList.value = response.data?.records || [];
@@ -95,10 +89,39 @@ const refreshImages = () => {
   fetchImages();
 };
 
-// 监听分页和筛选条件变化
-watch([currentPage, pageSize, searchKeyword, storageFilter], () => {
+// 监听分页和存储策略变化
+watch([currentPage, pageSize], () => {
   fetchImages();
 });
+
+// 存储策略切换时回到第一页
+watch(storageFilter, () => {
+  currentPage.value = 1;
+  fetchImages();
+});
+
+// 关键词搜索（防抖 300ms）
+let searchTimer: number | undefined;
+watch(searchKeyword, () => {
+  window.clearTimeout(searchTimer);
+  searchTimer = window.setTimeout(() => {
+    currentPage.value = 1;
+    fetchImages();
+  }, 300);
+});
+
+// 外部传入的已选值同步到选中状态
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (props.limit === 1) {
+      selectedImages.value = typeof val === 'string' && val ? [val] : [];
+    } else {
+      selectedImages.value = Array.isArray(val) ? [...val] : [];
+    }
+  },
+  { immediate: true },
+);
 
 // 组件挂载时获取数据
 onMounted(() => {
@@ -111,6 +134,7 @@ const handleImageSelect = (imageUrl: string) => {
   if (props.limit === 1) {
     // 单选模式
     selectedImages.value = [imageUrl];
+    emit('update:modelValue', imageUrl);
   } else {
     // 多选模式
     const index = selectedImages.value.indexOf(imageUrl);
@@ -119,22 +143,8 @@ const handleImageSelect = (imageUrl: string) => {
     } else if (selectedImages.value.length < props.limit) {
       selectedImages.value.push(imageUrl);
     }
+    emit('update:modelValue', [...selectedImages.value]);
   }
-};
-
-// 处理确定按钮点击
-const handleConfirm = () => {
-  if (selectedImages.value.length > 0) {
-    emit('update:modelValue', selectedImages.value[0]);
-    emit('confirm', selectedImages.value[0]);
-    emit('update:visible', false);
-  }
-};
-
-// 处理取消按钮点击
-const handleCancel = () => {
-  emit('update:visible', false);
-  emit('cancel');
 };
 
 // 处理上传完成
@@ -144,61 +154,21 @@ const handleUploadFinish = () => {
 </script>
 
 <template>
-  <div class="image-selector">
-    <!-- 标签页 -->
-    <div class="tabs">
-      <div 
-        class="tab-item" 
-        :class="{ active: activeTab === 'attachment' }"
-        @click="activeTab = 'attachment'"
-      >
-        附件库
-      </div>
-      <div 
-        class="tab-item" 
-        :class="{ active: activeTab === 'imageStream' }"
-        @click="activeTab = 'imageStream'"
-      >
-        Image Stream
-      </div>
-    </div>
-
-    <!-- 搜索和排序 -->
+  <div v-if="visible" class="image-selector">
+    <!-- 搜索 -->
     <div class="header">
       <div class="search-box">
-        <n-input
-          v-model:value="searchKeyword"
-          placeholder="输入关键词搜索"
-          clearable
-          prefix-icon="Search"
-          size="small"
-        />
+        <n-input v-model:value="searchKeyword" placeholder="输入名称搜索" clearable size="small">
+          <template #prefix>
+            <n-icon><Search /></n-icon>
+          </template>
+        </n-input>
       </div>
       <div class="header-actions">
-        <div class="sort-box">
-          <span>排序:</span>
-          <n-select
-            v-model:value="sortOption"
-            :options="[{ label: '默认', value: 'default' }, { label: '最新', value: 'latest' }, { label: '最热', value: 'hottest' }]"
-            size="small"
-            style="width: 80px;"
-          />
-        </div>
-        <n-button 
-          quaternary 
-          circle 
-          size="small" 
-          @click="viewMode = viewMode === 'grid' ? 'list' : 'grid'"
-        >
-          <component :is="viewMode === 'grid' ? List : Grid" />
-        </n-button>
-        <n-button 
-          quaternary 
-          circle 
-          size="small" 
-          @click="refreshImages"
-        >
-          <refresh />
+        <n-button quaternary circle size="small" @click="refreshImages">
+          <template #icon>
+            <n-icon><Refresh /></n-icon>
+          </template>
         </n-button>
       </div>
     </div>
@@ -225,19 +195,26 @@ const handleUploadFinish = () => {
       </div>
     </div>
 
-    <!-- 上传按钮 -->
+    <!-- 上传 -->
     <div class="upload-section">
-      <n-button type="primary" size="small" prefix-icon="Upload">
-        上传
-      </n-button>
-      <!-- 这里可以添加上传组件 -->
       <n-upload
-        v-show="false"
         accept="image/*"
         action="/api/v1/file/upload"
-        list-type="image"
+        :show-file-list="false"
         @finish="handleUploadFinish"
-      />
+      >
+        <n-button type="primary" size="small">
+          <template #icon>
+            <n-icon><CloudUploadOutline /></n-icon>
+          </template>
+          上传
+        </n-button>
+      </n-upload>
+    </div>
+
+    <!-- 已选择提示 -->
+    <div class="selection-info">
+      已选择 {{ selectedImages.length }}/{{ limit }} 项
     </div>
 
     <!-- 图片网格 -->
@@ -289,17 +266,6 @@ const handleUploadFinish = () => {
         />
       </div>
     </div>
-
-    <!-- 底部按钮 -->
-    <div class="footer">
-      <div class="selection-info">
-        确定 (已选择 {{ selectedImages.length }}/{{ limit }} 项)
-      </div>
-      <div class="footer-buttons">
-        <n-button size="small" @click="handleCancel">取消</n-button>
-        <n-button type="primary" size="small" @click="handleConfirm" :disabled="selectedImages.length === 0">确定</n-button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -311,33 +277,7 @@ const handleUploadFinish = () => {
   flex-direction: column;
 }
 
-/* 标签页 */
-.tabs {
-  display: flex;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 16px;
-}
-
-.tab-item {
-  padding: 8px 16px;
-  cursor: pointer;
-  color: #6b7280;
-  font-size: 14px;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-}
-
-.tab-item:hover {
-  color: #3b82f6;
-}
-
-.tab-item.active {
-  color: #3b82f6;
-  border-bottom-color: #3b82f6;
-  font-weight: 500;
-}
-
-/* 头部搜索和排序 */
+/* 头部搜索 */
 .header {
   display: flex;
   justify-content: space-between;
@@ -354,14 +294,6 @@ const handleUploadFinish = () => {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.sort-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #6b7280;
 }
 
 /* 筛选条件 */
@@ -394,6 +326,13 @@ const handleUploadFinish = () => {
 /* 上传按钮 */
 .upload-section {
   margin-bottom: 16px;
+}
+
+/* 已选择提示 */
+.selection-info {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
 }
 
 /* 图片网格 */
@@ -492,24 +431,5 @@ const handleUploadFinish = () => {
 .total {
   font-size: 14px;
   color: #6b7280;
-}
-
-/* 底部按钮 */
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.selection-info {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.footer-buttons {
-  display: flex;
-  gap: 8px;
 }
 </style>
