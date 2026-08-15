@@ -1296,6 +1296,10 @@ func init() {
 	payorderDescState := payorderFields[17].Descriptor()
 	// payorder.DefaultState holds the default value on creation for the state field.
 	payorder.DefaultState = payorderDescState.Default.(string)
+	// payorderDescPointsGranted is the schema descriptor for points_granted field.
+	payorderDescPointsGranted := payorderFields[23].Descriptor()
+	// payorder.DefaultPointsGranted holds the default value on creation for the points_granted field.
+	payorder.DefaultPointsGranted = payorderDescPointsGranted.Default.(int)
 	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
 	personalaccesstokenMixinFields0 := personalaccesstokenMixin[0].Fields()
 	_ = personalaccesstokenMixinFields0

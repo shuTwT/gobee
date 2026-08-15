@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 type LicensePageReq struct {
 	Page         int    `json:"page" query:"page" form:"page" validate:"required,min=1"`
 	Size         int    `json:"page_size" query:"page_size" form:"page_size" validate:"required,min=1,max=100"`
@@ -13,14 +11,14 @@ type LicensePageReq struct {
 type LicenseCreateReq struct {
 	Domain       string    `json:"domain" validate:"required"`
 	CustomerName string    `json:"customer_name"`
-	ExpireDate   time.Time `json:"expire_date" validate:"required"`
+	ExpireDate   LocalTime `json:"expire_date" validate:"required"`
 }
 
 type LicenseUpdateReq struct {
 	Domain       string    `json:"domain,omitempty"`
 	LicenseKey   string    `json:"license_key,omitempty"`
 	CustomerName string    `json:"customer_name,omitempty"`
-	ExpireDate   time.Time `json:"expire_date,omitempty"`
+	ExpireDate   LocalTime `json:"expire_date"`
 	Status       int       `json:"status,omitempty"`
 }
 
@@ -40,8 +38,8 @@ type LicenseVerifyReq struct {
 }
 
 type LicenseVerifyResp struct {
-	Valid        bool   `json:"valid"`
-	CustomerName string `json:"customer_name"`
-	ExpireDate   string `json:"expire_date"`
-	Message      string `json:"message"`
+	Valid        bool       `json:"valid"`
+	CustomerName string     `json:"customer_name"`
+	ExpireDate   *LocalTime `json:"expire_date,omitempty"`
+	Message      string     `json:"message"`
 }

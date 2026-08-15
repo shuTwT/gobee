@@ -40,22 +40,22 @@ const rules: FormRules = {
   },
   start_time: {
     required: true,
-    type: 'string',
+    type: 'number',
     message: '请选择开始时间',
-    trigger: 'change',
+    trigger: ['blur', 'change'],
   },
   end_time: {
     required: true,
-    type: 'string',
+    type: 'number',
     message: '请选择结束时间',
-    trigger: 'change',
+    trigger: ['blur', 'change'],
   },
 }
 
 const couponTypeOptions = [
-  { label: '满减', value: 0 },
-  { label: '折扣', value: 1 },
-  { label: '无门槛', value: 2 },
+  { label: '满减', value: 1 },
+  { label: '折扣', value: 2 },
+  { label: '无门槛', value: 3 },
 ]
 
 const getData = () => {
@@ -71,6 +71,7 @@ const getData = () => {
             value: data.value,
             total_count: data.total_count,
             per_user_limit: data.per_user_limit,
+            // start_time/end_time 直接提交毫秒时间戳
             start_time: data.start_time,
             end_time: data.end_time,
             active: data.active,

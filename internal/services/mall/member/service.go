@@ -2,7 +2,6 @@ package member
 
 import (
 	"context"
-	"time"
 
 	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/ent/member"
@@ -75,10 +74,7 @@ func (s *MemberServiceImpl) UpdateMember(c *fiber.Ctx, id int, updateReq *model.
 	}
 
 	if updateReq.ExpireTime != nil {
-		expireTime, err := time.Parse(time.RFC3339, *updateReq.ExpireTime)
-		if err == nil {
-			update.SetExpireTime(model.ParseTime(expireTime).Time())
-		}
+		update.SetExpireTime(updateReq.ExpireTime.Time())
 	}
 
 	if updateReq.Points != nil {

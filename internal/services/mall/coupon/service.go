@@ -2,7 +2,6 @@ package coupon
 
 import (
 	"context"
-	"time"
 
 	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/ent/coupon"
@@ -31,15 +30,6 @@ func NewCouponServiceImpl(client *ent.Client) *CouponServiceImpl {
 }
 
 func (s *CouponServiceImpl) CreateCoupon(ctx context.Context, req *model.CouponCreateReq) (*ent.Coupon, error) {
-	startTime, err := time.Parse(time.RFC3339, req.StartTime)
-	if err != nil {
-		return nil, err
-	}
-	endTime, err := time.Parse(time.RFC3339, req.EndTime)
-	if err != nil {
-		return nil, err
-	}
-
 	createBuilder := s.client.Coupon.Create().
 		SetName(req.Name).
 		SetCode(req.Code).
@@ -49,8 +39,8 @@ func (s *CouponServiceImpl) CreateCoupon(ctx context.Context, req *model.CouponC
 		SetMaxDiscount(req.MaxDiscount).
 		SetTotalCount(req.TotalCount).
 		SetPerUserLimit(req.PerUserLimit).
-		SetStartTime(startTime).
-		SetEndTime(endTime)
+		SetStartTime(req.StartTime.Time()).
+		SetEndTime(req.EndTime.Time())
 
 	if req.Description != nil {
 		createBuilder.SetDescription(*req.Description)
@@ -99,16 +89,10 @@ func (s *CouponServiceImpl) UpdateCoupon(ctx context.Context, id int, req *model
 		updateBuilder.SetPerUserLimit(*req.PerUserLimit)
 	}
 	if req.StartTime != nil {
-		startTime, err := time.Parse(time.RFC3339, *req.StartTime)
-		if err == nil {
-			updateBuilder.SetStartTime(startTime)
-		}
+		updateBuilder.SetStartTime(req.StartTime.Time())
 	}
 	if req.EndTime != nil {
-		endTime, err := time.Parse(time.RFC3339, *req.EndTime)
-		if err == nil {
-			updateBuilder.SetEndTime(endTime)
-		}
+		updateBuilder.SetEndTime(req.EndTime.Time())
 	}
 	if req.Active != nil {
 		updateBuilder.SetActive(*req.Active)

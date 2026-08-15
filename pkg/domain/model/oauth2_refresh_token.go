@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 // Oauth2RefreshTokenCreateReq represents the request body for creating an OAuth2 refresh token.
 
 type Oauth2RefreshTokenCreateReq struct {
@@ -9,13 +7,13 @@ type Oauth2RefreshTokenCreateReq struct {
 	RefreshToken string    `json:"refresh_token" validate:"required"`
 	ClientID     string    `json:"client_id" validate:"required"`
 	Scope        string    `json:"scope" validate:"required"`
-	ExpireAt     time.Time `json:"expire_at" validate:"required"`
+	ExpireAt     LocalTime `json:"expire_at" validate:"required"`
 }
 
 // Oauth2RefreshTokenUpdateReq represents the request body for updating an OAuth2 refresh token.
 
 type Oauth2RefreshTokenUpdateReq struct {
-	ExpireAt *time.Time `json:"expire_at,omitempty"`
+	ExpireAt *LocalTime `json:"expire_at,omitempty"`
 	Scope    *string    `json:"scope,omitempty"`
 }
 

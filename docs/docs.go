@@ -2301,7 +2301,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.Coupon"
+                                            "$ref": "#/definitions/model.CouponResp"
                                         }
                                     }
                                 }
@@ -2323,7 +2323,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/coupon/delete/{id}": {
+        "/api/v1/coupon/delete/glm-5.3_common": {
             "delete": {
                 "description": "删除优惠券",
                 "consumes": [
@@ -2406,7 +2406,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/ent.Coupon"
+                                                "$ref": "#/definitions/model.CouponResp"
                                             }
                                         }
                                     }
@@ -2468,7 +2468,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.PageResult-ent_Coupon"
+                                            "$ref": "#/definitions/model.PageResult-model_CouponResp"
                                         }
                                     }
                                 }
@@ -2490,7 +2490,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/coupon/query/{id}": {
+        "/api/v1/coupon/query/glm-5.3_common": {
             "get": {
                 "description": "查询优惠券详情",
                 "consumes": [
@@ -2524,7 +2524,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.Coupon"
+                                            "$ref": "#/definitions/model.CouponResp"
                                         }
                                     }
                                 }
@@ -2599,7 +2599,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.PageResult-ent_Coupon"
+                                            "$ref": "#/definitions/model.PageResult-model_CouponResp"
                                         }
                                     }
                                 }
@@ -2621,7 +2621,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/coupon/update/{id}": {
+        "/api/v1/coupon/update/glm-5.3_common": {
             "put": {
                 "description": "更新优惠券",
                 "consumes": [
@@ -2664,7 +2664,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.Coupon"
+                                            "$ref": "#/definitions/model.CouponResp"
                                         }
                                     }
                                 }
@@ -2838,7 +2838,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.CouponUsage"
+                                            "$ref": "#/definitions/model.CouponUsageResp"
                                         }
                                     }
                                 }
@@ -2860,7 +2860,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/couponusage/delete/{id}": {
+        "/api/v1/couponusage/delete/glm-5.3_common": {
             "delete": {
                 "description": "删除优惠券使用记录",
                 "consumes": [
@@ -2943,7 +2943,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/ent.CouponUsage"
+                                                "$ref": "#/definitions/model.CouponUsageResp"
                                             }
                                         }
                                     }
@@ -3007,7 +3007,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.PageResult-ent_CouponUsage"
+                                            "$ref": "#/definitions/model.PageResult-model_CouponUsageResp"
                                         }
                                     }
                                 }
@@ -3029,7 +3029,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/couponusage/query/{id}": {
+        "/api/v1/couponusage/query/glm-5.3_common": {
             "get": {
                 "description": "查询优惠券使用记录",
                 "consumes": [
@@ -3063,7 +3063,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.CouponUsage"
+                                            "$ref": "#/definitions/model.CouponUsageResp"
                                         }
                                     }
                                 }
@@ -3142,7 +3142,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.PageResult-ent_CouponUsage"
+                                            "$ref": "#/definitions/model.PageResult-model_CouponUsageResp"
                                         }
                                     }
                                 }
@@ -3164,7 +3164,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/couponusage/update/{id}": {
+        "/api/v1/couponusage/update/glm-5.3_common": {
             "put": {
                 "description": "更新优惠券使用记录",
                 "consumes": [
@@ -3207,7 +3207,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.CouponUsage"
+                                            "$ref": "#/definitions/model.CouponUsageResp"
                                         }
                                     }
                                 }
@@ -6304,6 +6304,87 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/pay-order/mock-pay/{id}": {
+            "get": {
+                "description": "模拟支付页面（仅测试环境使用），展示订单信息并提供模拟支付成功/失败按钮",
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "公开接口/支付"
+                ],
+                "summary": "模拟支付页",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "支付订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "模拟支付页面 HTML",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pay-order/mock-pay/{id}/fail": {
+            "post": {
+                "description": "模拟支付失败回调（仅测试环境使用）",
+                "tags": [
+                    "公开接口/支付"
+                ],
+                "summary": "模拟支付失败",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "支付订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pay-order/mock-pay/{id}/success": {
+            "post": {
+                "description": "模拟支付成功回调（仅测试环境使用），走真实支付成功履约链路",
+                "tags": [
+                    "公开接口/支付"
+                ],
+                "summary": "模拟支付成功",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "支付订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpSuccess"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/pay-order/notify": {
             "post": {
                 "description": "易支付异步通知回调，公开接口",
@@ -6322,6 +6403,53 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pay-order/pay-methods": {
+            "get": {
+                "description": "查询当前用户可用的支付方式（支付宝/微信/余额）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/支付订单"
+                ],
+                "summary": "可用支付方式",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PayMethodResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
                         }
                     }
                 }
@@ -6364,6 +6492,64 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pay-order/recharge": {
+            "post": {
+                "description": "提交余额充值订单，支付成功后自动入账钱包并发放会员积分",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/支付订单"
+                ],
+                "summary": "余额充值",
+                "parameters": [
+                    {
+                        "description": "充值请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PayOrderRechargeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PayOrderSubmitResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/model.HttpError"
                         }
@@ -13283,142 +13469,6 @@ const docTemplate = `{
                 }
             }
         },
-        "ent.Coupon": {
-            "type": "object",
-            "properties": {
-                "active": {
-                    "description": "是否启用",
-                    "type": "boolean"
-                },
-                "category_ids": {
-                    "description": "适用分类ID列表",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "code": {
-                    "description": "优惠券代码",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "优惠券描述",
-                    "type": "string"
-                },
-                "end_time": {
-                    "description": "结束时间",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "integer"
-                },
-                "image": {
-                    "description": "优惠券图片",
-                    "type": "string"
-                },
-                "max_discount": {
-                    "description": "最大优惠金额(分)",
-                    "type": "integer"
-                },
-                "min_amount": {
-                    "description": "最低消费金额(分)",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "优惠券名称",
-                    "type": "string"
-                },
-                "per_user_limit": {
-                    "description": "每用户限领数量",
-                    "type": "integer"
-                },
-                "product_ids": {
-                    "description": "适用商品ID列表",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "start_time": {
-                    "description": "开始时间",
-                    "type": "string"
-                },
-                "total_count": {
-                    "description": "发放总数",
-                    "type": "integer"
-                },
-                "type": {
-                    "description": "优惠券类型: 0-满减 1-折扣 2-无门槛",
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                },
-                "used_count": {
-                    "description": "已使用数量",
-                    "type": "integer"
-                },
-                "value": {
-                    "description": "优惠券值",
-                    "type": "integer"
-                }
-            }
-        },
-        "ent.CouponUsage": {
-            "type": "object",
-            "properties": {
-                "coupon_code": {
-                    "description": "优惠券代码",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "discount_amount": {
-                    "description": "优惠金额(分)",
-                    "type": "integer"
-                },
-                "expire_at": {
-                    "description": "过期时间",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "integer"
-                },
-                "order_id": {
-                    "description": "订单ID",
-                    "type": "integer"
-                },
-                "remark": {
-                    "description": "备注",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "状态: 0-未使用 1-已使用 2-已过期",
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                },
-                "used_at": {
-                    "description": "使用时间",
-                    "type": "string"
-                },
-                "user_id": {
-                    "description": "用户ID",
-                    "type": "integer"
-                }
-            }
-        },
         "ent.FLink": {
             "type": "object",
             "properties": {
@@ -13887,6 +13937,10 @@ const docTemplate = `{
                 "pay_url": {
                     "description": "支付链接",
                     "type": "string"
+                },
+                "points_granted": {
+                    "description": "充值发放的积分数量",
+                    "type": "integer"
                 },
                 "post_id": {
                     "description": "文章付费关联",
@@ -15063,6 +15117,74 @@ const docTemplate = `{
                 }
             }
         },
+        "model.CouponResp": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "category_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "max_discount": {
+                    "type": "integer"
+                },
+                "min_amount": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "per_user_limit": {
+                    "type": "integer"
+                },
+                "product_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "total_count": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "used_count": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.CouponUpdateReq": {
             "type": "object",
             "properties": {
@@ -15169,6 +15291,44 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "remark": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.CouponUsageResp": {
+            "type": "object",
+            "properties": {
+                "coupon_code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "discount_amount": {
+                    "type": "integer"
+                },
+                "expire_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "order_id": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "used_at": {
                     "type": "string"
                 },
                 "user_id": {
@@ -16225,34 +16385,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.PageResult-ent_Coupon": {
-            "type": "object",
-            "properties": {
-                "records": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Coupon"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "model.PageResult-ent_CouponUsage": {
-            "type": "object",
-            "properties": {
-                "records": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.CouponUsage"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "model.PageResult-ent_Notification": {
             "type": "object",
             "properties": {
@@ -16330,6 +16462,34 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.Wallet"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PageResult-model_CouponResp": {
+            "type": "object",
+            "properties": {
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.CouponResp"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PageResult-model_CouponUsageResp": {
+            "type": "object",
+            "properties": {
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.CouponUsageResp"
                     }
                 },
                 "total": {
@@ -16561,6 +16721,48 @@ const docTemplate = `{
                 }
             }
         },
+        "model.PayMethodResp": {
+            "type": "object",
+            "properties": {
+                "alipay": {
+                    "description": "支付宝（易支付或直连支付宝启用）",
+                    "type": "boolean"
+                },
+                "balance": {
+                    "description": "余额支付（钱包余额大于 0）",
+                    "type": "boolean"
+                },
+                "balance_amount": {
+                    "description": "钱包余额,单位分",
+                    "type": "integer"
+                },
+                "wechat": {
+                    "description": "微信支付（易支付或直连微信支付启用）",
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.PayOrderRechargeReq": {
+            "type": "object",
+            "required": [
+                "channel_type",
+                "return_url"
+            ],
+            "properties": {
+                "amount": {
+                    "description": "充值金额,单位分",
+                    "type": "integer"
+                },
+                "channel_type": {
+                    "description": "渠道类型 1 支付宝 2 微信 3 银联",
+                    "type": "string"
+                },
+                "return_url": {
+                    "description": "返回地址",
+                    "type": "string"
+                }
+            }
+        },
         "model.PayOrderRefundReq": {
             "type": "object",
             "properties": {
@@ -16641,6 +16843,27 @@ const docTemplate = `{
                 },
                 "return_url": {
                     "description": "返回地址",
+                    "type": "string"
+                }
+            }
+        },
+        "model.PayOrderSubmitResp": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "description": "系统订单ID",
+                    "type": "integer"
+                },
+                "out_trade_no": {
+                    "description": "商户订单号",
+                    "type": "string"
+                },
+                "pay_url": {
+                    "description": "支付链接",
+                    "type": "string"
+                },
+                "trade_no": {
+                    "description": "易支付订单号",
                     "type": "string"
                 }
             }

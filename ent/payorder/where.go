@@ -180,6 +180,11 @@ func RefundAt(v time.Time) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldEQ(FieldRefundAt, v))
 }
 
+// PointsGranted applies equality check predicate on the "points_granted" field. It's identical to PointsGrantedEQ.
+func PointsGranted(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldPointsGranted, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldEQ(FieldCreatedAt, v))
@@ -1713,6 +1718,56 @@ func RefundAtIsNil() predicate.PayOrder {
 // RefundAtNotNil applies the NotNil predicate on the "refund_at" field.
 func RefundAtNotNil() predicate.PayOrder {
 	return predicate.PayOrder(sql.FieldNotNull(FieldRefundAt))
+}
+
+// PointsGrantedEQ applies the EQ predicate on the "points_granted" field.
+func PointsGrantedEQ(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldEQ(FieldPointsGranted, v))
+}
+
+// PointsGrantedNEQ applies the NEQ predicate on the "points_granted" field.
+func PointsGrantedNEQ(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNEQ(FieldPointsGranted, v))
+}
+
+// PointsGrantedIn applies the In predicate on the "points_granted" field.
+func PointsGrantedIn(vs ...int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIn(FieldPointsGranted, vs...))
+}
+
+// PointsGrantedNotIn applies the NotIn predicate on the "points_granted" field.
+func PointsGrantedNotIn(vs ...int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotIn(FieldPointsGranted, vs...))
+}
+
+// PointsGrantedGT applies the GT predicate on the "points_granted" field.
+func PointsGrantedGT(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldGT(FieldPointsGranted, v))
+}
+
+// PointsGrantedGTE applies the GTE predicate on the "points_granted" field.
+func PointsGrantedGTE(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldGTE(FieldPointsGranted, v))
+}
+
+// PointsGrantedLT applies the LT predicate on the "points_granted" field.
+func PointsGrantedLT(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldLT(FieldPointsGranted, v))
+}
+
+// PointsGrantedLTE applies the LTE predicate on the "points_granted" field.
+func PointsGrantedLTE(v int) predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldLTE(FieldPointsGranted, v))
+}
+
+// PointsGrantedIsNil applies the IsNil predicate on the "points_granted" field.
+func PointsGrantedIsNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldIsNull(FieldPointsGranted))
+}
+
+// PointsGrantedNotNil applies the NotNil predicate on the "points_granted" field.
+func PointsGrantedNotNil() predicate.PayOrder {
+	return predicate.PayOrder(sql.FieldNotNull(FieldPointsGranted))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

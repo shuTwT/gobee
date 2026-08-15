@@ -22166,6 +22166,8 @@ type PayOrderMutation struct {
 	refund_amount        *int
 	addrefund_amount     *int
 	refund_at            *time.Time
+	points_granted       *int
+	addpoints_granted    *int
 	clearedFields        map[string]struct{}
 	user                 *int
 	cleareduser          bool
@@ -23552,6 +23554,76 @@ func (m *PayOrderMutation) ResetRefundAt() {
 	delete(m.clearedFields, payorder.FieldRefundAt)
 }
 
+// SetPointsGranted sets the "points_granted" field.
+func (m *PayOrderMutation) SetPointsGranted(i int) {
+	m.points_granted = &i
+	m.addpoints_granted = nil
+}
+
+// PointsGranted returns the value of the "points_granted" field in the mutation.
+func (m *PayOrderMutation) PointsGranted() (r int, exists bool) {
+	v := m.points_granted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPointsGranted returns the old "points_granted" field's value of the PayOrder entity.
+// If the PayOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayOrderMutation) OldPointsGranted(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPointsGranted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPointsGranted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPointsGranted: %w", err)
+	}
+	return oldValue.PointsGranted, nil
+}
+
+// AddPointsGranted adds i to the "points_granted" field.
+func (m *PayOrderMutation) AddPointsGranted(i int) {
+	if m.addpoints_granted != nil {
+		*m.addpoints_granted += i
+	} else {
+		m.addpoints_granted = &i
+	}
+}
+
+// AddedPointsGranted returns the value that was added to the "points_granted" field in this mutation.
+func (m *PayOrderMutation) AddedPointsGranted() (r int, exists bool) {
+	v := m.addpoints_granted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPointsGranted clears the value of the "points_granted" field.
+func (m *PayOrderMutation) ClearPointsGranted() {
+	m.points_granted = nil
+	m.addpoints_granted = nil
+	m.clearedFields[payorder.FieldPointsGranted] = struct{}{}
+}
+
+// PointsGrantedCleared returns if the "points_granted" field was cleared in this mutation.
+func (m *PayOrderMutation) PointsGrantedCleared() bool {
+	_, ok := m.clearedFields[payorder.FieldPointsGranted]
+	return ok
+}
+
+// ResetPointsGranted resets all changes to the "points_granted" field.
+func (m *PayOrderMutation) ResetPointsGranted() {
+	m.points_granted = nil
+	m.addpoints_granted = nil
+	delete(m.clearedFields, payorder.FieldPointsGranted)
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *PayOrderMutation) ClearUser() {
 	m.cleareduser = true
@@ -23667,7 +23739,7 @@ func (m *PayOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PayOrderMutation) Fields() []string {
-	fields := make([]string, 0, 25)
+	fields := make([]string, 0, 26)
 	if m.created_at != nil {
 		fields = append(fields, payorder.FieldCreatedAt)
 	}
@@ -23743,6 +23815,9 @@ func (m *PayOrderMutation) Fields() []string {
 	if m.refund_at != nil {
 		fields = append(fields, payorder.FieldRefundAt)
 	}
+	if m.points_granted != nil {
+		fields = append(fields, payorder.FieldPointsGranted)
+	}
 	return fields
 }
 
@@ -23801,6 +23876,8 @@ func (m *PayOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.RefundAmount()
 	case payorder.FieldRefundAt:
 		return m.RefundAt()
+	case payorder.FieldPointsGranted:
+		return m.PointsGranted()
 	}
 	return nil, false
 }
@@ -23860,6 +23937,8 @@ func (m *PayOrderMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldRefundAmount(ctx)
 	case payorder.FieldRefundAt:
 		return m.OldRefundAt(ctx)
+	case payorder.FieldPointsGranted:
+		return m.OldPointsGranted(ctx)
 	}
 	return nil, fmt.Errorf("unknown PayOrder field %s", name)
 }
@@ -24044,6 +24123,13 @@ func (m *PayOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRefundAt(v)
 		return nil
+	case payorder.FieldPointsGranted:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPointsGranted(v)
+		return nil
 	}
 	return fmt.Errorf("unknown PayOrder field %s", name)
 }
@@ -24064,6 +24150,9 @@ func (m *PayOrderMutation) AddedFields() []string {
 	if m.addrefund_amount != nil {
 		fields = append(fields, payorder.FieldRefundAmount)
 	}
+	if m.addpoints_granted != nil {
+		fields = append(fields, payorder.FieldPointsGranted)
+	}
 	return fields
 }
 
@@ -24080,6 +24169,8 @@ func (m *PayOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedChannelFeePrice()
 	case payorder.FieldRefundAmount:
 		return m.AddedRefundAmount()
+	case payorder.FieldPointsGranted:
+		return m.AddedPointsGranted()
 	}
 	return nil, false
 }
@@ -24116,6 +24207,13 @@ func (m *PayOrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddRefundAmount(v)
+		return nil
+	case payorder.FieldPointsGranted:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPointsGranted(v)
 		return nil
 	}
 	return fmt.Errorf("unknown PayOrder numeric field %s", name)
@@ -24190,6 +24288,9 @@ func (m *PayOrderMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(payorder.FieldRefundAt) {
 		fields = append(fields, payorder.FieldRefundAt)
+	}
+	if m.FieldCleared(payorder.FieldPointsGranted) {
+		fields = append(fields, payorder.FieldPointsGranted)
 	}
 	return fields
 }
@@ -24270,6 +24371,9 @@ func (m *PayOrderMutation) ClearField(name string) error {
 		return nil
 	case payorder.FieldRefundAt:
 		m.ClearRefundAt()
+		return nil
+	case payorder.FieldPointsGranted:
+		m.ClearPointsGranted()
 		return nil
 	}
 	return fmt.Errorf("unknown PayOrder nullable field %s", name)
@@ -24353,6 +24457,9 @@ func (m *PayOrderMutation) ResetField(name string) error {
 		return nil
 	case payorder.FieldRefundAt:
 		m.ResetRefundAt()
+		return nil
+	case payorder.FieldPointsGranted:
+		m.ResetPointsGranted()
 		return nil
 	}
 	return fmt.Errorf("unknown PayOrder field %s", name)

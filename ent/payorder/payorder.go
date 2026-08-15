@@ -64,6 +64,8 @@ const (
 	FieldRefundAmount = "refund_amount"
 	// FieldRefundAt holds the string denoting the refund_at field in the database.
 	FieldRefundAt = "refund_at"
+	// FieldPointsGranted holds the string denoting the points_granted field in the database.
+	FieldPointsGranted = "points_granted"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgePost holds the string denoting the post edge name in mutations.
@@ -123,6 +125,7 @@ var Columns = []string{
 	FieldRefundNo,
 	FieldRefundAmount,
 	FieldRefundAt,
+	FieldPointsGranted,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -144,6 +147,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultState holds the default value on creation for the "state" field.
 	DefaultState string
+	// DefaultPointsGranted holds the default value on creation for the "points_granted" field.
+	DefaultPointsGranted int
 )
 
 // OrderOption defines the ordering options for the PayOrder queries.
@@ -277,6 +282,11 @@ func ByRefundAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByRefundAt orders the results by the refund_at field.
 func ByRefundAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRefundAt, opts...).ToFunc()
+}
+
+// ByPointsGranted orders the results by the points_granted field.
+func ByPointsGranted(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPointsGranted, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

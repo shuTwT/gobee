@@ -23,6 +23,32 @@ func NewMemberHandler(userService user_service.UserService, memberService member
 	}
 }
 
+func buildMemberResp(m *ent.Member, userName string) *model.MemberResp {
+	return &model.MemberResp{
+		ID:          m.ID,
+		UserID:      m.UserID,
+		UserName:    userName,
+		MemberLevel: m.MemberLevel,
+		MemberNo:    m.MemberNo,
+		JoinTime:    model.LocalTime(m.JoinTime),
+		ExpireTime:  model.LocalTime(m.ExpireTime),
+		Points:      m.Points,
+		TotalSpent:  m.TotalSpent,
+		OrderCount:  m.OrderCount,
+		Active:      m.Active,
+		Remark:      m.Remark,
+	}
+}
+
+// memberUserName 查询会员对应的用户名，查询失败时返回空字符串
+func (h *MemberHandler) memberUserName(c *fiber.Ctx, userId int) string {
+	user, err := h.userService.QueryUserById(c.Context(), userId)
+	if err != nil || user == nil {
+		return ""
+	}
+	return user.Name
+}
+
 // @Summary 查询会员
 // @Description 查询会员
 // @Tags 后台管理接口/会员
@@ -54,7 +80,7 @@ func (h *MemberHandler) QueryMember(c *fiber.Ctx) error {
 		))
 	}
 
-	return c.JSON(model.NewSuccess("success", m))
+	return c.JSON(model.NewSuccess("success", buildMemberResp(m, h.memberUserName(c, m.UserID))))
 }
 
 // @Summary 查询会员列表分页
@@ -92,20 +118,7 @@ func (h *MemberHandler) QueryMemberPage(c *fiber.Ctx) error {
 				err.Error(),
 			))
 		}
-		memberResps = append(memberResps, &model.MemberResp{
-			ID:          m.ID,
-			UserID:      m.UserID,
-			UserName:    user.Name,
-			MemberLevel: m.MemberLevel,
-			MemberNo:    m.MemberNo,
-			JoinTime:    m.JoinTime.Format("2006-01-02 15:04:05"),
-			ExpireTime:  m.ExpireTime.Format("2006-01-02 15:04:05"),
-			Points:      m.Points,
-			TotalSpent:  m.TotalSpent,
-			OrderCount:  m.OrderCount,
-			Active:      m.Active,
-			Remark:      m.Remark,
-		})
+		memberResps = append(memberResps, buildMemberResp(m, user.Name))
 	}
 	pageResult := model.PageResult[*model.MemberResp]{
 		Total:   int64(count),
@@ -139,7 +152,7 @@ func (h *MemberHandler) CreateMember(c *fiber.Ctx) error {
 		))
 	}
 
-	return c.JSON(model.NewSuccess("success", m))
+	return c.JSON(model.NewSuccess("success", buildMemberResp(m, h.memberUserName(c, m.UserID))))
 }
 
 // @Summary 更新会员
@@ -181,7 +194,7 @@ func (h *MemberHandler) UpdateMember(c *fiber.Ctx) error {
 		))
 	}
 
-	return c.JSON(model.NewSuccess("success", updatedMember))
+	return c.JSON(model.NewSuccess("success", buildMemberResp(updatedMember, h.memberUserName(c, updatedMember.UserID))))
 }
 
 // @Summary 删除会员

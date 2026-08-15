@@ -3,12 +3,12 @@ import { BASE_URL, type ApiResponse, type TableResponse } from '@/api/utils'
 
 export interface License {
   id: number
-  created_at: string
-  updated_at: string
+  created_at: number
+  updated_at: number
   domain: string
   license_key: string
   customer_name: string
-  expire_date: string
+  expire_date: number
   status: number
 }
 
@@ -23,14 +23,14 @@ export interface LicensePageParams {
 export interface LicenseCreateReq {
   domain: string
   customer_name: string
-  expire_date: string
+  expire_date: number
 }
 
 export interface LicenseUpdateReq {
   domain?: string
   license_key?: string
   customer_name?: string
-  expire_date?: string
+  expire_date?: number
   status?: number
 }
 
@@ -41,7 +41,7 @@ export interface LicenseVerifyReq {
 export interface LicenseVerifyResp {
   valid: boolean
   customer_name: string
-  expire_date: string
+  expire_date?: number
   message: string
 }
 

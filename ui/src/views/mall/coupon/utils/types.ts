@@ -9,8 +9,8 @@ export type FormItemProps = {
   max_discount:number
   total_count:number
   per_user_limit:number
-  start_time:number
-  end_time:number
+  start_time:number | null
+  end_time:number | null
   active:boolean
   image:string
   product_ids:number[]

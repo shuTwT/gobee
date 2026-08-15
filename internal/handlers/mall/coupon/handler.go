@@ -21,12 +21,39 @@ func NewCouponHandler(couponService coupon_service.CouponService) *CouponHandler
 	}
 }
 
+func newCouponResp(c *ent.Coupon) *model.CouponResp {
+	if c == nil {
+		return nil
+	}
+	return &model.CouponResp{
+		ID:           c.ID,
+		CreatedAt:    model.LocalTime(c.CreatedAt),
+		UpdatedAt:    model.LocalTime(c.UpdatedAt),
+		Name:         c.Name,
+		Code:         c.Code,
+		Description:  c.Description,
+		Type:         c.Type,
+		Value:        c.Value,
+		MinAmount:    c.MinAmount,
+		MaxDiscount:  c.MaxDiscount,
+		TotalCount:   c.TotalCount,
+		UsedCount:    c.UsedCount,
+		PerUserLimit: c.PerUserLimit,
+		StartTime:    model.LocalTime(c.StartTime),
+		EndTime:      model.LocalTime(c.EndTime),
+		Active:       c.Active,
+		Image:        c.Image,
+		ProductIds:   c.ProductIds,
+		CategoryIds:  c.CategoryIds,
+	}
+}
+
 // @Summary 获取所有优惠券
 // @Description 获取所有优惠券列表
 // @Tags 后台管理接口/优惠券
 // @Accept json
 // @Produce json
-// @Success 200 {object} model.HttpSuccess{data=[]ent.Coupon}
+// @Success 200 {object} model.HttpSuccess{data=[]model.CouponResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/coupon/list [get]
@@ -36,7 +63,11 @@ func (h *CouponHandler) ListCoupons(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(model.NewSuccess("success", coupons))
+	resps := make([]*model.CouponResp, 0, len(coupons))
+	for _, couponEntity := range coupons {
+		resps = append(resps, newCouponResp(couponEntity))
+	}
+	return c.JSON(model.NewSuccess("success", resps))
 }
 
 // @Summary 获取优惠券分页列表
@@ -46,7 +77,7 @@ func (h *CouponHandler) ListCoupons(c *fiber.Ctx) error {
 // @Produce json
 // @Param page query int false "页码"
 // @Param size query int false "每页数量"
-// @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.Coupon]}
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.CouponResp]}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/coupon/page [get]
@@ -69,9 +100,14 @@ func (h *CouponHandler) ListCouponsPage(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	pageResult := model.PageResult[*ent.Coupon]{
+	records := make([]*model.CouponResp, 0, len(coupons))
+	for _, couponEntity := range coupons {
+		records = append(records, newCouponResp(couponEntity))
+	}
+
+	pageResult := model.PageResult[*model.CouponResp]{
 		Total:   int64(total),
-		Records: coupons,
+		Records: records,
 	}
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
@@ -82,7 +118,7 @@ func (h *CouponHandler) ListCouponsPage(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param coupon_create_req body model.CouponCreateReq true "优惠券创建请求体"
-// @Success 200 {object} model.HttpSuccess{data=ent.Coupon}
+// @Success 200 {object} model.HttpSuccess{data=model.CouponResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/coupon/create [post]
@@ -97,7 +133,7 @@ func (h *CouponHandler) CreateCoupon(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(model.NewSuccess("success", coupon))
+	return c.JSON(model.NewSuccess("success", newCouponResp(coupon)))
 }
 
 // @Summary 更新优惠券
@@ -107,10 +143,10 @@ func (h *CouponHandler) CreateCoupon(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path int true "优惠券 ID"
 // @Param coupon_update_req body model.CouponUpdateReq true "优惠券更新请求体"
-// @Success 200 {object} model.HttpSuccess{data=ent.Coupon}
+// @Success 200 {object} model.HttpSuccess{data=model.CouponResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/coupon/update/{id} [put]
+// @Router /api/v1/coupon/update/glm-5.3_common [put]
 func (h *CouponHandler) UpdateCoupon(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -127,7 +163,7 @@ func (h *CouponHandler) UpdateCoupon(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(model.NewSuccess("success", coupon))
+	return c.JSON(model.NewSuccess("success", newCouponResp(coupon)))
 }
 
 // @Summary 查询优惠券
@@ -136,10 +172,10 @@ func (h *CouponHandler) UpdateCoupon(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path int true "优惠券 ID"
-// @Success 200 {object} model.HttpSuccess{data=ent.Coupon}
+// @Success 200 {object} model.HttpSuccess{data=model.CouponResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/coupon/query/{id} [get]
+// @Router /api/v1/coupon/query/glm-5.3_common [get]
 func (h *CouponHandler) QueryCoupon(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -151,7 +187,7 @@ func (h *CouponHandler) QueryCoupon(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(model.NewSuccess("success", coupon))
+	return c.JSON(model.NewSuccess("success", newCouponResp(coupon)))
 }
 
 // @Summary 删除优惠券
@@ -163,7 +199,7 @@ func (h *CouponHandler) QueryCoupon(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/coupon/delete/{id} [delete]
+// @Router /api/v1/coupon/delete/glm-5.3_common [delete]
 func (h *CouponHandler) DeleteCoupon(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -232,7 +268,7 @@ func (h *CouponHandler) BatchDeleteCoupons(c *fiber.Ctx) error {
 // @Param status query int false "优惠券状态"
 // @Param page query int false "页码" default(1)
 // @Param size query int false "每页数量" default(10)
-// @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.Coupon]}
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.CouponResp]}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/coupon/search [get]
@@ -247,9 +283,14 @@ func (h *CouponHandler) SearchCoupons(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	pageResult := model.PageResult[*ent.Coupon]{
+	records := make([]*model.CouponResp, 0, len(coupons))
+	for _, couponEntity := range coupons {
+		records = append(records, newCouponResp(couponEntity))
+	}
+
+	pageResult := model.PageResult[*model.CouponResp]{
 		Total:   int64(total),
-		Records: coupons,
+		Records: records,
 	}
 	return c.JSON(model.NewSuccess("success", pageResult))
 }

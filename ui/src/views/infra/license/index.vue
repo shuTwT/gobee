@@ -79,6 +79,7 @@ const columns: DataTableColumns<License> = [
   {
     title: '过期日期',
     key: 'expire_date',
+    render: (row) => (row.expire_date ? new Date(row.expire_date).toLocaleString() : '-'),
   },
   {
     title: '状态',
@@ -238,7 +239,8 @@ const handleVerify = async (row: License) => {
   try {
     const res = await verifyLicense({ domain: row.domain })
     if (res.data.valid) {
-      message.success(`授权验证成功：${res.data.message}，客户：${res.data.customer_name}，过期时间：${res.data.expire_date}`)
+      const expireDate = res.data.expire_date ? new Date(res.data.expire_date).toLocaleString() : '-'
+      message.success(`授权验证成功：${res.data.message}，客户：${res.data.customer_name}，过期时间：${expireDate}`)
     } else {
       message.warning(`授权验证失败：${res.data.message}`)
     }

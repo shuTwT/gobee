@@ -216,106 +216,6 @@ definitions:
         description: 评论者用户ID
         type: integer
     type: object
-  ent.Coupon:
-    properties:
-      active:
-        description: 是否启用
-        type: boolean
-      category_ids:
-        description: 适用分类ID列表
-        items:
-          type: integer
-        type: array
-      code:
-        description: 优惠券代码
-        type: string
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      description:
-        description: 优惠券描述
-        type: string
-      end_time:
-        description: 结束时间
-        type: string
-      id:
-        description: ID of the ent.
-        type: integer
-      image:
-        description: 优惠券图片
-        type: string
-      max_discount:
-        description: 最大优惠金额(分)
-        type: integer
-      min_amount:
-        description: 最低消费金额(分)
-        type: integer
-      name:
-        description: 优惠券名称
-        type: string
-      per_user_limit:
-        description: 每用户限领数量
-        type: integer
-      product_ids:
-        description: 适用商品ID列表
-        items:
-          type: integer
-        type: array
-      start_time:
-        description: 开始时间
-        type: string
-      total_count:
-        description: 发放总数
-        type: integer
-      type:
-        description: '优惠券类型: 0-满减 1-折扣 2-无门槛'
-        type: integer
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-      used_count:
-        description: 已使用数量
-        type: integer
-      value:
-        description: 优惠券值
-        type: integer
-    type: object
-  ent.CouponUsage:
-    properties:
-      coupon_code:
-        description: 优惠券代码
-        type: string
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      discount_amount:
-        description: 优惠金额(分)
-        type: integer
-      expire_at:
-        description: 过期时间
-        type: string
-      id:
-        description: ID of the ent.
-        type: integer
-      order_id:
-        description: 订单ID
-        type: integer
-      remark:
-        description: 备注
-        type: string
-      status:
-        description: '状态: 0-未使用 1-已使用 2-已过期'
-        type: integer
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-      used_at:
-        description: 使用时间
-        type: string
-      user_id:
-        description: 用户ID
-        type: integer
-    type: object
   ent.FLink:
     properties:
       avatar_url:
@@ -653,6 +553,9 @@ definitions:
       pay_url:
         description: 支付链接
         type: string
+      points_granted:
+        description: 充值发放的积分数量
+        type: integer
       post_id:
         description: 文章付费关联
         type: integer
@@ -1464,6 +1367,51 @@ definitions:
     - type
     - value
     type: object
+  model.CouponResp:
+    properties:
+      active:
+        type: boolean
+      category_ids:
+        items:
+          type: integer
+        type: array
+      code:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      end_time:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      max_discount:
+        type: integer
+      min_amount:
+        type: integer
+      name:
+        type: string
+      per_user_limit:
+        type: integer
+      product_ids:
+        items:
+          type: integer
+        type: array
+      start_time:
+        type: string
+      total_count:
+        type: integer
+      type:
+        type: integer
+      updated_at:
+        type: string
+      used_count:
+        type: integer
+      value:
+        type: integer
+    type: object
   model.CouponUpdateReq:
     properties:
       active:
@@ -1538,6 +1486,31 @@ definitions:
     - discount_amount
     - expire_at
     - user_id
+    type: object
+  model.CouponUsageResp:
+    properties:
+      coupon_code:
+        type: string
+      created_at:
+        type: string
+      discount_amount:
+        type: integer
+      expire_at:
+        type: string
+      id:
+        type: integer
+      order_id:
+        type: integer
+      remark:
+        type: string
+      status:
+        type: integer
+      updated_at:
+        type: string
+      used_at:
+        type: string
+      user_id:
+        type: integer
     type: object
   model.CouponUsageUpdateReq:
     properties:
@@ -2246,24 +2219,6 @@ definitions:
       total:
         type: integer
     type: object
-  model.PageResult-ent_Coupon:
-    properties:
-      records:
-        items:
-          $ref: '#/definitions/ent.Coupon'
-        type: array
-      total:
-        type: integer
-    type: object
-  model.PageResult-ent_CouponUsage:
-    properties:
-      records:
-        items:
-          $ref: '#/definitions/ent.CouponUsage'
-        type: array
-      total:
-        type: integer
-    type: object
   model.PageResult-ent_Notification:
     properties:
       records:
@@ -2314,6 +2269,24 @@ definitions:
       records:
         items:
           $ref: '#/definitions/ent.Wallet'
+        type: array
+      total:
+        type: integer
+    type: object
+  model.PageResult-model_CouponResp:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/model.CouponResp'
+        type: array
+      total:
+        type: integer
+    type: object
+  model.PageResult-model_CouponUsageResp:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/model.CouponUsageResp'
         type: array
       total:
         type: integer
@@ -2462,6 +2435,36 @@ definitions:
       total:
         type: integer
     type: object
+  model.PayMethodResp:
+    properties:
+      alipay:
+        description: 支付宝（易支付或直连支付宝启用）
+        type: boolean
+      balance:
+        description: 余额支付（钱包余额大于 0）
+        type: boolean
+      balance_amount:
+        description: 钱包余额,单位分
+        type: integer
+      wechat:
+        description: 微信支付（易支付或直连微信支付启用）
+        type: boolean
+    type: object
+  model.PayOrderRechargeReq:
+    properties:
+      amount:
+        description: 充值金额,单位分
+        type: integer
+      channel_type:
+        description: 渠道类型 1 支付宝 2 微信 3 银联
+        type: string
+      return_url:
+        description: 返回地址
+        type: string
+    required:
+    - channel_type
+    - return_url
+    type: object
   model.PayOrderRefundReq:
     properties:
       amount:
@@ -2519,6 +2522,21 @@ definitions:
     - channel_type
     - order_type
     - return_url
+    type: object
+  model.PayOrderSubmitResp:
+    properties:
+      order_id:
+        description: 系统订单ID
+        type: integer
+      out_trade_no:
+        description: 商户订单号
+        type: string
+      pay_url:
+        description: 支付链接
+        type: string
+      trade_no:
+        description: 易支付订单号
+        type: string
     type: object
   model.PayOrderTodayStats:
     properties:
@@ -4928,7 +4946,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.Coupon'
+                  $ref: '#/definitions/model.CouponResp'
               type: object
         "400":
           description: Bad Request
@@ -4941,7 +4959,7 @@ paths:
       summary: 创建优惠券
       tags:
       - 后台管理接口/优惠券
-  /api/v1/coupon/delete/{id}:
+  /api/v1/coupon/delete/glm-5.3_common:
     delete:
       consumes:
       - application/json
@@ -4991,7 +5009,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/ent.Coupon'
+                    $ref: '#/definitions/model.CouponResp'
                   type: array
               type: object
         "400":
@@ -5029,7 +5047,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/model.PageResult-ent_Coupon'
+                  $ref: '#/definitions/model.PageResult-model_CouponResp'
               type: object
         "400":
           description: Bad Request
@@ -5042,7 +5060,7 @@ paths:
       summary: 获取优惠券分页列表
       tags:
       - 后台管理接口/优惠券
-  /api/v1/coupon/query/{id}:
+  /api/v1/coupon/query/glm-5.3_common:
     get:
       consumes:
       - application/json
@@ -5063,7 +5081,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.Coupon'
+                  $ref: '#/definitions/model.CouponResp'
               type: object
         "400":
           description: Bad Request
@@ -5110,7 +5128,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/model.PageResult-ent_Coupon'
+                  $ref: '#/definitions/model.PageResult-model_CouponResp'
               type: object
         "400":
           description: Bad Request
@@ -5123,7 +5141,7 @@ paths:
       summary: 搜索优惠券
       tags:
       - 后台管理接口/优惠券
-  /api/v1/coupon/update/{id}:
+  /api/v1/coupon/update/glm-5.3_common:
     put:
       consumes:
       - application/json
@@ -5150,7 +5168,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.Coupon'
+                  $ref: '#/definitions/model.CouponResp'
               type: object
         "400":
           description: Bad Request
@@ -5255,7 +5273,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.CouponUsage'
+                  $ref: '#/definitions/model.CouponUsageResp'
               type: object
         "400":
           description: Bad Request
@@ -5268,7 +5286,7 @@ paths:
       summary: 创建优惠券使用记录
       tags:
       - 后台管理接口/优惠券使用记录
-  /api/v1/couponusage/delete/{id}:
+  /api/v1/couponusage/delete/glm-5.3_common:
     delete:
       consumes:
       - application/json
@@ -5318,7 +5336,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/ent.CouponUsage'
+                    $ref: '#/definitions/model.CouponUsageResp'
                   type: array
               type: object
         "400":
@@ -5358,7 +5376,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/model.PageResult-ent_CouponUsage'
+                  $ref: '#/definitions/model.PageResult-model_CouponUsageResp'
               type: object
         "400":
           description: Bad Request
@@ -5371,7 +5389,7 @@ paths:
       summary: 获取优惠券使用记录列表分页
       tags:
       - 后台管理接口/优惠券使用记录
-  /api/v1/couponusage/query/{id}:
+  /api/v1/couponusage/query/glm-5.3_common:
     get:
       consumes:
       - application/json
@@ -5392,7 +5410,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.CouponUsage'
+                  $ref: '#/definitions/model.CouponUsageResp'
               type: object
         "400":
           description: Bad Request
@@ -5441,7 +5459,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/model.PageResult-ent_CouponUsage'
+                  $ref: '#/definitions/model.PageResult-model_CouponUsageResp'
               type: object
         "400":
           description: Bad Request
@@ -5454,7 +5472,7 @@ paths:
       summary: 搜索优惠券使用记录
       tags:
       - 后台管理接口/优惠券使用记录
-  /api/v1/couponusage/update/{id}:
+  /api/v1/couponusage/update/glm-5.3_common:
     put:
       consumes:
       - application/json
@@ -5481,7 +5499,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.CouponUsage'
+                  $ref: '#/definitions/model.CouponUsageResp'
               type: object
         "400":
           description: Bad Request
@@ -7375,6 +7393,59 @@ paths:
       summary: 获取支付订单列表
       tags:
       - 后台管理接口/支付订单
+  /api/v1/pay-order/mock-pay/{id}:
+    get:
+      description: 模拟支付页面（仅测试环境使用），展示订单信息并提供模拟支付成功/失败按钮
+      parameters:
+      - description: 支付订单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: 模拟支付页面 HTML
+          schema:
+            type: string
+      summary: 模拟支付页
+      tags:
+      - 公开接口/支付
+  /api/v1/pay-order/mock-pay/{id}/fail:
+    post:
+      description: 模拟支付失败回调（仅测试环境使用）
+      parameters:
+      - description: 支付订单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+      summary: 模拟支付失败
+      tags:
+      - 公开接口/支付
+  /api/v1/pay-order/mock-pay/{id}/success:
+    post:
+      description: 模拟支付成功回调（仅测试环境使用），走真实支付成功履约链路
+      parameters:
+      - description: 支付订单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HttpSuccess'
+      summary: 模拟支付成功
+      tags:
+      - 公开接口/支付
   /api/v1/pay-order/notify:
     post:
       consumes:
@@ -7388,6 +7459,34 @@ paths:
           schema:
             type: string
       summary: 支付回调
+      tags:
+      - 后台管理接口/支付订单
+  /api/v1/pay-order/pay-methods:
+    get:
+      consumes:
+      - application/json
+      description: 查询当前用户可用的支付方式（支付宝/微信/余额）
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PayMethodResp'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 可用支付方式
       tags:
       - 后台管理接口/支付订单
   /api/v1/pay-order/query/{id}:
@@ -7421,6 +7520,41 @@ paths:
           schema:
             $ref: '#/definitions/model.HttpError'
       summary: 查询支付订单
+      tags:
+      - 后台管理接口/支付订单
+  /api/v1/pay-order/recharge:
+    post:
+      consumes:
+      - application/json
+      description: 提交余额充值订单，支付成功后自动入账钱包并发放会员积分
+      parameters:
+      - description: 充值请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.PayOrderRechargeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PayOrderSubmitResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 余额充值
       tags:
       - 后台管理接口/支付订单
   /api/v1/pay-order/refund/{id}:

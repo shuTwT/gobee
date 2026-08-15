@@ -98,6 +98,10 @@ func (PayOrder) Fields() []ent.Field {
 			Optional().
 			Nillable().
 			Comment("退款时间"),
+		field.Int("points_granted").
+			Optional().
+			Default(0).
+			Comment("充值发放的积分数量"),
 	}
 }
 

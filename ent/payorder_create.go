@@ -365,6 +365,20 @@ func (_c *PayOrderCreate) SetNillableRefundAt(v *time.Time) *PayOrderCreate {
 	return _c
 }
 
+// SetPointsGranted sets the "points_granted" field.
+func (_c *PayOrderCreate) SetPointsGranted(v int) *PayOrderCreate {
+	_c.mutation.SetPointsGranted(v)
+	return _c
+}
+
+// SetNillablePointsGranted sets the "points_granted" field if the given value is not nil.
+func (_c *PayOrderCreate) SetNillablePointsGranted(v *int) *PayOrderCreate {
+	if v != nil {
+		_c.SetPointsGranted(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *PayOrderCreate) SetID(v int) *PayOrderCreate {
 	_c.mutation.SetID(v)
@@ -432,6 +446,10 @@ func (_c *PayOrderCreate) defaults() {
 	if _, ok := _c.mutation.State(); !ok {
 		v := payorder.DefaultState
 		_c.mutation.SetState(v)
+	}
+	if _, ok := _c.mutation.PointsGranted(); !ok {
+		v := payorder.DefaultPointsGranted
+		_c.mutation.SetPointsGranted(v)
 	}
 }
 
@@ -568,6 +586,10 @@ func (_c *PayOrderCreate) createSpec() (*PayOrder, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.RefundAt(); ok {
 		_spec.SetField(payorder.FieldRefundAt, field.TypeTime, value)
 		_node.RefundAt = &value
+	}
+	if value, ok := _c.mutation.PointsGranted(); ok {
+		_spec.SetField(payorder.FieldPointsGranted, field.TypeInt, value)
+		_node.PointsGranted = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

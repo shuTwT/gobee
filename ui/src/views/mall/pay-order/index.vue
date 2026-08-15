@@ -131,13 +131,13 @@
                 }}</n-tag>
               </n-descriptions-item>
               <n-descriptions-item label="创建时间">{{
-                currentOrder.createdAt
+                formatTime(currentOrder.createdAt)
               }}</n-descriptions-item>
               <n-descriptions-item label="支付时间" v-if="currentOrder.paidAt">{{
-                currentOrder.paidAt
+                formatTime(currentOrder.paidAt)
               }}</n-descriptions-item>
               <n-descriptions-item label="过期时间">{{
-                currentOrder.expireAt
+                formatTime(currentOrder.expireAt)
               }}</n-descriptions-item>
               <n-descriptions-item label="用户ID">{{ currentOrder.userId }}</n-descriptions-item>
             </n-descriptions>
@@ -155,7 +155,7 @@
                 getStatusText(currentOrder.status)
               }}</n-descriptions-item>
               <n-descriptions-item label="支付时间" v-if="currentOrder.paidAt">{{
-                currentOrder.paidAt
+                formatTime(currentOrder.paidAt)
               }}</n-descriptions-item>
               <n-descriptions-item label="支付金额" v-if="currentOrder.paidAmount"
                 >¥{{ currentOrder.paidAmount }}</n-descriptions-item
@@ -224,8 +224,12 @@ import {
   EyeOutline,
 } from '@vicons/ionicons5'
 import * as payOrderApi from '@/api/mall/payOrder'
+import dayjs from 'dayjs'
 
 const message = useMessage()
+
+// 时间格式化：空值显示 '-'
+const formatTime = (time?: string) => (time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-')
 
 // 搜索和筛选
 const searchKeyword = ref('')
@@ -319,7 +323,11 @@ interface BackendPayOrder {
   channel_type: string
   order_id: string
   out_trade_no: string
-  total_fee: string
+  // 下单用户ID
+  user_id: number
+  // 支付金额,单位分
+  price: number
+  order_price: number
   subject: string
   body: string
   notify_url: string
@@ -358,15 +366,16 @@ const mapBackendToFrontend = (backendOrder: BackendPayOrder): PayOrderItem => {
     id: backendOrder.id,
     merchantOrderNo: backendOrder.out_trade_no || '',
     title: backendOrder.subject || '',
-    amount: parseFloat(backendOrder.total_fee || '0'),
-    paidAmount: status === 'paid' ? parseFloat(backendOrder.total_fee || '0') : 0,
+    // 后端金额单位为分，展示转为元
+    amount: (backendOrder.price || 0) / 100,
+    paidAmount: status === 'paid' ? (backendOrder.price || 0) / 100 : 0,
     fee: 0,
     channel: backendOrder.channel_type,
     channelName: channelName,
     status: status,
     tradeNo: backendOrder.order_id,
     thirdPartyOrderNo: '',
-    userId: '',
+    userId: backendOrder.user_id ? String(backendOrder.user_id) : '',
     clientIp: '',
     userAgent: '',
     notifyUrl: backendOrder.notify_url || '',
@@ -517,15 +526,14 @@ const columns: DataTableColumns<PayOrderItem> = [
     title: '创建时间',
     key: 'createdAt',
     width: 160,
+    render: (row) => formatTime(row.createdAt),
     sorter: (row1, row2) => new Date(row1.createdAt).getTime() - new Date(row2.createdAt).getTime(),
   },
   {
     title: '支付时间',
     key: 'paidAt',
     width: 160,
-    render: (row) => {
-      return row.paidAt || '-'
-    },
+    render: (row) => formatTime(row.paidAt),
     sorter: (row1, row2) => {
       const time1 = row1.paidAt ? new Date(row1.paidAt).getTime() : 0
       const time2 = row2.paidAt ? new Date(row2.paidAt).getTime() : 0

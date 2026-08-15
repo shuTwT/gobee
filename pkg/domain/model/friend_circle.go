@@ -1,14 +1,12 @@
 package model
 
-import "time"
-
 type FriendCircleRuleResp struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt *LocalTime `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UpdatedAt *LocalTime `json:"updated_at,omitempty"`
 	// 规则名称
 	Name string `json:"name,omitempty"`
 	// 标题选择器

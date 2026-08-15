@@ -14,15 +14,15 @@ export const createCoupon = (data: any) => {
 }
 
 export const updateCoupon = (id: number, data: any) => {
-  return http.request<ApiResponse<any>>('put', `${BASE_URL}/v1/coupon/update/${id}`, { data })
+  return http.request<ApiResponse<any>>('put', `${BASE_URL}/v1/coupon/update/` + id, { data })
 }
 
 export const queryCoupon = (id: number) => {
-  return http.request<ApiResponse<any>>('get', `${BASE_URL}/v1/coupon/query/${id}`)
+  return http.request<ApiResponse<any>>('get', `${BASE_URL}/v1/coupon/query/` + id)
 }
 
 export const deleteCoupon = (id: number) => {
-  return http.request<ApiResponse<any>>('delete', `${BASE_URL}/v1/coupon/delete/${id}`)
+  return http.request<ApiResponse<any>>('delete', `${BASE_URL}/v1/coupon/delete/` + id)
 }
 
 export const batchUpdateCoupons = (ids: number[], data: any) => {

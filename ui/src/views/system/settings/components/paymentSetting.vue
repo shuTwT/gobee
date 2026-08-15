@@ -23,6 +23,8 @@ const defaultForm = {
   paymentNotifyUrl: '',
   orderTimeout: 30,
   refundReview: true,
+  rechargePointsRate: 1,
+  enableMockPay: false,
 }
 const paymentForm = ref({
   enableEpay: false,
@@ -42,6 +44,8 @@ const paymentForm = ref({
   paymentNotifyUrl: '',
   orderTimeout: 30,
   refundReview: true,
+  rechargePointsRate: 1,
+  enableMockPay: false,
 })
 const paymentLoading = ref(false)
 
@@ -165,8 +169,20 @@ onMounted(() => {
         <template #suffix>分钟</template>
       </n-input-number>
     </n-form-item>
+    <n-form-item label="充值积分比例" path="rechargePointsRate">
+      <n-input-number v-model:value="paymentForm.rechargePointsRate" :min="1" :max="10000">
+        <template #suffix>积分/分</template>
+      </n-input-number>
+    </n-form-item>
     <n-form-item label="退款审核" path="refundReview">
       <n-switch v-model:value="paymentForm.refundReview" />
+    </n-form-item>
+    <n-divider />
+    <n-form-item label="模拟支付(Mock)" path="enableMockPay">
+      <n-switch v-model:value="paymentForm.enableMockPay" />
+      <span style="margin-left: 8px; font-size: 12px; color: #999">
+        开启后下单不调用真实支付网关，返回本地模拟支付页（仅测试环境使用）
+      </span>
     </n-form-item>
     <n-form-item>
       <n-button type="primary" @click="savePaymentSettings" :loading="paymentLoading">

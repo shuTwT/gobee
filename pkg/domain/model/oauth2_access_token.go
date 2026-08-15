@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 // Oauth2AccessTokenCreateReq represents the request body for creating an OAuth2 access token.
 
 type Oauth2AccessTokenCreateReq struct {
@@ -10,7 +8,7 @@ type Oauth2AccessTokenCreateReq struct {
 	RefreshToken string    `json:"refresh_token" validate:"required"`
 	ClientID     string    `json:"client_id" validate:"required"`
 	Scope        string    `json:"scope" validate:"required"`
-	ExpireAt     time.Time `json:"expire_at" validate:"required"`
+	ExpireAt     LocalTime `json:"expire_at" validate:"required"`
 }
 
 // Oauth2AccessTokenUpdateReq represents the request body for updating an OAuth2 access token.
@@ -19,7 +17,7 @@ type Oauth2AccessTokenUpdateReq struct {
 	AccessToken  *string    `json:"access_token,omitempty"`
 	RefreshToken *string    `json:"refresh_token,omitempty"`
 	Scope        *string    `json:"scope,omitempty"`
-	ExpireAt     *time.Time `json:"expire_at,omitempty"`
+	ExpireAt     *LocalTime `json:"expire_at,omitempty"`
 }
 
 // Oauth2AccessTokenResp represents the response body for an OAuth2 access token.

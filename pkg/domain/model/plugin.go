@@ -2,7 +2,6 @@ package model
 
 import (
 	"mime/multipart"
-	"time"
 )
 
 type PluginPageReq struct {
@@ -60,7 +59,7 @@ type PluginRegisterReq struct {
 	Version     string            `json:"version" validate:"required"`
 	GrpcAddress string            `json:"grpc_address" validate:"required"`
 	Status      string            `json:"status" validate:"required"`
-	StartTime   *time.Time        `json:"start_time"`
+	StartTime   *LocalTime        `json:"start_time"`
 	Metadata    map[string]string `json:"metadata"`
 }
 

@@ -2,7 +2,6 @@ package license
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/shuTwT/hoshikuzu/internal/services/infra/license"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
@@ -121,7 +120,7 @@ func (h *LicenseHandler) CreateLicense(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	newLicense, err := h.licenseService.CreateLicense(c.Context(), req.Domain, licenseKey, req.CustomerName, req.ExpireDate)
+	newLicense, err := h.licenseService.CreateLicense(c.Context(), req.Domain, licenseKey, req.CustomerName, req.ExpireDate.Time())
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -161,7 +160,7 @@ func (h *LicenseHandler) UpdateLicense(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
 	}
 
-	updatedLicense, err := h.licenseService.UpdateLicense(c.Context(), id, req.Domain, req.LicenseKey, req.CustomerName, req.ExpireDate, req.Status)
+	updatedLicense, err := h.licenseService.UpdateLicense(c.Context(), id, req.Domain, req.LicenseKey, req.CustomerName, req.ExpireDate.Time(), req.Status)
 	if err != nil {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
@@ -233,7 +232,7 @@ func (h *LicenseHandler) VerifyLicense(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("授权验证", &model.LicenseVerifyResp{
 		Valid:        true,
 		CustomerName: licenseEntity.CustomerName,
-		ExpireDate:   licenseEntity.ExpireDate.Format(time.RFC3339),
+		ExpireDate:   model.ParseTime(licenseEntity.ExpireDate),
 		Message:      "授权有效",
 	}))
 }

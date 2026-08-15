@@ -55,9 +55,25 @@ type PayOrderResp struct {
 }
 
 const (
-	PayOrderTypePost    = "1"
-	PayOrderTypeProduct = "2"
+	PayOrderTypePost     = "1"
+	PayOrderTypeProduct  = "2"
+	PayOrderTypeRecharge = "3"
+
+	// 支付渠道
+	PayChannelBalance = "balance"
 )
+
+// PayMethodResp 可用支付方式查询响应
+type PayMethodResp struct {
+	// 支付宝（易支付或直连支付宝启用）
+	Alipay bool `json:"alipay"`
+	// 微信支付（易支付或直连微信支付启用）
+	Wechat bool `json:"wechat"`
+	// 余额支付（钱包余额大于 0）
+	Balance bool `json:"balance"`
+	// 钱包余额,单位分
+	BalanceAmount int `json:"balance_amount"`
+}
 
 type PayOrderSubmitReq struct {
 	// 渠道类型 1 支付宝 2 微信 3 银联
@@ -112,4 +128,14 @@ type PayOrderRefundResp struct {
 	RefundNo     string `json:"refund_no"`
 	RefundAmount int    `json:"refund_amount"`
 	State        string `json:"state"`
+}
+
+// PayOrderRechargeReq 余额充值请求
+type PayOrderRechargeReq struct {
+	// 渠道类型 1 支付宝 2 微信 3 银联
+	ChannelType string `json:"channel_type" validate:"required"`
+	// 返回地址
+	ReturnUrl string `json:"return_url" validate:"required,url"`
+	// 充值金额,单位分
+	Amount int `json:"amount"`
 }

@@ -279,6 +279,8 @@ func initMallRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		payOrderApi.Get("/query/:id", handlerMap.PayOrderHandler.QueryPayOrder).Name("payOrderQuery")
 		payOrderApi.Delete("/delete/:id", handlerMap.PayOrderHandler.DeletePayOrder).Name("payOrderDelete")
 		payOrderApi.Post("/submit", handlerMap.PayOrderHandler.SubmitPayOrder).Name("payOrderSubmit")
+		payOrderApi.Post("/recharge", handlerMap.PayOrderHandler.RechargePayOrder).Name("payOrderRecharge")
+		payOrderApi.Get("/pay-methods", handlerMap.PayOrderHandler.GetPayMethods).Name("payOrderPayMethods")
 		payOrderApi.Post("/refund/:id", handlerMap.PayOrderHandler.RefundPayOrder).Name("payOrderRefund")
 		payOrderApi.Get("/status/:id", handlerMap.PayOrderHandler.QueryOrderStatus).Name("payOrderStatus")
 		payOrderApi.Get("/today-stats", handlerMap.PayOrderHandler.GetTodayStats).Name("payOrderTodayStats")
@@ -411,6 +413,11 @@ func Initialize(router *fiber.App, handlerMap handlers.HandlerMap, dbClient *ent
 			// 支付回调（公开，易支付服务器不带认证）
 			apiV1.Post("/pay-order/notify", handlerMap.PayOrderHandler.NotifyPayOrder)
 			apiV1.Get("/pay-order/notify", handlerMap.PayOrderHandler.NotifyPayOrder)
+
+			// 模拟支付（公开，仅测试环境开启 mock 开关后使用）
+			apiV1.Get("/pay-order/mock-pay/:id", handlerMap.PayOrderHandler.MockPayPage)
+			apiV1.Post("/pay-order/mock-pay/:id/success", handlerMap.PayOrderHandler.MockPaySuccess)
+			apiV1.Post("/pay-order/mock-pay/:id/fail", handlerMap.PayOrderHandler.MockPayFail)
 
 			apiV1.Use(middleware.FlexibleAuth(dbClient))
 			initAIRouter(apiV1, handlerMap)

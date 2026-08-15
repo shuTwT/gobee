@@ -519,6 +519,33 @@ func (_u *PayOrderUpdate) ClearRefundAt() *PayOrderUpdate {
 	return _u
 }
 
+// SetPointsGranted sets the "points_granted" field.
+func (_u *PayOrderUpdate) SetPointsGranted(v int) *PayOrderUpdate {
+	_u.mutation.ResetPointsGranted()
+	_u.mutation.SetPointsGranted(v)
+	return _u
+}
+
+// SetNillablePointsGranted sets the "points_granted" field if the given value is not nil.
+func (_u *PayOrderUpdate) SetNillablePointsGranted(v *int) *PayOrderUpdate {
+	if v != nil {
+		_u.SetPointsGranted(*v)
+	}
+	return _u
+}
+
+// AddPointsGranted adds value to the "points_granted" field.
+func (_u *PayOrderUpdate) AddPointsGranted(v int) *PayOrderUpdate {
+	_u.mutation.AddPointsGranted(v)
+	return _u
+}
+
+// ClearPointsGranted clears the value of the "points_granted" field.
+func (_u *PayOrderUpdate) ClearPointsGranted() *PayOrderUpdate {
+	_u.mutation.ClearPointsGranted()
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *PayOrderUpdate) SetUser(v *User) *PayOrderUpdate {
 	return _u.SetUserID(v.ID)
@@ -747,6 +774,15 @@ func (_u *PayOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.RefundAtCleared() {
 		_spec.ClearField(payorder.FieldRefundAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.PointsGranted(); ok {
+		_spec.SetField(payorder.FieldPointsGranted, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedPointsGranted(); ok {
+		_spec.AddField(payorder.FieldPointsGranted, field.TypeInt, value)
+	}
+	if _u.mutation.PointsGrantedCleared() {
+		_spec.ClearField(payorder.FieldPointsGranted, field.TypeInt)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1343,6 +1379,33 @@ func (_u *PayOrderUpdateOne) ClearRefundAt() *PayOrderUpdateOne {
 	return _u
 }
 
+// SetPointsGranted sets the "points_granted" field.
+func (_u *PayOrderUpdateOne) SetPointsGranted(v int) *PayOrderUpdateOne {
+	_u.mutation.ResetPointsGranted()
+	_u.mutation.SetPointsGranted(v)
+	return _u
+}
+
+// SetNillablePointsGranted sets the "points_granted" field if the given value is not nil.
+func (_u *PayOrderUpdateOne) SetNillablePointsGranted(v *int) *PayOrderUpdateOne {
+	if v != nil {
+		_u.SetPointsGranted(*v)
+	}
+	return _u
+}
+
+// AddPointsGranted adds value to the "points_granted" field.
+func (_u *PayOrderUpdateOne) AddPointsGranted(v int) *PayOrderUpdateOne {
+	_u.mutation.AddPointsGranted(v)
+	return _u
+}
+
+// ClearPointsGranted clears the value of the "points_granted" field.
+func (_u *PayOrderUpdateOne) ClearPointsGranted() *PayOrderUpdateOne {
+	_u.mutation.ClearPointsGranted()
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *PayOrderUpdateOne) SetUser(v *User) *PayOrderUpdateOne {
 	return _u.SetUserID(v.ID)
@@ -1601,6 +1664,15 @@ func (_u *PayOrderUpdateOne) sqlSave(ctx context.Context) (_node *PayOrder, err 
 	}
 	if _u.mutation.RefundAtCleared() {
 		_spec.ClearField(payorder.FieldRefundAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.PointsGranted(); ok {
+		_spec.SetField(payorder.FieldPointsGranted, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedPointsGranted(); ok {
+		_spec.AddField(payorder.FieldPointsGranted, field.TypeInt, value)
+	}
+	if _u.mutation.PointsGrantedCleared() {
+		_spec.ClearField(payorder.FieldPointsGranted, field.TypeInt)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

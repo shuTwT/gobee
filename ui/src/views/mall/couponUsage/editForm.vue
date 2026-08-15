@@ -16,9 +16,9 @@ const formData = ref({
   user_id: props.couponUsageData.user_id || 0,
   order_id: props.couponUsageData.order_id || null,
   status: props.couponUsageData.status !== undefined ? props.couponUsageData.status : 0,
-  used_at: props.couponUsageData.used_at || '',
+  used_at: props.couponUsageData.used_at ? new Date(props.couponUsageData.used_at).getTime() : null,
   discount_amount: props.couponUsageData.discount_amount || 0,
-  expire_at: props.couponUsageData.expire_at || '',
+  expire_at: props.couponUsageData.expire_at ? new Date(props.couponUsageData.expire_at).getTime() : null,
   remark: props.couponUsageData.remark || '',
 })
 
@@ -42,7 +42,7 @@ const rules: FormRules = {
   },
   expire_at: {
     required: true,
-    type: 'string',
+    type: 'number',
     message: '请选择过期时间',
     trigger: 'change',
   },

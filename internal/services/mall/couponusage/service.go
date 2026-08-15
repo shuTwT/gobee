@@ -2,7 +2,6 @@ package couponusage
 
 import (
 	"context"
-	"time"
 
 	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/ent/couponusage"
@@ -30,16 +29,11 @@ func NewCouponUsageServiceImpl(client *ent.Client) *CouponUsageServiceImpl {
 }
 
 func (s *CouponUsageServiceImpl) CreateCouponUsage(ctx context.Context, req *model.CouponUsageCreateReq) (*ent.CouponUsage, error) {
-	expireAt, err := time.Parse(time.RFC3339, req.ExpireAt)
-	if err != nil {
-		return nil, err
-	}
-
 	createBuilder := s.client.CouponUsage.Create().
 		SetCouponCode(req.CouponCode).
 		SetUserID(req.UserID).
 		SetDiscountAmount(req.DiscountAmount).
-		SetExpireAt(expireAt)
+		SetExpireAt(req.ExpireAt.Time())
 
 	if req.OrderID != nil {
 		createBuilder.SetOrderID(*req.OrderID)
@@ -61,19 +55,13 @@ func (s *CouponUsageServiceImpl) UpdateCouponUsage(ctx context.Context, id int, 
 		updateBuilder.SetStatus(*req.Status)
 	}
 	if req.UsedAt != nil {
-		usedAt, err := time.Parse(time.RFC3339, *req.UsedAt)
-		if err == nil {
-			updateBuilder.SetUsedAt(usedAt)
-		}
+		updateBuilder.SetUsedAt(req.UsedAt.Time())
 	}
 	if req.DiscountAmount != nil {
 		updateBuilder.SetDiscountAmount(*req.DiscountAmount)
 	}
 	if req.ExpireAt != nil {
-		expireAt, err := time.Parse(time.RFC3339, *req.ExpireAt)
-		if err == nil {
-			updateBuilder.SetExpireAt(expireAt)
-		}
+		updateBuilder.SetExpireAt(req.ExpireAt.Time())
 	}
 	if req.Remark != nil {
 		updateBuilder.SetRemark(*req.Remark)
