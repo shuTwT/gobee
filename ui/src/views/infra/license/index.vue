@@ -307,6 +307,7 @@ onMounted(() => {
         :loading="loading"
         :pagination="pagination"
         :row-key="(row) => row.id"
+        :scroll-x="1200"
       />
     </n-card>
   </div>

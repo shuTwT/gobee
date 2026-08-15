@@ -252,6 +252,7 @@ onMounted(() => {
         :pagination="pagination"
         :row-key="(row) => row.id"
         :remote="true"
+        :scroll-x="1380"
       />
     </n-card>
   </div>

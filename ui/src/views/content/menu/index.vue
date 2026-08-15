@@ -324,6 +324,7 @@ onMounted(() => {
         :data="dataList"
         :loading="loading"
         :row-key="(row) => row.id"
+        :scroll-x="1200"
         :children-key="'children'"
         default-expand-all
       />
