@@ -93,6 +93,8 @@ func (h *PostHandler) ListPost(c *fiber.Ctx) error {
 // @Produce json
 // @Param page query int false "页码" default(1)
 // @Param size query int false "每页数量" default(10)
+// @Param start_date query int false "创建时间起始（毫秒时间戳）"
+// @Param end_date query int false "创建时间结束（毫秒时间戳）"
 // @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.PostResp]}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError

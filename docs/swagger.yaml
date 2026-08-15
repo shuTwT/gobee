@@ -2038,6 +2038,8 @@ definitions:
     properties:
       active:
         type: boolean
+      created_at:
+        type: string
       description:
         type: string
       discount_rate:
@@ -2058,6 +2060,8 @@ definitions:
         type: array
       sort_order:
         type: integer
+      updated_at:
+        type: string
     type: object
   model.MemberLevelUpdateReq:
     properties:
@@ -2086,6 +2090,8 @@ definitions:
     properties:
       active:
         type: boolean
+      created_at:
+        type: string
       expire_time:
         type: string
       id:
@@ -2104,6 +2110,8 @@ definitions:
         type: string
       total_spent:
         type: integer
+      updated_at:
+        type: string
       user_id:
         type: integer
       user_name:
@@ -2224,15 +2232,6 @@ definitions:
       records:
         items:
           $ref: '#/definitions/ent.Notification'
-        type: array
-      total:
-        type: integer
-    type: object
-  model.PageResult-ent_Product:
-    properties:
-      records:
-        items:
-          $ref: '#/definitions/ent.Product'
         type: array
       total:
         type: integer
@@ -2386,6 +2385,15 @@ definitions:
       records:
         items:
           $ref: '#/definitions/model.PostSearchResp'
+        type: array
+      total:
+        type: integer
+    type: object
+  model.PageResult-model_ProductResp:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/model.ProductResp'
         type: array
       total:
         type: integer
@@ -3022,6 +3030,70 @@ definitions:
     - price
     - sku
     - stock
+    type: object
+  model.ProductResp:
+    properties:
+      active:
+        type: boolean
+      attributes:
+        additionalProperties: true
+        type: object
+      brand:
+        type: string
+      category_id:
+        type: integer
+      cost_price:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      digital:
+        type: boolean
+      featured:
+        type: boolean
+      id:
+        type: integer
+      images:
+        items:
+          type: string
+        type: array
+      meta_description:
+        type: string
+      meta_keywords:
+        type: string
+      meta_title:
+        type: string
+      min_stock:
+        type: integer
+      name:
+        type: string
+      original_price:
+        type: integer
+      price:
+        type: integer
+      sales:
+        type: integer
+      short_description:
+        type: string
+      sku:
+        type: string
+      sort_order:
+        type: integer
+      stock:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      unit:
+        type: string
+      updated_at:
+        type: string
+      volume:
+        type: number
+      weight:
+        type: number
     type: object
   model.ProductSearchResp:
     properties:
@@ -8090,6 +8162,14 @@ paths:
         in: query
         name: size
         type: integer
+      - description: 创建时间起始（毫秒时间戳）
+        in: query
+        name: start_date
+        type: integer
+      - description: 创建时间结束（毫秒时间戳）
+        in: query
+        name: end_date
+        type: integer
       produces:
       - application/json
       responses:
@@ -8387,7 +8467,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.Product'
+                  $ref: '#/definitions/model.ProductResp'
               type: object
         "400":
           description: Bad Request
@@ -8450,7 +8530,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/ent.Product'
+                    $ref: '#/definitions/model.ProductResp'
                   type: array
               type: object
         "500":
@@ -8484,7 +8564,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/model.PageResult-ent_Product'
+                  $ref: '#/definitions/model.PageResult-model_ProductResp'
               type: object
         "500":
           description: Internal Server Error
@@ -8514,7 +8594,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.Product'
+                  $ref: '#/definitions/model.ProductResp'
               type: object
         "400":
           description: Bad Request
@@ -8554,7 +8634,7 @@ paths:
             - $ref: '#/definitions/model.HttpSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/ent.Product'
+                  $ref: '#/definitions/model.ProductResp'
               type: object
         "400":
           description: Bad Request

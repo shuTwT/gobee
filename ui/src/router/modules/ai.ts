@@ -22,6 +22,16 @@ export default [
           roles: ['admin', 'common', 'guest'],
         },
       },
+      {
+        path: '/ai/provider',
+        name: 'AiProvider',
+        component: () => import('@/views/ai/provider/index.vue'),
+        meta: {
+          title: 'AI 提供商管理',
+          showLink: true,
+          roles: ['admin', 'common', 'guest'],
+        },
+      },
     ]
   }
 ] satisfies RouteRecordRaw[]

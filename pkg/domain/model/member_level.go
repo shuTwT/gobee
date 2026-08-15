@@ -24,14 +24,16 @@ type MemberLevelUpdateReq struct {
 }
 
 type MemberLevelResp struct {
-	ID           int      `json:"id"`
-	Name         string   `json:"name"`
-	Description  string   `json:"description,omitempty"`
-	Level        int      `json:"level"`
-	MinPoints    int      `json:"min_points"`
-	DiscountRate int      `json:"discount_rate"`
-	Privileges   []string `json:"privileges,omitempty"`
-	Icon         string   `json:"icon,omitempty"`
-	Active       bool     `json:"active"`
-	SortOrder    int      `json:"sort_order"`
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	Description  string    `json:"description,omitempty"`
+	Level        int       `json:"level"`
+	MinPoints    int       `json:"min_points"`
+	DiscountRate int       `json:"discount_rate"`
+	Privileges   []string  `json:"privileges,omitempty"`
+	Icon         string    `json:"icon,omitempty"`
+	Active       bool      `json:"active"`
+	SortOrder    int       `json:"sort_order"`
+	CreatedAt    LocalTime `json:"created_at"`
+	UpdatedAt    LocalTime `json:"updated_at"`
 }

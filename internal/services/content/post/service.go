@@ -121,6 +121,16 @@ func (s *PostServiceImpl) QueryPostPage(c context.Context, req model.PostPageReq
 		query.Where(post.TitleContains(req.Title))
 	}
 
+	// 创建时间区间过滤，前端日期范围结束值为所选最后一天的零点，加一天转为左闭右开区间
+	if req.StartDate != nil {
+		query.Where(post.CreatedAtGTE(req.StartDate.Time()))
+	}
+
+	if req.EndDate != nil {
+		endDate := req.EndDate.Time().Add(24 * time.Hour)
+		query.Where(post.CreatedAtLT(endDate))
+	}
+
 	if req.Year != nil {
 		startDate := time.Date(*req.Year, 1, 1, 0, 0, 0, 0, time.UTC)
 		endDate := time.Date(*req.Year+1, 1, 1, 0, 0, 0, 0, time.UTC)

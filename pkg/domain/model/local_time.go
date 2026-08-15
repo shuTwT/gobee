@@ -19,6 +19,16 @@ func (t *LocalTime) UnmarshalJSON(data []byte) (err error) {
 	return
 }
 
+// UnmarshalText 支持从 query/form 字符串参数解析毫秒时间戳
+func (t *LocalTime) UnmarshalText(text []byte) error {
+	num, err := strconv.ParseInt(string(text), 10, 64)
+	if err != nil {
+		return err
+	}
+	*t = LocalTime(time.UnixMilli(num))
+	return nil
+}
+
 func (t LocalTime) MarshalJSON() ([]byte, error) {
 	return ([]byte)(strconv.FormatInt(time.Time(t).UnixMilli(), 10)), nil
 }

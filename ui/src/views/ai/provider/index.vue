@@ -422,186 +422,188 @@ onMounted(loadProviders)
 </script>
 
 <template>
-  <div :style="cssVars" class="flex items-start gap-4">
-    <!-- 左：AI 提供商 -->
-    <n-card title="AI 提供商" :style="{ width: '560px' }" class="shrink-0">
-      <template #header-extra>
-        <n-button type="primary" size="small" @click="openCreateProvider">添加提供商</n-button>
-      </template>
-      <n-data-table
-        :columns="providerColumns"
-        :data="providers"
-        :loading="loading"
-        :row-props="providerRowProps"
-        :row-class-name="providerRowClassName"
-        size="small"
-        :max-height="480"
-      />
-      <p class="mt-3 text-xs leading-5 text-gray-400">
-        点击左侧某一行可在右侧管理其模型。默认提供商用于 AI 聊天与文章摘要。
-      </p>
-    </n-card>
+  <div class="container-fluid p-6">
+    <div :style="cssVars" class="flex items-start gap-4">
+      <!-- 左：AI 提供商 -->
+      <n-card title="AI 提供商" :style="{ width: '560px' }" class="shrink-0">
+        <template #header-extra>
+          <n-button type="primary" size="small" @click="openCreateProvider">添加提供商</n-button>
+        </template>
+        <n-data-table
+          :columns="providerColumns"
+          :data="providers"
+          :loading="loading"
+          :row-props="providerRowProps"
+          :row-class-name="providerRowClassName"
+          size="small"
+          :max-height="480"
+        />
+        <p class="mt-3 text-xs leading-5 text-gray-400">
+          点击左侧某一行可在右侧管理其模型。默认提供商用于 AI 聊天与文章摘要。
+        </p>
+      </n-card>
 
-    <!-- 右：模型管理子表 -->
-    <n-card class="min-w-0 flex-1">
-      <template #header>
-        <div class="flex items-center justify-between gap-4">
-          <span class="truncate">模型管理{{ selectedProvider ? ` - ${selectedProvider.name}` : '' }}</span>
-          <div class="flex shrink-0 gap-2">
-            <n-button
-              size="small"
-              :loading="syncingModels"
-              :disabled="!selectedProvider"
-              @click="handleSyncModels"
-            >
-              从供应商同步模型
-            </n-button>
-            <n-button
-              size="small"
-              type="primary"
-              :disabled="!selectedProvider"
-              @click="openCreateModel"
-            >
-              添加模型
-            </n-button>
+      <!-- 右：模型管理子表 -->
+      <n-card class="min-w-0 flex-1">
+        <template #header>
+          <div class="flex items-center justify-between gap-4">
+            <span class="truncate">模型管理{{ selectedProvider ? ` - ${selectedProvider.name}` : '' }}</span>
+            <div class="flex shrink-0 gap-2">
+              <n-button
+                size="small"
+                :loading="syncingModels"
+                :disabled="!selectedProvider"
+                @click="handleSyncModels"
+              >
+                从供应商同步模型
+              </n-button>
+              <n-button
+                size="small"
+                type="primary"
+                :disabled="!selectedProvider"
+                @click="openCreateModel"
+              >
+                添加模型
+              </n-button>
+            </div>
           </div>
-        </div>
-      </template>
-      <n-empty v-if="!selectedProvider" description="请先在左侧选择提供商" class="py-20" />
-      <n-data-table
-        v-else
-        :columns="modelColumns"
-        :data="selectedProvider.models"
-        size="small"
-        :max-height="480"
-      />
-    </n-card>
+        </template>
+        <n-empty v-if="!selectedProvider" description="请先在左侧选择提供商" class="py-20" />
+        <n-data-table
+          v-else
+          :columns="modelColumns"
+          :data="selectedProvider.models"
+          size="small"
+          :max-height="480"
+        />
+      </n-card>
 
-    <!-- 提供商弹窗 -->
-    <n-modal
-      v-model:show="providerFormVisible"
-      preset="card"
-      :title="editingProviderId === null ? '添加提供商' : '编辑提供商'"
-      style="width: 640px"
-    >
-      <n-form
-        ref="providerFormRef"
-        :model="providerForm"
-        :rules="providerRules"
-        label-placement="left"
-        label-width="110px"
+      <!-- 提供商弹窗 -->
+      <n-modal
+        v-model:show="providerFormVisible"
+        preset="card"
+        :title="editingProviderId === null ? '添加提供商' : '编辑提供商'"
+        style="width: 640px"
       >
-        <n-form-item label="提供商名称" path="name">
-          <n-input v-model:value="providerForm.name" placeholder="如 DeepSeek、OpenAI" />
-        </n-form-item>
-        <n-form-item label="提供商类型" path="provider_type">
-          <n-select
-            v-model:value="providerForm.provider_type"
-            :options="providerTypeOptions"
-            @update:value="onProviderTypeChange"
-          />
-        </n-form-item>
-        <n-form-item label="API 地址" path="base_url">
-          <n-input v-model:value="providerForm.base_url" placeholder="https://api.openai.com/v1" />
-        </n-form-item>
-        <n-form-item label="API Key" path="api_key">
-          <n-input
-            v-model:value="providerForm.api_key"
-            type="password"
-            show-password-on="mousedown"
-            :placeholder="editingProviderId === null ? '本地服务（如 Ollama）可留空' : '留空表示不修改'"
-          />
-        </n-form-item>
-        <n-form-item label="状态" path="is_enabled">
-          <n-switch v-model:value="providerForm.is_enabled" />
-          <span class="ml-2 text-xs text-gray-400">停用后 AI 聊天将不会使用该提供商</span>
-        </n-form-item>
-        <n-form-item label="设为默认" path="is_default">
-          <n-switch v-model:value="providerForm.is_default" />
-          <span class="ml-2 text-xs text-gray-400">默认提供商用于 AI 聊天与文章摘要</span>
-        </n-form-item>
-        <n-form-item label="排序" path="sort">
-          <n-input-number v-model:value="providerForm.sort" :min="0" />
-        </n-form-item>
-        <n-form-item label="备注" path="remark">
-          <n-input v-model:value="providerForm.remark" type="textarea" :rows="2" placeholder="可选" />
-        </n-form-item>
-        <n-collapse>
-          <n-collapse-item title="高级参数（采样）" name="advanced">
-            <n-form-item label="温度" path="temperature">
-              <n-slider v-model:value="providerForm.temperature" :min="0" :max="2" :step="0.1" />
-              <span class="slider-value">{{ providerForm.temperature }}</span>
-            </n-form-item>
-            <n-form-item label="最大令牌数" path="max_tokens">
-              <n-input-number v-model:value="providerForm.max_tokens" :min="1" :max="8192" />
-            </n-form-item>
-            <n-form-item label="Top P" path="top_p">
-              <n-slider v-model:value="providerForm.top_p" :min="0" :max="1" :step="0.1" />
-              <span class="slider-value">{{ providerForm.top_p }}</span>
-            </n-form-item>
-            <n-form-item label="频率惩罚" path="frequency_penalty">
-              <n-slider
-                v-model:value="providerForm.frequency_penalty"
-                :min="-2"
-                :max="2"
-                :step="0.1"
-              />
-              <span class="slider-value">{{ providerForm.frequency_penalty }}</span>
-            </n-form-item>
-            <n-form-item label="存在惩罚" path="presence_penalty">
-              <n-slider
-                v-model:value="providerForm.presence_penalty"
-                :min="-2"
-                :max="2"
-                :step="0.1"
-              />
-              <span class="slider-value">{{ providerForm.presence_penalty }}</span>
-            </n-form-item>
-          </n-collapse-item>
-        </n-collapse>
-      </n-form>
-      <template #footer>
-        <div class="flex justify-end gap-3">
-          <n-button :loading="providerTesting" @click="testProvider">测试连接</n-button>
-          <n-button type="primary" :loading="providerSaving" @click="saveProvider">保存</n-button>
-        </div>
-      </template>
-    </n-modal>
+        <n-form
+          ref="providerFormRef"
+          :model="providerForm"
+          :rules="providerRules"
+          label-placement="left"
+          label-width="110px"
+        >
+          <n-form-item label="提供商名称" path="name">
+            <n-input v-model:value="providerForm.name" placeholder="如 DeepSeek、OpenAI" />
+          </n-form-item>
+          <n-form-item label="提供商类型" path="provider_type">
+            <n-select
+              v-model:value="providerForm.provider_type"
+              :options="providerTypeOptions"
+              @update:value="onProviderTypeChange"
+            />
+          </n-form-item>
+          <n-form-item label="API 地址" path="base_url">
+            <n-input v-model:value="providerForm.base_url" placeholder="https://api.openai.com/v1" />
+          </n-form-item>
+          <n-form-item label="API Key" path="api_key">
+            <n-input
+              v-model:value="providerForm.api_key"
+              type="password"
+              show-password-on="mousedown"
+              :placeholder="editingProviderId === null ? '本地服务（如 Ollama）可留空' : '留空表示不修改'"
+            />
+          </n-form-item>
+          <n-form-item label="状态" path="is_enabled">
+            <n-switch v-model:value="providerForm.is_enabled" />
+            <span class="ml-2 text-xs text-gray-400">停用后 AI 聊天将不会使用该提供商</span>
+          </n-form-item>
+          <n-form-item label="设为默认" path="is_default">
+            <n-switch v-model:value="providerForm.is_default" />
+            <span class="ml-2 text-xs text-gray-400">默认提供商用于 AI 聊天与文章摘要</span>
+          </n-form-item>
+          <n-form-item label="排序" path="sort">
+            <n-input-number v-model:value="providerForm.sort" :min="0" />
+          </n-form-item>
+          <n-form-item label="备注" path="remark">
+            <n-input v-model:value="providerForm.remark" type="textarea" :rows="2" placeholder="可选" />
+          </n-form-item>
+          <n-collapse>
+            <n-collapse-item title="高级参数（采样）" name="advanced">
+              <n-form-item label="温度" path="temperature">
+                <n-slider v-model:value="providerForm.temperature" :min="0" :max="2" :step="0.1" />
+                <span class="slider-value">{{ providerForm.temperature }}</span>
+              </n-form-item>
+              <n-form-item label="最大令牌数" path="max_tokens">
+                <n-input-number v-model:value="providerForm.max_tokens" :min="1" :max="8192" />
+              </n-form-item>
+              <n-form-item label="Top P" path="top_p">
+                <n-slider v-model:value="providerForm.top_p" :min="0" :max="1" :step="0.1" />
+                <span class="slider-value">{{ providerForm.top_p }}</span>
+              </n-form-item>
+              <n-form-item label="频率惩罚" path="frequency_penalty">
+                <n-slider
+                  v-model:value="providerForm.frequency_penalty"
+                  :min="-2"
+                  :max="2"
+                  :step="0.1"
+                />
+                <span class="slider-value">{{ providerForm.frequency_penalty }}</span>
+              </n-form-item>
+              <n-form-item label="存在惩罚" path="presence_penalty">
+                <n-slider
+                  v-model:value="providerForm.presence_penalty"
+                  :min="-2"
+                  :max="2"
+                  :step="0.1"
+                />
+                <span class="slider-value">{{ providerForm.presence_penalty }}</span>
+              </n-form-item>
+            </n-collapse-item>
+          </n-collapse>
+        </n-form>
+        <template #footer>
+          <div class="flex justify-end gap-3">
+            <n-button :loading="providerTesting" @click="testProvider">测试连接</n-button>
+            <n-button type="primary" :loading="providerSaving" @click="saveProvider">保存</n-button>
+          </div>
+        </template>
+      </n-modal>
 
-    <!-- 模型弹窗 -->
-    <n-modal
-      v-model:show="modelFormVisible"
-      preset="card"
-      :title="editingModelId === null ? '添加模型' : '编辑模型'"
-      style="width: 480px"
-    >
-      <n-form
-        ref="modelFormRef"
-        :model="modelForm"
-        :rules="modelRules"
-        label-placement="left"
-        label-width="90px"
+      <!-- 模型弹窗 -->
+      <n-modal
+        v-model:show="modelFormVisible"
+        preset="card"
+        :title="editingModelId === null ? '添加模型' : '编辑模型'"
+        style="width: 480px"
       >
-        <n-form-item label="模型名称" path="model_name">
-          <n-input v-model:value="modelForm.model_name" placeholder="如 gpt-4o、deepseek-chat" />
-        </n-form-item>
-        <n-form-item label="显示名称" path="display_name">
-          <n-input v-model:value="modelForm.display_name" placeholder="可选" />
-        </n-form-item>
-        <n-form-item label="启用" path="is_enabled">
-          <n-switch v-model:value="modelForm.is_enabled" />
-        </n-form-item>
-        <n-form-item label="排序" path="sort">
-          <n-input-number v-model:value="modelForm.sort" :min="0" />
-        </n-form-item>
-      </n-form>
-      <template #footer>
-        <div class="flex justify-end gap-3">
-          <n-button @click="modelFormVisible = false">取消</n-button>
-          <n-button type="primary" :loading="modelSaving" @click="saveModel">保存</n-button>
-        </div>
-      </template>
-    </n-modal>
+        <n-form
+          ref="modelFormRef"
+          :model="modelForm"
+          :rules="modelRules"
+          label-placement="left"
+          label-width="90px"
+        >
+          <n-form-item label="模型名称" path="model_name">
+            <n-input v-model:value="modelForm.model_name" placeholder="如 gpt-4o、deepseek-chat" />
+          </n-form-item>
+          <n-form-item label="显示名称" path="display_name">
+            <n-input v-model:value="modelForm.display_name" placeholder="可选" />
+          </n-form-item>
+          <n-form-item label="启用" path="is_enabled">
+            <n-switch v-model:value="modelForm.is_enabled" />
+          </n-form-item>
+          <n-form-item label="排序" path="sort">
+            <n-input-number v-model:value="modelForm.sort" :min="0" />
+          </n-form-item>
+        </n-form>
+        <template #footer>
+          <div class="flex justify-end gap-3">
+            <n-button @click="modelFormVisible = false">取消</n-button>
+            <n-button type="primary" :loading="modelSaving" @click="saveModel">保存</n-button>
+          </div>
+        </template>
+      </n-modal>
+    </div>
   </div>
 </template>
 

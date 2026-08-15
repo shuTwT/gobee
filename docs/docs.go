@@ -7432,6 +7432,18 @@ const docTemplate = `{
                         "description": "每页数量",
                         "name": "size",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建时间起始（毫秒时间戳）",
+                        "name": "start_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建时间结束（毫秒时间戳）",
+                        "name": "end_date",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -7918,7 +7930,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.Product"
+                                            "$ref": "#/definitions/model.ProductResp"
                                         }
                                     }
                                 }
@@ -8023,7 +8035,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/ent.Product"
+                                                "$ref": "#/definitions/model.ProductResp"
                                             }
                                         }
                                     }
@@ -8079,7 +8091,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.PageResult-ent_Product"
+                                            "$ref": "#/definitions/model.PageResult-model_ProductResp"
                                         }
                                     }
                                 }
@@ -8129,7 +8141,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.Product"
+                                            "$ref": "#/definitions/model.ProductResp"
                                         }
                                     }
                                 }
@@ -8194,7 +8206,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ent.Product"
+                                            "$ref": "#/definitions/model.ProductResp"
                                         }
                                     }
                                 }
@@ -16108,6 +16120,9 @@ const docTemplate = `{
                 "active": {
                     "type": "boolean"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -16137,6 +16152,9 @@ const docTemplate = `{
                 },
                 "sort_order": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -16181,6 +16199,9 @@ const docTemplate = `{
                 "active": {
                     "type": "boolean"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "expire_time": {
                     "type": "string"
                 },
@@ -16207,6 +16228,9 @@ const docTemplate = `{
                 },
                 "total_spent": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 },
                 "user_id": {
                     "type": "integer"
@@ -16392,20 +16416,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.Notification"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "model.PageResult-ent_Product": {
-            "type": "object",
-            "properties": {
-                "records": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Product"
                     }
                 },
                 "total": {
@@ -16644,6 +16654,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.PostSearchResp"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PageResult-model_ProductResp": {
+            "type": "object",
+            "properties": {
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ProductResp"
                     }
                 },
                 "total": {
@@ -17545,6 +17569,102 @@ const docTemplate = `{
                     }
                 },
                 "unit": {
+                    "type": "string"
+                },
+                "volume": {
+                    "type": "number"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "model.ProductResp": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "attributes": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "brand": {
+                    "type": "string"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "cost_price": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "digital": {
+                    "type": "boolean"
+                },
+                "featured": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "meta_description": {
+                    "type": "string"
+                },
+                "meta_keywords": {
+                    "type": "string"
+                },
+                "meta_title": {
+                    "type": "string"
+                },
+                "min_stock": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "original_price": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "sales": {
+                    "type": "integer"
+                },
+                "short_description": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 },
                 "volume": {

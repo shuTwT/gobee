@@ -20,6 +20,26 @@ func NewMemberLevelHandler(memberLevelService memberlevel_service.MemberLevelSer
 	}
 }
 
+func buildMemberLevelResp(ml *ent.MemberLevel) *model.MemberLevelResp {
+	if ml == nil {
+		return nil
+	}
+	return &model.MemberLevelResp{
+		ID:           ml.ID,
+		Name:         ml.Name,
+		Description:  ml.Description,
+		Level:        ml.Level,
+		MinPoints:    ml.MinPoints,
+		DiscountRate: ml.DiscountRate,
+		Privileges:   ml.Privileges,
+		Icon:         ml.Icon,
+		Active:       ml.Active,
+		SortOrder:    ml.SortOrder,
+		CreatedAt:    model.LocalTime(ml.CreatedAt),
+		UpdatedAt:    model.LocalTime(ml.UpdatedAt),
+	}
+}
+
 // @Summary 查询会员等级
 // @Description 查询会员等级
 // @Tags 后台管理接口/会员等级
@@ -51,7 +71,7 @@ func (h *MemberLevelHandler) QueryMemberLevel(c *fiber.Ctx) error {
 		))
 	}
 
-	return c.JSON(model.NewSuccess("success", ml))
+	return c.JSON(model.NewSuccess("success", buildMemberLevelResp(ml)))
 }
 
 // @Summary 查询会员等级列表
@@ -70,7 +90,11 @@ func (h *MemberLevelHandler) QueryMemberLevelList(c *fiber.Ctx) error {
 		))
 	}
 
-	return c.JSON(model.NewSuccess("success", memberLevels))
+	memberLevelResps := make([]*model.MemberLevelResp, 0, len(memberLevels))
+	for _, ml := range memberLevels {
+		memberLevelResps = append(memberLevelResps, buildMemberLevelResp(ml))
+	}
+	return c.JSON(model.NewSuccess("success", memberLevelResps))
 }
 
 // @Summary 查询会员等级分页
@@ -100,9 +124,13 @@ func (h *MemberLevelHandler) QueryMemberLevelPage(c *fiber.Ctx) error {
 		))
 	}
 
-	pageResult := model.PageResult[*ent.MemberLevel]{
+	memberLevelResps := make([]*model.MemberLevelResp, 0, len(memberLevels))
+	for _, ml := range memberLevels {
+		memberLevelResps = append(memberLevelResps, buildMemberLevelResp(ml))
+	}
+	pageResult := model.PageResult[*model.MemberLevelResp]{
 		Total:   int64(count),
-		Records: memberLevels,
+		Records: memberLevelResps,
 	}
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
@@ -132,7 +160,7 @@ func (h *MemberLevelHandler) CreateMemberLevel(c *fiber.Ctx) error {
 		))
 	}
 
-	return c.JSON(model.NewSuccess("success", ml))
+	return c.JSON(model.NewSuccess("success", buildMemberLevelResp(ml)))
 }
 
 // @Summary 更新会员等级
@@ -174,7 +202,7 @@ func (h *MemberLevelHandler) UpdateMemberLevel(c *fiber.Ctx) error {
 		))
 	}
 
-	return c.JSON(model.NewSuccess("success", updatedMemberLevel))
+	return c.JSON(model.NewSuccess("success", buildMemberLevelResp(updatedMemberLevel)))
 }
 
 // @Summary 删除会员等级

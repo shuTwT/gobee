@@ -5,17 +5,19 @@ import (
 )
 
 type PostPageReq struct {
-	Page         int     `json:"page" query:"page" form:"page" validate:"required,min=1"`
-	Size         int     `json:"page_size" query:"page_size" form:"page_size" validate:"required,min=1,max=100"`
-	CategoryID   *int    `json:"category_id" query:"category_id" form:"category_id"`
-	TagID        *int    `json:"tag_id" query:"tag_id" form:"tag_id"`
-	Title        string  `json:"title" query:"title" form:"title"`
-	CategoryName string  `json:"category_name" query:"category_name" form:"category_name"`
-	TagName      string  `json:"tag_name" query:"tag_name" form:"tag_name"`
-	Year         *int    `json:"year" query:"year" form:"year"`
-	Month        *int    `json:"month" query:"month" form:"month"`
-	Status       *string `json:"status" query:"status" form:"status"`
-	IsVisible    *bool   `json:"is_visible" query:"is_visible" form:"is_visible"`
+	Page         int        `json:"page" query:"page" form:"page" validate:"required,min=1"`
+	Size         int        `json:"page_size" query:"page_size" form:"page_size" validate:"required,min=1,max=100"`
+	CategoryID   *int       `json:"category_id" query:"category_id" form:"category_id"`
+	TagID        *int       `json:"tag_id" query:"tag_id" form:"tag_id"`
+	Title        string     `json:"title" query:"title" form:"title"`
+	CategoryName string     `json:"category_name" query:"category_name" form:"category_name"`
+	TagName      string     `json:"tag_name" query:"tag_name" form:"tag_name"`
+	Year         *int       `json:"year" query:"year" form:"year"`
+	Month        *int       `json:"month" query:"month" form:"month"`
+	Status       *string    `json:"status" query:"status" form:"status"`
+	IsVisible    *bool      `json:"is_visible" query:"is_visible" form:"is_visible"`
+	StartDate    *LocalTime `json:"start_date" query:"start_date" form:"start_date"`
+	EndDate      *LocalTime `json:"end_date" query:"end_date" form:"end_date"`
 }
 
 type PostListReq struct {

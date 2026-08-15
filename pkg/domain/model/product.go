@@ -28,8 +28,8 @@ type ProductCreateReq struct {
 }
 
 type ProductBatchUpdateReq struct {
-	IDs    []int  `json:"ids" validate:"required"`
-	Active *bool  `json:"active,omitempty"`
+	IDs    []int `json:"ids" validate:"required"`
+	Active *bool `json:"active,omitempty"`
 }
 
 type ProductBatchDeleteReq struct {
@@ -71,16 +71,47 @@ type ProductSearchReq struct {
 }
 
 type ProductSearchResp struct {
-	ID               int     `json:"id"`
-	Name             string  `json:"name"`
-	ShortDescription *string `json:"short_description"`
-	Sku              string  `json:"sku"`
-	Price            int     `json:"price"`
-	OriginalPrice    *int    `json:"original_price"`
-	Stock            int     `json:"stock"`
-	Sales            int     `json:"sales"`
-	Brand            *string `json:"brand"`
+	ID               int      `json:"id"`
+	Name             string   `json:"name"`
+	ShortDescription *string  `json:"short_description"`
+	Sku              string   `json:"sku"`
+	Price            int      `json:"price"`
+	OriginalPrice    *int     `json:"original_price"`
+	Stock            int      `json:"stock"`
+	Sales            int      `json:"sales"`
+	Brand            *string  `json:"brand"`
 	Images           []string `json:"images"`
-	Active           bool    `json:"active"`
-	Relevance        float64 `json:"relevance"`
+	Active           bool     `json:"active"`
+	Relevance        float64  `json:"relevance"`
+}
+
+type ProductResp struct {
+	ID               int                    `json:"id"`
+	Name             string                 `json:"name"`
+	Description      string                 `json:"description,omitempty"`
+	ShortDescription string                 `json:"short_description,omitempty"`
+	Sku              string                 `json:"sku"`
+	Price            int                    `json:"price"`
+	OriginalPrice    int                    `json:"original_price,omitempty"`
+	CostPrice        int                    `json:"cost_price,omitempty"`
+	Stock            int                    `json:"stock"`
+	MinStock         int                    `json:"min_stock"`
+	Sales            int                    `json:"sales"`
+	CategoryID       int                    `json:"category_id,omitempty"`
+	Brand            string                 `json:"brand,omitempty"`
+	Unit             string                 `json:"unit,omitempty"`
+	Weight           float64                `json:"weight,omitempty"`
+	Volume           float64                `json:"volume,omitempty"`
+	Images           []string               `json:"images,omitempty"`
+	Attributes       map[string]interface{} `json:"attributes,omitempty"`
+	Tags             []string               `json:"tags,omitempty"`
+	Active           bool                   `json:"active"`
+	Featured         bool                   `json:"featured"`
+	Digital          bool                   `json:"digital"`
+	MetaTitle        string                 `json:"meta_title,omitempty"`
+	MetaDescription  string                 `json:"meta_description,omitempty"`
+	MetaKeywords     string                 `json:"meta_keywords,omitempty"`
+	SortOrder        int                    `json:"sort_order"`
+	CreatedAt        LocalTime              `json:"created_at"`
+	UpdatedAt        LocalTime              `json:"updated_at"`
 }

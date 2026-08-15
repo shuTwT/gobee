@@ -1,51 +1,75 @@
 <script setup lang="ts">
-import type { UploadFileInfo } from 'naive-ui';
+import type { UploadFileInfo } from 'naive-ui'
 
-// import type { UploadFileInfo } from 'naive-ui';
-
-const props  = withDefaults(defineProps<{
-  fileList?: string[],
-  limit?:number
-}>(),{
-  fileList: ()=>[],
-  limit:1
-})
-
-const fileListRef = ref(props.fileList)
+const props = withDefaults(
+  defineProps<{
+    fileList?: string[]
+    limit?: number
+  }>(),
+  {
+    fileList: () => [],
+    limit: 1,
+  },
+)
 
 const emit = defineEmits<{
   (e: 'update:fileList', fileList: string[]): void
 }>()
 
-// const defaultUploadFileList = ref<UploadFileInfo[]>([])
-// const uploadFileList = ref<UploadFileInfo[]>([])
+// 受控文件列表，供 n-upload 展示缩略图
+const uploadFileList = ref<UploadFileInfo[]>([])
 
-const handleUploadFinish=({file}:{file:UploadFileInfo,event?:ProgressEvent})=>{
-  fileListRef.value.push(file.url||'')
-  emit('update:fileList',fileListRef.value)
+watch(
+  () => props.fileList,
+  (list) => {
+    const urls = list || []
+    // 保留仍在上传中（尚无 url）的条目，避免其从受控列表消失
+    const pending = uploadFileList.value.filter((f) => !f.url || !urls.includes(f.url))
+    const finished = urls.map((url) => ({
+      id: url,
+      name: url.split('/').pop() || url,
+      url,
+      status: 'finished' as const,
+    }))
+    uploadFileList.value = [...pending, ...finished]
+  },
+  { immediate: true },
+)
+
+// 上传完成：naive-ui 默认不会解析响应，需从 xhr 响应中取出 url
+// 后端返回 { code, msg, data: [{ url, ... }] }
+const handleUploadFinish = ({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) => {
+  const response = (event?.target as XMLHttpRequest)?.response
+  let data: Array<{ url?: string }> | undefined
+  try {
+    data = JSON.parse(typeof response === 'string' ? response : '')?.data
+  } catch {
+    data = undefined
+  }
+  const url = data?.[0]?.url
+  if (url) {
+    file.url = url
+  }
 }
 
-const getFileList = ()=>{
-  return fileListRef.value
+// 列表变化（新增/删除/状态更新）时同步到外部
+const handleFileListChange = (list: UploadFileInfo[]) => {
+  uploadFileList.value = list
+  emit('update:fileList', list.map((f) => f.url || '').filter(Boolean))
 }
-defineExpose({getFileList})
 </script>
 <template>
   <n-upload
-    :multiple="props.limit > 1"
+    :file-list="uploadFileList"
+    :multiple="limit > 1"
     accept="image/*"
     action="/api/v1/file/upload"
     list-type="image"
-    :max="props.limit"
+    :max="limit"
     @finish="handleUploadFinish"
+    @update:file-list="handleFileListChange"
   >
-  <template v-if="fileListRef&&fileListRef.length>0">
-    <div v-for="(item,index) in fileListRef" :key="index">
-      <n-image :src="item"/>
-      <div class="upload-toolbar" @click.stop></div>
-    </div>
-  </template>
-    <n-upload-dragger v-else>
+    <n-upload-dragger v-if="uploadFileList.length === 0">
       <div style="margin-bottom: 12px">
         <n-icon size="48" :depth="3">
           <svg

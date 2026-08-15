@@ -21,12 +21,56 @@ func NewProductHandler(productService product_service.ProductService) *ProductHa
 	}
 }
 
+func newProductResp(p *ent.Product) *model.ProductResp {
+	if p == nil {
+		return nil
+	}
+	return &model.ProductResp{
+		ID:               p.ID,
+		Name:             p.Name,
+		Description:      p.Description,
+		ShortDescription: p.ShortDescription,
+		Sku:              p.Sku,
+		Price:            p.Price,
+		OriginalPrice:    p.OriginalPrice,
+		CostPrice:        p.CostPrice,
+		Stock:            p.Stock,
+		MinStock:         p.MinStock,
+		Sales:            p.Sales,
+		CategoryID:       p.CategoryID,
+		Brand:            p.Brand,
+		Unit:             p.Unit,
+		Weight:           p.Weight,
+		Volume:           p.Volume,
+		Images:           p.Images,
+		Attributes:       p.Attributes,
+		Tags:             p.Tags,
+		Active:           p.Active,
+		Featured:         p.Featured,
+		Digital:          p.Digital,
+		MetaTitle:        p.MetaTitle,
+		MetaDescription:  p.MetaDescription,
+		MetaKeywords:     p.MetaKeywords,
+		SortOrder:        p.SortOrder,
+		CreatedAt:        model.LocalTime(p.CreatedAt),
+		UpdatedAt:        model.LocalTime(p.UpdatedAt),
+	}
+}
+
+func newProductResps(products []*ent.Product) []*model.ProductResp {
+	resps := make([]*model.ProductResp, 0, len(products))
+	for _, p := range products {
+		resps = append(resps, newProductResp(p))
+	}
+	return resps
+}
+
 // @Summary 查询所有商品
 // @Description 查询所有商品
 // @Tags 后台管理接口/商品
 // @Accept json
 // @Produce json
-// @Success 200 {object} model.HttpSuccess{data=[]ent.Product}
+// @Success 200 {object} model.HttpSuccess{data=[]model.ProductResp}
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/product/list [get]
 func (h *ProductHandler) ListProducts(c *fiber.Ctx) error {
@@ -35,7 +79,7 @@ func (h *ProductHandler) ListProducts(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(model.NewSuccess("success", products))
+	return c.JSON(model.NewSuccess("success", newProductResps(products)))
 }
 
 // @Summary 分页查询商品
@@ -45,7 +89,7 @@ func (h *ProductHandler) ListProducts(c *fiber.Ctx) error {
 // @Produce json
 // @Param page query int false "页码"
 // @Param size query int false "每页数量"
-// @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.Product]}
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.ProductResp]}
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/product/page [get]
 func (h *ProductHandler) ListProductsPage(c *fiber.Ctx) error {
@@ -67,9 +111,9 @@ func (h *ProductHandler) ListProductsPage(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	pageResult := model.PageResult[*ent.Product]{
+	pageResult := model.PageResult[*model.ProductResp]{
 		Total:   int64(total),
-		Records: products,
+		Records: newProductResps(products),
 	}
 	return c.JSON(model.NewSuccess("success", pageResult))
 }
@@ -80,7 +124,7 @@ func (h *ProductHandler) ListProductsPage(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param product body model.ProductCreateReq true "商品创建请求"
-// @Success 200 {object} model.HttpSuccess{data=ent.Product}
+// @Success 200 {object} model.HttpSuccess{data=model.ProductResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/product/create [post]
@@ -95,7 +139,7 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(model.NewSuccess("success", product))
+	return c.JSON(model.NewSuccess("success", newProductResp(product)))
 }
 
 // @Summary 更新商品
@@ -105,7 +149,7 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path int true "商品ID"
 // @Param product body model.ProductUpdateReq true "商品更新请求"
-// @Success 200 {object} model.HttpSuccess{data=ent.Product}
+// @Success 200 {object} model.HttpSuccess{data=model.ProductResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/product/update/{id} [put]
@@ -125,7 +169,7 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(model.NewSuccess("success", product))
+	return c.JSON(model.NewSuccess("success", newProductResp(product)))
 }
 
 // @Summary 查询商品
@@ -134,7 +178,7 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path int true "商品ID"
-// @Success 200 {object} model.HttpSuccess{data=ent.Product}
+// @Success 200 {object} model.HttpSuccess{data=model.ProductResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/product/query/{id} [get]
@@ -149,7 +193,7 @@ func (h *ProductHandler) QueryProduct(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 
-	return c.JSON(model.NewSuccess("success", product))
+	return c.JSON(model.NewSuccess("success", newProductResp(product)))
 }
 
 // @Summary 删除商品

@@ -494,11 +494,13 @@ const deletePost = (row: any) => {
 // 处理搜索
 const handleSearch = () => {
   pagination.page = 1
+  onSearch()
 }
 
 // 处理筛选变化
 const handleFilterChange = () => {
   pagination.page = 1
+  onSearch()
 }
 
 // 刷新数据

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { NUpload, NUploadDragger, NButton, NForm, NFormItem, NAlert, NProgress, NSpin, type UploadSettledFileInfo, NIcon } from 'naive-ui'
+import { NUpload, NUploadDragger, NButton, NForm, NFormItem, NAlert, NSpin, type UploadSettledFileInfo, NIcon } from 'naive-ui'
 import { CloudUploadOutline } from '@vicons/ionicons5'
 import { createPlugin } from '@/api/infra/plugin'
 
@@ -9,7 +9,6 @@ const emit = defineEmits(['success'])
 const uploadRef = ref()
 const fileListRef = ref<File[]>([])
 const uploading = ref(false)
-const uploadProgress = ref(0)
 
 const handleUploadChange = (options: {
     file: UploadSettledFileInfo;
@@ -36,7 +35,6 @@ const handleUpload = async () => {
   }
 
   uploading.value = true
-  uploadProgress.value = 0
 
   try {
     await createPlugin(fileListRef.value[0])
@@ -47,7 +45,6 @@ const handleUpload = async () => {
     window.$message?.error('插件上传失败：' + error.message)
   } finally {
     uploading.value = false
-    uploadProgress.value = 0
   }
 }
 
@@ -58,26 +55,7 @@ const handleRemove = () => {
 
 <template>
   <div class="plugin-upload">
-    <n-alert type="info" title="插件上传说明">
-      <p>请上传插件压缩包（.zip格式），压缩包需包含以下文件：</p>
-      <ul>
-        <li>plugin-config.yaml - 插件配置文件</li>
-        <li>插件二进制文件 - 可执行文件</li>
-      </ul>
-      <p>plugin-config.yaml 示例：</p>
-      <pre class="config-example">
-name: "示例插件"
-key: "example-plugin"
-version: "1.0.0"
-description: "这是一个示例插件"
-protocol_version: "1"
-magic_cookie_key: "GO_PLUGIN"
-magic_cookie_value: "Hoshikuzu"
-dependencies:
-  - "storage-plugin"
-config: '{"timeout": 30}'
-auto_start: true</pre>
-    </n-alert>
+    <n-alert type="warning">请勿安装来源不明的插件</n-alert>
 
     <n-form>
       <n-form-item label="选择插件压缩包">
@@ -92,18 +70,12 @@ auto_start: true</pre>
         >
           <n-upload-dragger>
             <div class="upload-area">
-              <n-spin :show="uploading" :stroke-width="60">
-                <template #description>
-                  <div v-if="!uploading">
-                    <n-icon size="48" :component="CloudUploadOutline" />
-                    <div class="upload-text">点击或拖拽上传插件压缩包</div>
-                    <div class="upload-hint">支持 .zip 格式</div>
-                  </div>
-                  <div v-else>
-                    <n-progress type="line" :percentage="uploadProgress" :show-indicator="false" />
-                    <div class="upload-text">正在上传...</div>
-                  </div>
-                </template>
+              <n-spin :show="uploading">
+                <div class="upload-inner">
+                  <n-icon size="48" :component="CloudUploadOutline" />
+                  <div class="upload-text">点击或拖拽上传插件压缩包</div>
+                  <div class="upload-hint">支持 .zip 格式</div>
+                </div>
               </n-spin>
             </div>
           </n-upload-dragger>
@@ -151,6 +123,13 @@ auto_start: true</pre>
   background-color: #f0f9ff;
 }
 
+.upload-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 48px;
+}
+
 .upload-text {
   margin-top: 16px;
   font-size: 16px;
@@ -180,14 +159,5 @@ auto_start: true</pre>
 .file-size {
   color: #999;
   font-size: 12px;
-}
-
-.config-example {
-  background-color: #f5f5f5;
-  padding: 16px;
-  border-radius: 4px;
-  font-size: 12px;
-  line-height: 1.6;
-  overflow-x: auto;
 }
 </style>

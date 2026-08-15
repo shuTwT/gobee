@@ -31,4 +31,6 @@ type MemberResp struct {
 	OrderCount  int       `json:"order_count"`
 	Active      bool      `json:"active"`
 	Remark      string    `json:"remark,omitempty"`
+	CreatedAt   LocalTime `json:"created_at"`
+	UpdatedAt   LocalTime `json:"updated_at"`
 }

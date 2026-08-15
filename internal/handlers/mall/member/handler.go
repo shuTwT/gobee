@@ -37,6 +37,8 @@ func buildMemberResp(m *ent.Member, userName string) *model.MemberResp {
 		OrderCount:  m.OrderCount,
 		Active:      m.Active,
 		Remark:      m.Remark,
+		CreatedAt:   model.LocalTime(m.CreatedAt),
+		UpdatedAt:   model.LocalTime(m.UpdatedAt),
 	}
 }
 
