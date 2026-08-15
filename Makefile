@@ -21,7 +21,7 @@ proto:
 	@echo "Generating protobuf code..."
 	@protoc --go_out=. --go_opt=paths=source_relative \
     	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-		pkg/plugin/proto/*.proto
+		pkg/plugin/proto/*.proto pkg/plugin/*/proto/*.proto
 # ===================== 原有功能（完全保留） =====================
 build-frontend:
 	@echo "Building frontend..."

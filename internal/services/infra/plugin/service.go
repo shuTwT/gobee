@@ -7,20 +7,16 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
-	"net/rpc"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
-	"time"
 
 	"github.com/shuTwT/hoshikuzu/ent"
 	plugin_ent "github.com/shuTwT/hoshikuzu/ent/plugin"
+	plugin_infra "github.com/shuTwT/hoshikuzu/internal/infra/plugin"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
-
-	plugin_lib "github.com/hashicorp/go-plugin"
+	plugin_shared "github.com/shuTwT/hoshikuzu/pkg/plugin/shared"
 	"gopkg.in/yaml.v3"
 )
 
@@ -37,58 +33,22 @@ type PluginService interface {
 	RegisterPlugin(ctx context.Context, pluginInfo *model.PluginRegisterReq) error
 	HeartbeatPlugin(ctx context.Context, heartbeatInfo *model.PluginHeartbeatReq) error
 	CheckPluginTimeout(ctx context.Context) error
+	StartHeartbeatChecker(ctx context.Context)
+	GetPluginInstance(ctx context.Context, id int) (plugin_shared.PluginStore, error)
+	CallPlugin(ctx context.Context, id int, method string, params []byte) ([]byte, error)
 }
 
+// PluginServiceImpl 插件服务：负责插件 CRUD 与上传安装，
+// 插件进程的加载、启停与心跳管理委托给基础设施层的 PluginManager
 type PluginServiceImpl struct {
-	client           *ent.Client
-	pluginClients    map[int]*plugin_lib.Client
-	pluginCache      map[string]map[string]interface{}
-	pluginHeartbeats map[string]time.Time
-	mu               sync.RWMutex
+	client  *ent.Client
+	manager *plugin_infra.PluginManager
 }
 
-type emptyPlugin struct {
-	plugin_lib.Plugin
-}
-
-func (emptyPlugin) Server(*plugin_lib.MuxBroker) (interface{}, error) {
-	return &emptyPluginRPCServer{Impl: &emptyPlugin{}}, nil
-}
-
-func (emptyPlugin) Client(b *plugin_lib.MuxBroker, c *rpc.Client) (interface{}, error) {
-	return &emptyPluginRPCClient{client: c}, nil
-}
-
-type emptyPluginRPCServer struct {
-	Impl *emptyPlugin
-}
-
-func (s *emptyPluginRPCServer) Init() error {
-	return nil
-}
-
-func (s *emptyPluginRPCServer) Ping() error {
-	return nil
-}
-
-func (s *emptyPluginRPCServer) Close() error {
-	return nil
-}
-
-type emptyPluginRPCClient struct {
-	client *rpc.Client
-}
-
-func (c *emptyPluginRPCClient) Close() error {
-	return nil
-}
-
-func NewPluginServiceImpl(client *ent.Client) *PluginServiceImpl {
+func NewPluginServiceImpl(client *ent.Client, manager *plugin_infra.PluginManager) *PluginServiceImpl {
 	return &PluginServiceImpl{
-		client:           client,
-		pluginClients:    make(map[int]*plugin_lib.Client),
-		pluginCache:      make(map[string]map[string]interface{}),
-		pluginHeartbeats: make(map[string]time.Time),
+		client:  client,
+		manager: manager,
 	}
 }
 
@@ -350,7 +310,7 @@ func (s *PluginServiceImpl) DeletePlugin(ctx context.Context, id int) error {
 	}
 
 	if pluginEntity.Status == "running" {
-		if err := s.StopPlugin(ctx, id); err != nil {
+		if err := s.manager.Stop(ctx, id); err != nil {
 			return fmt.Errorf("停止插件失败: %w", err)
 		}
 	}
@@ -360,241 +320,47 @@ func (s *PluginServiceImpl) DeletePlugin(ctx context.Context, id int) error {
 		return fmt.Errorf("删除插件目录失败: %w", err)
 	}
 
-	err = s.client.Plugin.DeleteOneID(id).Exec(ctx)
-	if err != nil {
-		return err
-	}
-
-	s.mu.Lock()
-	delete(s.pluginClients, id)
-	s.mu.Unlock()
-
-	return nil
+	return s.client.Plugin.DeleteOneID(id).Exec(ctx)
 }
 
 func (s *PluginServiceImpl) StartPlugin(ctx context.Context, id int) error {
-	pluginEntity, err := s.client.Plugin.Query().Where(plugin_ent.ID(id)).First(ctx)
-	if err != nil {
-		return err
-	}
-
-	if !pluginEntity.Enabled {
-		return errors.New("插件未启用")
-	}
-
-	if _, err := os.Stat(pluginEntity.BinPath); os.IsNotExist(err) {
-		return fmt.Errorf("插件二进制文件不存在: %s", pluginEntity.BinPath)
-	}
-
-	if len(pluginEntity.Dependencies) > 0 {
-		for _, depKey := range pluginEntity.Dependencies {
-			depPlugin, err := s.client.Plugin.Query().Where(plugin_ent.Key(depKey)).First(ctx)
-			if err != nil {
-				return fmt.Errorf("获取依赖插件 '%s' 失败: %w", depKey, err)
-			}
-			if depPlugin.Status != "running" {
-				return fmt.Errorf("依赖插件 '%s' 未运行", depKey)
-			}
-		}
-	}
-
-	s.mu.RLock()
-	if client, exists := s.pluginClients[id]; exists {
-		s.mu.RUnlock()
-		if _, err := client.Client(); err == nil {
-			return errors.New("插件已在运行中")
-		}
-		client.Kill()
-		delete(s.pluginClients, id)
-		s.mu.RUnlock()
-	} else {
-		s.mu.RUnlock()
-	}
-
-	now := time.Now()
-	err = s.client.Plugin.UpdateOneID(id).
-		SetStatus("loading").
-		SetLastStartedAt(now).
-		SetLastError("").
-		Exec(ctx)
-	if err != nil {
-		return err
-	}
-
-	go func(pluginID int, pluginKey string) {
-		handshakeConfig := plugin_lib.HandshakeConfig{
-			ProtocolVersion:  pluginEntity.ProtocolVersion,
-			MagicCookieKey:   pluginEntity.MagicCookieKey,
-			MagicCookieValue: pluginEntity.MagicCookieValue,
-		}
-
-		client := plugin_lib.NewClient(&plugin_lib.ClientConfig{
-			HandshakeConfig: handshakeConfig,
-			Plugins:         map[string]plugin_lib.Plugin{pluginKey: &emptyPlugin{}},
-			Cmd:             exec.Command(pluginEntity.BinPath),
-			Managed:         true,
-		})
-
-		rpcClient, err := client.Client()
-		if err != nil {
-			s.client.Plugin.UpdateOneID(pluginID).
-				SetStatus("error").
-				SetLastError(fmt.Sprintf("插件连接失败: %s", err.Error())).
-				Exec(context.Background())
-			return
-		}
-
-		_, err = rpcClient.Dispense(pluginKey)
-		if err != nil {
-			s.client.Plugin.UpdateOneID(pluginID).
-				SetStatus("error").
-				SetLastError(fmt.Sprintf("插件分发失败: %s", err.Error())).
-				Exec(context.Background())
-			client.Kill()
-			return
-		}
-
-		s.mu.Lock()
-		s.pluginClients[pluginID] = client
-		s.mu.Unlock()
-
-		s.client.Plugin.UpdateOneID(pluginID).
-			SetStatus("running").
-			Exec(context.Background())
-	}(id, pluginEntity.Key)
-
-	return nil
+	return s.manager.Start(ctx, id)
 }
 
 func (s *PluginServiceImpl) StopPlugin(ctx context.Context, id int) error {
-	s.mu.RLock()
-	client, exists := s.pluginClients[id]
-	s.mu.RUnlock()
-
-	if !exists {
-		return errors.New("插件未运行")
-	}
-
-	client.Kill()
-
-	s.mu.Lock()
-	delete(s.pluginClients, id)
-	s.mu.Unlock()
-
-	now := time.Now()
-	err := s.client.Plugin.UpdateOneID(id).
-		SetStatus("stopped").
-		SetLastStoppedAt(now).
-		Exec(ctx)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.manager.Stop(ctx, id)
 }
 
 func (s *PluginServiceImpl) RestartPlugin(ctx context.Context, id int) error {
-	pluginEntity, err := s.client.Plugin.Query().Where(plugin_ent.ID(id)).First(ctx)
-	if err != nil {
-		return err
-	}
-
-	if pluginEntity.Status == "running" {
-		if err := s.StopPlugin(ctx, id); err != nil {
-			return fmt.Errorf("停止插件失败: %w", err)
-		}
-		time.Sleep(1 * time.Second)
-	}
-
-	if err := s.StartPlugin(ctx, id); err != nil {
-		return fmt.Errorf("启动插件失败: %w", err)
-	}
-
-	return nil
+	return s.manager.Restart(ctx, id)
 }
 
 func (s *PluginServiceImpl) AutoStartPlugins(ctx context.Context) error {
-	plugins, err := s.client.Plugin.Query().
-		Where(plugin_ent.AutoStart(true)).
-		Where(plugin_ent.Enabled(true)).
-		All(ctx)
-	if err != nil {
-		return fmt.Errorf("获取自动启动插件失败: %w", err)
-	}
-
-	for _, p := range plugins {
-		if p.Status != "running" {
-			go func(pluginID int) {
-				if err := s.StartPlugin(context.Background(), pluginID); err != nil {
-					fmt.Printf("自动启动插件 %d 失败: %v\n", pluginID, err)
-				}
-			}(p.ID)
-		}
-	}
-
-	return nil
+	return s.manager.AutoStart(ctx)
 }
 
 func (s *PluginServiceImpl) RegisterPlugin(ctx context.Context, pluginInfo *model.PluginRegisterReq) error {
-	// 使用插件名称作为key
-	pluginKey := pluginInfo.Name
-
-	s.mu.Lock()
-	s.pluginCache[pluginKey] = map[string]interface{}{
-		"name":         pluginInfo.Name,
-		"version":      pluginInfo.Version,
-		"grpc_address": pluginInfo.GrpcAddress,
-		"status":       pluginInfo.Status,
-		"start_time":   pluginInfo.StartTime,
-		"metadata":     pluginInfo.Metadata,
-	}
-	// 初始化心跳时间
-	s.pluginHeartbeats[pluginKey] = time.Now()
-	s.mu.Unlock()
-
-	return nil
+	return s.manager.Register(ctx, pluginInfo)
 }
 
 func (s *PluginServiceImpl) HeartbeatPlugin(ctx context.Context, heartbeatInfo *model.PluginHeartbeatReq) error {
-	// 使用插件名称作为key
-	pluginKey := heartbeatInfo.Name
-
-	s.mu.Lock()
-	// 更新心跳时间
-	s.pluginHeartbeats[pluginKey] = time.Now()
-	// 如果插件状态不为空，则更新插件缓存中的状态
-	if heartbeatInfo.Status != "" {
-		if pluginInfo, exists := s.pluginCache[pluginKey]; exists {
-			pluginInfo["status"] = heartbeatInfo.Status
-			s.pluginCache[pluginKey] = pluginInfo
-		}
-	}
-	s.mu.Unlock()
-
-	return nil
+	return s.manager.Heartbeat(ctx, heartbeatInfo)
 }
 
 func (s *PluginServiceImpl) CheckPluginTimeout(ctx context.Context) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	return s.manager.CheckTimeout(ctx)
+}
 
-	// 超时时间设置为30秒
-	timeout := 30 * time.Second
-	now := time.Now()
+func (s *PluginServiceImpl) StartHeartbeatChecker(ctx context.Context) {
+	s.manager.StartHeartbeatChecker(ctx)
+}
 
-	// 遍历所有插件的心跳时间
-	for pluginKey, heartbeatTime := range s.pluginHeartbeats {
-		// 检查心跳时间是否超过了超时时间
-		if now.Sub(heartbeatTime) > timeout {
-			// 如果超过了超时时间，则将插件状态置为停止(stopped)
-			if pluginInfo, exists := s.pluginCache[pluginKey]; exists {
-				pluginInfo["status"] = "stopped"
-				s.pluginCache[pluginKey] = pluginInfo
-			}
-		}
-	}
+func (s *PluginServiceImpl) GetPluginInstance(ctx context.Context, id int) (plugin_shared.PluginStore, error) {
+	return s.manager.GetInstance(ctx, id)
+}
 
-	return nil
+func (s *PluginServiceImpl) CallPlugin(ctx context.Context, id int, method string, params []byte) ([]byte, error) {
+	return s.manager.Call(ctx, id, method, params)
 }
 
 func validatePluginConfig(config *model.PluginConfig) error {

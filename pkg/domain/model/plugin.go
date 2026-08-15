@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"mime/multipart"
 )
 
@@ -12,6 +13,12 @@ type PluginPageReq struct {
 	Status    string `json:"status" query:"status" form:"status" validate:"omitempty,oneof=stopped running error loading"`
 	Enabled   *bool  `json:"enabled" query:"enabled" form:"enabled"`
 	AutoStart *bool  `json:"auto_start" query:"auto_start" form:"auto_start"`
+}
+
+// PluginCallReq 插件通用能力调用请求（capability 协议）
+type PluginCallReq struct {
+	Method string          `json:"method" validate:"required"` // 插件自定义方法名（建议 {域}.{动作}，如 license.create）
+	Params json.RawMessage `json:"params"`                     // 参数 JSON 原文透传（可选）
 }
 
 type PluginConfig struct {

@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"strconv"
@@ -223,6 +224,83 @@ func (h *PluginHandler) RestartPlugin(c *fiber.Ctx) error {
 
 	slog.Info("Plugin restarted successfully", "plugin_id", id)
 	return c.JSON(model.NewSuccess("插件重启成功", nil))
+}
+
+// @Summary 获取插件静态资源
+// @Description 代理读取插件提供的静态资源（如插件自带的前端资源）
+// @Tags 后台管理接口/插件
+// @Accept json
+// @Produce json
+// @Param id path int true "插件ID"
+// @Param path path string true "资源路径"
+// @Success 200 {object} model.HttpSuccess{data=nil}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/plugin/{id}/resource/{path} [get]
+func (h *PluginHandler) GetPluginResource(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		slog.Error("Invalid plugin ID", "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "无效的插件ID"))
+	}
+
+	path := c.Params("*")
+	if path == "" {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "资源路径不能为空"))
+	}
+
+	instance, err := h.pluginService.GetPluginInstance(c.Context(), id)
+	if err != nil {
+		slog.Error("Failed to get plugin instance", "plugin_id", id, "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	content, contentType, err := instance.GetStaticResource(c.Context(), path)
+	if err != nil {
+		slog.Error("Failed to get plugin resource", "plugin_id", id, "path", path, "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	if contentType != "" {
+		c.Set("Content-Type", contentType)
+	}
+	return c.Send(content)
+}
+
+// @Summary 调用插件能力
+// @Description 通用调用插件业务能力（capability 协议）：method 为插件自定义方法名，params 为 JSON 原文透传，新增插件无需修改宿主代码
+// @Tags 后台管理接口/插件
+// @Accept json
+// @Produce json
+// @Param id path int true "插件ID"
+// @Param req body model.PluginCallReq true "调用请求"
+// @Success 200 {object} model.HttpSuccess{data=json.RawMessage}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/plugin/{id}/call [post]
+func (h *PluginHandler) CallPlugin(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		slog.Error("Invalid plugin ID", "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "无效的插件ID"))
+	}
+
+	var req model.PluginCallReq
+	if err := c.BodyParser(&req); err != nil {
+		slog.Error("Failed to parse request body", "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "请求体解析失败"))
+	}
+	if req.Method == "" {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "method 不能为空"))
+	}
+
+	result, err := h.pluginService.CallPlugin(c.Context(), id, req.Method, req.Params)
+	if err != nil {
+		slog.Error("Failed to call plugin", "plugin_id", id, "method", req.Method, "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	return c.JSON(model.NewSuccess("插件调用成功", json.RawMessage(result)))
 }
 
 func (h *PluginHandler) buildPluginResp(p *ent.Plugin) *model.PluginResp {

@@ -51,7 +51,7 @@ type StorePlugin struct {
 
 type StoreGRPCPlugin struct {
 	plugin.Plugin
-	impl PluginStore
+	Impl PluginStore
 }
 
 // --------------------------
@@ -83,8 +83,9 @@ func (p *StorePlugin) Client(broker *plugin.MuxBroker, c *rpc.Client) (interface
 // 作用：将 PluginStore 业务接口的实现注册到 gRPC 服务端
 // --------------------------
 func (p *StoreGRPCPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	// 1. 创建 gRPC 服务端实例（封装业务实现）
+	// 1. 创建 gRPC 服务端实例（注入插件业务实现）
 	grpcServer := &GRPCServer{}
+	grpcServer.SetImpl(p.Impl)
 	// 2. 注册到 gRPC 服务端（使用 pb 包生成的注册方法）
 	pb.RegisterPluginStoreServiceServer(s, grpcServer)
 	// 3. 无错误返回 nil

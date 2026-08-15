@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"embed"
-	"fmt"
 	"log/slog"
 
 	"github.com/shuTwT/hoshikuzu/internal/handlers"
@@ -166,9 +165,12 @@ func InitializeApp(assetsRes embed.FS, frontendRes embed.FS) (*fiber.App, func()
 			return
 		}
 		if err := serviceMap.PluginService.AutoStartPlugins(context.Background()); err != nil {
-			fmt.Printf("自动启动插件失败: %v\n", err)
+			slog.Error("自动启动插件失败", "error", err.Error())
+		} else {
+			slog.Info("自动启动插件成功")
 		}
-		slog.Info("自动启动插件成功")
+		// 启动插件心跳超时检查（30秒周期）
+		serviceMap.PluginService.StartHeartbeatChecker(context.Background())
 	}()
 
 	return app, cleanup

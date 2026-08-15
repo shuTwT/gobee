@@ -220,6 +220,8 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		pluginApi.Post("/:id/start", handlerMap.PluginHandler.StartPlugin)
 		pluginApi.Post("/:id/stop", handlerMap.PluginHandler.StopPlugin)
 		pluginApi.Post("/:id/restart", handlerMap.PluginHandler.RestartPlugin)
+		pluginApi.Get("/:id/resource/*", handlerMap.PluginHandler.GetPluginResource)
+		pluginApi.Post("/:id/call", handlerMap.PluginHandler.CallPlugin)
 	}
 	themeApi := router.Group("/theme")
 	{

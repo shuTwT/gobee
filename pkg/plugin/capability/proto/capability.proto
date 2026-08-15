@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+// 通用能力调用协议：宿主与插件共享的通用业务契约。
+// 插件通过实现 CapabilityService 暴露任意业务能力（method + JSON 参数透传），
+// 宿主无需为具体插件编写业务适配代码。
+package capability;
+
+option go_package = "github.com/shuTwT/hoshikuzu/pkg/plugin/capability/proto;capability_pb";
+
+// 通用调用请求：method 为插件自定义的方法名（建议 {域}.{动作}，如 license.create），
+// params 为 JSON 原文透传（插件侧自行解析）
+message CallRequest {
+  string method = 1;
+  bytes params = 2;
+}
+
+// 通用调用响应：result 为 JSON 原文（插件侧序列化），error 为业务错误信息
+message CallResponse {
+  bytes result = 1;
+  string error = 2;
+}
+
+service CapabilityService {
+  rpc Call(CallRequest) returns (CallResponse);
+}

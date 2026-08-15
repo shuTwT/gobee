@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/shuTwT/hoshikuzu/ent"
+	plugin_infra "github.com/shuTwT/hoshikuzu/internal/infra/plugin"
 	"github.com/shuTwT/hoshikuzu/internal/infra/schedule/manager"
 	ai_service "github.com/shuTwT/hoshikuzu/internal/services/ai/chat"
 	album_service "github.com/shuTwT/hoshikuzu/internal/services/content/album"
@@ -163,7 +164,8 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 	settingService := setting_service.NewSettingServiceImpl(db)
 	payOderService := payorder_service.NewPayOrderServiceImpl(db, settingService)
 	permissionService := permission_service.NewPermissionServiceImpl(db)
-	pluginService := plugin_service.NewPluginServiceImpl(db)
+	pluginManager := plugin_infra.NewPluginManager(db)
+	pluginService := plugin_service.NewPluginServiceImpl(db, pluginManager)
 	productService := product_service.NewProductServiceImpl(db)
 	roleService := role_service.NewRoleServiceImpl(db)
 	aiService := ai_service.NewAIServiceImpl(db)
