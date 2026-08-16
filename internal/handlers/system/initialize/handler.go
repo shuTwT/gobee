@@ -22,6 +22,15 @@ func NewInitializeHandler(client *ent.Client, userService user_service.UserServi
 	return &InitializeHandler{client: client, userService: userService, settingService: settingService}
 }
 
+// PreInit 查询初始化前置信息
+// @Summary 查询初始化前置信息
+// @Description 查询系统初始化所需的数据库类型等前置信息
+// @Tags 公开接口/初始化
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=model.PreInitResp}
+// @Failure 500 {object} model.HttpError
+// @Router /api/preinit [get]
 func (h *InitializeHandler) PreInit(c *fiber.Ctx) error {
 	DBType := config.GetString(config.DATABASE_TYPE)
 	return c.JSON(model.NewSuccess("success", model.PreInitResp{DBType: DBType}))

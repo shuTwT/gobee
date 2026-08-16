@@ -176,7 +176,7 @@ func (h *ThemeHandler) DeleteTheme(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/theme/enable/{id} [put]
+// @Router /api/v1/theme/{id}/enable [post]
 func (h *ThemeHandler) EnableTheme(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -204,7 +204,7 @@ func (h *ThemeHandler) EnableTheme(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/theme/disable/{id} [put]
+// @Router /api/v1/theme/{id}/disable [post]
 func (h *ThemeHandler) DisableTheme(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

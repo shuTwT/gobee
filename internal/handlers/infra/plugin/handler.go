@@ -65,7 +65,7 @@ func (h *PluginHandler) CreatePlugin(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.PluginResp]}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/plugin/list [get]
+// @Router /api/v1/plugin/page [get]
 func (h *PluginHandler) ListPluginPage(c *fiber.Ctx) error {
 	var pageReq model.PluginPageReq
 	if err := c.QueryParser(&pageReq); err != nil {
@@ -154,7 +154,7 @@ func (h *PluginHandler) DeletePlugin(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/plugin/start/{id} [post]
+// @Router /api/v1/plugin/{id}/start [post]
 func (h *PluginHandler) StartPlugin(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -181,7 +181,7 @@ func (h *PluginHandler) StartPlugin(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/plugin/stop/{id} [post]
+// @Router /api/v1/plugin/{id}/stop [post]
 func (h *PluginHandler) StopPlugin(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -208,7 +208,7 @@ func (h *PluginHandler) StopPlugin(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/plugin/restart/{id} [post]
+// @Router /api/v1/plugin/{id}/restart [post]
 func (h *PluginHandler) RestartPlugin(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

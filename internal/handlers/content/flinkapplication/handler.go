@@ -97,7 +97,7 @@ func (h *FlinkApplicationHandler) QueryFlinkApplication(c *fiber.Ctx) error {
 // @Param req body model.FlinkApplicationUpdateReq true "友链申请更新请求"
 // @Success 200 {object} model.HttpSuccess{data=ent.FLinkApplication}
 // @Failure 400 {object} model.HttpError
-// @Router /api/v1/flink-application/approve/{id} [put]
+// @Router /api/v1/flink-application/update/{id} [put]
 func (h *FlinkApplicationHandler) ApproveFlinkApplication(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

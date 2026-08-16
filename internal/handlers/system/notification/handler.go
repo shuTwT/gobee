@@ -64,7 +64,7 @@ func (h *NotificationHandler) ListNotificationPage(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=ent.Notification}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/notifications/query/:id [get]
+// @Router /api/v1/notifications/query/{id} [get]
 func (h *NotificationHandler) QueryNotification(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -90,7 +90,7 @@ func (h *NotificationHandler) QueryNotification(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/notifications/delete/:id [delete]
+// @Router /api/v1/notifications/delete/{id} [delete]
 func (h *NotificationHandler) DeleteNotification(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

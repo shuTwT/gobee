@@ -22,6 +22,28 @@ proto:
 	@protoc --go_out=. --go_opt=paths=source_relative \
     	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		pkg/plugin/proto/*.proto pkg/plugin/*/proto/*.proto
+
+# 从 handler 注解重新生成 swagger 文档（docs/swagger.json）
+# 修改 handler 的 swagger 注解后必须运行此命令，再提交 docs/
+swagger:
+	@echo "Generating swagger docs..."
+	@swag init -d ./ -o ./docs
+	@echo "Swagger docs regenerated."
+
+# 契约变更后的完整刷新流程：swagger -> api-client
+generate-api: swagger
+	@echo "Regenerating api-client..."
+	cd ui/packages/api-client && pnpm run generate
+	@echo "api-client regenerated."
+
+# 校验 swagger 是否与 handler 注解同步（CI 或提交前使用）
+check-swagger: swagger
+	@if git diff --exit-code --quiet docs/; then \
+		echo "✅ Swagger docs are in sync with handler annotations."; \
+	else \
+		echo "❌ Swagger docs are OUT OF SYNC. Run 'make swagger' and commit the changes." >&2; \
+		exit 1; \
+	fi
 # ===================== 原有功能（完全保留） =====================
 build-frontend:
 	@echo "Building frontend..."

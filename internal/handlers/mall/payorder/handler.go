@@ -23,13 +23,15 @@ func NewPayOrderHandler(client *ent.Client, service payorder_service.PayOrderSer
 }
 
 // @Summary 获取支付订单列表
-// @Description 获取所有支付订单的列表
+// @Description 获取所有支付订单的分页列表
 // @Tags 后台管理接口/支付订单
 // @Accept json
 // @Produce json
-// @Success 200 {object} model.HttpSuccess{data=[]ent.PayOrder}
+// @Param page query int false "页码" default(1)
+// @Param size query int false "每页数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.PayOrder]}
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/pay-order/list [get]
+// @Router /api/v1/pay-order/page [get]
 func (h *PayOrderHandler) ListPayOrderPage(c *fiber.Ctx) error {
 	var req model.PageQuery
 	if err := c.QueryParser(&req); err != nil {
@@ -52,7 +54,7 @@ func (h *PayOrderHandler) ListPayOrderPage(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path string true "支付订单ID"
-// @Param payorder body ent.PayOrder true "支付订单信息"
+// @Param payorder body model.PayOrderUpdateReq true "支付订单信息"
 // @Success 200 {object} ent.PayOrder
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError

@@ -31,7 +31,7 @@ func NewTagHandler(tagService tag_service.TagService) *TagHandler {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/tag/{id} [get]
+// @Router /api/v1/tag/query/{id} [get]
 func (h *TagHandler) QueryTag(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -147,7 +147,7 @@ func (h *TagHandler) CreateTag(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/tag//update/{id} [put]
+// @Router /api/v1/tag/update/{id} [put]
 func (h *TagHandler) UpdateTag(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

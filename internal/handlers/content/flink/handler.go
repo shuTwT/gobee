@@ -222,7 +222,7 @@ func (h *FlinkHandler) QueryFlink(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/flink/{id} [delete]
+// @Router /api/v1/flink/delete/{id} [delete]
 func (h *FlinkHandler) DeleteFlink(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

@@ -1,0 +1,3 @@
+// swaggo 全局类型覆盖
+// json.RawMessage 是 swag 无法解析的类型，映射为通用 JSON 对象
+replace json.RawMessage map[string]interface{}

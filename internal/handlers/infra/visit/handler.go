@@ -27,7 +27,7 @@ func NewVisitHandler(visitService visit.VisitService) *VisitHandler {
 // @Success 200 {object} model.HttpSuccess{data=model.PageResult[ent.VisitLog]}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/visit/list [get]
+// @Router /api/v1/visit-log/page [get]
 func (h *VisitHandler) ListVisitLogPage(c *fiber.Ctx) error {
 	var pageQuery model.VisitLogPageQuery
 	err := c.QueryParser(&pageQuery)
@@ -74,7 +74,7 @@ func (h *VisitHandler) ListVisitLogPage(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/visit/query/{id} [get]
+// @Router /api/v1/visit-log/query/{id} [get]
 func (h *VisitHandler) QueryVisitLog(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -101,7 +101,7 @@ func (h *VisitHandler) QueryVisitLog(c *fiber.Ctx) error {
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/visit/delete/{id} [delete]
+// @Router /api/v1/visit-log/delete/{id} [delete]
 func (h *VisitHandler) DeleteVisitLog(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -127,7 +127,7 @@ func (h *VisitHandler) DeleteVisitLog(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/visit/batch/delete [post]
+// @Router /api/v1/visit-log/batch/delete [post]
 func (h *VisitHandler) BatchDeleteVisitLog(c *fiber.Ctx) error {
 	var req model.VisitLogBatchDeleteReq
 	if err := c.BodyParser(&req); err != nil {

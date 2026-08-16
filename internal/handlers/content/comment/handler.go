@@ -3,6 +3,7 @@ package comment
 import (
 	"strconv"
 
+	"github.com/shuTwT/hoshikuzu/ent"
 	comment_service "github.com/shuTwT/hoshikuzu/internal/services/content/comment"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
 
@@ -63,4 +64,82 @@ func (h *CommentHandler) GetComment(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(model.NewSuccess("评论列表获取成功", resp))
+}
+
+// @Summary 审核通过评论
+// @Description 将评论状态设置为已审核(2)
+// @Tags 后台管理接口/评论
+// @Accept json
+// @Produce json
+// @Param id path int true "评论ID"
+// @Success 200 {object} model.HttpSuccess{data=ent.Comment}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/comment/approve/{id} [put]
+func (h *CommentHandler) ApproveComment(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	resp, err := h.commentService.SetCommentStatus(c.Context(), id, 2)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return c.JSON(model.NewError(fiber.StatusNotFound, "评论不存在"))
+		}
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	return c.JSON(model.NewSuccess("审核通过成功", resp))
+}
+
+// @Summary 拒绝评论
+// @Description 将评论状态设置为未审核(1)
+// @Tags 后台管理接口/评论
+// @Accept json
+// @Produce json
+// @Param id path int true "评论ID"
+// @Success 200 {object} model.HttpSuccess{data=ent.Comment}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/comment/reject/{id} [put]
+func (h *CommentHandler) RejectComment(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	resp, err := h.commentService.SetCommentStatus(c.Context(), id, 1)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return c.JSON(model.NewError(fiber.StatusNotFound, "评论不存在"))
+		}
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	return c.JSON(model.NewSuccess("拒绝评论成功", resp))
+}
+
+// @Summary 删除评论
+// @Description 删除指定评论
+// @Tags 后台管理接口/评论
+// @Accept json
+// @Produce json
+// @Param id path int true "评论ID"
+// @Success 200 {object} model.HttpSuccess
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/comment/delete/{id} [delete]
+func (h *CommentHandler) DeleteComment(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	err = h.commentService.DeleteComment(c.Context(), id)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return c.JSON(model.NewError(fiber.StatusNotFound, "评论不存在"))
+		}
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	return c.JSON(model.NewSuccess("删除成功", nil))
 }

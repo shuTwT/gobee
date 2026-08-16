@@ -191,7 +191,7 @@ func (h *PostHandler) CreatePost(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=ent.Post}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/post/update/{id} [put]
+// @Router /api/v1/post/update/content/{id} [put]
 func (h *PostHandler) UpdatePostContent(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

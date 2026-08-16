@@ -68,7 +68,7 @@ func (h *FriendCircleHandler) ListFriendCircleRecordPage(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=ent.FriendCircleRecord}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/friend-circle [post]
+// @Router /api/v1/friend-circle/create [post]
 func (h *FriendCircleHandler) CreateFriendCircleRecord(c *fiber.Ctx) error {
 	var req *model.FriendCircleRecordSaveReq
 	if err := c.BodyParser(&req); err != nil {
@@ -92,7 +92,7 @@ func (h *FriendCircleHandler) CreateFriendCircleRecord(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=ent.FriendCircleRecord}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/friend-circle/{id} [put]
+// @Router /api/v1/friend-circle/update/{id} [put]
 func (h *FriendCircleHandler) UpdateFriendCircleRecord(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -121,7 +121,7 @@ func (h *FriendCircleHandler) UpdateFriendCircleRecord(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/friend-circle/{id} [delete]
+// @Router /api/v1/friend-circle/delete/{id} [delete]
 func (h *FriendCircleHandler) DeleteFriendCircleRecord(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

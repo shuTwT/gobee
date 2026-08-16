@@ -19,6 +19,10 @@ type CommentService interface {
 	CreateComment(c context.Context, comment string, href string, link string, mail string, nick string, ua string, url string, ipAddress string) (*int, error)
 	GetRecentComment(c context.Context, pageSize int) ([]*ent.Comment, error)
 	ParseUserAgent(ua string) (browser string, os string)
+	// SetCommentStatus 更新评论审核状态（1未审核,2已审核）
+	SetCommentStatus(c context.Context, id int, status int) (*ent.Comment, error)
+	// DeleteComment 删除评论
+	DeleteComment(c context.Context, id int) error
 }
 
 type CommentServiceImpl struct {
@@ -130,4 +134,22 @@ func (s *CommentServiceImpl) GetCommentCount(c context.Context) (int, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+func (s *CommentServiceImpl) SetCommentStatus(c context.Context, id int, status int) (*ent.Comment, error) {
+	entity, err := s.client.Comment.UpdateOneID(id).
+		SetStatus(status).
+		Save(c)
+	if err != nil {
+		return nil, err
+	}
+	return entity, nil
+}
+
+func (s *CommentServiceImpl) DeleteComment(c context.Context, id int) error {
+	err := s.client.Comment.DeleteOneID(id).Exec(c)
+	if err != nil {
+		return err
+	}
+	return nil
 }

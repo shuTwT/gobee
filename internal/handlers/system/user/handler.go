@@ -103,7 +103,7 @@ func (h *UserHandler) ListUserPage(c *fiber.Ctx) error {
 // @Tags 后台管理接口/用户
 // @Accept json
 // @Produce json
-// @Param user body ent.User true "用户信息"
+// @Param user body model.UserCreateReq true "用户信息"
 // @Success 201 {object} ent.User
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
@@ -132,7 +132,7 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path string true "用户ID"
-// @Param user body ent.User true "用户信息"
+// @Param user body model.UserUpdateReq true "用户信息"
 // @Success 200 {object} ent.User
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
@@ -235,7 +235,7 @@ func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 // @Tags 后台管理接口/用户
 // @Accept json
 // @Produce json
-// @Success 200 {object} []model.PersonalAccessTokenListResp
+// @Success 200 {object} model.HttpSuccess{data=[]model.PersonalAccessTokenListResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
 // @Router /api/v1/user/personal-access-token/list [get]
@@ -273,7 +273,7 @@ func (h *UserHandler) GetPersonalAccessTokenList(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path string true "个人令牌ID"
-// @Success 200 {object} model.PersonalAccessTokenResp
+// @Success 200 {object} model.HttpSuccess{data=model.PersonalAccessTokenResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
@@ -349,8 +349,7 @@ func (h *UserHandler) CreatePat(c *fiber.Ctx) error {
 // @Tags 后台管理接口/用户
 // @Accept json
 // @Produce json
-// @Param id path string true "用户ID"
-// @Success 200 {object} model.UserProfileResp
+// @Success 200 {object} model.HttpSuccess{data=model.UserProfileResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 404 {object} model.HttpError
 // @Failure 500 {object} model.HttpError

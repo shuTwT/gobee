@@ -75,6 +75,9 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	{
 		commentApi.Get("/page", handlerMap.CommentHandler.ListCommentPage)
 		commentApi.Get("/query/:id", handlerMap.CommentHandler.GetComment)
+		commentApi.Put("/approve/:id", handlerMap.CommentHandler.ApproveComment)
+		commentApi.Put("/reject/:id", handlerMap.CommentHandler.RejectComment)
+		commentApi.Delete("/delete/:id", handlerMap.CommentHandler.DeleteComment)
 	}
 	albumApi := router.Group("/album")
 	{
@@ -113,6 +116,9 @@ func initContentRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 	friendCircleRecordApi := router.Group("/friend-circle")
 	{
 		friendCircleRecordApi.Get("/page", handlerMap.FriendCircleHandler.ListFriendCircleRecordPage)
+		friendCircleRecordApi.Post("/create", handlerMap.FriendCircleHandler.CreateFriendCircleRecord)
+		friendCircleRecordApi.Put("/update/:id", handlerMap.FriendCircleHandler.UpdateFriendCircleRecord)
+		friendCircleRecordApi.Delete("/delete/:id", handlerMap.FriendCircleHandler.DeleteFriendCircleRecord)
 	}
 	essayApi := router.Group("/essay")
 	{

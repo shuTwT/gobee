@@ -146,7 +146,7 @@ func (h *CouponHandler) CreateCoupon(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=model.CouponResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/coupon/update/glm-5.3_common [put]
+// @Router /api/v1/coupon/update/{id} [put]
 func (h *CouponHandler) UpdateCoupon(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -175,7 +175,7 @@ func (h *CouponHandler) UpdateCoupon(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=model.CouponResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/coupon/query/glm-5.3_common [get]
+// @Router /api/v1/coupon/query/{id} [get]
 func (h *CouponHandler) QueryCoupon(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -199,7 +199,7 @@ func (h *CouponHandler) QueryCoupon(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/coupon/delete/glm-5.3_common [delete]
+// @Router /api/v1/coupon/delete/{id} [delete]
 func (h *CouponHandler) DeleteCoupon(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -222,7 +222,7 @@ func (h *CouponHandler) DeleteCoupon(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/coupon/batch/update [put]
+// @Router /api/v1/coupon/batch [put]
 func (h *CouponHandler) BatchUpdateCoupons(c *fiber.Ctx) error {
 	var req *model.CouponBatchUpdateReq
 	if err := c.BodyParser(&req); err != nil {
@@ -245,7 +245,7 @@ func (h *CouponHandler) BatchUpdateCoupons(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/coupon/batch/delete [delete]
+// @Router /api/v1/coupon/batch/delete [post]
 func (h *CouponHandler) BatchDeleteCoupons(c *fiber.Ctx) error {
 	var req *model.CouponBatchDeleteReq
 	if err := c.BodyParser(&req); err != nil {

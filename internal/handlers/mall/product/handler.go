@@ -228,7 +228,7 @@ func (h *ProductHandler) DeleteProduct(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/product/batch-update [put]
+// @Router /api/v1/product/batch [put]
 func (h *ProductHandler) BatchUpdateProducts(c *fiber.Ctx) error {
 	var req *model.ProductBatchUpdateReq
 	if err := c.BodyParser(&req); err != nil {
@@ -251,7 +251,7 @@ func (h *ProductHandler) BatchUpdateProducts(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/product/batch-delete [delete]
+// @Router /api/v1/product/batch/delete [post]
 func (h *ProductHandler) BatchDeleteProducts(c *fiber.Ctx) error {
 	var req *model.ProductBatchDeleteReq
 	if err := c.BodyParser(&req); err != nil {

@@ -52,7 +52,7 @@ func newCouponUsageResp(u *ent.CouponUsage) *model.CouponUsageResp {
 // @Success 200 {object} model.HttpSuccess{data=[]model.CouponUsageResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/couponusage/list [get]
+// @Router /api/v1/coupon-usage/list [get]
 func (h *CouponUsageHandler) ListCouponUsages(c *fiber.Ctx) error {
 	usages, err := h.couponUsageService.ListAllCouponUsages(c.Context())
 	if err != nil {
@@ -76,7 +76,7 @@ func (h *CouponUsageHandler) ListCouponUsages(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.CouponUsageResp]}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/couponusage/page [get]
+// @Router /api/v1/coupon-usage/page [get]
 func (h *CouponUsageHandler) ListCouponUsagesPage(c *fiber.Ctx) error {
 	var pageQuery model.PageQuery
 
@@ -117,7 +117,7 @@ func (h *CouponUsageHandler) ListCouponUsagesPage(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=model.CouponUsageResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/couponusage/create [post]
+// @Router /api/v1/coupon-usage/create [post]
 func (h *CouponUsageHandler) CreateCouponUsage(c *fiber.Ctx) error {
 	var req *model.CouponUsageCreateReq
 	if err := c.BodyParser(&req); err != nil {
@@ -142,7 +142,7 @@ func (h *CouponUsageHandler) CreateCouponUsage(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=model.CouponUsageResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/couponusage/update/glm-5.3_common [put]
+// @Router /api/v1/coupon-usage/update/{id} [put]
 func (h *CouponUsageHandler) UpdateCouponUsage(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -171,7 +171,7 @@ func (h *CouponUsageHandler) UpdateCouponUsage(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=model.CouponUsageResp}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/couponusage/query/glm-5.3_common [get]
+// @Router /api/v1/coupon-usage/query/{id} [get]
 func (h *CouponUsageHandler) QueryCouponUsage(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -195,7 +195,7 @@ func (h *CouponUsageHandler) QueryCouponUsage(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/couponusage/delete/glm-5.3_common [delete]
+// @Router /api/v1/coupon-usage/delete/{id} [delete]
 func (h *CouponUsageHandler) DeleteCouponUsage(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -218,7 +218,7 @@ func (h *CouponUsageHandler) DeleteCouponUsage(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/couponusage/batch/update [put]
+// @Router /api/v1/coupon-usage/batch [put]
 func (h *CouponUsageHandler) BatchUpdateCouponUsages(c *fiber.Ctx) error {
 	var req *model.CouponUsageBatchUpdateReq
 	if err := c.BodyParser(&req); err != nil {
@@ -241,7 +241,7 @@ func (h *CouponUsageHandler) BatchUpdateCouponUsages(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/couponusage/batch/delete [delete]
+// @Router /api/v1/coupon-usage/batch/delete [post]
 func (h *CouponUsageHandler) BatchDeleteCouponUsages(c *fiber.Ctx) error {
 	var req *model.CouponUsageBatchDeleteReq
 	if err := c.BodyParser(&req); err != nil {
@@ -264,7 +264,7 @@ func (h *CouponUsageHandler) BatchDeleteCouponUsages(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=model.PageResult[model.CouponUsageResp]}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/couponusage/search [get]
+// @Router /api/v1/coupon-usage/search [get]
 func (h *CouponUsageHandler) SearchCouponUsages(c *fiber.Ctx) error {
 	var req model.CouponUsageSearchReq
 	if err := c.QueryParser(&req); err != nil {

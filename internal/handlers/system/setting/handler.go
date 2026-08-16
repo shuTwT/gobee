@@ -122,7 +122,7 @@ func (h *SettingHandler) GetJsonSettingsMap(c *fiber.Ctx) error {
 // @Success 200 {object} model.HttpSuccess{data=nil}
 // @Failure 400 {object} model.HttpError
 // @Failure 500 {object} model.HttpError
-// @Router /api/v1/settings/{key} [post]
+// @Router /api/v1/settings/json/save/{key} [post]
 func (h *SettingHandler) SaveSettings(c *fiber.Ctx) error {
 	ctx := c.Context()
 
