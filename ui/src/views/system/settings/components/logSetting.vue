@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui';
-import * as settingApi from '@/api/system/setting'
+import { apiClient, useApi } from '@/api'
 
 const message = useMessage()
 
@@ -63,7 +63,7 @@ const externalLogServiceOptions = [
 const saveLogsSettings = async () => {
   logsLoading.value = true
   try {
-    await settingApi.saveSettings('log',logsForm.value)
+    await useApi(apiClient.api.v1SettingsJsonSaveCreate, 'log',logsForm.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
     onSearch()
     message.success('日志设置保存成功')
@@ -98,7 +98,7 @@ const exportLogs = async () => {
 }
 
 const onSearch = async ()=>{
-  const res = await settingApi.getSettingsMap('log')
+  const res = await useApi(apiClient.api.v1SettingsJsonDetail, 'log')
   logsForm.value = Object.assign({},defaultForm,res.data)
 }
 

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon,NDataTable, type DataTableColumns, NTag, NPopconfirm } from 'naive-ui'
 import { Pencil,RefreshOutline,TrashOutline } from '@vicons/ionicons5'
-import * as userApi from '@/api/system/user'
+import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 
@@ -145,10 +145,10 @@ const openEditDialog = (title = '新增', row?: any) => {
         const data = await editFormRef.value?.getData()
         
         if (currentUserId.value) {
-          await userApi.updateUser(currentUserId.value, data)
+          await useApi(apiClient.api.v1UserUpdateUpdate, String(currentUserId.value), data)
           window.$message?.success('更新成功')
         } else {
-          await userApi.createUser(data)
+          await useApi(apiClient.api.v1UserCreateCreate, data)
           window.$message?.success('创建成功')
         }
         
@@ -164,7 +164,7 @@ const openEditDialog = (title = '新增', row?: any) => {
 
 const onSearch = () => {
   loading.value = true
-  userApi.getUserPage({
+  useApi(apiClient.api.v1UserPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
   }).then(res => {
@@ -179,7 +179,7 @@ const onSearch = () => {
 
 const handleDelete = async (id: number) => {
   try {
-    await userApi.deleteUser(id)
+    await useApi(apiClient.api.v1UserDeleteDelete, String(id))
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {

@@ -223,7 +223,7 @@ import {
   TimeOutline,
   EyeOutline,
 } from '@vicons/ionicons5'
-import * as payOrderApi from '@/api/mall/payOrder'
+import { apiClient, useApi } from '@/api'
 import dayjs from 'dayjs'
 
 const message = useMessage()
@@ -599,7 +599,7 @@ const handleCancelOrder = () => {
 const handleRefundOrder = async () => {
   if (currentOrder.value && currentOrder.value.status === 'paid') {
     try {
-      const res = await payOrderApi.refundPayOrder(currentOrder.value.id, { amount: 0 })
+      const res = await useApi(apiClient.api.v1PayOrderRefundCreate, currentOrder.value.id, { amount: 0 })
       if (res.code === 200) {
         message.success(res.msg || '退款成功')
         showDetailModal.value = false
@@ -621,7 +621,7 @@ const exportOrders = () => {
 const loadOrderList = async () => {
   loading.value = true
   try {
-    const res = await payOrderApi.getPayOrderPage({
+    const res = await useApi(apiClient.api.v1PayOrderPageList, {
       page: pagination.page,
       page_size: pagination.pageSize
     })
@@ -641,7 +641,7 @@ const loadOrderList = async () => {
 // 加载今日统计
 const loadTodayStats = async () => {
   try {
-    const res = await payOrderApi.getTodayStats()
+    const res = await useApi(apiClient.api.v1PayOrderTodayStatsList)
     if (res.data) {
       todayStats.total = res.data.total || 0
       todayStats.amount = res.data.amount || 0

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MarkdownEditor from '@/components/markdown/MarkdownEditor.vue'
 import { useRoute } from 'vue-router'
-import * as postApi from '@/api/content/post'
+import { apiClient, useApi } from '@/api'
 import { usePostHook } from '../utils/hook'
 import { MdCatalog, MdPreview } from 'md-editor-v3'
 import {register} from "@hoshikuzu/md-kit/src/index"
@@ -69,7 +69,7 @@ const handleHtmlChange = (h:string)=>{
 const getPostData = () => {
   const id = route.query.id
   if (id) {
-    postApi.queryPost(id + '').then((res) => {
+    useApi(apiClient.api.v1PostQueryDetail, Number(id)).then((res) => {
       valueMarkdown.value = res.data.md_content
       if (res.data.status == 'draft') {
         publishStatus.value = false

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import * as settingApi from '@/api/system/setting'
+import { apiClient, useApi } from '@/api'
 
 const message = useMessage()
 const paymentFormRef = ref<FormInst | null>(null)
@@ -53,7 +53,7 @@ const paymentLoading = ref(false)
 const savePaymentSettings = async () => {
   paymentLoading.value = true
   try {
-    await settingApi.saveSettings('payment', paymentForm.value)
+    await useApi(apiClient.api.v1SettingsJsonSaveCreate, 'payment', paymentForm.value)
     await new Promise((resolve) => setTimeout(resolve, 1000))
     onSearch()
     message.success('支付设置保存成功')
@@ -75,7 +75,7 @@ const testPaymentConnection = async () => {
 }
 
 const onSearch = async () => {
-  const res = await settingApi.getSettingsMap('payment')
+  const res = await useApi(apiClient.api.v1SettingsJsonDetail, 'payment')
   paymentForm.value = Object.assign({}, defaultForm, res.data)
 }
 

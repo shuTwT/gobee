@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { NButton, NTag, useThemeVars, type DataTableColumns } from 'naive-ui'
-import * as aiApi from '@/api/ai'
+import { NButton, NTag, useThemeVars, type DataTableColumns, type FormInst } from 'naive-ui'
+import { apiClient, useApi } from '@/api'
 import type { AIProvider, AIModelItem, AIProviderInput, AIModelInput } from '@/api/ai'
 
 const message = useMessage()
@@ -24,7 +24,7 @@ const selectedProvider = computed(
 const loadProviders = async () => {
   loading.value = true
   try {
-    const res = await aiApi.listProviders()
+    const res = await useApi(apiClient.api.v1AiProvidersListList)
     providers.value = res.data
     if (!providers.value.some(p => p.id === selectedProviderId.value)) {
       selectedProviderId.value = providers.value[0]?.id ?? null
@@ -128,7 +128,7 @@ const providerColumns: DataTableColumns<AIProvider> = [
 
 const handleSetDefault = async (row: AIProvider) => {
   try {
-    await aiApi.updateProvider(row.id, {
+    await useApi(apiClient.api.v1AiProvidersUpdateUpdate, row.id, {
       name: row.name,
       provider_type: row.provider_type,
       base_url: row.base_url,
@@ -158,7 +158,7 @@ const handleDeleteProvider = (row: AIProvider) => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await aiApi.deleteProvider(row.id)
+        await useApi(apiClient.api.v1AiProvidersDeleteDelete, row.id)
         message.success('提供商已删除')
         await loadProviders()
       } catch {
@@ -240,10 +240,10 @@ const saveProvider = async () => {
   providerSaving.value = true
   try {
     if (editingProviderId.value === null) {
-      await aiApi.createProvider({ ...providerForm.value })
+      await useApi(apiClient.api.v1AiProvidersCreateCreate, { ...providerForm.value })
       message.success('提供商创建成功')
     } else {
-      await aiApi.updateProvider(editingProviderId.value, { ...providerForm.value })
+      await useApi(apiClient.api.v1AiProvidersUpdateUpdate, editingProviderId.value, { ...providerForm.value })
       message.success('提供商保存成功')
     }
     providerFormVisible.value = false
@@ -266,7 +266,7 @@ const testProvider = async () => {
   }
   providerTesting.value = true
   try {
-    await aiApi.testProvider({
+    await useApi(apiClient.api.v1AiProvidersTestCreate, {
       base_url: providerForm.value.base_url,
       api_key: providerForm.value.api_key,
     })
@@ -368,10 +368,10 @@ const saveModel = async () => {
   modelSaving.value = true
   try {
     if (editingModelId.value === null) {
-      await aiApi.createProviderModel(selectedProvider.value.id, { ...modelForm.value })
+      await useApi(apiClient.api.v1AiProvidersModelsCreateCreate, selectedProvider.value.id, { ...modelForm.value })
       message.success('模型添加成功')
     } else {
-      await aiApi.updateProviderModel(selectedProvider.value.id, editingModelId.value, {
+      await useApi(apiClient.api.v1AiProvidersModelsUpdateUpdate, selectedProvider.value.id, editingModelId.value, {
         ...modelForm.value,
       })
       message.success('模型保存成功')
@@ -394,7 +394,7 @@ const handleDeleteModel = (row: AIModelItem) => {
     onPositiveClick: async () => {
       if (!selectedProvider.value) return
       try {
-        await aiApi.deleteProviderModel(selectedProvider.value.id, row.id)
+        await useApi(apiClient.api.v1AiProvidersModelsDeleteDelete, selectedProvider.value.id, row.id)
         message.success('模型已删除')
         await loadProviders()
       } catch {
@@ -408,7 +408,7 @@ const handleSyncModels = async () => {
   if (!selectedProvider.value) return
   syncingModels.value = true
   try {
-    await aiApi.syncProviderModels(selectedProvider.value.id)
+    await useApi(apiClient.api.v1AiProvidersModelsSyncCreate, selectedProvider.value.id)
     message.success('模型同步成功')
     await loadProviders()
   } catch {

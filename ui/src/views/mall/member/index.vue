@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NInputNumber } from 'naive-ui'
 import { Pencil, RefreshOutline } from '@vicons/ionicons5'
-import * as memberApi from '@/api/mall/member'
-import * as memberLevelApi from '@/api/mall/memberLevel'
+import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 
@@ -117,7 +116,7 @@ const columns: DataTableColumns<any> = [
 
 const getMemberLevels = async () => {
   try {
-    const res = await memberLevelApi.getMemberLevelPage({ page: 1, page_size: 100 })
+    const res = await useApi(apiClient.api.v1MemberLevelPageList, { page: 1, page_size: 100 })
     const levels = res.data.records || []
     const map: Record<number, any> = {}
     levels.forEach((level: any) => {
@@ -131,7 +130,7 @@ const getMemberLevels = async () => {
 
 const onSearch = () => {
   loading.value = true
-  memberApi.getMemberPage({
+  useApi(apiClient.api.v1MemberPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
   }).then(res => {
@@ -158,7 +157,7 @@ const openEditDialog = (row: any) => {
       try {
         const data = await editFormRef.value?.getData()
         
-        await memberApi.updateMember(row.id, data)
+        await useApi(apiClient.api.v1MemberUpdateUpdate, row.id, data)
         window.$message?.success('更新成功')
         
         onSearch()

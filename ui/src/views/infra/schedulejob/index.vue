@@ -3,15 +3,8 @@ import { h, ref, onMounted, computed } from 'vue'
 import { NButton, NIcon, NDataTable, NInput, NSelect, NPopconfirm, NTag, NSwitch, useMessage, useDialog } from 'naive-ui'
 import { RefreshOutline, Pencil, TrashOutline, PlayCircleOutline } from '@vicons/ionicons5'
 import type { DataTableColumns } from 'naive-ui'
-import {
-  getScheduleJobPage,
-  createScheduleJob,
-  updateScheduleJob,
-  deleteScheduleJob,
-  executeScheduleJob,
-  type ScheduleJob,
-  type CreateScheduleJobParams,
-} from '@/api/infra/schedulejob'
+import { apiClient, useApi } from '@/api'
+import type { ScheduleJob } from './utils/types'
 import { addDialog } from '@/components/dialog'
 import FormComponent from './form.vue'
 import dayjs from 'dayjs'
@@ -268,7 +261,7 @@ const columns: DataTableColumns<ScheduleJob> = [
 
 const onSearch = () => {
   loading.value = true
-  getScheduleJobPage({
+  useApi(apiClient.api.v1ScheduleJobPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
   }).then(res => {
@@ -318,10 +311,10 @@ const openEditDialog = (title = '新增', row?: ScheduleJob) => {
           onSearch()
         }
         if (title === '新增') {
-          await createScheduleJob(curData as CreateScheduleJobParams)
+          await useApi(apiClient.api.v1ScheduleJobCreateCreate, curData)
           chores()
         } else {
-          await updateScheduleJob(curData)
+          await useApi(apiClient.api.v1ScheduleJobUpdateUpdate, curData.id, curData)
           chores()
         }
       } catch (error) {
@@ -333,7 +326,7 @@ const openEditDialog = (title = '新增', row?: ScheduleJob) => {
 }
 
 const handleDelete = (row: ScheduleJob) => {
-  deleteScheduleJob(row.id).then(() => {
+  useApi(apiClient.api.v1ScheduleJobDeleteDelete, row.id).then(() => {
     window.$message?.success('删除成功')
     onSearch()
   }).catch(error => {
@@ -343,7 +336,7 @@ const handleDelete = (row: ScheduleJob) => {
 }
 
 const handleExecute = (row: ScheduleJob) => {
-  executeScheduleJob(row.id).then(() => {
+  useApi(apiClient.api.v1ScheduleJobExecuteCreate, row.id).then(() => {
     window.$message?.success('定时任务执行成功')
     onSearch()
   }).catch(error => {

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
-import * as couponApi from '@/api/mall/coupon'
 import type { FormItemProps,FormProps } from '@/views/mall/coupon/utils/types'
 
 const props = defineProps<FormProps>()

@@ -12,7 +12,6 @@ const addDialog = <P=Record<string,any>>(options:DialogOptions<P>)=>{
   },options)
   const length = dialogStore.value.push(dialog)
   const open =()=>{
-    console.log(dialogStore.value[length-1])
     dialogStore.value[length-1].visible=true
   }
 

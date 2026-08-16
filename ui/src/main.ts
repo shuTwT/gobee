@@ -1,5 +1,5 @@
 import './assets/main.css'
-import { getSettings } from './api/system/setting'
+import { apiClient, useApi } from '@/api'
 
 import { createApp } from 'vue'
 import { setupStore } from './stores'
@@ -10,7 +10,7 @@ import { useSettingsStoreHook } from './stores/modules/settings'
 
 const app = createApp(App)
 
-getSettings().then(async(res) => {
+useApi(apiClient.api.v1SettingsList).then(async(res) => {
   setupStore(app)
   app.use(router)
 

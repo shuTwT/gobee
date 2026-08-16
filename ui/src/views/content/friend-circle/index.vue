@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as friendCircleRecordApi from '@/api/content/friendCircle'
+import { apiClient, useApi } from '@/api'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
@@ -9,7 +9,7 @@ const dataList = ref<any[]>([])
 
 const onSearch = async () => {
   try {
-    const res = await friendCircleRecordApi.getFriendCircleRecordPage()
+    const res = await useApi(apiClient.api.v1FriendCirclePageList, {})
     dataList.value = res.data.records
   } catch {}
 }

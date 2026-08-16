@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
-import * as memberlevelService from '@/api/mall/memberLevel'
+import { apiClient, useApi } from '@/api'
 import type {FormProps,FormItemProps} from '@/views/mall/member/utils/types'
 
 
@@ -36,7 +36,7 @@ const rules: FormRules = {
 
 const getMemberLevels = async () => {
   try {
-    const data = await memberlevelService.getMemberLevelList()
+    const data = await useApi(apiClient.api.v1MemberLevelListList)
     if (data.code === 200) {
       memberLevels.value = data.data || []
     }

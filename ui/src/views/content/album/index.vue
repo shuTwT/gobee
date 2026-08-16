@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import * as albumApi from '@/api/content/album'
-import * as albumPhotoApi from '@/api/content/albumPhoto'
 import { addDialog } from '@/components/dialog'
 import albumForm from "./albumForm.vue"
 import albumPhotoForm from "./albumPhotoForm.vue"
@@ -36,9 +34,9 @@ const onSearchAlbum=async()=>{
 }
 
 const onSearchAlbumPhoto=async()=>{
-  const res=await albumPhotoApi.getAlbumPhotoPage({
+  const res=await useApi(apiClient.api.v1AlbumPhotoPageList,{
     page:pagination.page,
-    pageSize:pagination.pageSize,
+    page_size:pagination.pageSize,
   })
   if (res.code === 200) {
     albumPhotoList.value = res.data.records || []
@@ -65,12 +63,12 @@ const openAlbumDialog = (title='新增',row?:any)=>{
           done()
         }
         if(title=='新增'){
-          albumApi.createAlbum(data).then(()=>{
+          useApi(apiClient.api.v1AlbumCreateCreate, data).then(()=>{
             chores()
             onSearchAlbum()
           })
         }else{
-          albumApi.updateAlbum(row?.id,data).then(()=>{
+          useApi(apiClient.api.v1AlbumUpdateUpdate, String(row?.id), data).then(()=>{
             chores()
             onSearchAlbum()
           })
@@ -103,12 +101,12 @@ const openAlbumPhotoDialog=(title='新增',row?:any)=>{
           done()
         }
         if(title=='新增'){
-          albumPhotoApi.createAlbumPhoto(data).then(()=>{
+          useApi(apiClient.api.v1AlbumPhotoCreateCreate, data).then(()=>{
             chores()
             onSearchAlbumPhoto()
           })
         }else{
-          albumPhotoApi.updateAlbumPhoto(row?.id,data).then(()=>{
+          useApi(apiClient.api.v1AlbumPhotoUpdateUpdate, String(row?.id), data).then(()=>{
             chores()
             onSearchAlbumPhoto()
           })

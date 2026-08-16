@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm, NUpload } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline, CloudUploadOutline, EyeOutline } from '@vicons/ionicons5'
-import * as themeApi from '@/api/infra/theme'
+import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 import Detail from './detail.vue'
@@ -157,7 +157,7 @@ const columns: DataTableColumns<any> = [
 
 const onSearch = () => {
   loading.value = true
-  themeApi.getThemePage({
+  useApi(apiClient.api.v1ThemePageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
   }).then(res => {
@@ -186,7 +186,7 @@ const handleUpload = () => {
     beforeSure: async (done) => {
       try {
         const data = await editFormRef.value?.getData()
-        await themeApi.createTheme(data)
+        await useApi(apiClient.api.v1ThemeCreateCreate, data)
         window.$message?.success('主题创建成功')
         onSearch()
         done()
@@ -212,7 +212,7 @@ const handleDetail = (row: any) => {
 
 const handleEnable = async (id: number) => {
   try {
-    await themeApi.enableTheme(id)
+    await useApi(apiClient.api.v1ThemeEnableCreate, id)
     window.$message?.success('启用成功')
     onSearch()
   } catch (error) {
@@ -223,7 +223,7 @@ const handleEnable = async (id: number) => {
 
 const handleDisable = async (id: number) => {
   try {
-    await themeApi.disableTheme(id)
+    await useApi(apiClient.api.v1ThemeDisableCreate, id)
     window.$message?.success('禁用成功')
     onSearch()
   } catch (error) {
@@ -234,7 +234,7 @@ const handleDisable = async (id: number) => {
 
 const handleDelete = async (id: number) => {
   try {
-    await themeApi.deleteTheme(id)
+    await useApi(apiClient.api.v1ThemeDeleteDelete, id)
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {

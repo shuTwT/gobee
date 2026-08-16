@@ -3,14 +3,8 @@ import { h, ref, reactive, onMounted } from 'vue'
 import { NCard, NDataTable, NButton, NSpace, NTag, NIcon, NPopconfirm, useMessage, NInput, NSelect } from 'naive-ui'
 import { RefreshOutline, AddOutline, TrashOutline, CheckmarkCircleOutline, Search } from '@vicons/ionicons5'
 import type { DataTableColumns } from 'naive-ui'
-import {
-  getLicensePage,
-  deleteLicense,
-  verifyLicense,
-  createLicense,
-  updateLicense,
-  type License,
-} from '@/api/infra/license'
+import { apiClient, useApi } from '@/api'
+import type { License } from './utils/types'
 import { addDialog } from '@/components/dialog'
 import FormComponent from './form.vue'
 import type { FormProps } from './utils/types'
@@ -28,7 +22,7 @@ const statusOptions = [
   { label: '有效', value: 1 },
   { label: '过期', value: 2 },
   { label: '禁用', value: 3 },
-]
+] as any[]
 
 const loading = ref(false)
 const data = ref<License[]>([])
@@ -164,7 +158,7 @@ const columns: DataTableColumns<License> = [
 const onSearch = async () => {
   loading.value = true
   try {
-    const res = await getLicensePage({
+    const res = await useApi(apiClient.api.v1LicensePageList, {
       page: pagination.page,
       page_size: pagination.pageSize,
       domain: searchForm.domain || undefined,
@@ -208,10 +202,10 @@ const openEditDialog = (title = '新增', row?: License) => {
         const data = await editFormRef.value?.getData()
         
         if (currentLicenseId.value) {
-          await updateLicense(currentLicenseId.value, data)
+          await useApi(apiClient.api.v1LicenseUpdateUpdate, currentLicenseId.value, data)
           message.success('更新成功')
         } else {
-          await createLicense(data)
+          await useApi(apiClient.api.v1LicenseCreateCreate, data)
           message.success('创建成功')
         }
         
@@ -227,7 +221,7 @@ const openEditDialog = (title = '新增', row?: License) => {
 
 const handleDelete = async (row: License) => {
   try {
-    await deleteLicense(row.id)
+    await useApi(apiClient.api.v1LicenseDeleteDelete, row.id)
     message.success('授权删除成功')
     onSearch()
   } catch (error) {
@@ -237,7 +231,7 @@ const handleDelete = async (row: License) => {
 
 const handleVerify = async (row: License) => {
   try {
-    const res = await verifyLicense({ domain: row.domain })
+    const res = await useApi(apiClient.api.v1LicenseVerifyCreate, { domain: row.domain })
     if (res.data.valid) {
       const expireDate = res.data.expire_date ? new Date(res.data.expire_date).toLocaleString() : '-'
       message.success(`授权验证成功：${res.data.message}，客户：${res.data.customer_name}，过期时间：${expireDate}`)

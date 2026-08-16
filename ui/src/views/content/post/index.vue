@@ -30,14 +30,13 @@ import {
 import { h, ref, reactive, onMounted } from 'vue'
 import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 import { useRouter } from 'vue-router'
-import * as postApi from '@/api/content/post'
-import * as categoryApi from '@/api/content/category'
-import * as tagApi from '@/api/content/tag'
+import { apiClient, useApi } from '@/api'
+
+
 import { usePostHook } from './utils/hook'
 import dayjs from 'dayjs'
 import { addDialog } from '@/components/dialog'
 import ShareDialog from './shareDialog.vue'
-import * as settingApi from '@/api/system/setting'
 
 const message = useMessage()
 const dialog = useDialog()
@@ -299,8 +298,8 @@ const columns: DataTableColumns<any> = [
 const loadCategoryAndTagOptions = async () => {
   try {
     const [categoryRes, tagRes] = await Promise.all([
-      categoryApi.getCategoryList(),
-      tagApi.getTagList(),
+      useApi(apiClient.api.v1CategoryListList),
+      useApi(apiClient.api.v1TagListList),
     ])
     if (categoryRes.code === 200) {
       categoryOptions.value = categoryRes.data.map((item: any) => ({
@@ -321,11 +320,10 @@ const loadCategoryAndTagOptions = async () => {
 
 // 创建文章
 const createPost = () => {
-  postApi
-    .createPost({
+  useApi(apiClient.api.v1PostCreateCreate, {
       title: '未命名的文章',
       content: '<p>此处是文章内容</p>',
-    })
+    } as Parameters<typeof apiClient.api.v1PostCreateCreate>[0])
     .then((res) => {
       if (res.code === 200) {
         message.success('创建成功')
@@ -360,8 +358,8 @@ const handleSettingPost = (row: any) => {
 const sharePost = async (row: any) => {
   try {
     const [postRes, settingRes] = await Promise.all([
-      postApi.queryPost(row.id),
-      settingApi.getSettingsMap('basic'),
+      useApi(apiClient.api.v1PostQueryDetail, row.id),
+      useApi(apiClient.api.v1SettingsJsonDetail, 'basic'),
     ])
     const post = postRes.data
     const siteUrl = (settingRes.data?.siteUrl || settingRes.data?.site_url || '').replace(/\/$/, '')
@@ -397,7 +395,7 @@ const sharePost = async (row: any) => {
 // 导出文章
 const exportPost = async (row: any) => {
   try {
-    const res = await postApi.queryPost(row.id)
+    const res = await useApi(apiClient.api.v1PostQueryDetail, row.id)
     const post = res.data
     const content = post.md_content || post.content || ''
     if (!content.trim()) {
@@ -429,7 +427,7 @@ const exportPost = async (row: any) => {
 // 复制文章内容
 const copyPostContent = async (row: any) => {
   try {
-    const res = await postApi.queryPost(row.id)
+    const res = await useApi(apiClient.api.v1PostQueryDetail, row.id)
     const post = res.data
     const content = post.md_content || post.content || ''
     if (!content.trim()) {
@@ -483,7 +481,7 @@ const deletePost = (row: any) => {
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
-      postApi.deletePost(row.id).then(() => {
+      useApi(apiClient.api.v1PostDeleteDelete, row.id).then(() => {
         message.success('删除成功')
         onSearch()
       })
@@ -515,7 +513,7 @@ const handleRefresh = () => {
 }
 
 const onSearch = async () => {
-  const res = await postApi.getPostPage({
+  const res = await useApi(apiClient.api.v1PostPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
     title: searchKeyword.value,

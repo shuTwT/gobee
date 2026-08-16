@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline } from '@vicons/ionicons5'
-import * as categoryApi from '@/api/content/category'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
+import { apiClient, useApi } from '@/api'
 
 const pagination = reactive({
   page: 1,
@@ -120,7 +120,7 @@ const columns: DataTableColumns<any> = [
 
 const onSearch = () => {
   loading.value = true
-  categoryApi.getCategoryPage({
+  useApi(apiClient.api.v1CategoryPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
   }).then(res => {
@@ -151,10 +151,10 @@ const openEditDialog = (title = '新增', row?: any) => {
         const data = await editFormRef.value?.getData()
         
         if (currentCategoryId.value) {
-          await categoryApi.updateCategory(currentCategoryId.value, data)
+          await useApi(apiClient.api.v1CategoryUpdateUpdate, currentCategoryId.value, data)
           window.$message?.success('更新成功')
         } else {
-          await categoryApi.createCategory(data)
+          await useApi(apiClient.api.v1CategoryCreateCreate, data)
           window.$message?.success('创建成功')
         }
         
@@ -170,7 +170,7 @@ const openEditDialog = (title = '新增', row?: any) => {
 
 const handleDelete = async (id: number) => {
   try {
-    await categoryApi.deleteCategory(id)
+    await useApi(apiClient.api.v1CategoryDeleteDelete, id)
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {

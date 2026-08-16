@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui';
 import type { FormItemProps } from './utils/types'
-import { getCategoryList } from '@/api/content/category'
-import { getTagList } from '@/api/content/tag'
+import { apiClient, useApi } from '@/api'
+
 
 const props = defineProps<{
   formInline: FormItemProps
@@ -38,7 +38,7 @@ const getData = () => {
 
 const loadCategoryOptions = async () => {
   try {
-    const res = await getCategoryList()
+    const res = await useApi(apiClient.api.v1CategoryListList)
     if (res.code === 200 && res.data) {
       categoryOptions.value = res.data.map((item: any) => ({
         value: item.id,
@@ -52,7 +52,7 @@ const loadCategoryOptions = async () => {
 
 const loadTagOptions = async () => {
   try {
-    const res = await getTagList()
+    const res = await useApi(apiClient.api.v1TagListList)
     if (res.code === 200 && res.data) {
       tagOptions.value = res.data.map((item: any) => ({
         value: item.id,

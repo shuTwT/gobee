@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NButton, NDescriptions,NDescriptionsItem, NSpace, useThemeVars } from 'naive-ui'
-import * as userApi from "@/api/system/user"
+import { apiClient, useApi } from "@/api"
 import personalAccessTokenForm from './personalAccessTokenForm.vue'
 import profileEditForm from './profileEditForm.vue'
 import { addDialog } from '@/components/dialog'
@@ -35,11 +35,11 @@ const handleEditProfile = () => {
     beforeSure: async (done) => {
       try {
         const data = await formRef.value.getData()
-        await userApi.updateProfile(data)
+        await useApi(apiClient.api.v1UserProfileUpdateUpdate, data)
         message.success('保存成功')
         done()
         // 保存成功后刷新资料，并同步用户 store 昵称（头部/左下角即时刷新 + 持久化）
-        const res = await userApi.getUserProfile()
+        const res = await useApi(apiClient.api.v1UserProfileList)
         personalInfomation.value = res.data
         const newNickname = res.data.nickname ?? ''
         userStore.SET_NICKNAME(newNickname)
@@ -112,7 +112,7 @@ const copyTokenOrigin = ref('')
 const {copy,isSupported} = useClipboard({source:copyTokenOrigin})
 
 const onSearchUserPersonalAccessToken = async()=>{
-  const res= await userApi.getPersonalAccessTokenList()
+  const res = await useApi(apiClient.api.v1UserPersonalAccessTokenListList)
   personalAccessTokenList.value =  res.data
 }
 const openPatEditDialog = (title='新增')=>{
@@ -129,7 +129,7 @@ const openPatEditDialog = (title='新增')=>{
       }
       try{
         const curData =await formRef.value.getData()
-        await userApi.createPat(curData)
+        await useApi(apiClient.api.v1UserPersonalAccessTokenCreateCreate, curData)
         chores()
       }catch{
 
@@ -140,7 +140,7 @@ const openPatEditDialog = (title='新增')=>{
 }
 const copyToken = async (row:any)=>{
   try{
-    const res = await userApi.getPersonalAccessToken(row.id)
+    const res = await useApi(apiClient.api.v1UserPersonalAccessTokenQueryDetail, String(row.id))
     copyTokenOrigin.value = res.data.token
     if(isSupported.value){
       copy()
@@ -156,7 +156,7 @@ const copyToken = async (row:any)=>{
 onMounted(async ()=>{
   try{
     await onSearchUserPersonalAccessToken()
-    const res = await userApi.getUserProfile()
+    const res = await useApi(apiClient.api.v1UserProfileList)
     personalInfomation.value = res.data
   }catch{
 

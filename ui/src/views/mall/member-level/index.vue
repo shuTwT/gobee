@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline } from '@vicons/ionicons5'
-import * as memberLevelApi from '@/api/mall/memberLevel'
+import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 
@@ -128,7 +128,7 @@ const columns: DataTableColumns<any> = [
 
 const onSearch = () => {
   loading.value = true
-  memberLevelApi.getMemberLevelPage({
+  useApi(apiClient.api.v1MemberLevelPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
   }).then(res => {
@@ -163,10 +163,10 @@ const openEditDialog = (title = '新增', row?: any) => {
         const data = await editFormRef.value?.getData()
         
         if (currentMemberLevelId.value) {
-          await memberLevelApi.updateMemberLevel(currentMemberLevelId.value, data)
+          await useApi(apiClient.api.v1MemberLevelUpdateUpdate, currentMemberLevelId.value, data)
           window.$message?.success('更新成功')
         } else {
-          await memberLevelApi.createMemberLevel(data)
+          await useApi(apiClient.api.v1MemberLevelCreateCreate, data)
           window.$message?.success('创建成功')
         }
         
@@ -182,7 +182,7 @@ const openEditDialog = (title = '新增', row?: any) => {
 
 const handleDelete = async (id: number) => {
   try {
-    await memberLevelApi.deleteMemberLevel(id)
+    await useApi(apiClient.api.v1MemberLevelDeleteDelete, id)
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {

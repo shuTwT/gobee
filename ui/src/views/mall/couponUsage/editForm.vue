@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
-import * as couponUsageApi from '@/api/mall/couponUsage'
 
 interface Props {
   couponUsageId?: number

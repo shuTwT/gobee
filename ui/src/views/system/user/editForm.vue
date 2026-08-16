@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormInst, FormRules } from 'naive-ui'
 import type { FormProps } from './utils/types';
-import * as roleApi from '@/api/system/role'
+import { apiClient, useApi } from '@/api'
 
 const props = defineProps<FormProps>()
 
@@ -36,7 +36,7 @@ const rules: FormRules = {
 }
 
 const loadRoles = () => {
-  roleApi.getRoleList().then(res => {
+  useApi(apiClient.api.v1RoleListList).then(res => {
     if (res.code === 200) {
       roleOptions.value = res.data.map((role: any) => ({
         label: role.name,

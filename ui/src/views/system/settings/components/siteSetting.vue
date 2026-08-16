@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import * as settingApi from '@/api/system/setting'
+import { apiClient, useApi } from '@/api'
 import ImageUpload from '@/components/upload/ImageUpload.vue'
 
 const message = useMessage()
@@ -40,8 +40,8 @@ const saveSiteSettings = async () => {
   siteLoading.value = true
   try {
     await Promise.all([
-      settingApi.saveSettings('basic', basicForm.value),
-      settingApi.saveSettings('site', siteForm.value),
+      useApi(apiClient.api.v1SettingsJsonSaveCreate, 'basic', basicForm.value),
+      useApi(apiClient.api.v1SettingsJsonSaveCreate, 'site', siteForm.value),
     ])
     await new Promise((resolve) => setTimeout(resolve, 1000))
     onSearch()
@@ -55,8 +55,8 @@ const saveSiteSettings = async () => {
 
 const onSearch = async () => {
   const [basicRes, siteRes] = await Promise.all([
-    settingApi.getSettingsMap('basic'),
-    settingApi.getSettingsMap('site'),
+    useApi(apiClient.api.v1SettingsJsonDetail, 'basic'),
+    useApi(apiClient.api.v1SettingsJsonDetail, 'site'),
   ])
   basicForm.value = { ...defaultBasicForm, ...basicRes.data }
   siteForm.value = { ...defaultSiteForm, ...siteRes.data }

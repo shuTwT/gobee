@@ -3,12 +3,14 @@ import Uppy from '@uppy/core';
 import Dashboard from '@uppy/dashboard';
 import Zhcn from '@uppy/locales/lib/zh_CN';
 import XHRUpload from '@uppy/xhr-upload';
-import { BASE_URL } from '@/api/utils';
+
 import { getToken } from '@/utils/auth';
-import { getStorageStrategyListAll } from '@/api/infra/storage';
+import { apiClient, useApi } from '@/api';
 
 import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
+
+const BASE_URL = import.meta.env.VITE_BASE_API
 
 let uppy:Uppy|null = null;
 
@@ -53,7 +55,7 @@ onMounted(()=>{
 })
 
 onMounted(()=>{
-  getStorageStrategyListAll().then((res)=>{
+  useApi(apiClient.api.v1StorageStrategyListList).then((res)=>{
     if(res.code === 200){
       for(let i=0;i<res.data.length;i++){
         if(res.data[i].master==true){

@@ -4,7 +4,7 @@ import { RefreshOutline, Link, Search } from '@vicons/ionicons5'
 import type { DataTableColumns } from 'naive-ui'
 import { addDialog } from '@/components/dialog'
 import uploadForm from './uploadForm.vue'
-import * as fileApi from '@/api/infra/file'
+import { apiClient, useApi } from '@/api'
 import dayjs from 'dayjs'
 
 const searchForm = reactive({
@@ -139,7 +139,7 @@ const openUploadDialog = (title = '新增', row?: any) => {
 
 const onSearch = async () => {
   loading.value = true
-  const res = await fileApi.getFilePage({
+  const res = await useApi(apiClient.api.v1FilePageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
     name: searchForm.name || undefined,

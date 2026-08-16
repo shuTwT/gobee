@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, NInput, NInputNumber, NSwitch, NTag, NPopconfirm, NSelect, type DataTableColumns } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline, AddOutline } from '@vicons/ionicons5'
-import * as menuApi from '@/api/content/menu'
+import { apiClient, useApi } from '@/api'
 
 const pagination = reactive({
   page: 1,
@@ -181,7 +181,7 @@ const columns: DataTableColumns<any> = [
 const loadMenuList = async () => {
   loading.value = true
   try {
-    const res = await menuApi.getMenuList()
+    const res = await useApi(apiClient.api.v1MenuListList)
     const flatData = res.data || []
     dataList.value = buildMenuTree(flatData)
     updateParentMenuOptions()
@@ -266,10 +266,10 @@ const handleSubmit = async () => {
 
   try {
     if (currentMenuId.value) {
-      await menuApi.updateMenu(currentMenuId.value, formData.value)
+      await useApi(apiClient.api.v1MenuUpdateUpdate, currentMenuId.value, formData.value)
       window.$message?.success('更新成功')
     } else {
-      await menuApi.createMenu(formData.value)
+      await useApi(apiClient.api.v1MenuCreateCreate, formData.value)
       window.$message?.success('创建成功')
     }
     
@@ -283,7 +283,7 @@ const handleSubmit = async () => {
 
 const handleDelete = async (id: number) => {
   try {
-    await menuApi.deleteMenu(id)
+    await useApi(apiClient.api.v1MenuDeleteDelete, id)
     window.$message?.success('删除成功')
     loadMenuList()
   } catch (error) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { apiClient, useApi } from "@/api"
-import { getNotificationPage } from "@/api/system/notification"
+
 import { RouterLink } from "vue-router"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
@@ -85,7 +85,7 @@ const quickLinks: quickLink[] = [
 const loadNotifications = async () => {
   notificationLoading.value = true
   try {
-    const res = await getNotificationPage({
+    const res = await useApi(apiClient.api.v1NotificationsPageList, {
       page: 1,
       page_size: 10,
       is_read: false,

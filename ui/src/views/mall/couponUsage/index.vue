@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm, NInput, NSelect } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline } from '@vicons/ionicons5'
-import * as couponUsageApi from '@/api/mall/couponUsage'
+import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 
@@ -153,7 +153,7 @@ const columns: DataTableColumns<any> = [
 
 const onSearch = () => {
   loading.value = true
-  couponUsageApi.getCouponUsagePage({
+  useApi(apiClient.api.v1CouponUsagePageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
     coupon_code: searchCouponCode.value || undefined,
@@ -171,7 +171,7 @@ const onSearch = () => {
 
 const handleDelete = async (id: number) => {
   try {
-    await couponUsageApi.deleteCouponUsage(id)
+    await useApi(apiClient.api.v1CouponUsageDeleteDelete, id)
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {
@@ -186,7 +186,7 @@ const handleBatchDelete = async () => {
     return
   }
   try {
-    await couponUsageApi.batchDeleteCouponUsages(checkedRowKeys.value)
+    await useApi(apiClient.api.v1CouponUsageBatchDeleteCreate, { ids: checkedRowKeys.value })
     window.$message?.success('删除成功')
     checkedRowKeys.value = []
     onSearch()

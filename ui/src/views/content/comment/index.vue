@@ -11,16 +11,28 @@ import {
   useMessage,
 } from 'naive-ui'
 import type { DataTableColumns } from 'naive-ui'
-import {
-  getCommentPage,
-  getCommentDetail,
-  approveComment,
-  rejectComment,
-  deleteComment,
-  type Comment,
-  CommentStatus,
-} from '@/api/content/comment'
-import {apiClient,useApi} from "@/api"
+import type { EntComment } from '@hoshikuzu/api-client'
+import { apiClient, useApi } from '@/api'
+
+// 评论状态
+enum CommentStatus {
+  Pending = 1, // 未审核
+  Approved = 2, // 已审核
+}
+
+// 评论列表项类型（EntComment 基础上补充关联数据）
+type Comment = EntComment & {
+  id: number
+  user?: {
+    id: number
+    name: string
+    email: string
+  }
+  article?: {
+    id: number
+    title: string
+  }
+}
 
 const message = useMessage()
 
@@ -59,7 +71,7 @@ const fetchComments = async () => {
 // 查看评论详情
 const handleView = async (row: Comment) => {
   try {
-    const res = await useApi(apiClient.api.v1CommentDetail,row.id)
+    const res = await useApi(apiClient.api.v1CommentQueryDetail, row.id)
     currentComment.value = res.data
     showModal.value = true
   } catch {
@@ -70,7 +82,7 @@ const handleView = async (row: Comment) => {
 // 审核评论
 const handleApprove = async (row: Comment) => {
   try {
-    await approveComment(row.id)
+    await useApi(apiClient.api.v1CommentApproveUpdate, row.id)
     message.success('审核通过成功')
     fetchComments()
   } catch  {
@@ -81,7 +93,7 @@ const handleApprove = async (row: Comment) => {
 // 拒绝评论
 const handleReject = async (row: Comment) => {
   try {
-    await rejectComment(row.id)
+    await useApi(apiClient.api.v1CommentRejectUpdate, row.id)
     message.success('拒绝评论成功')
     fetchComments()
   } catch {
@@ -92,7 +104,7 @@ const handleReject = async (row: Comment) => {
 // 删除评论
 const handleDelete = async (row: Comment) => {
   try {
-    await deleteComment(row.id)
+    await useApi(apiClient.api.v1CommentDeleteDelete, row.id)
     message.success('删除成功')
     fetchComments()
   } catch {
@@ -125,7 +137,7 @@ const columns: DataTableColumns<Comment> = [
   {
     title: '评论时间',
     key: 'created_at',
-    render: (row) => new Date(row.created_at).toLocaleString(),
+    render: (row) => new Date(row.created_at ?? '').toLocaleString(),
   },
   {
     title: '状态',
@@ -254,7 +266,7 @@ onMounted(() => {
           {{ currentComment.user_agent || '-' }}
         </n-descriptions-item>
         <n-descriptions-item label="评论时间">
-          {{ new Date(currentComment.created_at).toLocaleString() }}
+          {{ new Date(currentComment.created_at ?? '').toLocaleString() }}
         </n-descriptions-item>
         <n-descriptions-item label="状态">
           <n-tag :type="currentComment.status === CommentStatus.Approved ? 'success' : 'warning'">

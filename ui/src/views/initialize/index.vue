@@ -69,7 +69,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { preInit, initialize } from '@/api/initialize';
+import { apiClient, useApi } from '@/api';
 import type { FormInst, FormRules } from 'naive-ui';
 
 const message = useMessage();
@@ -142,7 +142,7 @@ const isFormValid = computed(() => {
 const fetchDbType = async () => {
   loading.value = true;
   try {
-    const response = await preInit();
+    const response = await useApi(apiClient.api.preinitList);
     if (response.code === 200 && response.data) {
       dbType.value = response.data.dbType || 'sqlite';
     } else {
@@ -175,12 +175,12 @@ const submitForm = async () => {
 
   submitting.value = true;
   try {
-    const response = await initialize({
+    const response = (await useApi(apiClient.api.initializeCreate, {
       admin_username: formData.username,
       admin_email: formData.email,
       admin_password: formData.password,
       confirm_password: formData.confirmPassword
-    });
+    })) as unknown as { code: number; msg: string };
 
     if (response.code === 200) {
       message.success('初始化成功');

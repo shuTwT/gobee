@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NTag, NDataTable, NButton, NIcon, NPopconfirm } from 'naive-ui'
-import * as roleApi from '@/api/system/role'
+import { apiClient, useApi } from '@/api'
 import type { DataTableColumns } from 'naive-ui'
 import { RefreshOutline, Pencil, TrashOutline } from '@vicons/ionicons5'
 import { addDialog } from '@/components/dialog'
@@ -132,10 +132,10 @@ const openEditDialog = (title = '新增', row?: any) => {
         const data = await editFormRef.value?.getData()
 
         if (currentRoleId.value) {
-          await roleApi.updateRole(currentRoleId.value, data)
+          await useApi(apiClient.api.v1RoleUpdateUpdate, currentRoleId.value, data)
           window.$message?.success('更新成功')
         } else {
-          await roleApi.createRole(data)
+          await useApi(apiClient.api.v1RoleCreateCreate, data)
           window.$message?.success('创建成功')
         }
 
@@ -151,7 +151,7 @@ const openEditDialog = (title = '新增', row?: any) => {
 
 const onSearch = () => {
   loading.value = true
-  roleApi.getRolePage({
+  useApi(apiClient.api.v1RolePageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
   }).then(res => {
@@ -166,7 +166,7 @@ const onSearch = () => {
 
 const handleDelete = async (id: number) => {
   try {
-    await roleApi.deleteRole(id)
+    await useApi(apiClient.api.v1RoleDeleteDelete, id)
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {

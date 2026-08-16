@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import * as settingApi from '@/api/system/setting'
+import { apiClient, useApi } from '@/api'
 
 const message = useMessage()
 
@@ -38,8 +38,8 @@ const saveNotificationSettings = async () => {
   notificationLoading.value = true
   try {
     await Promise.all([
-      settingApi.saveSettings('notify', notificationForm.value),
-      settingApi.saveSettings('email', emailForm.value),
+      useApi(apiClient.api.v1SettingsJsonSaveCreate, 'notify', notificationForm.value),
+      useApi(apiClient.api.v1SettingsJsonSaveCreate, 'email', emailForm.value),
     ])
     await new Promise((resolve) => setTimeout(resolve, 1000))
     onSearch()
@@ -53,8 +53,8 @@ const saveNotificationSettings = async () => {
 
 const onSearch = async () => {
   const [notifyRes, emailRes] = await Promise.all([
-    settingApi.getSettingsMap('notify'),
-    settingApi.getSettingsMap('email'),
+    useApi(apiClient.api.v1SettingsJsonDetail, 'notify'),
+    useApi(apiClient.api.v1SettingsJsonDetail, 'email'),
   ])
   notificationForm.value = Object.assign({}, defaultNotifyForm, notifyRes.data)
   emailForm.value = Object.assign({}, defaultEmailForm, emailRes.data)

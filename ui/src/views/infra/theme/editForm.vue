@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import type { FormInst, UploadFileInfo } from 'naive-ui'
 import { NUpload, NButton, NForm, NFormItem, NInput, NRadioGroup, NRadio, type UploadCustomRequestOptions } from 'naive-ui'
-import * as themeApi from '@/api/infra/theme'
+import { apiClient, useApi } from '@/api'
 
 const props = defineProps({
   formInline: {
@@ -75,7 +75,6 @@ watch(() => formData.value.type, (newType, oldType) => {
 })
 
 const handleUploadFile = ({ file, onFinish, onError }: UploadCustomRequestOptions) => {
-  console.log('开始上传文件:', file.name)
   
   if (!file.file) {
     window.$message?.error('文件无效')
@@ -86,9 +85,7 @@ const handleUploadFile = ({ file, onFinish, onError }: UploadCustomRequestOption
   const formDataUpload = new FormData()
   formDataUpload.append('file', file.file)  
   
-  themeApi.uploadThemeFile(formDataUpload).then(res => {
-    console.log('上传响应:', res)
-    console.log('文件路径:', res.data.file_path)
+  useApi(apiClient.api.v1ThemeUploadCreate, { file: file.file }).then(res => {
     
     if (!res.data || !res.data.file_path) {
       window.$message?.error('服务器返回数据格式错误')
@@ -109,10 +106,6 @@ const handleUploadFile = ({ file, onFinish, onError }: UploadCustomRequestOption
 
 const getData = () => {
   return new Promise((resolve, reject) => {
-    console.log('getData 被调用')
-    console.log('当前主题类型:', formData.value.type)
-    console.log('已上传文件路径:', uploadedFilePath.value)
-    console.log('文件列表:', fileList.value)
     
     if (formRef.value) {
       formRef.value?.validate((errors) => {

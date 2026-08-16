@@ -1,8 +1,6 @@
-import { http } from '@/utils/http'
 import { getToken } from '@/utils/auth'
-import { BASE_URL, type ApiResponse } from '@/api/utils'
 
-const AI_BASE_URL = `${BASE_URL}/v1/ai`
+const AI_BASE_URL = '/api/v1/ai'
 
 export interface AIModelItem {
   id: number
@@ -75,62 +73,6 @@ export interface AIStreamEvent {
   message_id?: number
   code?: string
   message?: string
-}
-
-export const listProviders = () => {
-  return http.request<ApiResponse<AIProvider[]>>('get', `${AI_BASE_URL}/providers/list`)
-}
-
-export const createProvider = (data: AIProviderInput) => {
-  return http.request<ApiResponse<null>>('post', `${AI_BASE_URL}/providers/create`, { data })
-}
-
-export const updateProvider = (id: number, data: AIProviderInput) => {
-  return http.request<ApiResponse<null>>('put', `${AI_BASE_URL}/providers/update/${id}`, { data })
-}
-
-export const deleteProvider = (id: number) => {
-  return http.request<ApiResponse<null>>('delete', `${AI_BASE_URL}/providers/delete/${id}`)
-}
-
-export const testProvider = (data: Pick<AIProviderInput, 'base_url' | 'api_key'>) => {
-  return http.request<ApiResponse<null>>('post', `${AI_BASE_URL}/providers/test`, { data })
-}
-
-export const syncProviderModels = (providerId: number) => {
-  return http.request<ApiResponse<null>>('post', `${AI_BASE_URL}/providers/${providerId}/models/sync`)
-}
-
-export const createProviderModel = (providerId: number, data: AIModelInput) => {
-  return http.request<ApiResponse<null>>('post', `${AI_BASE_URL}/providers/${providerId}/models/create`, { data })
-}
-
-export const updateProviderModel = (providerId: number, modelId: number, data: AIModelInput) => {
-  return http.request<ApiResponse<null>>('put', `${AI_BASE_URL}/providers/${providerId}/models/update/${modelId}`, { data })
-}
-
-export const deleteProviderModel = (providerId: number, modelId: number) => {
-  return http.request<ApiResponse<null>>('delete', `${AI_BASE_URL}/providers/${providerId}/models/delete/${modelId}`)
-}
-
-export const listSessions = () => {
-  return http.request<ApiResponse<ChatSession[]>>('get', `${AI_BASE_URL}/chat/sessions`)
-}
-
-export const createSession = () => {
-  return http.request<ApiResponse<ChatSession>>('post', `${AI_BASE_URL}/chat/sessions`)
-}
-
-export const listMessages = (sessionId: number) => {
-  return http.request<ApiResponse<ChatMessage[]>>('get', `${AI_BASE_URL}/chat/sessions/${sessionId}/messages`)
-}
-
-export const deleteSession = (sessionId: number) => {
-  return http.request<ApiResponse<null>>('delete', `${AI_BASE_URL}/chat/sessions/${sessionId}`)
-}
-
-export const clearSession = (sessionId: number) => {
-  return http.request<ApiResponse<null>>('delete', `${AI_BASE_URL}/chat/sessions/${sessionId}/messages`)
 }
 
 type StreamEventName = 'delta' | 'done' | 'error'

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ScrollbarInst } from 'naive-ui'
-import * as aiApi from '@/api/ai'
+import { apiClient, useApi } from '@/api'
+import { streamChat as aiStreamChat } from '@/api/ai'
 import type { ChatMessage as Message, ChatSession } from '@/api/ai'
 
 const chatSessions = ref<ChatSession[]>([])
@@ -22,12 +23,12 @@ const scrollToBottom = () => {
 }
 
 const refreshSessions = async () => {
-  const res = await aiApi.listSessions()
+  const res = await useApi(apiClient.api.v1AiChatSessionsList)
   chatSessions.value = res.data
 }
 
 const loadMessages = async (sessionId: number) => {
-  const res = await aiApi.listMessages(sessionId)
+  const res = await useApi(apiClient.api.v1AiChatSessionsMessagesList, sessionId)
   currentSessionId.value = sessionId
   messages.value = res.data
   scrollToBottom()
@@ -36,7 +37,7 @@ const loadMessages = async (sessionId: number) => {
 const createNewSession = async () => {
   if (loading.value) return
   try {
-    const res = await aiApi.createSession()
+    const res = await useApi(apiClient.api.v1AiChatSessionsCreate)
     chatSessions.value.unshift(res.data)
     currentSessionId.value = res.data.id
     messages.value = []
@@ -72,7 +73,7 @@ const deleteSession = async (sessionId: number, event: Event) => {
   event.stopPropagation()
   if (loading.value) return
   try {
-    await aiApi.deleteSession(sessionId)
+    await useApi(apiClient.api.v1AiChatSessionsDelete, sessionId)
     const remaining = chatSessions.value.filter(session => session.id !== sessionId)
     chatSessions.value = remaining
     if (currentSessionId.value === sessionId) {
@@ -90,7 +91,7 @@ const deleteSession = async (sessionId: number, event: Event) => {
 const clearChat = async () => {
   if (loading.value || currentSessionId.value === null) return
   try {
-    await aiApi.clearSession(currentSessionId.value)
+    await useApi(apiClient.api.v1AiChatSessionsMessagesDelete, currentSessionId.value)
     messages.value = []
     const session = chatSessions.value.find(item => item.id === currentSessionId.value)
     if (session) {
@@ -131,7 +132,7 @@ const sendMessage = async () => {
   scrollToBottom()
 
   try {
-    await aiApi.streamChat(
+    await aiStreamChat(
       sessionId,
       content,
       (event, data) => {

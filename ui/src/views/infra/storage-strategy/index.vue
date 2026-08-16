@@ -1,27 +1,22 @@
 <script setup lang="ts">
 import { h, ref, reactive, onMounted } from 'vue'
-import { NCard, NDataTable, NButton, NSpace, NSwitch, NIcon, useMessage, NInput, NSelect } from 'naive-ui'
+import { NCard, NDataTable, NButton, NSpace, NSwitch, NIcon, useMessage, useDialog, NInput, NSelect } from 'naive-ui'
 import { RefreshOutline,Pencil, Search } from '@vicons/ionicons5'
 import type { DataTableColumns } from 'naive-ui'
-import {
-  getStorageStrategyList,
-  createStorageStrategy,
-  updateStorageStrategy,
-  deleteStorageStrategy,
-  setDefaultStorageStrategy,
-  type StorageStrategy,
-} from '@/api/infra/storage'
+import { apiClient, useApi } from '@/api'
+import type { StorageStrategy } from './utils/types'
 import { addDialog } from '@/components/dialog'
 import FormComponent from './form.vue'
 import type { FormItemProps } from './utils/types'
 
 const message = useMessage()
+const dialog = useDialog()
 
 const searchForm = reactive({
   name: '',
   type: '',
   master: null as boolean | null,
-})
+} as Record<string, any>)
 
 const typeOptions = [
   { label: '本地存储', value: 'local' },
@@ -31,7 +26,7 @@ const typeOptions = [
 const masterOptions = [
   { label: '是', value: true },
   { label: '否', value: false },
-]
+] as any[]
 
 const loading = ref(false)
 const data = ref<StorageStrategy[]>([])
@@ -128,7 +123,7 @@ const columns: DataTableColumns<StorageStrategy> = [
 const onSearch = async () => {
   loading.value = true
   try {
-    const res = await getStorageStrategyList({
+    const res = await useApi(apiClient.api.v1StorageStrategyPageList, {
       page: pagination.page,
       page_size: pagination.pageSize,
       name: searchForm.name || undefined,
@@ -177,18 +172,17 @@ const openEditDialog = (title='新增',row?:FormItemProps) => {
     beforeSure: async (done) => {
       try {
         const curData = await formRef.value?.getData()
-        console.log(curData)
         const chores = () => {
           message.success('创建成功喵~')
           done()
           onSearch()
         }
         if(title=='新增'){
-          createStorageStrategy(curData).then(() => {
+          useApi(apiClient.api.v1StorageStrategyCreateCreate, curData).then(() => {
             chores()
           })
         }else{
-          updateStorageStrategy(curData).then(() => {
+          useApi(apiClient.api.v1StorageStrategyUpdateUpdate, curData.id, curData).then(() => {
             chores()
           })
         }
@@ -207,7 +201,7 @@ const handleDelete = async (row: StorageStrategy) => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await deleteStorageStrategy(row.id)
+        await useApi(apiClient.api.v1StorageStrategyDeleteDelete, row.id)
         message.success('删除成功喵~')
         onSearch()
       } catch (error) {
@@ -219,7 +213,7 @@ const handleDelete = async (row: StorageStrategy) => {
 
 const handleSetDefault = async (row: StorageStrategy) => {
   try {
-    await setDefaultStorageStrategy(row.id)
+    await useApi(apiClient.api.v1StorageStrategyDefaultUpdate, row.id)
     message.success('设置默认策略成功喵~')
     onSearch()
   } catch (error) {

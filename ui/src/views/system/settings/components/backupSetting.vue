@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInst } from 'naive-ui'
-import * as settingApi from '@/api/system/setting'
+import { apiClient, useApi } from '@/api'
 
 const message = useMessage()
 
@@ -55,7 +55,7 @@ const remoteStorageOptions = [
 const saveBackupSettings = async () => {
   backupLoading.value = true
   try {
-    await settingApi.saveSettings('backup',backupForm.value)
+    await useApi(apiClient.api.v1SettingsJsonSaveCreate, 'backup',backupForm.value)
     await new Promise((resolve) => setTimeout(resolve, 1000))
     onSearch()
     message.success('备份设置保存成功')
@@ -82,7 +82,7 @@ const viewBackupHistory = async () => {
 }
 
 const onSearch = async ()=>{
-  const res = await settingApi.getSettingsMap('backup')
+  const res = await useApi(apiClient.api.v1SettingsJsonDetail, 'backup')
   backupForm.value = Object.assign({},defaultForm,res.data)
 }
 

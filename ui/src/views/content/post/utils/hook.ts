@@ -1,6 +1,5 @@
 import { NButton, NPopconfirm, type MessageReactive } from 'naive-ui'
-import * as postApi from '@/api/content/post'
-import * as settingApi from '@/api/system/setting'
+import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 import type { FormProps } from './types'
 import SettingForm from '../settingForm.vue'
@@ -14,12 +13,11 @@ export function usePostHook() {
   // 保存文章
   const savePost = (row: any) => {
     return new Promise((resolve, reject) => {
-      postApi
-        .updatePostContent(row.id, {
+      useApi(apiClient.api.v1PostUpdateContentUpdate, row.id, {
           content: row.content,
           md_content: row.md_content,
           html_content: row.v,
-        })
+        } as Parameters<typeof apiClient.api.v1PostUpdateContentUpdate>[1])
         .then((res) => {
           message.success('保存成功')
           resolve(true)
@@ -37,8 +35,7 @@ export function usePostHook() {
       duration: 0,
     })
     return new Promise((resolve, reject) => {
-      postApi
-        .queryPost(row.id)
+      useApi(apiClient.api.v1PostQueryDetail, row.id)
         .then((res) => {
           const formRef = ref()
           addDialog<FormProps>({
@@ -76,13 +73,12 @@ export function usePostHook() {
             beforeSure: async (done) => {
               try {
                 const curData = await formRef.value?.getData()
-                console.log(curData)
                 const chores = () => {
                   message.success('更新成功喵~')
                   done()
                   resolve(true)
                 }
-                postApi.updatePostSetting(row.id, curData).then(() => {
+                useApi(apiClient.api.v1PostUpdateSettingUpdate, row.id, curData).then(() => {
                   chores()
                 })
               } catch {}
@@ -105,8 +101,7 @@ export function usePostHook() {
         positiveText: '确定',
         negativeText: '取消',
         onPositiveClick: () => {
-          postApi
-            .publishPost(row.id)
+          useApi(apiClient.api.v1PostPublishUpdate, row.id)
             .then(() => {
               message.success('发布成功')
               resolve(true)
@@ -129,8 +124,7 @@ export function usePostHook() {
         positiveText: '确定',
         negativeText: '取消',
         onPositiveClick: () => {
-          postApi
-            .unpublishPost(row.id)
+          useApi(apiClient.api.v1PostUnpublishUpdate, row.id)
             .then(() => {
               message.success('取消发布成功')
               resolve(true)
@@ -148,8 +142,8 @@ export function usePostHook() {
   const sharePost = (row: any) => {
     return new Promise<void>((resolve, reject) => {
       Promise.all([
-        postApi.queryPost(row.id),
-        settingApi.getSettingsMap('basic'),
+        useApi(apiClient.api.v1PostQueryDetail, row.id),
+        useApi(apiClient.api.v1SettingsJsonDetail, 'basic'),
       ])
         .then(([postRes, settingRes]) => {
           const post = postRes.data
@@ -194,8 +188,7 @@ export function usePostHook() {
   // 导出文章
   const exportPost = (row: any) => {
     return new Promise<void>((resolve, reject) => {
-      postApi
-        .queryPost(row.id)
+      useApi(apiClient.api.v1PostQueryDetail, row.id)
         .then((res) => {
           const post = res.data
           const content = post.md_content || post.content || ''
@@ -231,8 +224,7 @@ export function usePostHook() {
   // 复制文章内容
   const copyPostContent = (row: any) => {
     return new Promise<void>((resolve, reject) => {
-      postApi
-        .queryPost(row.id)
+      useApi(apiClient.api.v1PostQueryDetail, row.id)
         .then((res) => {
           const post = res.data
           const content = post.md_content || post.content || ''

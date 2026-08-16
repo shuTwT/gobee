@@ -15,7 +15,7 @@ import {
   type PaginationProps,
 } from 'naive-ui'
 import { Checkmark, Close, RefreshOutline } from '@vicons/ionicons5'
-import { getFlinkApplicationPage, approveFlinkApplication } from '@/api/content/flinkApplication'
+import { apiClient, useApi } from '@/api'
 
 const message = useMessage()
 const dialog = useDialog()
@@ -188,7 +188,7 @@ const loadData = async () => {
     if (applicationTypeFilter.value !== null) {
       params.application_type = applicationTypeFilter.value
     }
-    const res = await getFlinkApplicationPage(params)
+    const res = await useApi(apiClient.api.v1FlinkApplicationPageList, params)
     dataList.value = res.data.records
     pagination.itemCount = res.data.total
   } catch (error) {
@@ -200,7 +200,7 @@ const loadData = async () => {
 
 const handleApprove = async (row: any) => {
   try {
-    await approveFlinkApplication(row.id, { status: 1, reject_reason: '' })
+    await useApi(apiClient.api.v1FlinkApplicationUpdateUpdate, row.id, { status: 1, reject_reason: '' })
     window.$message?.success('审批通过')
     await loadData()
   } catch (error) {
@@ -227,7 +227,7 @@ const handleReject = (row: any) => {
 
 const confirmReject = async (id: number, reason: string) => {
   try {
-    await approveFlinkApplication(id, {
+    await useApi(apiClient.api.v1FlinkApplicationUpdateUpdate, id, {
       status: 2,
       reject_reason: reason,
     })

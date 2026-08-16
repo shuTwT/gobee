@@ -23,7 +23,7 @@ const openUploadImage = ()=>{
       visible: true,
       modelValue: selectedImage.value,
       'onUpdate:modelValue': (value) => {
-        selectedImage.value = value
+        selectedImage.value = Array.isArray(value) ? (value[0] ?? '') : value
       }
     }),
     beforeSure:async(done)=>{

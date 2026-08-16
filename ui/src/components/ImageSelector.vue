@@ -2,9 +2,9 @@
 import { ref, onMounted, watch } from 'vue';
 import { NUpload, NImage, NButton, NInput, NTag, NPagination, NIcon } from 'naive-ui';
 import { Search, Refresh, CloudUploadOutline } from '@vicons/ionicons5';
-import { getStorageStrategyListAll } from '@/api/infra/storage';
-import { getFilePage } from '@/api/infra/file';
-import type { StorageStrategy } from '@/api/infra/storage';
+import { apiClient, useApi } from '@/api';
+
+import type { EntStorageStrategy } from '@hoshikuzu/api-client';
 
 const props = withDefaults(defineProps<{
   visible: boolean;
@@ -31,7 +31,7 @@ const total = ref(0);
 const selectedImages = ref<string[]>([]);
 
 // 存储策略列表
-const storageStrategies = ref<StorageStrategy[]>([]);
+const storageStrategies = ref<EntStorageStrategy[]>([]);
 
 // 图片列表
 const imageList = ref<any[]>([]);
@@ -42,9 +42,9 @@ const loading = ref(false);
 // 获取存储策略列表
 const fetchStorageStrategies = async () => {
   try {
-    const response = await getStorageStrategyListAll();
+    const response = await useApi(apiClient.api.v1StorageStrategyListList);
     if (response.code === 200) {
-      storageStrategies.value = response.data || [];
+      storageStrategies.value = (response.data || []) as EntStorageStrategy[];
     }
   } catch (error) {
     console.error('获取存储策略失败:', error);
@@ -69,7 +69,7 @@ const fetchImages = async () => {
       params.storage_strategy_id = storageFilter.value;
     }
 
-    const response = await getFilePage(params);
+    const response = await useApi(apiClient.api.v1FilePageList, params);
     if (response.code === 200) {
       imageList.value = response.data?.records || [];
       total.value = response.data?.total || 0;

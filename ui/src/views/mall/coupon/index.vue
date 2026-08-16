@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm, NInput, NSelect } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline, CheckmarkOutline, CloseOutline } from '@vicons/ionicons5'
-import * as couponApi from '@/api/mall/coupon'
+import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 import type { FormProps } from './utils/types'
@@ -182,7 +182,7 @@ const columns: DataTableColumns<any> = [
 
 const onSearch = () => {
   loading.value = true
-  couponApi.getCouponPage({
+  useApi(apiClient.api.v1CouponPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
     keyword: searchKeyword.value || undefined,
@@ -228,10 +228,10 @@ const openEditDialog = (title = '新增', row?: any) => {
         const data = await editFormRef.value?.getData()
         
         if (row?.id) {
-          await couponApi.updateCoupon(row.id, data)
+          await useApi(apiClient.api.v1CouponUpdateUpdate, row.id, data)
           window.$message?.success('更新成功')
         } else {
-          await couponApi.createCoupon(data)
+          await useApi(apiClient.api.v1CouponCreateCreate, data)
           window.$message?.success('创建成功')
         }
         
@@ -247,7 +247,7 @@ const openEditDialog = (title = '新增', row?: any) => {
 
 const handleDelete = async (id: number) => {
   try {
-    await couponApi.deleteCoupon(id)
+    await useApi(apiClient.api.v1CouponDeleteDelete, id)
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {
@@ -262,7 +262,7 @@ const handleBatchEnable = async () => {
     return
   }
   try {
-    await couponApi.batchUpdateCoupons(checkedRowKeys.value, { active: true })
+    await useApi(apiClient.api.v1CouponBatchUpdate, { ids: checkedRowKeys.value, active: true })
     window.$message?.success('启用成功')
     checkedRowKeys.value = []
     onSearch()
@@ -278,7 +278,7 @@ const handleBatchDisable = async () => {
     return
   }
   try {
-    await couponApi.batchUpdateCoupons(checkedRowKeys.value, { active: false })
+    await useApi(apiClient.api.v1CouponBatchUpdate, { ids: checkedRowKeys.value, active: false })
     window.$message?.success('禁用成功')
     checkedRowKeys.value = []
     onSearch()
@@ -294,7 +294,7 @@ const handleBatchDelete = async () => {
     return
   }
   try {
-    await couponApi.batchDeleteCoupons(checkedRowKeys.value)
+    await useApi(apiClient.api.v1CouponBatchDeleteCreate, { ids: checkedRowKeys.value })
     window.$message?.success('删除成功')
     checkedRowKeys.value = []
     onSearch()

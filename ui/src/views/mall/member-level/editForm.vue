@@ -35,7 +35,6 @@ const rules: FormRules = {
 
 const getData = () => {
   return new Promise((resolve, reject) => {
-    console.log(formData.value)
     if (formRef.value) {
       formRef.value?.validate((errors) => {
         if (!errors) {

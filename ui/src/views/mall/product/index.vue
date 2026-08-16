@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline, CloudUploadOutline, CloudDownloadOutline } from '@vicons/ionicons5'
-import * as productApi from '@/api/mall/product'
+import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 
@@ -153,7 +153,7 @@ const columns: DataTableColumns<any> = [
 
 const onSearch = () => {
   loading.value = true
-  productApi.getProductPage({
+  useApi(apiClient.api.v1ProductPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
   }).then(res => {
@@ -205,10 +205,10 @@ const openEditDialog = (title = '新增', row?: any) => {
         const data = await editFormRef.value?.getData()
         
         if (currentProductId.value) {
-          await productApi.updateProduct(currentProductId.value, data)
+          await useApi(apiClient.api.v1ProductUpdateUpdate, currentProductId.value, data)
           window.$message?.success('更新成功')
         } else {
-          await productApi.createProduct(data)
+          await useApi(apiClient.api.v1ProductCreateCreate, data)
           window.$message?.success('创建成功')
         }
         
@@ -224,7 +224,7 @@ const openEditDialog = (title = '新增', row?: any) => {
 
 const handleDelete = async (id: number) => {
   try {
-    await productApi.deleteProduct(id)
+    await useApi(apiClient.api.v1ProductDeleteDelete, id)
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {
@@ -239,7 +239,7 @@ const handleBatchOnline = async () => {
     return
   }
   try {
-    await productApi.batchUpdateProducts(checkedRowKeys.value, { active: true })
+    await useApi(apiClient.api.v1ProductBatchUpdate, { ids: checkedRowKeys.value, active: true })
     window.$message?.success('上架成功')
     checkedRowKeys.value = []
     onSearch()
@@ -255,7 +255,7 @@ const handleBatchOffline = async () => {
     return
   }
   try {
-    await productApi.batchUpdateProducts(checkedRowKeys.value, { active: false })
+    await useApi(apiClient.api.v1ProductBatchUpdate, { ids: checkedRowKeys.value, active: false })
     window.$message?.success('下架成功')
     checkedRowKeys.value = []
     onSearch()
@@ -271,7 +271,7 @@ const handleBatchDelete = async () => {
     return
   }
   try {
-    await productApi.batchDeleteProducts(checkedRowKeys.value)
+    await useApi(apiClient.api.v1ProductBatchDeleteCreate, { ids: checkedRowKeys.value })
     window.$message?.success('删除成功')
     checkedRowKeys.value = []
     onSearch()

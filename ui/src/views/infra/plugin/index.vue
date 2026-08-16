@@ -3,14 +3,8 @@ import { h, ref, reactive, onMounted } from 'vue'
 import { NCard, NDataTable, NButton, NSpace, NSwitch, NTag, NIcon, NPopconfirm, useMessage, NInput, NSelect } from 'naive-ui'
 import { RefreshOutline, Play, Stop, Refresh as RefreshIcon, TrashOutline, Search } from '@vicons/ionicons5'
 import type { DataTableColumns } from 'naive-ui'
-import {
-  getPluginPage,
-  deletePlugin,
-  startPlugin,
-  stopPlugin,
-  restartPlugin,
-  type Plugin,
-} from '@/api/infra/plugin'
+import { apiClient, useApi } from '@/api'
+import type { Plugin } from './utils/types'
 import { addDialog } from '@/components/dialog'
 import FormComponent from './form.vue'
 
@@ -22,7 +16,7 @@ const searchForm = reactive({
   status: '',
   enabled: null as boolean | null,
   auto_start: null as boolean | null,
-})
+} as Record<string, any>)
 
 const statusOptions = [
   { label: '全部', value: '' },
@@ -35,12 +29,12 @@ const statusOptions = [
 const enabledOptions = [
   { label: '是', value: true },
   { label: '否', value: false },
-]
+] as any[]
 
 const autoStartOptions = [
   { label: '是', value: true },
   { label: '否', value: false },
-]
+] as any[]
 
 const loading = ref(false)
 const data = ref<Plugin[]>([])
@@ -213,7 +207,7 @@ const columns: DataTableColumns<Plugin> = [
 const onSearch = async () => {
   loading.value = true
   try {
-    const res = await getPluginPage({ 
+    const res = await useApi(apiClient.api.v1PluginPageList, { 
       page: pagination.page, 
       page_size: pagination.pageSize,
       name: searchForm.name || undefined,
@@ -251,7 +245,7 @@ const handleAddPlugin = () => {
 
 const handleStart = async (row: Plugin) => {
   try {
-    await startPlugin(row.id)
+    await useApi(apiClient.api.v1PluginStartCreate, row.id)
     message.success('插件启动成功')
     onSearch()
   } catch (error) {
@@ -261,7 +255,7 @@ const handleStart = async (row: Plugin) => {
 
 const handleStop = async (row: Plugin) => {
   try {
-    await stopPlugin(row.id)
+    await useApi(apiClient.api.v1PluginStopCreate, row.id)
     message.success('插件停止成功')
     onSearch()
   } catch (error) {
@@ -271,7 +265,7 @@ const handleStop = async (row: Plugin) => {
 
 const handleRestart = async (row: Plugin) => {
   try {
-    await restartPlugin(row.id)
+    await useApi(apiClient.api.v1PluginRestartCreate, row.id)
     message.success('插件重启成功')
     onSearch()
   } catch (error) {
@@ -281,7 +275,7 @@ const handleRestart = async (row: Plugin) => {
 
 const handleDelete = async (row: Plugin) => {
   try {
-    await deletePlugin(row.id)
+    await useApi(apiClient.api.v1PluginDeleteDelete, row.id)
     message.success('插件删除成功')
     onSearch()
   } catch (error) {

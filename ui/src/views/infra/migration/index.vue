@@ -21,7 +21,7 @@ import {
 } from 'naive-ui'
 import { CloudUploadOutline, Link, Folder, DocumentText, CheckmarkCircleOutline, AlertCircleOutline, WarningOutline } from '@vicons/ionicons5'
 import type { UploadFileInfo } from 'naive-ui'
-import { importMarkdown, checkDuplicate } from '@/api/infra/migration'
+import { apiClient, useApi } from '@/api'
 import type { SourceType, SourceTypeItem, MigrationResult, PreviewData, MigrationCheckResult, DuplicateFile } from './utils/types'
 
 // 步骤状态
@@ -216,7 +216,7 @@ const startImport = () => {
 const confirmImport = async () => {
   if (sourceType.value === 'md') {
     const files = mdFileList.value.map(f => f.file).filter((f): f is File => f !== undefined)
-    const response = await checkDuplicate(files)
+    const response = await useApi(apiClient.api.v1MigrationCheckDuplicateCreate, { files: files as unknown as File })
     
     if (response.code === 200 && response.data) {
       duplicateCheckResult.value = response.data
@@ -235,7 +235,7 @@ const confirmImport = async () => {
         }, 200)
         
         try {
-          const response = await importMarkdown(files)
+          const response = await useApi(apiClient.api.v1MigrationMdCreate, { files: files as unknown as File })
           
           clearInterval(progressInterval)
           
@@ -294,7 +294,7 @@ const confirmAndImport = async () => {
   try {
     if (sourceType.value === 'md') {
       const files = mdFileList.value.map(f => f.file).filter((f): f is File => f !== undefined)
-      const response = await importMarkdown(files)
+      const response = await useApi(apiClient.api.v1MigrationMdCreate, { files: files as unknown as File })
       
       clearInterval(progressInterval)
       

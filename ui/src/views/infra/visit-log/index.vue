@@ -3,12 +3,8 @@ import { h, ref, onMounted, reactive } from 'vue'
 import { NCard, NDataTable, NButton, NSpace, useMessage, NIcon, useDialog, NPopconfirm, NInput } from 'naive-ui'
 import { RefreshOutline, TrashOutline, EyeOutline } from '@vicons/ionicons5'
 import type { DataTableColumns } from 'naive-ui'
-import {
-  getVisitLogPage,
-  deleteVisitLog,
-  batchDeleteVisitLog,
-  type VisitLogResponse,
-} from '@/api/infra/visitLog'
+import { apiClient, useApi } from '@/api'
+import type { VisitLogResponse } from './utils/types'
 import { addDialog } from '@/components/dialog'
 import LogDetail from './logDetail.vue'
 import dayjs from 'dayjs'
@@ -163,7 +159,7 @@ const openDetailDialog = (row: VisitLogResponse) => {
 const onSearch = async () => {
   loading.value = true
   try {
-    const res = await getVisitLogPage({
+    const res = await useApi(apiClient.api.v1VisitLogPageList, {
       page: pagination.page,
       page_size: pagination.pageSize,
       ip: searchParams.ip,
@@ -182,7 +178,7 @@ const onSearch = async () => {
 
 const handleDelete = async (row: VisitLogResponse) => {
   try {
-    await deleteVisitLog(row.id)
+    await useApi(apiClient.api.v1VisitLogDeleteDelete, row.id)
     message.success('删除成功喵~')
     onSearch()
   } catch (error) {
@@ -202,7 +198,7 @@ const handleBatchDelete = () => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await batchDeleteVisitLog(selectedRowKeys.value)
+        await useApi(apiClient.api.v1VisitLogBatchDeleteCreate, { ids: selectedRowKeys.value })
         message.success('批量删除成功喵~')
         selectedRowKeys.value = []
         onSearch()

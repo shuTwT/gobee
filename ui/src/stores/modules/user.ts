@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { store } from '..'
 import { useStorageLocal } from '@/utils/utils'
 import { removeToken, setToken, getToken, userKey, type DataInfo } from '@/utils/auth'
-import { passwordLogin, refreshToken as refreshTokenApi, logout as logoutApi } from '@/api/system/auth'
+import { apiClient, useApi } from '@/api'
 import router, { resetRouter } from '@/router'
 
 export const useUserStore = defineStore('user', () => {
@@ -78,7 +78,7 @@ export const useUserStore = defineStore('user', () => {
 
   async function loginByUsername(data:any){
     return new Promise<any>((resolve, reject) => {
-      passwordLogin(data).then(({data}) => {
+      useApi(apiClient.api.authLoginPasswordCreate, data).then(({data}) => {
         setToken(data)
         resolve(data)
       }).catch(err => {
@@ -92,7 +92,7 @@ export const useUserStore = defineStore('user', () => {
     const refreshTokenValue = getToken()?.refreshToken
     if (refreshTokenValue) {
       try {
-        await logoutApi(refreshTokenValue)
+        await useApi(apiClient.api.authLogoutCreate, { refreshToken: refreshTokenValue })
       } catch {
         // 忽略网络错误，继续本地登出
       }
@@ -151,7 +151,9 @@ export function refreshAccessToken(): Promise<string> {
   }
   accessTokenRefreshPromise = (async () => {
     try {
-      const { data: tokenData } = await refreshTokenApi({ refreshToken: data.refreshToken })
+      const { data: tokenData } = await useApi(apiClient.api.authRefreshTokenCreate, {
+        refreshToken: data.refreshToken,
+      })
       setToken(tokenData)
       return tokenData.accessToken as string
     } finally {

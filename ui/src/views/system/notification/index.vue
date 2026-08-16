@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm, NDrawer, NDrawerContent, NDescriptions, NDescriptionsItem } from 'naive-ui'
 import { RefreshOutline, TrashOutline, EyeOutline, CheckmarkDoneOutline } from '@vicons/ionicons5'
-import * as notificationApi from '@/api/system/notification'
+import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 
 const dataList = ref<any[]>([])
@@ -133,10 +133,10 @@ const openDetailDrawer = (row: any) => {
 
 const onSearch = () => {
   loading.value = true
-  notificationApi.getNotificationPage({
+  useApi(apiClient.api.v1NotificationsPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
-    is_read: searchForm.is_read,
+    is_read: searchForm.is_read ?? undefined,
   }).then(res => {
     if (res.code === 200) {
       dataList.value = res.data.records || []
@@ -149,7 +149,7 @@ const onSearch = () => {
 
 const handleDelete = async (id: number) => {
   try {
-    await notificationApi.deleteNotification(id)
+    await useApi(apiClient.api.v1NotificationsDeleteDelete, id)
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {
@@ -164,7 +164,7 @@ const handleBatchRead = async () => {
     return
   }
   try {
-    await notificationApi.batchMarkAsRead({ ids: selectedRowKeys.value })
+    await useApi(apiClient.api.v1NotificationsBatchReadCreate, { ids: selectedRowKeys.value })
     window.$message?.success('批量标记已读成功')
     selectedRowKeys.value = []
     onSearch()

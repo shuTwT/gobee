@@ -2,7 +2,7 @@ import { usePermissionStore, usePermissionStoreHook } from "@/stores/modules/per
 import type { RouteComponent, Router,RouteRecordRaw } from "vue-router";
 import { cloneDeep, intersection, isEmpty } from "lodash-es"
 import router from ".";
-import { getAsyncRoutes } from "@/api/system/routes";
+import { apiClient, useApi } from "@/api";
 import { useStorageLocal } from "@/utils/utils";
 import { userKey, type DataInfo } from "@/utils/auth";
 import { buildHierarchyTree } from "@/utils/tree";
@@ -171,7 +171,7 @@ function addPathMatch() {
 
 function initRouter():Promise<Router>{
   return new Promise(resolve=>{
-    getAsyncRoutes().then(({data})=>{
+    useApi(apiClient.api.v1RoutesList).then(({data})=>{
       handleAsyncRoutes(cloneDeep(data))
       resolve(router)
     })

@@ -57,14 +57,12 @@ const ProductCardPlugin = (md: markdownit, options: {}) => {
   md.renderer.rules['product-card'] = (tokens, idx, ops, env, slf) => {
     const token = tokens[idx]
     const attrs = token.attrs || []
-    console.log(Object.fromEntries(attrs))
     const attrObj = Object.fromEntries(attrs)
     let attrString = ``
     for(const [key, value] of attrs){
       attrString += `${key}="${value}" `
     }
     const code = token.content
-    console.log(code)
 
     return `<product-card ${attrString}></product-card>`
 

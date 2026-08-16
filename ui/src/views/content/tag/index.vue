@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm } from 'naive-ui'
 import { Pencil, RefreshOutline, TrashOutline } from '@vicons/ionicons5'
-import * as tagApi from '@/api/content/tag'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
+import { apiClient, useApi } from '@/api'
 
 const pagination = reactive({
   page: 1,
@@ -128,10 +128,10 @@ const columns: DataTableColumns<any> = [
 
 const onSearch = () => {
   loading.value = true
-  tagApi.getTagPage({
+  useApi(apiClient.api.v1TagPageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
-  }).then(res => {
+  } as any).then(res => {
     dataList.value = res.data.records || []
     pagination.total = res.data.total || 0
   }).finally(() => {
@@ -160,10 +160,10 @@ const openEditDialog = (title = '新增', row?: any) => {
         const data = await editFormRef.value?.getData()
         
         if (currentTagId.value) {
-          await tagApi.updateTag(currentTagId.value, data)
+          await useApi(apiClient.api.v1TagUpdateUpdate, currentTagId.value, data)
           window.$message?.success('更新成功')
         } else {
-          await tagApi.createTag(data)
+          await useApi(apiClient.api.v1TagCreateCreate, data)
           window.$message?.success('创建成功')
         }
         
@@ -179,7 +179,7 @@ const openEditDialog = (title = '新增', row?: any) => {
 
 const handleDelete = async (id: number) => {
   try {
-    await tagApi.deleteTag(id)
+    await useApi(apiClient.api.v1TagDeleteDelete, id)
     window.$message?.success('删除成功')
     onSearch()
   } catch (error) {

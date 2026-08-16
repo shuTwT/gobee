@@ -19,7 +19,7 @@ import {
   NPopconfirm,
 } from 'naive-ui'
 import type { UploadFileInfo } from 'naive-ui'
-import * as essayApi from '@/api/content/essay'
+import { apiClient, useApi } from '@/api'
 import dayjs from 'dayjs'
 
 const message = useMessage()
@@ -78,7 +78,7 @@ const getImageGridClass = (count: number) => {
 const fetchEssays = async () => {
   loading.value = true
   try {
-    const res = await essayApi.getEssayPage({
+    const res = await useApi(apiClient.api.v1EssayPageList, {
       page: pagination.value.page,
       page_size: pagination.value.pageSize,
     })
@@ -127,7 +127,7 @@ const handleEdit = (row: Essay) => {
 // 删除说说
 const handleDelete = async (id: number) => {
   try {
-    await essayApi.deleteEssay(id)
+    await useApi(apiClient.api.v1EssayDeleteDelete, String(id))
     message.success('删除成功')
     fetchEssays()
   } catch (error) {
@@ -145,10 +145,10 @@ const handleSubmit = async () => {
 
   try {
     if (isEdit.value && currentId.value) {
-      await essayApi.updateEssay(currentId.value, formData.value)
+      await useApi(apiClient.api.v1EssayUpdateUpdate, String(currentId.value), formData.value)
       message.success('更新成功')
     } else {
-      await essayApi.createEssay(formData.value)
+      await useApi(apiClient.api.v1EssayCreateCreate, formData.value)
       message.success('创建成功')
     }
     showModal.value = false

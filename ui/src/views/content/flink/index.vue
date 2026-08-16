@@ -219,7 +219,7 @@ const handleDeleteGroup = async (row: any) => {
 const handleDelete = async (row: any) => {
   // TODO: 实现删除逻辑
   try {
-    await useApi(apiClient.api.v1FlinkDelete, row.id!)
+    await useApi(apiClient.api.v1FlinkDeleteDelete, row.id!)
     message.success('删除成功喵~')
     await onSearchFlink()
   } catch { }

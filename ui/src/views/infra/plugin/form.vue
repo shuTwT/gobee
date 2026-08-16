@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { NUpload, NUploadDragger, NButton, NForm, NFormItem, NAlert, NSpin, type UploadSettledFileInfo, NIcon } from 'naive-ui'
 import { CloudUploadOutline } from '@vicons/ionicons5'
-import { createPlugin } from '@/api/infra/plugin'
+import { apiClient, useApi } from '@/api'
 
 const emit = defineEmits(['success'])
 
@@ -37,7 +37,7 @@ const handleUpload = async () => {
   uploading.value = true
 
   try {
-    await createPlugin(fileListRef.value[0])
+    await useApi(apiClient.api.v1PluginCreateCreate, { file: fileListRef.value[0] })
     window.$message?.success('插件上传成功')
     emit('success')
     fileListRef.value = []
