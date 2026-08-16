@@ -64,9 +64,7 @@ const menuOptions = computed<MenuOption[]>(() =>
 )
 
 const handleChildMenu = (menu: RouteRecordRaw, index: number) => {
-  console.log(menu)
   // childMenu.value = menu.children ?? []
-  console.log(childMenu.value)
   router.push(menu.path);
   curActive.value = index;
 }

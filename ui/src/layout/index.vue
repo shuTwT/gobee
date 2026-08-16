@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import type { MenuOption } from 'naive-ui'
-import { ProLayout, useLayoutMenu, type ProLayoutProps } from 'pro-naive-ui'
-import { RouterLink, useRoute, useRouter, type RouteRecordRaw } from 'vue-router'
-import { useAppStore } from '@/stores/modules/app'
-import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
 import { usePermissionStore } from '@/stores/modules/permission'
-import { useUserStore } from '@/stores/modules/user'
-import { remainingPaths } from '@/router'
-import { findRouteByPath, getParentPaths } from '@/router/utils'
 import LaySidebar from './components/lay-sidebar/NavDouble.vue'
 import LayHeader from './components/lay-header/index.vue'
 import LayContent from './components/lay-content/index.vue'
@@ -26,13 +19,6 @@ const dialog = useDialog()
 window.$dialog = dialog
 const notification = useNotification()
 window.$notification = notification
-
-
-
-
-
-
-
 
 </script>
 <template>

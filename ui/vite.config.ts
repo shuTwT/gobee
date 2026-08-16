@@ -9,7 +9,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import svgLoader from 'vite-svg-loader'
-// import { visualizer } from "rollup-plugin-visualizer";
 
 
 // https://vite.dev/config/
@@ -43,9 +42,6 @@ export default defineConfig({
       resolvers: [NaiveUiResolver()]
     }),
     svgLoader()
-    // visualizer({
-    //   open:true
-    // })
   ],
   base:'/console/',
   build:{

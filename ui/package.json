@@ -8,7 +8,7 @@
     "build": "pnpm run generate && run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit",
+    "type-check": "vue-tsc --noEmit -p tsconfig.app.json",
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix",
     "lint": "run-s lint:*",

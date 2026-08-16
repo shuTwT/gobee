@@ -8,7 +8,7 @@ export {
 }
 
 export function register() {
-  if (typeof window != undefined) {
+  if (typeof window != "undefined") {
     
     if(!customElements.get('product-card') ){
       customElements.define('product-card', ProductCardElement)
