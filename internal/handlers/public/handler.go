@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"strconv"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -783,6 +784,112 @@ func (h *PublicHandler) GetRandomPost(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusNotFound, "No posts found"))
 	}
 	return c.JSON(model.NewSuccess("success", post))
+}
+
+// @Summary 随机获取多篇文章
+// @Description 随机获取N篇已发布且可见的文章
+// @Tags 公开接口/文章
+// @Accept json
+// @Produce json
+// @Param limit query int false "获取数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=[]model.PostResp}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/public/post/random/list [get]
+func (h *PublicHandler) GetRandomPosts(c *fiber.Ctx) error {
+	var req model.PostRandomReq
+	if err := c.QueryParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	if req.Limit == 0 {
+		req.Limit = 10
+	}
+	posts, err := h.postService.GetRandomPosts(c.Context(), req.Limit)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	postResps := make([]*model.PostResp, 0, len(posts))
+	for _, post := range posts {
+		postResps = append(postResps, buildPostResp(post))
+	}
+	return c.JSON(model.NewSuccess("success", postResps))
+}
+
+// @Summary 获取相关文章推荐
+// @Description 根据标签、标题相似度、时间新鲜度、同分类加权，获取与指定文章相关的N篇文章
+// @Tags 公开接口/文章
+// @Accept json
+// @Produce json
+// @Param id path int true "当前文章ID"
+// @Param limit query int false "获取数量" default(10)
+// @Success 200 {object} model.HttpSuccess{data=[]model.PostRelatedResp}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/public/post/related/{id} [get]
+func (h *PublicHandler) GetRelatedPosts(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest,
+			"Invalid ID format"))
+	}
+	var req model.PostRelatedReq
+	if err := c.QueryParser(&req); err != nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, err.Error()))
+	}
+	if req.Limit == 0 {
+		req.Limit = 10
+	}
+	posts, err := h.postService.GetRelatedPosts(c.Context(), id, req.Limit)
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", posts))
+}
+
+// buildPostResp 将 ent.Post 转换为文章响应模型
+func buildPostResp(post *ent.Post) *model.PostResp {
+	return &model.PostResp{
+		ID:                    post.ID,
+		Title:                 post.Title,
+		Slug:                  post.Slug,
+		Content:               post.Content,
+		MdContent:             post.MdContent,
+		HtmlContent:           post.HTMLContent,
+		ContentType:           string(post.ContentType),
+		Status:                string(post.Status),
+		IsAutogenSummary:      post.IsAutogenSummary,
+		IsVisible:             post.IsVisible,
+		IsPinToTop:            post.IsPinToTop,
+		IsAllowComment:        post.IsAllowComment,
+		IsVisibleAfterComment: post.IsVisibleAfterComment,
+		IsVisibleAfterPay:     post.IsVisibleAfterPay,
+		Price:                 float32(post.Price) / 100,
+		PublishedAt:           (*model.LocalTime)(post.PublishedAt),
+		ViewCount:             post.ViewCount,
+		CommentCount:          post.CommentCount,
+		Cover:                 post.Cover,
+		Keywords:              post.Keywords,
+		Copyright:             post.Copyright,
+		Author:                post.Author,
+		Summary:               post.Summary,
+		CreatedAt:             (model.LocalTime)(post.CreatedAt),
+		Categories:            post.Edges.Categories,
+		CategoryIds: func() []int {
+			ids := make([]int, len(post.Edges.Categories))
+			for i, cat := range post.Edges.Categories {
+				ids[i] = cat.ID
+			}
+			return ids
+		}(),
+		Tags: post.Edges.Tags,
+		TagIds: func() []int {
+			ids := make([]int, len(post.Edges.Tags))
+			for i, tag := range post.Edges.Tags {
+				ids[i] = tag.ID
+			}
+			return ids
+		}(),
+	}
 }
 
 // @Summary 搜索文章

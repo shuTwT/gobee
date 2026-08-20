@@ -366,6 +366,10 @@ func initPublicRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		publicApi.Get("/post/month-stats", handlerMap.PublicHandler.GetPostMonthStats)
 		// 随机文章接口
 		publicApi.Get("/post/random", handlerMap.PublicHandler.GetRandomPost)
+		// 随机多篇文章接口
+		publicApi.Get("/post/random/list", handlerMap.PublicHandler.GetRandomPosts)
+		// 相关文章推荐接口
+		publicApi.Get("/post/related/:id", handlerMap.PublicHandler.GetRelatedPosts)
 		// 文章详情接口
 		publicApi.Get("/post/slug/:slug", handlerMap.PublicHandler.QueryPostBySlug)
 		// 分类列表接口

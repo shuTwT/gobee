@@ -140,3 +140,20 @@ type PostSearchResp struct {
 	ViewCount   int        `json:"view_count"`
 	Relevance   float64    `json:"relevance"`
 }
+
+// PostRandomReq 随机获取文章请求
+type PostRandomReq struct {
+	Limit int `json:"limit" query:"limit" form:"limit" validate:"omitempty,min=1,max=50"` // 获取数量，默认 10
+}
+
+// PostRelatedReq 相关文章推荐请求
+type PostRelatedReq struct {
+	ID    int `json:"id" query:"id" form:"id" validate:"required,min=1"`                  // 当前文章ID
+	Limit int `json:"limit" query:"limit" form:"limit" validate:"omitempty,min=1,max=50"` // 获取数量，默认 10
+}
+
+// PostRelatedResp 相关文章推荐响应
+type PostRelatedResp struct {
+	PostResp
+	Score float64 `json:"score"` // 相关度总分
+}

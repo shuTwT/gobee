@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-
+	"math"
 	"math/rand/v2"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/go-ego/gse"
 	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/ent/category"
 	"github.com/shuTwT/hoshikuzu/ent/post"
@@ -32,6 +34,8 @@ type PostService interface {
 	GetPostCount(c context.Context) (int, error)
 	GetPostMonthStats(c context.Context, req model.PostMonthStatsReq) ([]model.PostMonthStat, error)
 	GetRandomPost(c context.Context) (*ent.Post, error)
+	GetRandomPosts(c context.Context, limit int) ([]*ent.Post, error)
+	GetRelatedPosts(c context.Context, id int, limit int) ([]*model.PostRelatedResp, error)
 	SearchPosts(c context.Context, req model.PostSearchReq) ([]*model.PostSearchResp, int, error)
 	PublishPost(c context.Context, id int) (*ent.Post, error)
 	UnpublishPost(c context.Context, id int) (*ent.Post, error)
@@ -371,6 +375,267 @@ func (s *PostServiceImpl) GetRandomPost(c context.Context) (*ent.Post, error) {
 	}
 
 	return post, nil
+}
+
+// GetRandomPosts 随机获取 N 篇已发布的可见文章
+func (s *PostServiceImpl) GetRandomPosts(c context.Context, limit int) ([]*ent.Post, error) {
+	if limit < 1 {
+		limit = 1
+	}
+	ids, err := s.client.Post.Query().
+		Where(post.StatusEQ("published"), post.IsVisible(true)).
+		Order(ent.Asc(post.FieldID)).
+		IDs(c)
+	if err != nil {
+		return nil, err
+	}
+	if len(ids) == 0 {
+		return []*ent.Post{}, nil
+	}
+	if len(ids) > limit {
+		rand.Shuffle(len(ids), func(i, j int) { ids[i], ids[j] = ids[j], ids[i] })
+		ids = ids[:limit]
+	}
+	return s.client.Post.Query().
+		Where(post.IDIn(ids...)).
+		WithCategories().
+		WithTags().
+		All(c)
+}
+
+// GetRelatedPosts 获取与指定文章相关的 N 篇推荐文章
+//
+// 评分规则：
+//   - 标签匹配（0~100）：当前文章与候选文章标签集合的 Jaccard 相似度 ×100
+//   - 标题相似（0~100）：标题按中文分词后 Jaccard 相似度 ×100
+//   - 时间新鲜度（0~30）：6 个月半衰期的指数衰减，越新分越高
+//   - 同分类加成（0 或 10）：同分类加 10 分
+//
+// 排序：有标签匹配的文章排在前面，无标签匹配的排在后面，组内均按总分降序，选满 N 篇为止。
+func (s *PostServiceImpl) GetRelatedPosts(c context.Context, id int, limit int) ([]*model.PostRelatedResp, error) {
+	current, err := s.client.Post.Query().
+		Where(post.ID(id)).
+		WithCategories().
+		WithTags().
+		Only(c)
+	if err != nil {
+		return nil, err
+	}
+
+	candidates, err := s.client.Post.Query().
+		Where(post.IDNEQ(id), post.StatusEQ("published"), post.IsVisible(true)).
+		WithCategories().
+		WithTags().
+		All(c)
+	if err != nil {
+		return nil, err
+	}
+
+	currentTagIDs := postTagIDSet(current)
+	currentCategoryIDs := postCategoryIDSet(current)
+	currentTitleTokens := titleTokenSet(current.Title)
+
+	scored := make([]scoredCandidate, 0, len(candidates))
+	for _, cand := range candidates {
+		score, hasTagMatch := calcRelatedScore(cand, currentTagIDs, currentCategoryIDs, currentTitleTokens)
+		scored = append(scored, scoredCandidate{
+			resp: &model.PostRelatedResp{
+				PostResp: toPostResp(cand),
+				Score:    score,
+			},
+			hasTagMatch: hasTagMatch,
+		})
+	}
+
+	// 有标签匹配的排前面，无标签匹配的排后面，组内均按总分降序
+	sortRelatedCandidates(scored)
+
+	if len(scored) > limit {
+		scored = scored[:limit]
+	}
+
+	results := make([]*model.PostRelatedResp, 0, len(scored))
+	for _, s := range scored {
+		results = append(results, s.resp)
+	}
+	return results, nil
+}
+
+type scoredCandidate struct {
+	resp        *model.PostRelatedResp
+	hasTagMatch bool
+}
+
+// sortRelatedCandidates 相关文章排序：有标签匹配的排前面，无标签匹配的排后面，组内按总分降序
+func sortRelatedCandidates(scored []scoredCandidate) {
+	sort.Slice(scored, func(i, j int) bool {
+		if scored[i].hasTagMatch != scored[j].hasTagMatch {
+			return scored[i].hasTagMatch
+		}
+		if scored[i].resp.Score != scored[j].resp.Score {
+			return scored[i].resp.Score > scored[j].resp.Score
+		}
+		return scored[i].resp.ID < scored[j].resp.ID
+	})
+}
+
+// 中文分词器：使用 gse 嵌入词典，词典编译进二进制，运行时无需外部字典文件
+var (
+	segmenterOnce sync.Once
+	segmenter     *gse.Segmenter
+)
+
+func getSegmenter() *gse.Segmenter {
+	segmenterOnce.Do(func() {
+		seg, err := gse.NewEmbed()
+		if err != nil {
+			slog.Error("加载中文分词词典失败", "error", err.Error())
+			return
+		}
+		segmenter = &seg
+	})
+	return segmenter
+}
+
+// titleTokenSet 将标题按中文分词后转为 token 集合
+func titleTokenSet(title string) map[string]struct{} {
+	seg := getSegmenter()
+	if seg == nil {
+		return map[string]struct{}{}
+	}
+	tokens := seg.Cut(strings.TrimSpace(title), true)
+	set := make(map[string]struct{}, len(tokens))
+	for _, t := range tokens {
+		t = strings.TrimSpace(t)
+		if t == "" {
+			continue
+		}
+		set[t] = struct{}{}
+	}
+	return set
+}
+
+// calcRelatedScore 计算候选文章的相关度总分，返回 (总分, 是否有标签匹配)
+func calcRelatedScore(cand *ent.Post, currentTagIDs, currentCategoryIDs map[int]struct{}, currentTitleTokens map[string]struct{}) (float64, bool) {
+	tagScore := 0.0
+	hasTagMatch := false
+	if tagSet := postTagIDSet(cand); len(tagSet) > 0 {
+		tagScore = jaccard(currentTagIDs, tagSet) * 100
+		hasTagMatch = tagScore > 0
+	}
+
+	titleScore := jaccard(currentTitleTokens, titleTokenSet(cand.Title)) * 100
+
+	freshness := 0.0
+	if cand.PublishedAt != nil {
+		freshness = freshnessScore(*cand.PublishedAt, time.Now())
+	}
+
+	categoryBonus := 0.0
+	if hasIntersection(currentCategoryIDs, postCategoryIDSet(cand)) {
+		categoryBonus = 10
+	}
+
+	return tagScore + titleScore + freshness + categoryBonus, hasTagMatch
+}
+
+// freshnessScore 时间新鲜度：以 6 个月为半衰期的指数衰减，上限 30 分
+func freshnessScore(publishedAt, now time.Time) float64 {
+	if publishedAt.After(now) {
+		publishedAt = now
+	}
+	ageDays := now.Sub(publishedAt).Hours() / 24
+	halfLifeDays := 182.625 // 6 个月
+	return 30 * math.Pow(0.5, ageDays/halfLifeDays)
+}
+
+// jaccard 计算两个集合的 Jaccard 相似度，空集合返回 0
+func jaccard[T comparable](a, b map[T]struct{}) float64 {
+	if len(a) == 0 && len(b) == 0 {
+		return 0
+	}
+	intersection := 0
+	for k := range a {
+		if _, ok := b[k]; ok {
+			intersection++
+		}
+	}
+	union := len(a) + len(b) - intersection
+	if union == 0 {
+		return 0
+	}
+	return float64(intersection) / float64(union)
+}
+
+func hasIntersection[T comparable](a, b map[T]struct{}) bool {
+	for k := range a {
+		if _, ok := b[k]; ok {
+			return true
+		}
+	}
+	return false
+}
+
+func postTagIDSet(p *ent.Post) map[int]struct{} {
+	set := make(map[int]struct{}, len(p.Edges.Tags))
+	for _, t := range p.Edges.Tags {
+		set[t.ID] = struct{}{}
+	}
+	return set
+}
+
+func postCategoryIDSet(p *ent.Post) map[int]struct{} {
+	set := make(map[int]struct{}, len(p.Edges.Categories))
+	for _, c := range p.Edges.Categories {
+		set[c.ID] = struct{}{}
+	}
+	return set
+}
+
+// toPostResp 将 ent.Post 转换为响应模型
+func toPostResp(p *ent.Post) model.PostResp {
+	return model.PostResp{
+		ID:                    p.ID,
+		Title:                 p.Title,
+		Slug:                  p.Slug,
+		Content:               p.Content,
+		MdContent:             p.MdContent,
+		HtmlContent:           p.HTMLContent,
+		ContentType:           string(p.ContentType),
+		Status:                string(p.Status),
+		IsAutogenSummary:      p.IsAutogenSummary,
+		IsVisible:             p.IsVisible,
+		IsPinToTop:            p.IsPinToTop,
+		IsAllowComment:        p.IsAllowComment,
+		IsVisibleAfterComment: p.IsVisibleAfterComment,
+		IsVisibleAfterPay:     p.IsVisibleAfterPay,
+		Price:                 float32(p.Price) / 100,
+		PublishedAt:           (*model.LocalTime)(p.PublishedAt),
+		ViewCount:             p.ViewCount,
+		CommentCount:          p.CommentCount,
+		Cover:                 p.Cover,
+		Keywords:              p.Keywords,
+		Copyright:             p.Copyright,
+		Author:                p.Author,
+		Summary:               p.Summary,
+		CreatedAt:             (model.LocalTime)(p.CreatedAt),
+		Categories:            p.Edges.Categories,
+		CategoryIds: func() []int {
+			ids := make([]int, len(p.Edges.Categories))
+			for i, cat := range p.Edges.Categories {
+				ids[i] = cat.ID
+			}
+			return ids
+		}(),
+		Tags: p.Edges.Tags,
+		TagIds: func() []int {
+			ids := make([]int, len(p.Edges.Tags))
+			for i, tag := range p.Edges.Tags {
+				ids[i] = tag.ID
+			}
+			return ids
+		}(),
+	}
 }
 
 func (s *PostServiceImpl) SearchPosts(c context.Context, req model.PostSearchReq) ([]*model.PostSearchResp, int, error) {

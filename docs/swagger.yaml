@@ -2899,6 +2899,104 @@ definitions:
         description: MM-YYYY 格式
         type: string
     type: object
+  model.PostRelatedResp:
+    properties:
+      author:
+        description: 作者
+        type: string
+      categories:
+        description: 分类ID列表
+        items:
+          $ref: '#/definitions/ent.Category'
+        type: array
+      category_ids:
+        description: 分类ID列表
+        items:
+          type: integer
+        type: array
+      comment_count:
+        description: 评论次数
+        type: integer
+      content:
+        description: 文章内容
+        type: string
+      content_type:
+        description: 内容类型
+        type: string
+      copyright:
+        description: 文章版权
+        type: string
+      cover:
+        description: 文章封面
+        type: string
+      created_at:
+        description: 创建时间
+        type: string
+      html_content:
+        description: html文章内容
+        type: string
+      id:
+        description: 文章ID
+        type: integer
+      is_allow_comment:
+        description: 是否允许评论
+        type: boolean
+      is_autogen_summary:
+        description: 是否自动生成摘要
+        type: boolean
+      is_pin_to_top:
+        description: 是否置顶
+        type: boolean
+      is_visible:
+        description: 是否可见
+        type: boolean
+      is_visible_after_comment:
+        description: 是否评论后可见
+        type: boolean
+      is_visible_after_pay:
+        description: 是否支付后可见
+        type: boolean
+      keywords:
+        description: 文章关键词
+        type: string
+      md_content:
+        description: md文章内容
+        type: string
+      price:
+        description: 文章价格
+        type: number
+      published_at:
+        description: 发布时间
+        type: string
+      score:
+        description: 相关度总分
+        type: number
+      slug:
+        description: 文章别名
+        type: string
+      status:
+        description: 状态
+        type: string
+      summary:
+        description: 文章摘要
+        type: string
+      tag_ids:
+        description: 标签ID列表
+        items:
+          type: integer
+        type: array
+      tags:
+        description: 标签ID列表
+        items:
+          $ref: '#/definitions/ent.Tag'
+        type: array
+      title:
+        description: 文章标题
+        type: string
+      view_count:
+        description: 浏览次数
+        type: integer
+    type: object
   model.PostResp:
     properties:
       author:
@@ -9991,6 +10089,83 @@ paths:
           schema:
             $ref: '#/definitions/model.HttpError'
       summary: 随机获取一篇文章
+      tags:
+      - 公开接口/文章
+  /api/v1/public/post/random/list:
+    get:
+      consumes:
+      - application/json
+      description: 随机获取N篇已发布且可见的文章
+      parameters:
+      - default: 10
+        description: 获取数量
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.PostResp'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 随机获取多篇文章
+      tags:
+      - 公开接口/文章
+  /api/v1/public/post/related/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据标签、标题相似度、时间新鲜度、同分类加权，获取与指定文章相关的N篇文章
+      parameters:
+      - description: 当前文章ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: 10
+        description: 获取数量
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.PostRelatedResp'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取相关文章推荐
       tags:
       - 公开接口/文章
   /api/v1/public/post/search:

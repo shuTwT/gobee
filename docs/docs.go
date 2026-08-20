@@ -10093,6 +10093,131 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/public/post/random/list": {
+            "get": {
+                "description": "随机获取N篇已发布且可见的文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "公开接口/文章"
+                ],
+                "summary": "随机获取多篇文章",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "获取数量",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.PostResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/public/post/related/{id}": {
+            "get": {
+                "description": "根据标签、标题相似度、时间新鲜度、同分类加权，获取与指定文章相关的N篇文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "公开接口/文章"
+                ],
+                "summary": "获取相关文章推荐",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "当前文章ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "获取数量",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.PostRelatedResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/public/post/search": {
             "get": {
                 "description": "根据查询参数搜索文章",
@@ -18097,6 +18222,139 @@ const docTemplate = `{
                 "month": {
                     "description": "MM-YYYY 格式",
                     "type": "string"
+                }
+            }
+        },
+        "model.PostRelatedResp": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "作者",
+                    "type": "string"
+                },
+                "categories": {
+                    "description": "分类ID列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Category"
+                    }
+                },
+                "category_ids": {
+                    "description": "分类ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "comment_count": {
+                    "description": "评论次数",
+                    "type": "integer"
+                },
+                "content": {
+                    "description": "文章内容",
+                    "type": "string"
+                },
+                "content_type": {
+                    "description": "内容类型",
+                    "type": "string"
+                },
+                "copyright": {
+                    "description": "文章版权",
+                    "type": "string"
+                },
+                "cover": {
+                    "description": "文章封面",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "html_content": {
+                    "description": "html文章内容",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "文章ID",
+                    "type": "integer"
+                },
+                "is_allow_comment": {
+                    "description": "是否允许评论",
+                    "type": "boolean"
+                },
+                "is_autogen_summary": {
+                    "description": "是否自动生成摘要",
+                    "type": "boolean"
+                },
+                "is_pin_to_top": {
+                    "description": "是否置顶",
+                    "type": "boolean"
+                },
+                "is_visible": {
+                    "description": "是否可见",
+                    "type": "boolean"
+                },
+                "is_visible_after_comment": {
+                    "description": "是否评论后可见",
+                    "type": "boolean"
+                },
+                "is_visible_after_pay": {
+                    "description": "是否支付后可见",
+                    "type": "boolean"
+                },
+                "keywords": {
+                    "description": "文章关键词",
+                    "type": "string"
+                },
+                "md_content": {
+                    "description": "md文章内容",
+                    "type": "string"
+                },
+                "price": {
+                    "description": "文章价格",
+                    "type": "number"
+                },
+                "published_at": {
+                    "description": "发布时间",
+                    "type": "string"
+                },
+                "score": {
+                    "description": "相关度总分",
+                    "type": "number"
+                },
+                "slug": {
+                    "description": "文章别名",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "string"
+                },
+                "summary": {
+                    "description": "文章摘要",
+                    "type": "string"
+                },
+                "tag_ids": {
+                    "description": "标签ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "tags": {
+                    "description": "标签ID列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Tag"
+                    }
+                },
+                "title": {
+                    "description": "文章标题",
+                    "type": "string"
+                },
+                "view_count": {
+                    "description": "浏览次数",
+                    "type": "integer"
                 }
             }
         },
