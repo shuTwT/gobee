@@ -197,11 +197,18 @@ func renderTemplate(serviceMap pkg.ServiceMap, templateName string) fiber.Handle
 
 		c.Set("Content-Type", "text/html; charset=utf-8")
 
+		configValues, err := serviceMap.ThemeService.GetThemeSettingValues(context.Background(), themeEntity)
+		if err != nil {
+			log.Printf("获取主题配置失败: %v", err)
+			configValues = map[string]any{}
+		}
+
 		data := map[string]interface{}{
 			"Title":  fmt.Sprintf("%s - %s", getTemplateTitle(templateName), themeEntity.DisplayName),
 			"Theme":  themeEntity,
 			"Path":   c.Path(),
 			"Params": c.AllParams(),
+			"Config": configValues,
 		}
 
 		if err := tmpl.Execute(c.Response().BodyWriter(), data); err != nil {

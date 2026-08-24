@@ -3,6 +3,7 @@ package theme
 import (
 	"archive/zip"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -14,6 +15,7 @@ import (
 
 	"github.com/shuTwT/hoshikuzu/ent"
 	theme_ent "github.com/shuTwT/hoshikuzu/ent/theme"
+	setting_service "github.com/shuTwT/hoshikuzu/internal/services/system/setting"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
 
 	"gopkg.in/yaml.v3"
@@ -30,15 +32,20 @@ type ThemeService interface {
 	DisableTheme(ctx context.Context, id int) error
 	RegisterDefaultTheme(ctx context.Context) error
 	GetEnabledTheme(ctx context.Context) (*ent.Theme, error)
+	GetThemeSetting(ctx context.Context, id int) (*model.ThemeSettingResp, error)
+	SaveThemeSetting(ctx context.Context, id int, values map[string]any) error
+	GetThemeSettingValues(ctx context.Context, themeEntity *ent.Theme) (map[string]any, error)
 }
 
 type ThemeServiceImpl struct {
-	client *ent.Client
+	client         *ent.Client
+	settingService setting_service.SettingService
 }
 
-func NewThemeServiceImpl(client *ent.Client) *ThemeServiceImpl {
+func NewThemeServiceImpl(client *ent.Client, settingService setting_service.SettingService) *ThemeServiceImpl {
 	return &ThemeServiceImpl{
-		client: client,
+		client:         client,
+		settingService: settingService,
 	}
 }
 
@@ -182,6 +189,14 @@ func (s *ThemeServiceImpl) createInternalTheme(ctx context.Context, req *model.C
 
 	if settingConfigContent == nil {
 		return nil, errors.New("压缩包中未找到 setting.yaml 文件")
+	}
+
+	var settingSchema model.SettingSchema
+	if err := yaml.Unmarshal(settingConfigContent, &settingSchema); err != nil {
+		return nil, fmt.Errorf("解析setting.yaml文件失败: %w", err)
+	}
+	if err := validateSettingSchema(&settingSchema); err != nil {
+		return nil, err
 	}
 
 	var themeConfig model.ThemeConfig
@@ -411,6 +426,14 @@ func (s *ThemeServiceImpl) createStaticTheme(ctx context.Context, req *model.Cre
 		return nil, errors.New("压缩包中未找到 setting.yaml 文件")
 	}
 
+	var settingSchema model.SettingSchema
+	if err := yaml.Unmarshal(settingConfigContent, &settingSchema); err != nil {
+		return nil, fmt.Errorf("解析setting.yaml文件失败: %w", err)
+	}
+	if err := validateSettingSchema(&settingSchema); err != nil {
+		return nil, err
+	}
+
 	var themeConfig model.ThemeConfig
 	if err := yaml.Unmarshal(themeConfigContent, &themeConfig); err != nil {
 		return nil, fmt.Errorf("解析theme.yaml文件失败: %w", err)
@@ -574,6 +597,215 @@ func (s *ThemeServiceImpl) GetEnabledTheme(ctx context.Context) (*ent.Theme, err
 		return nil, err
 	}
 	return themeEntity, nil
+}
+
+// settingKey 主题配置值在 setting 表中的存储键
+func settingKey(themeName string) string {
+	return "theme:" + themeName
+}
+
+// loadSettingSchema 从主题目录读取并解析 setting.yaml。
+// 外部主题或文件缺失时返回空 schema，不视为错误。
+func (s *ThemeServiceImpl) loadSettingSchema(themeEntity *ent.Theme) (*model.SettingSchema, error) {
+	schema := &model.SettingSchema{}
+	if themeEntity.Type == "external" || themeEntity.Path == "" {
+		return schema, nil
+	}
+
+	schemaPath := filepath.Join(themeEntity.Path, "setting.yaml")
+	content, err := os.ReadFile(schemaPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return schema, nil
+		}
+		return nil, fmt.Errorf("读取 setting.yaml 失败: %w", err)
+	}
+
+	if err := yaml.Unmarshal(content, schema); err != nil {
+		return nil, fmt.Errorf("解析 setting.yaml 失败: %w", err)
+	}
+	return schema, nil
+}
+
+// validateSettingSchema 校验主题设置表单定义的合法性
+func validateSettingSchema(schema *model.SettingSchema) error {
+	if schema.Type != "" && schema.Type != "setting" {
+		return errors.New("setting.yaml 的 type 必须为 setting")
+	}
+
+	fieldNames := make(map[string]struct{})
+	for _, form := range schema.Forms {
+		if form.Group == "" {
+			return errors.New("设置分组的 group 不能为空")
+		}
+		if form.Label == "" {
+			return errors.New("设置分组的 label 不能为空")
+		}
+		for _, field := range form.FormSchema {
+			if field.Name == "" {
+				return errors.New("设置字段的 name 不能为空")
+			}
+			if _, exists := fieldNames[field.Name]; exists {
+				return fmt.Errorf("设置字段 name 重复: %s", field.Name)
+			}
+			fieldNames[field.Name] = struct{}{}
+			if field.Label == "" {
+				return fmt.Errorf("设置字段 %s 的 label 不能为空", field.Name)
+			}
+			if _, ok := model.ValidSettingFieldTypes[field.Type]; !ok {
+				return fmt.Errorf("设置字段 %s 的类型无效: %s", field.Name, field.Type)
+			}
+			if (field.Type == model.SettingFieldTypeSelect || field.Type == model.SettingFieldTypeRadio) && len(field.Options) == 0 {
+				return fmt.Errorf("设置字段 %s 为 %s 类型，必须提供 options", field.Name, field.Type)
+			}
+		}
+	}
+	return nil
+}
+
+// loadStoredSettingValues 读取 setting 表中已保存的主题配置值，未保存过或值损坏时返回空 map
+func (s *ThemeServiceImpl) loadStoredSettingValues(ctx context.Context, themeName string) (map[string]any, error) {
+	values := map[string]any{}
+	if s.settingService == nil {
+		return values, nil
+	}
+
+	settingEntity, err := s.settingService.GetSettingByKey(ctx, settingKey(themeName))
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return values, nil
+		}
+		return nil, fmt.Errorf("读取主题配置失败: %w", err)
+	}
+
+	// 值损坏时不阻断设置页打开，保存时会以新值覆盖
+	var stored map[string]any
+	if err := json.Unmarshal([]byte(settingEntity.Value), &stored); err != nil {
+		return values, nil
+	}
+	for k, v := range stored {
+		values[k] = v
+	}
+	return values, nil
+}
+
+// mergeSettingDefaults 将 schema 中字段的默认值回填到缺失的配置项
+func mergeSettingDefaults(schema *model.SettingSchema, values map[string]any) {
+	for _, form := range schema.Forms {
+		for _, field := range form.FormSchema {
+			if _, ok := values[field.Name]; !ok && field.Default != nil {
+				values[field.Name] = field.Default
+			}
+		}
+	}
+}
+
+// GetThemeSetting 获取主题的设置表单定义与当前配置值（值缺失时回填 schema 默认值）
+func (s *ThemeServiceImpl) GetThemeSetting(ctx context.Context, id int) (*model.ThemeSettingResp, error) {
+	themeEntity, err := s.client.Theme.Query().Where(theme_ent.ID(id)).First(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	schema, err := s.loadSettingSchema(themeEntity)
+	if err != nil {
+		return nil, err
+	}
+
+	values, err := s.loadStoredSettingValues(ctx, themeEntity.Name)
+	if err != nil {
+		return nil, err
+	}
+	mergeSettingDefaults(schema, values)
+
+	resp := &model.ThemeSettingResp{
+		Forms:  schema.Forms,
+		Values: values,
+	}
+	if resp.Forms == nil {
+		resp.Forms = []model.SettingForm{}
+	}
+	if resp.Values == nil {
+		resp.Values = map[string]any{}
+	}
+	return resp, nil
+}
+
+// SaveThemeSetting 保存主题配置值，按当前 schema 过滤未知字段并校验必填项
+func (s *ThemeServiceImpl) SaveThemeSetting(ctx context.Context, id int, values map[string]any) error {
+	themeEntity, err := s.client.Theme.Query().Where(theme_ent.ID(id)).First(ctx)
+	if err != nil {
+		return err
+	}
+
+	schema, err := s.loadSettingSchema(themeEntity)
+	if err != nil {
+		return err
+	}
+	if len(schema.Forms) == 0 {
+		return errors.New("该主题没有可配置项")
+	}
+
+	fieldNames := make(map[string]struct{})
+	for _, form := range schema.Forms {
+		for _, field := range form.FormSchema {
+			fieldNames[field.Name] = struct{}{}
+		}
+	}
+
+	filtered := make(map[string]any, len(values))
+	for name, value := range values {
+		if _, ok := fieldNames[name]; ok {
+			filtered[name] = value
+		}
+	}
+
+	for _, form := range schema.Forms {
+		for _, field := range form.FormSchema {
+			if !field.Required {
+				continue
+			}
+			if value, ok := filtered[field.Name]; !ok || value == nil || value == "" {
+				return fmt.Errorf("配置项「%s」不能为空", field.Label)
+			}
+		}
+	}
+
+	content, err := json.Marshal(filtered)
+	if err != nil {
+		return fmt.Errorf("序列化主题配置失败: %w", err)
+	}
+
+	key := settingKey(themeEntity.Name)
+	exists, err := s.settingService.ExistSettingByKey(ctx, key)
+	if err != nil {
+		return fmt.Errorf("查询主题配置失败: %w", err)
+	}
+	if exists {
+		if err := s.settingService.UpdateSettingByKey(ctx, key, string(content)); err != nil {
+			return fmt.Errorf("更新主题配置失败: %w", err)
+		}
+	} else {
+		if err := s.settingService.CreateSettingIfNotExist(ctx, key, string(content)); err != nil {
+			return fmt.Errorf("保存主题配置失败: %w", err)
+		}
+	}
+	return nil
+}
+
+// GetThemeSettingValues 获取主题的生效配置值（已保存值 + schema 默认值），供前台模板渲染使用
+func (s *ThemeServiceImpl) GetThemeSettingValues(ctx context.Context, themeEntity *ent.Theme) (map[string]any, error) {
+	values, err := s.loadStoredSettingValues(ctx, themeEntity.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	schema, err := s.loadSettingSchema(themeEntity)
+	if err != nil {
+		return nil, err
+	}
+	mergeSettingDefaults(schema, values)
+	return values, nil
 }
 
 func validateThemeConfig(config *model.ThemeConfig) error {

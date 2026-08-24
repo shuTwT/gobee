@@ -222,6 +222,67 @@ func (h *ThemeHandler) DisableTheme(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("主题禁用成功", nil))
 }
 
+// @Summary 获取主题设置
+// @Description 获取指定主题的设置表单定义和当前配置值
+// @Tags 后台管理接口/主题
+// @Produce json
+// @Param id path int true "主题ID"
+// @Success 200 {object} model.HttpSuccess{data=model.ThemeSettingResp}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/theme/{id}/setting [get]
+func (h *ThemeHandler) QueryThemeSetting(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		slog.Error("Invalid theme ID", "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "无效的主题ID"))
+	}
+
+	resp, err := h.themeService.GetThemeSetting(c.Context(), id)
+	if err != nil {
+		slog.Error("Failed to get theme setting", "theme_id", id, "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	return c.JSON(model.NewSuccess("主题设置获取成功", resp))
+}
+
+// @Summary 保存主题设置
+// @Description 保存指定主题的配置值
+// @Tags 后台管理接口/主题
+// @Accept json
+// @Produce json
+// @Param id path int true "主题ID"
+// @Param req body model.SaveThemeSettingReq true "主题设置保存请求"
+// @Success 200 {object} model.HttpSuccess{data=nil}
+// @Failure 400 {object} model.HttpError
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/theme/{id}/setting/save [post]
+func (h *ThemeHandler) SaveThemeSetting(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		slog.Error("Invalid theme ID", "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "无效的主题ID"))
+	}
+
+	var req model.SaveThemeSettingReq
+	if err := c.BodyParser(&req); err != nil {
+		slog.Error("Failed to parse request body", "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "请求参数解析失败"))
+	}
+	if req.Values == nil {
+		return c.JSON(model.NewError(fiber.StatusBadRequest, "配置值不能为空"))
+	}
+
+	if err := h.themeService.SaveThemeSetting(c.Context(), id, req.Values); err != nil {
+		slog.Error("Failed to save theme setting", "theme_id", id, "error", err.Error())
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+
+	slog.Info("Theme setting saved successfully", "theme_id", id)
+	return c.JSON(model.NewSuccess("主题设置保存成功", nil))
+}
+
 func (h *ThemeHandler) buildThemeResp(t *ent.Theme) *model.ThemeResp {
 	return &model.ThemeResp{
 		ID:            t.ID,

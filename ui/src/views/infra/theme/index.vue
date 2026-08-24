@@ -1,10 +1,26 @@
 <script lang="ts" setup>
-import { NButton, NIcon, NDataTable, type DataTableColumns, NTag, NPopconfirm, NUpload } from 'naive-ui'
-import { Pencil, RefreshOutline, TrashOutline, CloudUploadOutline, EyeOutline } from '@vicons/ionicons5'
+import {
+  NButton,
+  NIcon,
+  NDataTable,
+  type DataTableColumns,
+  NTag,
+  NPopconfirm,
+  NUpload,
+} from 'naive-ui'
+import {
+  Pencil,
+  RefreshOutline,
+  TrashOutline,
+  CloudUploadOutline,
+  EyeOutline,
+  SettingsOutline,
+} from '@vicons/ionicons5'
 import { apiClient, useApi } from '@/api'
 import { addDialog } from '@/components/dialog'
 import EditForm from './editForm.vue'
 import Detail from './detail.vue'
+import SettingForm from './settingForm.vue'
 
 const pagination = reactive({
   page: 1,
@@ -26,6 +42,7 @@ const pagination = reactive({
 const dataList = ref<any>([])
 const loading = ref(false)
 const editFormRef = ref<any>(null)
+const settingFormRef = ref<any>(null)
 const currentThemeId = ref<number | undefined>(undefined)
 
 const columns: DataTableColumns<any> = [
@@ -83,74 +100,85 @@ const columns: DataTableColumns<any> = [
     key: 'enabled',
     width: 100,
     render: (row) => {
-      return h(NTag, { type: row.enabled ? 'success' : 'default' }, () => row.enabled ? '已启用' : '未启用')
+      return h(NTag, { type: row.enabled ? 'success' : 'default' }, () =>
+        row.enabled ? '已启用' : '未启用',
+      )
     },
   },
   {
     title: '操作',
     key: 'actions',
-    width: 200,
+    width: 270,
     fixed: 'right',
     render: (row) => {
-      return h(
-        'div',
-        { style: { display: 'flex', gap: '8px' } },
-        [
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'info',
-              quaternary: true,
-              onClick: () => handleDetail(row),
+      return h('div', { style: { display: 'flex', gap: '8px' } }, [
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'info',
+            quaternary: true,
+            onClick: () => handleDetail(row),
+          },
+          {
+            icon: () => h(NIcon, {}, () => h(EyeOutline)),
+            default: () => '详情',
+          },
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'warning',
+            quaternary: true,
+            onClick: () => handleSetting(row),
+          },
+          {
+            icon: () => h(NIcon, {}, () => h(SettingsOutline)),
+            default: () => '设置',
+          },
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'primary',
+            quaternary: true,
+            onClick: () => {
+              if (row.enabled) {
+                handleDisable(row.id)
+              } else {
+                handleEnable(row.id)
+              }
             },
-            {
-              icon: () => h(NIcon, {}, () => h(EyeOutline)),
-              default: () => '详情',
-            },
-          ),
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'primary',
-              quaternary: true,
-              onClick: () => {
-                if (row.enabled) {
-                  handleDisable(row.id)
-                } else {
-                  handleEnable(row.id)
-                }
-              },
-            },
-            {
-              default: () => row.enabled ? '禁用' : '启用',
-            },
-          ),
-          h(
-            NPopconfirm,
-            {
-              onPositiveClick: () => handleDelete(row.id),
-            },
-            {
-              trigger: () =>
-                h(
-                  NButton,
-                  {
-                    size: 'small',
-                    type: 'error',
-                    quaternary: true,
-                  },
-                  {
-                    icon: () => h(NIcon, {}, () => h(TrashOutline)),
-                    default: () => '删除',
-                  },
-                ),
-              default: () => '确定删除该主题吗？',
-            },
-          ),
-        ],
-      )
+          },
+          {
+            default: () => (row.enabled ? '禁用' : '启用'),
+          },
+        ),
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleDelete(row.id),
+          },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'error',
+                  quaternary: true,
+                },
+                {
+                  icon: () => h(NIcon, {}, () => h(TrashOutline)),
+                  default: () => '删除',
+                },
+              ),
+            default: () => '确定删除该主题吗？',
+          },
+        ),
+      ])
     },
   },
 ]
@@ -160,12 +188,14 @@ const onSearch = () => {
   useApi(apiClient.api.v1ThemePageList, {
     page: pagination.page,
     page_size: pagination.pageSize,
-  }).then(res => {
-    dataList.value = res.data.records || []
-    pagination.total = res.data.total || 0
-  }).finally(() => {
-    loading.value = false
   })
+    .then((res) => {
+      dataList.value = res.data.records || []
+      pagination.total = res.data.total || 0
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
 const handleUpload = () => {
@@ -179,10 +209,11 @@ const handleUpload = () => {
         display_name: '',
         version: '',
         external_url: '',
-        description: ''
-      }
+        description: '',
+      },
     },
-    contentRenderer: ({ options }) => h(EditForm, { ref: editFormRef, formInline: options.props!.formInline }),
+    contentRenderer: ({ options }) =>
+      h(EditForm, { ref: editFormRef, formInline: options.props!.formInline }),
     beforeSure: async (done) => {
       try {
         const data = await editFormRef.value?.getData()
@@ -201,11 +232,44 @@ const handleUpload = () => {
 const handleDetail = (row: any) => {
   addDialog({
     title: '主题详情',
-    contentRenderer: () => h(Detail, {
-      theme: row
-    }),
+    contentRenderer: () =>
+      h(Detail, {
+        theme: row,
+      }),
     beforeSure: (done) => {
       done()
+    },
+  })
+}
+
+const handleSetting = (row: any) => {
+  addDialog({
+    title: `主题设置 - ${row.display_name}`,
+    width: 700,
+    props: {
+      theme: row,
+    },
+    contentRenderer: ({ options }) =>
+      h(SettingForm, { ref: settingFormRef, theme: options.props!.theme }),
+    beforeSure: async (done) => {
+      let values: any = null
+      try {
+        values = await settingFormRef.value?.getData()
+      } catch {
+        window.$message?.warning('请检查表单填写')
+        return
+      }
+      if (!values) {
+        done()
+        return
+      }
+      try {
+        await useApi(apiClient.api.v1ThemeSettingSaveCreate, row.id, { values })
+        window.$message?.success('主题设置保存成功')
+        done()
+      } catch (error) {
+        console.error('保存主题设置失败:', error)
+      }
     },
   })
 }
@@ -252,8 +316,7 @@ onMounted(() => {
   <div class="container-fluid p-6">
     <n-card title="主题管理" class="theme-card">
       <div class="header-section">
-        <div class="search-section">
-        </div>
+        <div class="search-section"></div>
         <div class="action-section">
           <n-button type="primary" style="margin-right: 12px" @click="handleUpload">
             <template #icon>

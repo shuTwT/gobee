@@ -2,3 +2,59 @@ type: setting
 forms:
   - group: base
     label: 基础设置
+    formSchema:
+      - type: text
+        name: site_title
+        label: 站点标题
+        default: 恒信科技 - 专业企业数字化解决方案提供商
+        required: true
+      - type: textarea
+        name: site_description
+        label: 站点描述
+        default: 恒信科技提供专业的企业数字化解决方案
+        help: 用于 SEO 的站点描述文字
+      - type: select
+        name: primary_color
+        label: 主色调
+        default: '#165DFF'
+        options:
+          - label: 商务蓝
+            value: '#165DFF'
+          - label: 深空紫
+            value: '#7C3AED'
+          - label: 翡翠绿
+            value: '#10B981'
+      - type: radio
+        name: contact_position
+        label: 联系方式展示位置
+        default: footer
+        options:
+          - label: 页脚
+            value: footer
+          - label: 顶部导航
+            value: header
+  - group: layout
+    label: 布局设置
+    formSchema:
+      - type: switch
+        name: show_sidebar
+        label: 显示侧边栏
+        default: true
+      - type: number
+        name: posts_per_page
+        label: 每页文章数
+        default: 10
+        min: 1
+        max: 50
+      - type: date
+        name: site_build_time
+        label: 建站时间
+        help: 展示在站点页脚的时间戳
+      - type: color
+        name: link_color
+        label: 链接颜色
+        default: '#165DFF'
+      - type: secret
+        name: statistics_key
+        label: 统计密钥
+        placeholder: 第三方统计服务的密钥

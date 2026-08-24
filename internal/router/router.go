@@ -238,6 +238,8 @@ func initInfraRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		themeApi.Delete("/delete/:id", handlerMap.ThemeHandler.DeleteTheme)
 		themeApi.Post("/:id/enable", handlerMap.ThemeHandler.EnableTheme)
 		themeApi.Post("/:id/disable", handlerMap.ThemeHandler.DisableTheme)
+		themeApi.Get("/:id/setting", handlerMap.ThemeHandler.QueryThemeSetting)
+		themeApi.Post("/:id/setting/save", handlerMap.ThemeHandler.SaveThemeSetting)
 	}
 	licenseApi := router.Group("/license")
 	{

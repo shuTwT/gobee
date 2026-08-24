@@ -3456,6 +3456,14 @@ definitions:
       name:
         type: string
     type: object
+  model.SaveThemeSettingReq:
+    properties:
+      values:
+        additionalProperties: {}
+        type: object
+    required:
+    - values
+    type: object
   model.ScheduleJobResp:
     properties:
       created_at:
@@ -3481,6 +3489,48 @@ definitions:
       type:
         type: string
       updated_at:
+        type: string
+    type: object
+  model.SettingField:
+    properties:
+      default: {}
+      help:
+        type: string
+      label:
+        type: string
+      max:
+        type: number
+      min:
+        type: number
+      name:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/model.SettingOption'
+        type: array
+      placeholder:
+        type: string
+      required:
+        type: boolean
+      type:
+        type: string
+    type: object
+  model.SettingForm:
+    properties:
+      formSchema:
+        items:
+          $ref: '#/definitions/model.SettingField'
+        type: array
+      group:
+        type: string
+      label:
+        type: string
+    type: object
+  model.SettingOption:
+    properties:
+      label:
+        type: string
+      value:
         type: string
     type: object
   model.StorageStrategyCreateReq:
@@ -3633,6 +3683,16 @@ definitions:
         type: string
       version:
         type: string
+    type: object
+  model.ThemeSettingResp:
+    properties:
+      forms:
+        items:
+          $ref: '#/definitions/model.SettingForm'
+        type: array
+      values:
+        additionalProperties: {}
+        type: object
     type: object
   model.TwikooReqBody:
     properties:
@@ -11660,6 +11720,78 @@ paths:
           schema:
             $ref: '#/definitions/model.HttpError'
       summary: 启用主题
+      tags:
+      - 后台管理接口/主题
+  /api/v1/theme/{id}/setting:
+    get:
+      description: 获取指定主题的设置表单定义和当前配置值
+      parameters:
+      - description: 主题ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.ThemeSettingResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取主题设置
+      tags:
+      - 后台管理接口/主题
+  /api/v1/theme/{id}/setting/save:
+    post:
+      consumes:
+      - application/json
+      description: 保存指定主题的配置值
+      parameters:
+      - description: 主题ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 主题设置保存请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/model.SaveThemeSettingReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 保存主题设置
       tags:
       - 后台管理接口/主题
   /api/v1/theme/create:

@@ -40,6 +40,76 @@ type CreateExternalThemeReq struct {
 	Version     string `json:"version" validate:"required"`
 }
 
+// 主题设置表单支持的字段类型
+const (
+	SettingFieldTypeText     = "text"
+	SettingFieldTypeTextarea = "textarea"
+	SettingFieldTypeNumber   = "number"
+	SettingFieldTypeSelect   = "select"
+	SettingFieldTypeRadio    = "radio"
+	SettingFieldTypeSwitch   = "switch"
+	SettingFieldTypeColor    = "color"
+	SettingFieldTypeDate     = "date"
+	SettingFieldTypeSecret   = "secret"
+)
+
+// ValidSettingFieldTypes 允许的主题设置字段类型集合
+var ValidSettingFieldTypes = map[string]struct{}{
+	SettingFieldTypeText:     {},
+	SettingFieldTypeTextarea: {},
+	SettingFieldTypeNumber:   {},
+	SettingFieldTypeSelect:   {},
+	SettingFieldTypeRadio:    {},
+	SettingFieldTypeSwitch:   {},
+	SettingFieldTypeColor:    {},
+	SettingFieldTypeDate:     {},
+	SettingFieldTypeSecret:   {},
+}
+
+// SettingSchema 主题包 setting.yaml 的顶层结构
+type SettingSchema struct {
+	Type  string        `yaml:"type" json:"type"`
+	Forms []SettingForm `yaml:"forms" json:"forms"`
+}
+
+// SettingForm 设置表单分组，一个分组对应后台设置页的一个 Tab
+type SettingForm struct {
+	Group      string         `yaml:"group" json:"group"`
+	Label      string         `yaml:"label" json:"label"`
+	FormSchema []SettingField `yaml:"formSchema" json:"formSchema"`
+}
+
+// SettingField 设置表单中的单个字段定义
+type SettingField struct {
+	Type        string          `yaml:"type" json:"type"`
+	Name        string          `yaml:"name" json:"name"`
+	Label       string          `yaml:"label" json:"label"`
+	Placeholder string          `yaml:"placeholder,omitempty" json:"placeholder,omitempty"`
+	Help        string          `yaml:"help,omitempty" json:"help,omitempty"`
+	Default     any             `yaml:"default,omitempty" json:"default,omitempty"`
+	Required    bool            `yaml:"required,omitempty" json:"required,omitempty"`
+	Min         *float64        `yaml:"min,omitempty" json:"min,omitempty"`
+	Max         *float64        `yaml:"max,omitempty" json:"max,omitempty"`
+	Options     []SettingOption `yaml:"options,omitempty" json:"options,omitempty"`
+}
+
+// SettingOption select/radio 字段的候选项
+type SettingOption struct {
+	Label string `yaml:"label" json:"label"`
+	Value string `yaml:"value" json:"value"`
+}
+
+// ThemeSettingResp 主题设置接口响应：表单定义 + 当前配置值（已合并默认值）
+type ThemeSettingResp struct {
+	Forms  []SettingForm  `json:"forms"`
+	Values map[string]any `json:"values"`
+}
+
+// SaveThemeSettingReq 保存主题设置请求
+type SaveThemeSettingReq struct {
+	Values map[string]any `json:"values" validate:"required"`
+}
+
 type ThemeResp struct {
 	ID            int       `json:"id"`
 	CreatedAt     LocalTime `json:"created_at"`

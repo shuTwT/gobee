@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>恒信科技 - 专业企业数字化解决方案提供商</title>
+    <title>{{ if .Config.site_title }}{{ .Config.site_title }}{{ else }}恒信科技 - 专业企业数字化解决方案提供商{{ end }}</title>
     <!-- 引入Tailwind CSS用于快速布局（保证大气规整） -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入Font Awesome图标库 -->

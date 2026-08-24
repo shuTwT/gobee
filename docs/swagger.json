@@ -13022,6 +13022,124 @@
                 }
             }
         },
+        "/api/v1/theme/{id}/setting": {
+            "get": {
+                "description": "获取指定主题的设置表单定义和当前配置值",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/主题"
+                ],
+                "summary": "获取主题设置",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主题ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.ThemeSettingResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/theme/{id}/setting/save": {
+            "post": {
+                "description": "保存指定主题的配置值",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台管理接口/主题"
+                ],
+                "summary": "保存主题设置",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主题ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "主题设置保存请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.SaveThemeSettingReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/create": {
             "post": {
                 "description": "创建一个新用户",
@@ -19018,6 +19136,18 @@
                 }
             }
         },
+        "model.SaveThemeSettingReq": {
+            "type": "object",
+            "required": [
+                "values"
+            ],
+            "properties": {
+                "values": {
+                    "type": "object",
+                    "additionalProperties": {}
+                }
+            }
+        },
         "model.ScheduleJobResp": {
             "type": "object",
             "properties": {
@@ -19055,6 +19185,70 @@
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SettingField": {
+            "type": "object",
+            "properties": {
+                "default": {},
+                "help": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "max": {
+                    "type": "number"
+                },
+                "min": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.SettingOption"
+                    }
+                },
+                "placeholder": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SettingForm": {
+            "type": "object",
+            "properties": {
+                "formSchema": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.SettingField"
+                    }
+                },
+                "group": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SettingOption": {
+            "type": "object",
+            "properties": {
+                "label": {
+                    "type": "string"
+                },
+                "value": {
                     "type": "string"
                 }
             }
@@ -19283,6 +19477,21 @@
                 },
                 "version": {
                     "type": "string"
+                }
+            }
+        },
+        "model.ThemeSettingResp": {
+            "type": "object",
+            "properties": {
+                "forms": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.SettingForm"
+                    }
+                },
+                "values": {
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             }
         },

@@ -180,7 +180,7 @@ func InitializeServices(assetsRes embed.FS, db *ent.Client, scheduleManager *man
 	couponService := coupon_service.NewCouponServiceImpl(db)
 	couponUsageService := couponusage_service.NewCouponUsageServiceImpl(db)
 	storageStrategyService := storagestrategy_service.NewStorageStrategyServiceImpl(db)
-	themeService := theme_service.NewThemeServiceImpl(db)
+	themeService := theme_service.NewThemeServiceImpl(db, settingService)
 	tagService := tag_service.NewTagServiceImpl(db)
 	userService := user_service.NewUserServiceImpl(db)
 	visitService := visit_service.NewVisitServiceImpl(db)
