@@ -10472,6 +10472,47 @@
                 }
             }
         },
+        "/api/v1/public/site/statistic": {
+            "get": {
+                "description": "获取公开的站点统计信息，包括已发布且可见的文章数、分类数、标签数与文章总字数",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "公开接口/统计"
+                ],
+                "summary": "获取站点统计信息",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.SiteStatistic"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/public/tag/list": {
             "get": {
                 "description": "查询所有标签",
@@ -19250,6 +19291,23 @@
                 },
                 "value": {
                     "type": "string"
+                }
+            }
+        },
+        "model.SiteStatistic": {
+            "type": "object",
+            "properties": {
+                "categoryCount": {
+                    "type": "integer"
+                },
+                "postCount": {
+                    "type": "integer"
+                },
+                "tagCount": {
+                    "type": "integer"
+                },
+                "totalWordCount": {
+                    "type": "integer"
                 }
             }
         },

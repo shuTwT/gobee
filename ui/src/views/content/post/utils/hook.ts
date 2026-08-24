@@ -16,7 +16,7 @@ export function usePostHook() {
       useApi(apiClient.api.v1PostUpdateContentUpdate, row.id, {
           content: row.content,
           md_content: row.md_content,
-          html_content: row.v,
+          html_content: row.html_content,
         } as Parameters<typeof apiClient.api.v1PostUpdateContentUpdate>[1])
         .then((res) => {
           message.success('保存成功')

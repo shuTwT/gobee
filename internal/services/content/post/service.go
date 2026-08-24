@@ -177,6 +177,7 @@ func (s *PostServiceImpl) CreatePost(c context.Context, title string, content st
 	newPost, err := s.client.Post.Create().
 		SetTitle(title).
 		SetContent(content).
+		SetHTMLContent(content).
 		Save(c)
 	slug, err := utils.GenerateSlug(title, newPost.CreatedAt.Unix())
 	if err != nil {
@@ -213,6 +214,10 @@ func (s *PostServiceImpl) QueryPostById(c context.Context, id int) (*ent.Post, e
 }
 
 func (s *PostServiceImpl) UpdatePostContent(c context.Context, id int, content string, htmlContent *string, mdContent *string) (*ent.Post, error) {
+	// html_content 是 HTML 内容的权威存储字段，调用方未显式传入时与 content 保持一致
+	if htmlContent == nil {
+		htmlContent = &content
+	}
 	newPost, err := s.client.Post.UpdateOneID(id).
 		SetContent(content).
 		SetNillableHTMLContent(htmlContent).

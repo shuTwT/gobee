@@ -394,6 +394,8 @@ func initPublicRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		publicApi.Post("/flink-application/create", handlerMap.PublicHandler.CreateFlinkApplication)
 		// 前台菜单列表接口
 		publicApi.Get("/menu/list", handlerMap.PublicHandler.GetMenuList)
+		// 站点统计接口
+		publicApi.Get("/site/statistic", handlerMap.PublicHandler.GetSiteStatistic)
 		// 插件注册接口，仅在debug模式下生效，不需要认证
 		publicApi.Post("/plugin/register", handlerMap.PublicHandler.RegisterPlugin)
 		// 插件心跳接口，仅在debug模式下生效，不需要认证

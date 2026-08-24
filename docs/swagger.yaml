@@ -3533,6 +3533,17 @@ definitions:
       value:
         type: string
     type: object
+  model.SiteStatistic:
+    properties:
+      categoryCount:
+        type: integer
+      postCount:
+        type: integer
+      tagCount:
+        type: integer
+      totalWordCount:
+        type: integer
+    type: object
   model.StorageStrategyCreateReq:
     properties:
       access_key:
@@ -10354,6 +10365,30 @@ paths:
       summary: 搜索商品
       tags:
       - 公开接口/商品
+  /api/v1/public/site/statistic:
+    get:
+      consumes:
+      - application/json
+      description: 获取公开的站点统计信息，包括已发布且可见的文章数、分类数、标签数与文章总字数
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.SiteStatistic'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取站点统计信息
+      tags:
+      - 公开接口/统计
   /api/v1/public/tag/list:
     get:
       consumes:

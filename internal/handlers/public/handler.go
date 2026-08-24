@@ -28,6 +28,7 @@ import (
 	"github.com/shuTwT/hoshikuzu/internal/services/infra/plugin"
 	"github.com/shuTwT/hoshikuzu/internal/services/infra/visit"
 	"github.com/shuTwT/hoshikuzu/internal/services/mall/product"
+	common_service "github.com/shuTwT/hoshikuzu/internal/services/system/common"
 	user "github.com/shuTwT/hoshikuzu/internal/services/system/user"
 	"github.com/shuTwT/hoshikuzu/pkg/config"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
@@ -51,10 +52,11 @@ type PublicHandler struct {
 	flinkApplicationService flinkapplication.FlinkApplicationService
 	pluginService           plugin.PluginService
 	menuService             menu.MenuService
+	commonService           common_service.CommonService
 }
 
-func NewPublicHandler(visitService visit.VisitService, commentService comment.CommentService, albumService album.AlbumService, albumPhotoService albumphoto.AlbumPhotoService, flinkService flink.FlinkService, client *ent.Client, friendCircleService friendcircle.FriendCircleService, essayService essay.EssayService, postService post.PostService, categoryService category.CategoryService, tagService tag.TagService, userService user.UserService, productService product.ProductService, flinkApplicationService flinkapplication.FlinkApplicationService, pluginService plugin.PluginService, menuService menu.MenuService) *PublicHandler {
-	return &PublicHandler{visitService: visitService, commentService: commentService, albumService: albumService, albumPhotoService: albumPhotoService, flinkService: flinkService, client: client, friendCircleService: friendCircleService, essayService: essayService, postService: postService, categoryService: categoryService, tagService: tagService, userService: userService, productService: productService, flinkApplicationService: flinkApplicationService, pluginService: pluginService, menuService: menuService}
+func NewPublicHandler(visitService visit.VisitService, commentService comment.CommentService, albumService album.AlbumService, albumPhotoService albumphoto.AlbumPhotoService, flinkService flink.FlinkService, client *ent.Client, friendCircleService friendcircle.FriendCircleService, essayService essay.EssayService, postService post.PostService, categoryService category.CategoryService, tagService tag.TagService, userService user.UserService, productService product.ProductService, flinkApplicationService flinkapplication.FlinkApplicationService, pluginService plugin.PluginService, menuService menu.MenuService, commonService common_service.CommonService) *PublicHandler {
+	return &PublicHandler{visitService: visitService, commentService: commentService, albumService: albumService, albumPhotoService: albumPhotoService, flinkService: flinkService, client: client, friendCircleService: friendCircleService, essayService: essayService, postService: postService, categoryService: categoryService, tagService: tagService, userService: userService, productService: productService, flinkApplicationService: flinkApplicationService, pluginService: pluginService, menuService: menuService, commonService: commonService}
 }
 
 // @Summary 处理访客访问
@@ -1324,4 +1326,20 @@ func (h *PublicHandler) GetMenuList(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(model.NewSuccess("success", menus))
+}
+
+// @Summary 获取站点统计信息
+// @Description 获取公开的站点统计信息，包括已发布且可见的文章数、分类数、标签数与文章总字数
+// @Tags 公开接口/统计
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=model.SiteStatistic}
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/public/site/statistic [get]
+func (h *PublicHandler) GetSiteStatistic(c *fiber.Ctx) error {
+	statistic, err := h.commonService.GetSiteStatistic(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", statistic))
 }
