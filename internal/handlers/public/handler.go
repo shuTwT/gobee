@@ -29,6 +29,7 @@ import (
 	"github.com/shuTwT/hoshikuzu/internal/services/infra/visit"
 	"github.com/shuTwT/hoshikuzu/internal/services/mall/product"
 	common_service "github.com/shuTwT/hoshikuzu/internal/services/system/common"
+	setting_service "github.com/shuTwT/hoshikuzu/internal/services/system/setting"
 	user "github.com/shuTwT/hoshikuzu/internal/services/system/user"
 	"github.com/shuTwT/hoshikuzu/pkg/config"
 	"github.com/shuTwT/hoshikuzu/pkg/domain/model"
@@ -53,10 +54,11 @@ type PublicHandler struct {
 	pluginService           plugin.PluginService
 	menuService             menu.MenuService
 	commonService           common_service.CommonService
+	settingService          setting_service.SettingService
 }
 
-func NewPublicHandler(visitService visit.VisitService, commentService comment.CommentService, albumService album.AlbumService, albumPhotoService albumphoto.AlbumPhotoService, flinkService flink.FlinkService, client *ent.Client, friendCircleService friendcircle.FriendCircleService, essayService essay.EssayService, postService post.PostService, categoryService category.CategoryService, tagService tag.TagService, userService user.UserService, productService product.ProductService, flinkApplicationService flinkapplication.FlinkApplicationService, pluginService plugin.PluginService, menuService menu.MenuService, commonService common_service.CommonService) *PublicHandler {
-	return &PublicHandler{visitService: visitService, commentService: commentService, albumService: albumService, albumPhotoService: albumPhotoService, flinkService: flinkService, client: client, friendCircleService: friendCircleService, essayService: essayService, postService: postService, categoryService: categoryService, tagService: tagService, userService: userService, productService: productService, flinkApplicationService: flinkApplicationService, pluginService: pluginService, menuService: menuService, commonService: commonService}
+func NewPublicHandler(visitService visit.VisitService, commentService comment.CommentService, albumService album.AlbumService, albumPhotoService albumphoto.AlbumPhotoService, flinkService flink.FlinkService, client *ent.Client, friendCircleService friendcircle.FriendCircleService, essayService essay.EssayService, postService post.PostService, categoryService category.CategoryService, tagService tag.TagService, userService user.UserService, productService product.ProductService, flinkApplicationService flinkapplication.FlinkApplicationService, pluginService plugin.PluginService, menuService menu.MenuService, commonService common_service.CommonService, settingService setting_service.SettingService) *PublicHandler {
+	return &PublicHandler{visitService: visitService, commentService: commentService, albumService: albumService, albumPhotoService: albumPhotoService, flinkService: flinkService, client: client, friendCircleService: friendCircleService, essayService: essayService, postService: postService, categoryService: categoryService, tagService: tagService, userService: userService, productService: productService, flinkApplicationService: flinkApplicationService, pluginService: pluginService, menuService: menuService, commonService: commonService, settingService: settingService}
 }
 
 // @Summary 处理访客访问
@@ -1349,4 +1351,33 @@ func (h *PublicHandler) GetSiteStatistic(c *fiber.Ctx) error {
 		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
 	}
 	return c.JSON(model.NewSuccess("success", statistic))
+}
+
+// @Summary 获取站点配置
+// @Description 获取前台站点设置，合并返回系统设置中 basic（基本信息）与 site（站点设置）两组 JSON 配置，供前台渲染站点名称、Logo、公告、维护模式等信息
+// @Tags 公开接口/站点
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=map[string]interface{}}
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/public/siteConfig [get]
+func (h *PublicHandler) GetSiteConfig(c *fiber.Ctx) error {
+	config := map[string]any{}
+	for _, key := range []string{"basic", "site"} {
+		setting, err := h.settingService.GetSettingByKey(c.Context(), key)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				continue
+			}
+			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+		}
+		var value map[string]any
+		if err := json.Unmarshal([]byte(setting.Value), &value); err != nil {
+			return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+		}
+		for k, v := range value {
+			config[k] = v
+		}
+	}
+	return c.JSON(model.NewSuccess("success", config))
 }

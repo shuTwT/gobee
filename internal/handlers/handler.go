@@ -136,7 +136,8 @@ func InitHandler(serviceMap pkg.ServiceMap, db *ent.Client) HandlerMap {
 		serviceMap.FlinkApplicationService,
 		serviceMap.PluginService,
 		serviceMap.MenuService,
-		serviceMap.CommonService)
+		serviceMap.CommonService,
+		serviceMap.SettingService)
 
 	handlerMap := HandlerMap{
 		AIHandler:               aiHandler,

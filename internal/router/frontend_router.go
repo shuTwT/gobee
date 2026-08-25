@@ -11,8 +11,10 @@ import (
 	"mime"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/proxy"
 	"github.com/shuTwT/hoshikuzu/ent"
 	"github.com/shuTwT/hoshikuzu/pkg"
 )
@@ -106,7 +108,12 @@ func initFrontendRoutes(app *fiber.App, serviceMap pkg.ServiceMap) {
 				return c.Next()
 			}
 			if theme.ExternalURL != "" {
-				return c.Redirect(theme.ExternalURL + path)
+				target := strings.TrimRight(theme.ExternalURL, "/") + c.OriginalURL()
+				if err := proxy.Do(c, target); err != nil {
+					log.Printf("外部主题反向代理失败: %v", err)
+					return c.Status(fiber.StatusBadGateway).SendString("外部主题服务不可用")
+				}
+				return nil
 			}
 			return c.Next()
 		}

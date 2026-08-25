@@ -398,6 +398,8 @@ func initPublicRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		publicApi.Get("/menu/list", handlerMap.PublicHandler.GetMenuList)
 		// 站点统计接口
 		publicApi.Get("/site/statistic", handlerMap.PublicHandler.GetSiteStatistic)
+		// 站点配置接口
+		publicApi.Get("/siteConfig", handlerMap.PublicHandler.GetSiteConfig)
 		// 插件注册接口，仅在debug模式下生效，不需要认证
 		publicApi.Post("/plugin/register", handlerMap.PublicHandler.RegisterPlugin)
 		// 插件心跳接口，仅在debug模式下生效，不需要认证

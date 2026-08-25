@@ -10563,6 +10563,48 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/public/siteConfig": {
+            "get": {
+                "description": "获取前台站点设置，合并返回系统设置中 basic（基本信息）与 site（站点设置）两组 JSON 配置，供前台渲染站点名称、Logo、公告、维护模式等信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "公开接口/站点"
+                ],
+                "summary": "获取站点配置",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/public/tag/list": {
             "get": {
                 "description": "查询所有标签",
