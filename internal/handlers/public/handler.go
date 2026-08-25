@@ -529,6 +529,22 @@ func (h *PublicHandler) ListEssay(c *fiber.Ctx) error {
 	return c.JSON(model.NewSuccess("success", resp))
 }
 
+// @Summary 获取全量文章元数据
+// @Description 返回所有已发布可见文章的轻量元数据（slug、title、published_at），避免传输过大的 JSON
+// @Tags 公开接口/文章
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.HttpSuccess{data=[]model.PostMeta}
+// @Failure 500 {object} model.HttpError
+// @Router /api/v1/public/post/meta [get]
+func (h *PublicHandler) GetPostMeta(c *fiber.Ctx) error {
+	metas, err := h.postService.QueryPostMeta(c.Context())
+	if err != nil {
+		return c.JSON(model.NewError(fiber.StatusInternalServerError, err.Error()))
+	}
+	return c.JSON(model.NewSuccess("success", metas))
+}
+
 // @Summary 查询所有文章
 // @Description 查询所有文章
 // @Tags 公开接口/文章
@@ -552,9 +568,6 @@ func (h *PublicHandler) ListPost(c *fiber.Ctx) error {
 			ID:                    post.ID,
 			Title:                 post.Title,
 			Slug:                  post.Slug,
-			Content:               post.Content,
-			MdContent:             post.MdContent,
-			HtmlContent:           post.HTMLContent,
 			ContentType:           string(post.ContentType),
 			Status:                string(post.Status),
 			IsAutogenSummary:      post.IsAutogenSummary,
@@ -627,9 +640,6 @@ func (h *PublicHandler) ListPostPage(c *fiber.Ctx) error {
 			ID:                    post.ID,
 			Title:                 post.Title,
 			Slug:                  post.Slug,
-			Content:               post.Content,
-			MdContent:             post.MdContent,
-			HtmlContent:           post.HTMLContent,
 			ContentType:           string(post.ContentType),
 			Status:                string(post.Status),
 			IsAutogenSummary:      post.IsAutogenSummary,
@@ -854,9 +864,6 @@ func buildPostResp(post *ent.Post) *model.PostResp {
 		ID:                    post.ID,
 		Title:                 post.Title,
 		Slug:                  post.Slug,
-		Content:               post.Content,
-		MdContent:             post.MdContent,
-		HtmlContent:           post.HTMLContent,
 		ContentType:           string(post.ContentType),
 		Status:                string(post.Status),
 		IsAutogenSummary:      post.IsAutogenSummary,

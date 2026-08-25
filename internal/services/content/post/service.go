@@ -32,6 +32,7 @@ type PostService interface {
 	UpdatePostSetting(c context.Context, id int, post model.PostUpdateReq) (*ent.Post, error)
 	DeletePost(c context.Context, id int) error
 	GetPostCount(c context.Context) (int, error)
+	QueryPostMeta(c context.Context) ([]*model.PostMeta, error)
 	GetPostMonthStats(c context.Context, req model.PostMonthStatsReq) ([]model.PostMonthStat, error)
 	GetRandomPost(c context.Context) (*ent.Post, error)
 	GetRandomPosts(c context.Context, limit int) ([]*ent.Post, error)
@@ -49,6 +50,32 @@ type PostServiceImpl struct {
 
 func NewPostServiceImpl(client *ent.Client, aiService ai_service.AIService) *PostServiceImpl {
 	return &PostServiceImpl{client: client, aiService: aiService}
+}
+
+// postListFields 列表/分页查询仅选取的字段，排除 content、md_content、html_content 等正文大字段，
+// 减小数据库传输量与内存占用，从而优化查询速度
+var postListFields = []string{
+	post.FieldID,
+	post.FieldTitle,
+	post.FieldSlug,
+	post.FieldContentType,
+	post.FieldStatus,
+	post.FieldIsAutogenSummary,
+	post.FieldIsVisible,
+	post.FieldIsPinToTop,
+	post.FieldIsAllowComment,
+	post.FieldIsVisibleAfterComment,
+	post.FieldIsVisibleAfterPay,
+	post.FieldPrice,
+	post.FieldPublishedAt,
+	post.FieldViewCount,
+	post.FieldCommentCount,
+	post.FieldCover,
+	post.FieldKeywords,
+	post.FieldCopyright,
+	post.FieldAuthor,
+	post.FieldSummary,
+	post.FieldCreatedAt,
 }
 
 func (s *PostServiceImpl) QueryPostList(c context.Context, req model.PostListReq) ([]*ent.Post, error) {
@@ -87,6 +114,7 @@ func (s *PostServiceImpl) QueryPostList(c context.Context, req model.PostListReq
 	}
 
 	query = query.
+		Select(postListFields...).
 		WithCategories().
 		WithTags().
 		Order(ent.Desc(post.FieldID))
@@ -160,6 +188,7 @@ func (s *PostServiceImpl) QueryPostPage(c context.Context, req model.PostPageReq
 		return nil, 0, err
 	}
 	posts, err := query.
+		Select(postListFields...).
 		WithCategories().
 		WithTags().
 		Order(ent.Desc(post.FieldID)).
@@ -314,6 +343,32 @@ func (s *PostServiceImpl) GetPostCount(c context.Context) (int, error) {
 	return count, nil
 }
 
+// QueryPostMeta 查询全部已发布可见文章的轻量元数据。
+// 仅选取 slug、title、published_at 三列，避免加载正文等大字段导致响应 JSON 过大。
+func (s *PostServiceImpl) QueryPostMeta(c context.Context) ([]*model.PostMeta, error) {
+	posts, err := s.client.Post.Query().
+		Where(
+			post.StatusEQ("published"),
+			post.IsVisible(true),
+		).
+		Select(post.FieldSlug, post.FieldTitle, post.FieldPublishedAt).
+		Order(ent.Desc(post.FieldPublishedAt)).
+		All(c)
+	if err != nil {
+		return nil, err
+	}
+
+	metas := make([]*model.PostMeta, 0, len(posts))
+	for _, p := range posts {
+		metas = append(metas, &model.PostMeta{
+			Slug:        p.Slug,
+			Title:       p.Title,
+			PublishedAt: (*model.LocalTime)(p.PublishedAt),
+		})
+	}
+	return metas, nil
+}
+
 func (s *PostServiceImpl) GetPostMonthStats(c context.Context, req model.PostMonthStatsReq) ([]model.PostMonthStat, error) {
 	posts, err := s.client.Post.Query().Where(
 		post.StatusEQ("published"),
@@ -403,6 +458,7 @@ func (s *PostServiceImpl) GetRandomPosts(c context.Context, limit int) ([]*ent.P
 	}
 	return s.client.Post.Query().
 		Where(post.IDIn(ids...)).
+		Select(postListFields...).
 		WithCategories().
 		WithTags().
 		All(c)
@@ -420,6 +476,7 @@ func (s *PostServiceImpl) GetRandomPosts(c context.Context, limit int) ([]*ent.P
 func (s *PostServiceImpl) GetRelatedPosts(c context.Context, id int, limit int) ([]*model.PostRelatedResp, error) {
 	current, err := s.client.Post.Query().
 		Where(post.ID(id)).
+		Select(post.FieldID, post.FieldTitle).
 		WithCategories().
 		WithTags().
 		Only(c)
@@ -429,6 +486,7 @@ func (s *PostServiceImpl) GetRelatedPosts(c context.Context, id int, limit int) 
 
 	candidates, err := s.client.Post.Query().
 		Where(post.IDNEQ(id), post.StatusEQ("published"), post.IsVisible(true)).
+		Select(postListFields...).
 		WithCategories().
 		WithTags().
 		All(c)
@@ -597,15 +655,12 @@ func postCategoryIDSet(p *ent.Post) map[int]struct{} {
 	return set
 }
 
-// toPostResp 将 ent.Post 转换为响应模型
+// toPostResp 将 ent.Post 转换为响应模型（列表场景，不包含正文内容）
 func toPostResp(p *ent.Post) model.PostResp {
 	return model.PostResp{
 		ID:                    p.ID,
 		Title:                 p.Title,
 		Slug:                  p.Slug,
-		Content:               p.Content,
-		MdContent:             p.MdContent,
-		HtmlContent:           p.HTMLContent,
 		ContentType:           string(p.ContentType),
 		Status:                string(p.Status),
 		IsAutogenSummary:      p.IsAutogenSummary,

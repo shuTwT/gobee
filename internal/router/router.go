@@ -360,6 +360,8 @@ func initPublicRouter(router fiber.Router, handlerMap handlers.HandlerMap) {
 		publicApi.Get("/essay/page", handlerMap.PublicHandler.GetEssayPage)
 		// 文章列表接口
 		publicApi.Get("/post/list", handlerMap.PublicHandler.ListPost)
+		// 全量文章元数据接口
+		publicApi.Get("/post/meta", handlerMap.PublicHandler.GetPostMeta)
 		// 文章分页接口
 		publicApi.Get("/post/page", handlerMap.PublicHandler.ListPostPage)
 		// 文章搜索接口

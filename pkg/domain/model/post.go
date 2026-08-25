@@ -87,7 +87,7 @@ type PostResp struct {
 	CreatedAt             LocalTime       `json:"created_at"`               //创建时间
 	Title                 string          `json:"title"`                    //文章标题
 	Slug                  *string         `json:"slug"`                     //文章别名
-	Content               string          `json:"content"`                  //文章内容
+	Content               string          `json:"content,omitempty"`        //文章内容
 	MdContent             *string         `json:"md_content,omitempty"`     //md文章内容
 	HtmlContent           *string         `json:"html_content,omitempty"`   //html文章内容
 	ContentType           string          `json:"content_type"`             //内容类型
@@ -111,6 +111,13 @@ type PostResp struct {
 	CategoryIds           []int           `json:"category_ids,omitempty"`   //分类ID列表
 	Tags                  []*ent.Tag      `json:"tags"`                     //标签ID列表
 	TagIds                []int           `json:"tag_ids,omitempty"`        //标签ID列表
+}
+
+// PostMeta 文章轻量元数据，仅包含少量字段，避免全量文章列表传输过大 JSON
+type PostMeta struct {
+	Slug        *string    `json:"slug"`         //文章别名
+	Title       string     `json:"title"`        //文章标题
+	PublishedAt *LocalTime `json:"published_at"` //发布时间
 }
 
 type PostMonthStat struct {

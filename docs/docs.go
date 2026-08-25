@@ -9931,6 +9931,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/public/post/meta": {
+            "get": {
+                "description": "返回所有已发布可见文章的轻量元数据（slug、title、published_at），避免传输过大的 JSON",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "公开接口/文章"
+                ],
+                "summary": "获取全量文章元数据",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.PostMeta"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/public/post/month-stats": {
             "get": {
                 "description": "获取每个月份的文章数量统计",
@@ -18364,6 +18408,23 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                },
+                "title": {
+                    "description": "文章标题",
+                    "type": "string"
+                }
+            }
+        },
+        "model.PostMeta": {
+            "type": "object",
+            "properties": {
+                "published_at": {
+                    "description": "发布时间",
+                    "type": "string"
+                },
+                "slug": {
+                    "description": "文章别名",
+                    "type": "string"
                 },
                 "title": {
                     "description": "文章标题",

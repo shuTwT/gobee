@@ -2890,6 +2890,18 @@ definitions:
     - status
     - title
     type: object
+  model.PostMeta:
+    properties:
+      published_at:
+        description: 发布时间
+        type: string
+      slug:
+        description: 文章别名
+        type: string
+      title:
+        description: 文章标题
+        type: string
+    type: object
   model.PostMonthStat:
     properties:
       count:
@@ -10062,6 +10074,32 @@ paths:
           schema:
             $ref: '#/definitions/model.HttpError'
       summary: 查询所有文章
+      tags:
+      - 公开接口/文章
+  /api/v1/public/post/meta:
+    get:
+      consumes:
+      - application/json
+      description: 返回所有已发布可见文章的轻量元数据（slug、title、published_at），避免传输过大的 JSON
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpSuccess'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.PostMeta'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpError'
+      summary: 获取全量文章元数据
       tags:
       - 公开接口/文章
   /api/v1/public/post/month-stats:
